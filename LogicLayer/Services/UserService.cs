@@ -9,84 +9,47 @@ using LogicLayer.Validation.Exceptions;
 using LogicLayer.Validation;
 using DataAccessLayer.Validation;
 using System.Linq.Expressions;
+using LogicLayer.DTOs.UserDTO;
 
 namespace LogicLayer.Services
 {
     public class UserService
     {
-        private readonly IRepository<User> _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(IRepository<User> userRepository, IUnitOfWork unitOfWork)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
         }
 
-
-        public void AddUser(User user)
+        private UserReadDto MapUser_ReadDto(User user)
         {
-            ValidationHelper.ValidateEntity(user);
-
-            try
+            return new UserReadDto()
             {
-                _userRepository.Add(user);
-                _unitOfWork.Save();
-            }
-            catch
-            {
-                throw;
-            }
+                IsActive = user.IsActive,
+                Permissions = user.Permissions,
+                UserId = user.UserId,
+                UserName = user.Username
+            };
         }
 
-        public void UpdateUser(User user)
+        public UserReadDto ValidateUserCredentials(string UserName, string Password)
         {
-            ValidationHelper.ValidateEntity(user);
-
-            try
-            {
-                _userRepository.Update(user);
-                _unitOfWork.Save();
-            }
-            catch
-            {
-                throw;
-            }
-        }
-
-        public void DeleteUser(int userId)
-        {
-            User user = _userRepository.GetById(userId);
-
+            User user = _userRepository.GetByUserName(UserName);
             if (user == null)
             {
                 throw new NotFoundException(typeof(User));
             }
 
-            try
+            if (user.Password != Password)
             {
-                _userRepository.Delete(user);
-                _unitOfWork.Save();
+                throw new WrongPasswordException();
             }
-            catch
-            {
-                throw;
-            }
+
+            return MapUser_ReadDto(user);
         }
 
-        public User GetUserById(int userId)
-        {
-            User user = _userRepository.GetById(userId);
-            if (user == null)
-            {
-                throw new NotFoundException(typeof(User));
-            }
-            return user;
-        }
-
-        public List<User> GetAllUsers(int PageNumber,int RowsPerPage)
-        {
-            return _userRepository.GetAll(PageNumber,RowsPerPage);
-        }
     }
 }

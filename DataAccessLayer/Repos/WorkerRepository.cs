@@ -15,7 +15,7 @@ namespace DataAccessLayer.Repos
         {
         }
 
-        public Worker GetWithPerosnById(int WorkerId)
+        public Worker GetWithPersonById(int WorkerId)
         {
             return _context.Workers
                 .Where(w => w.WorkerId == WorkerId)

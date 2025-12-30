@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LogicLayer.Utilities;
-namespace LogicLayer.DTOs
+namespace LogicLayer.DTOs.WorkerDTO
 {
     public class WorkerListDto
     {

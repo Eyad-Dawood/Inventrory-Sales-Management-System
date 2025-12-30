@@ -65,6 +65,11 @@ namespace LogicLayer.Validation
                 string ArabicEntityName = errorMessagesManager.GetArabicEntityName(ObjectType);
                 return $"ال{ArabicEntityName} غير موجود أو يتعذر العثور عليه";
             }
+
+            static public string WrongPasswordErrorMessage()
+            {
+                return "كلمة المرور خاطئة , الرجاء المحاولة مرة أخرى";
+            }
         }
     }
 }

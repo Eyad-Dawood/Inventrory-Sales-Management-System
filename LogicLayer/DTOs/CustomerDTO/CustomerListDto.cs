@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LogicLayer.DTOs
+namespace LogicLayer.DTOs.CustomerDTO
 {
     public class CustomerListDto
     {

@@ -1,7 +1,7 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Validation;
-using LogicLayer.DTOs;
+using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using System;
@@ -26,6 +26,37 @@ namespace LogicLayer.Services
         }
 
 
+        public Customer MapCustomer_AddDto(CustomerAddDto DTO)
+        {
+            return new Customer()
+            {
+                Person = PersonService.MapPerosn_AddDto(DTO.PersonAddDto)
+            };
+        }
+        public CustomerReadDto MapCustomer_ReadDto(Customer customer)
+        {
+            return new CustomerReadDto()
+            {
+                CustomerId = customer.CustomerId,
+                PersonId = customer.PersonId,
+                Balance = customer.Balance,
+                IsActive = customer.IsActive,
+                FullName = customer.Person.FullName,
+                NationalNumber = customer.Person.NationalNumber,
+                PhoneNumber = customer.Person.PhoneNumber,
+                TownName = customer.Person.Town.TownName
+            };
+        }
+        private void ApplyCustomerUpdates(Customer customer,CustomerUpdateDto DTO)
+        {
+            // Update customer
+            customer.Balance = DTO.Balance;
+            customer.IsActive = DTO.IsActive;
+
+            // Update person
+            PersonService.UpdatePersonData(customer.Person, DTO.PersonUpdateDto);
+        }
+
         /// <exception cref="ValidationException">
         /// Thrown when the Customer or person data violates validation rules
         /// (e.g. invalid age, missing required fields).
@@ -34,20 +65,23 @@ namespace LogicLayer.Services
         /// Thrown when an unexpected error occurs such as database failure
         /// or infrastructure-related issues.
         /// </exception>
-        public void AddCustomer(Customer customer)
+        public void AddCustomer(CustomerAddDto DTO)
         {
-            ValidationHelper.ValidateEntity(customer);
+            Customer Customer = MapCustomer_AddDto(DTO);
+
+            ValidationHelper.ValidateEntity(Customer);
 
             using var transaction = _unitOfWork.BeginTransaction();
 
             try
             {
-                _personRepo.Add(customer.Person);
+                _personRepo.Add(Customer.Person);
+                _unitOfWork.Save();
 
-                customer.PersonId = customer.Person.PersonId;
+                Customer.PersonId = Customer.Person.PersonId;
 
 
-                _customerRepo.Add(customer);
+                _customerRepo.Add(Customer);
                 _unitOfWork.Save();
 
                 transaction.Commit();
@@ -69,33 +103,21 @@ namespace LogicLayer.Services
         /// Thrown when an unexpected error occurs such as database failure
         /// or infrastructure-related issues.
         /// </exception>
-        public void UpdateCustomer(Customer customer)
+        public void UpdateCustomer(CustomerUpdateDto DTO)
         {
+            var customer = _customerRepo.GetWithPersonById(DTO.CustomerId);
+            if (customer == null||customer.Person==null)
+                throw new NotFoundException(typeof(Customer));
+
+            ApplyCustomerUpdates(customer, DTO);
+
             ValidationHelper.ValidateEntity(customer);
 
-            using var transaction = _unitOfWork.BeginTransaction();
-
-            try
-            {
-
-                _personRepo.Update(customer.Person);
-
-
-                _customerRepo.Update(customer);
-                _unitOfWork.Save();
-
-                transaction.Commit();
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
+            _unitOfWork.Save();
         }
-
         public void DeleteCustomer(int customerId)
         {
-            Customer customer = _customerRepo.GetById(customerId);
+            Customer customer = _customerRepo.GetWithPersonById(customerId);
 
             if (customer == null)
             {
@@ -118,14 +140,15 @@ namespace LogicLayer.Services
             }
         }
 
-        public Customer GetCustomerById(int customerId)
+        public CustomerReadDto GetCustomerById(int customerId)
         {
             Customer customer = _customerRepo.GetWithPersonById(customerId);
+
             if (customer == null)
             {
                 throw new NotFoundException(typeof(Customer));
             }
-            return customer;
+            return MapCustomer_ReadDto(customer);
         }
 
         public List<CustomerListDto> GetAllCustomers(int PageNumber,int RowsPerPage)

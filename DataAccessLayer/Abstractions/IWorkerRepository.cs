@@ -9,7 +9,7 @@ namespace DataAccessLayer.Abstractions
 {
     public interface IWorkerRepository : IRepository<Worker>
     {
-        public Worker GetWithPerosnById(int WorkerId);
+        public Worker GetWithPersonById(int WorkerId);
         public List<Worker> GetAllWithPerson(int PageNumber, int RowsPerPage);
     }
 }

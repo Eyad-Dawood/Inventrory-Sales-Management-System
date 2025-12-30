@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LogicLayer.Validation.Exceptions;
-using LogicLayer.DTOs;
+using LogicLayer.DTOs.WorkerDTO;
 
 namespace LogicLayer.Services
 {
@@ -25,6 +25,37 @@ namespace LogicLayer.Services
             _unitOfWork = unitOfWork;
         }
 
+        public Worker MapWorker_AddDto(WorkerAddDto DTO)
+        {
+            return new Worker()
+            {
+                Craft = DTO.Craft,
+                Person = PersonService.MapPerosn_AddDto(DTO.PersonAddDto)
+            };
+        }
+        public void ApplyWorkerUpdates(Worker worker , WorkerUpdateDto DTO)
+        {
+            //Update Worker
+            worker.Craft = DTO.Craft;
+            worker.IsActive = DTO.IsActive;
+
+            //Update Person
+            PersonService.UpdatePersonData(worker.Person, DTO.PersonUpdateDto);
+        }
+        public WorkerReadDto MapWorker_ReadDto(Worker worker)
+        {
+            return new WorkerReadDto()
+            {
+                Craft = worker.Craft,
+                FullName = worker.Person.FullName,
+                IsActive = worker.IsActive,
+                WorkerId = worker.WorkerId,
+                NationalNumber = worker.Person.NationalNumber,
+                PersonId = worker.Person.PersonId,
+                PhoneNumber = worker.Person.PhoneNumber,
+                TownName = worker.Person.Town.TownName
+            };
+        }
 
         /// <exception cref="ValidationException">
         /// Thrown when the Worker or person data violates validation rules
@@ -34,8 +65,10 @@ namespace LogicLayer.Services
         /// Thrown when an unexpected error occurs such as database failure
         /// or infrastructure-related issues.
         /// </exception>
-        public void AddWorker(Worker worker)
+        public void AddWorker(WorkerAddDto DTO)
         {
+            Worker worker = MapWorker_AddDto(DTO);
+
             ValidationHelper.ValidateEntity(worker);
 
             using var transaction = _unitOfWork.BeginTransaction();
@@ -43,6 +76,7 @@ namespace LogicLayer.Services
             try
             {
                 _personRepo.Add(worker.Person);
+                _unitOfWork.Save();
 
                 worker.PersonId = worker.Person.PersonId;
 
@@ -70,34 +104,23 @@ namespace LogicLayer.Services
         /// Thrown when an unexpected error occurs such as database failure
         /// or infrastructure-related issues.
         /// </exception>
-        public void UpdateWorker(Worker Worker)
+        public void UpdateWorker(WorkerUpdateDto DTO)
         {
-            ValidationHelper.ValidateEntity(Worker);
+            var worker = _workerRepo.GetWithPersonById(DTO.WorkerId);
+            if (worker == null || worker.Person == null)
+                throw new NotFoundException(typeof(Worker));
 
-            using var transaction = _unitOfWork.BeginTransaction();
+            ApplyWorkerUpdates(worker,DTO);
 
-            try
-            {
+            ValidationHelper.ValidateEntity(worker);
 
-                _personRepo.Update(Worker.Person);
-
-
-                _workerRepo.Update(Worker);
-                _unitOfWork.Save();
-
-                transaction.Commit();
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
+            _unitOfWork.Save();
         }
 
 
         public void DeleteWorker(int workerId)
         {
-            Worker worker = _workerRepo.GetById(workerId);
+            Worker worker = _workerRepo.GetWithPersonById(workerId);
 
             if (worker == null)
             {
@@ -121,14 +144,15 @@ namespace LogicLayer.Services
         }
 
 
-        public Worker GetWorkerById(int workerId)
+        public WorkerReadDto GetWorkerById(int workerId)
         {
-            Worker worker = _workerRepo.GetWithPerosnById(workerId);
+            Worker worker = _workerRepo.GetWithPersonById(workerId);
             if (worker == null)
             {
                 throw new NotFoundException(typeof(Worker));
             }
-            return worker;
+
+            return MapWorker_ReadDto(worker);
         }
 
         public List<WorkerListDto> GetAllWorkers(int PageNumber, int RowsPerPage)

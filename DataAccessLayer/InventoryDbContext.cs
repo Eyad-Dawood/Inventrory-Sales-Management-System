@@ -22,5 +22,21 @@ namespace DataAccessLayer
          : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Worker>()
+                .Property(u => u.IsActive)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<Customer>()
+                .Property(u => u.IsActive)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<Customer>()
+                .Property(u => u.Balance)
+                .HasDefaultValue(0);
+        }
+
     }
 }
