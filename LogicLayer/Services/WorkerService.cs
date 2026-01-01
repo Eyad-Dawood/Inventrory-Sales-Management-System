@@ -71,6 +71,12 @@ namespace LogicLayer.Services
 
             ValidationHelper.ValidateEntity(worker);
 
+            //Alwase Active
+            worker.IsActive = true;
+
+            //Mapp Null
+            PersonService.MappNullStrings(worker.Person);
+
             using var transaction = _unitOfWork.BeginTransaction();
 
             try
@@ -110,7 +116,10 @@ namespace LogicLayer.Services
             if (worker == null || worker.Person == null)
                 throw new NotFoundException(typeof(Worker));
 
+
             ApplyWorkerUpdates(worker,DTO);
+
+            PersonService.MappNullStrings(worker.Person);
 
             ValidationHelper.ValidateEntity(worker);
 

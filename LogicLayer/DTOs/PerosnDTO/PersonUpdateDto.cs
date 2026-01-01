@@ -11,6 +11,7 @@ using LogicLayer.DTOs.TownDTO;
 
 namespace LogicLayer.DTOs.PersonDTO
 {
+    [Display(Name = "بيانات الشخص")]
     public class PersonUpdateDto
     {
         public int PersonId { get; set; }

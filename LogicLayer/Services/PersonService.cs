@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Entities;
 using LogicLayer.DTOs.PersonDTO;
+using LogicLayer.Services.Helpers;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,30 @@ namespace LogicLayer.Services
             Person.NationalNumber = DTO.NationalNumber;
             Person.PhoneNumber = DTO.PhoneNumber;
             Person.TownID = DTO.TownID;
+        }
+
+        public static void MappNullStrings(Person Person)
+        {
+            Person.ThirdName = NullMapperHelper.NormalizeString(Person.ThirdName);
+            Person.FourthName = NullMapperHelper.NormalizeString(Person.FourthName);
+            Person.NationalNumber = NullMapperHelper.NormalizeString(Person.NationalNumber);
+            Person.PhoneNumber = NullMapperHelper.NormalizeString(Person.PhoneNumber);
+
+        }
+
+        public static PersonUpdateDto MapPerosn_UpdateDto(Person person)
+        {
+            return new PersonUpdateDto()
+            {
+                FirstName = person.FirstName,
+                TownID = person.TownID,
+                FourthName = person.FourthName,
+                NationalNumber = person.NationalNumber,
+                PersonId = person.PersonId,
+                PhoneNumber = person.PhoneNumber,
+                SecondName = person.SecondName,
+                ThirdName = person.ThirdName,
+            };
         }
     }
 }

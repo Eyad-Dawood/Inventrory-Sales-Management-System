@@ -165,7 +165,7 @@ namespace DataAccessLayer.Entities
             }
 
             //validate Town
-            if(Town==null)
+            if(TownID <= 0)
             {
                 errors.Add(
                     new ValidationError

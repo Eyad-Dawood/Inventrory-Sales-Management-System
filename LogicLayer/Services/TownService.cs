@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Repos;
 using LogicLayer.DTOs.MasurementUnitDTO;
 using LogicLayer.DTOs.TownDTO;
@@ -31,8 +32,18 @@ namespace LogicLayer.Services
                 TownName = DTO.TownName
             };
         }
-
-
+        private void ApplyTownUpdate(Town town, TownUpdateDto DTO)
+        {
+            town.TownName = DTO.TownName;
+        }
+        private TownUpdateDto MapTow_UpdateDto(Town town)
+        {
+            return new TownUpdateDto()
+            {
+                TownId = town.TownID,
+                TownName = town.TownName
+            };
+        }
 
         public void AddTown(TownAddDto DTO)
         {
@@ -41,6 +52,20 @@ namespace LogicLayer.Services
             ValidationHelper.ValidateEntity(town);
 
             _Townrepo.Add(town);
+            _unitOfWork.Save();
+        }
+        public void UpdateTown(TownUpdateDto DTO)
+        {
+            Town town = _Townrepo.GetById(DTO.TownId);
+            if (town == null)
+            {
+                throw new NotFoundException(typeof(Town));
+            }
+
+            ApplyTownUpdate(town, DTO);
+
+            ValidationHelper.ValidateEntity(town);
+
             _unitOfWork.Save();
         }
         public List<TownListDto> GetAllTowns()
@@ -64,6 +89,16 @@ namespace LogicLayer.Services
             _Townrepo.Delete(town);
             _unitOfWork.Save();
         }
+        public TownUpdateDto GetTownForUpdate(int TownId)
+        {
+            Town Town = _Townrepo.GetById(TownId);
 
+            if (Town == null)
+            {
+                throw new NotFoundException(typeof(Town));
+            }
+
+            return MapTow_UpdateDto(Town);
+        }
     }
 }

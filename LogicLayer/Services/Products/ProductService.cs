@@ -147,8 +147,6 @@ namespace LogicLayer.Services.Products
                 {
                     //Log Here Later 
                 }
-
-                
             }
         }
         public void DeleteProductById(int ProductId)

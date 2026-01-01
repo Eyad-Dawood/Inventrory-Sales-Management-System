@@ -11,13 +11,10 @@ using LogicLayer.DTOs.PersonDTO;
 
 namespace LogicLayer.DTOs.CustomerDTO
 {
+    [Display(Name = "بيانات الزبون")]
     public class CustomerUpdateDto
     {
         public int CustomerId { get; set; }
-
-        public decimal Balance { get; set; }
-
-        public bool IsActive { get; set; }
 
         public PersonUpdateDto PersonUpdateDto { get; set; }
     }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LogicLayer.Services.Helpers;
 
 namespace LogicLayer.Services
 {
@@ -49,13 +50,18 @@ namespace LogicLayer.Services
         }
         private void ApplyCustomerUpdates(Customer customer,CustomerUpdateDto DTO)
         {
-            // Update customer
-            customer.Balance = DTO.Balance;
-            customer.IsActive = DTO.IsActive;
-
             // Update person
             PersonService.UpdatePersonData(customer.Person, DTO.PersonUpdateDto);
         }
+        private CustomerUpdateDto MapCustomer_UpdateDto(Customer customer)
+        {
+            return new CustomerUpdateDto()
+            {
+                CustomerId = customer.CustomerId,
+                PersonUpdateDto = PersonService.MapPerosn_UpdateDto(customer.Person)
+            };
+        }
+       
 
         /// <exception cref="ValidationException">
         /// Thrown when the Customer or person data violates validation rules
@@ -70,6 +76,12 @@ namespace LogicLayer.Services
             Customer Customer = MapCustomer_AddDto(DTO);
 
             ValidationHelper.ValidateEntity(Customer);
+
+            //Alwase Active
+            Customer.IsActive = true;
+
+            //Map Nulls
+            PersonService.MappNullStrings(Customer.Person);
 
             using var transaction = _unitOfWork.BeginTransaction();
 
@@ -95,6 +107,8 @@ namespace LogicLayer.Services
 
         }
 
+        
+
         /// <exception cref="ValidationException">
         /// Thrown when the patient or person data violates validation rules
         /// (e.g. invalid age, missing required fields).
@@ -110,6 +124,8 @@ namespace LogicLayer.Services
                 throw new NotFoundException(typeof(Customer));
 
             ApplyCustomerUpdates(customer, DTO);
+
+            PersonService.MappNullStrings(customer.Person);
 
             ValidationHelper.ValidateEntity(customer);
 
@@ -149,6 +165,16 @@ namespace LogicLayer.Services
                 throw new NotFoundException(typeof(Customer));
             }
             return MapCustomer_ReadDto(customer);
+        }
+
+        public CustomerUpdateDto GetCustomerForUpdate(int customerId)
+        {
+            Customer customer = _customerRepo.GetWithPersonById(customerId);
+            if (customer == null)
+            {
+                throw new NotFoundException(typeof(Customer));
+            }
+            return MapCustomer_UpdateDto(customer);
         }
 
         public List<CustomerListDto> GetAllCustomers(int PageNumber,int RowsPerPage)

@@ -2,6 +2,7 @@
 using DataAccessLayer.Validation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -13,15 +14,29 @@ namespace LogicLayer.Validation
 {
     public class ErrorMessagesManager
     {
-        static private string GetArabicPropertyName(Type ObjectType,string propertyName)
+        static private string GetArabicPropertyName(Type objectType, string propertyName)
         {
-            var displayName = ObjectType
-                .GetProperty(propertyName)
-                ?.GetCustomAttribute<DisplayAttribute>()
-                ?.GetName();
+            var property = objectType.GetProperty(
+                propertyName,
+                BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy
+            );
 
-            return displayName ?? propertyName;
+            if (property == null)
+                return propertyName;
+
+            // 1️ DisplayAttribute
+            var displayAttr = property.GetCustomAttribute<DisplayAttribute>();
+            if (displayAttr != null)
+                return displayAttr.GetName();
+
+            // 2️ DisplayNameAttribute
+            var displayNameAttr = property.GetCustomAttribute<DisplayNameAttribute>();
+            if (displayNameAttr != null)
+                return displayNameAttr.DisplayName;
+
+            return propertyName;
         }
+
         private string GetArabicEntityName(Type objectType)
         {
             var displayAttr = objectType.GetCustomAttribute<DisplayAttribute>();
@@ -70,7 +85,7 @@ namespace LogicLayer.Validation
                 ErrorMessagesManager errorMessagesManager = new ErrorMessagesManager();
 
                 string ArabicEntityName = errorMessagesManager.GetArabicEntityName(ObjectType);
-                return $"ال{ArabicEntityName} غير موجود أو يتعذر العثور عليه";
+                return $"{ArabicEntityName} غير موجود أو يتعذر العثور عليه";
             }
 
             static public string WrongPasswordErrorMessage()

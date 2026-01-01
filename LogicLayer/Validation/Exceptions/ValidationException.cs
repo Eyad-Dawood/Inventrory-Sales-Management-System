@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LogicLayer.Validation.Exceptions
 {
-    internal class ValidationException : Exception
+    public class ValidationException : Exception
     {
         public IReadOnlyList<string> Errors { get; }
 
