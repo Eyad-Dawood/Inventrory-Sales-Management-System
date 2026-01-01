@@ -7,12 +7,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LogicLayer.Validation
 {
     public class ErrorMessagesManager
     {
-        private string GetArabicPropertyName(Type ObjectType,string propertyName)
+        static private string GetArabicPropertyName(Type ObjectType,string propertyName)
         {
             var displayName = ObjectType
                 .GetProperty(propertyName)
@@ -26,31 +27,37 @@ namespace LogicLayer.Validation
             var displayAttr = objectType.GetCustomAttribute<DisplayAttribute>();
             return displayAttr?.GetName() ?? objectType.Name;
         }
-        public List<string> WriteValidationErrorsInArabic(List<ValidationError>Errors)
+
+        static public string WriteValidationErrorMessageInArabic(ValidationError Error)
+        {
+            string ArabicPropertyName = GetArabicPropertyName(Error.ObjectType, Error.PropertyName);
+
+            switch (Error.Code)
+            {
+                case ValidationErrorCode.RequiredFieldMissing:
+                    return ($"الحقل {ArabicPropertyName} مطلوب.");
+
+                case ValidationErrorCode.InvalidFormat:
+                    return ($"الحقل {ArabicPropertyName} يحتوي على تنسيق غير صالح.");
+
+                case ValidationErrorCode.ValueOutOfRange:
+                    return ($"القيمة في الحقل {ArabicPropertyName} خارج النطاق المسموح.");
+                    
+                case ValidationErrorCode.DuplicateEntry:
+                    return ($"القيمة في الحقل {ArabicPropertyName} مكررة.");
+                    
+                default:
+                    return ($"حدث خطأ غير معروف في الحقل {ArabicPropertyName}.");
+                   
+            }
+        }
+        static public List<string> WriteValidationErrorsInArabic(List<ValidationError>Errors)
         {
             List<string> Arabicerrors = new List<string>();
 
             foreach(ValidationError error in Errors)
             {
-                string ArabicPropertyName = GetArabicPropertyName(error.ObjectType,error.PropertyName);
-                switch (error.Code)
-                {
-                    case ValidationErrorCode.RequiredFieldMissing:
-                        Arabicerrors.Add($"الحقل {ArabicPropertyName} مطلوب.");
-                        break;
-                    case ValidationErrorCode.InvalidFormat:
-                        Arabicerrors.Add($"الحقل {ArabicPropertyName} يحتوي على تنسيق غير صالح.");
-                        break;
-                    case ValidationErrorCode.ValueOutOfRange:
-                        Arabicerrors.Add($"القيمة في الحقل {ArabicPropertyName} خارج النطاق المسموح.");
-                        break;
-                    case ValidationErrorCode.DuplicateEntry:
-                        Arabicerrors.Add($"القيمة في الحقل {ArabicPropertyName} مكررة.");
-                        break;
-                    default:
-                        Arabicerrors.Add($"حدث خطأ غير معروف في الحقل {ArabicPropertyName}.");
-                        break;
-                }
+                Arabicerrors.Add(WriteValidationErrorMessageInArabic(error));
             }
 
             return Arabicerrors;

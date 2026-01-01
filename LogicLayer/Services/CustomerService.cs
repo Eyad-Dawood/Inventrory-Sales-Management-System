@@ -26,14 +26,14 @@ namespace LogicLayer.Services
         }
 
 
-        public Customer MapCustomer_AddDto(CustomerAddDto DTO)
+        private Customer MapCustomer_AddDto(CustomerAddDto DTO)
         {
             return new Customer()
             {
                 Person = PersonService.MapPerosn_AddDto(DTO.PersonAddDto)
             };
         }
-        public CustomerReadDto MapCustomer_ReadDto(Customer customer)
+        private CustomerReadDto MapCustomer_ReadDto(Customer customer)
         {
             return new CustomerReadDto()
             {

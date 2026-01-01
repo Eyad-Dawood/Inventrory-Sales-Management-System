@@ -1,0 +1,62 @@
+﻿using DataAccessLayer.Abstractions;
+using DataAccessLayer.Abstractions.Products;
+using DataAccessLayer.Entities.Products;
+using DataAccessLayer.Repos;
+using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
+using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LogicLayer.Services.Products
+{
+    public class ProductStockMovementLogService
+    {
+        private readonly IProductStockMovementLogRepository _ProductStockMovementLogrepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public ProductStockMovementLogService(IProductStockMovementLogRepository productPriceLogrepository, IUnitOfWork unitOfWork)
+        {
+            _ProductStockMovementLogrepository = productPriceLogrepository;
+            _unitOfWork = unitOfWork;
+        }
+
+        public ProductStockMovementLog MapProductStockMovementLog_AddDto(ProductStockMovementLogAddDto dto)
+        {
+            return new ProductStockMovementLog()
+            {
+             CreatedByUserId = dto.CreatedByUserId,
+             ProductId = dto.ProductId,
+             OldQuantity = dto.OldQuantity,
+             NewQuantity = dto.NewQuantity,
+             Reason = dto.Reason,
+            };
+        }
+
+        public void AddProductStockMovementLog(ProductStockMovementLogAddDto DTO)
+        {
+            ProductStockMovementLog productStockMovementLog = MapProductStockMovementLog_AddDto(DTO);
+
+            _ProductStockMovementLogrepository.Add(productStockMovementLog);
+            _unitOfWork.Save();
+        }
+
+        public List<ProductStockMovementLogListDto> GetAllProductMovments(int PageNumber,int RowsPerPage)
+        {
+            return _ProductStockMovementLogrepository
+                .GetAllWithDetails(PageNumber, RowsPerPage)
+                .Select(p => new ProductStockMovementLogListDto()
+                {
+                    ProductId = p.ProductId,
+                    LogDate = p.LogDate,
+                    CreatedbyUserName = p.User.Username,
+                    NewQuantity = p.NewQuantity,
+                    OldQuantity = p.OldQuantity,
+                    ProductName = $@"{p.Product.ProductType.ProductTypeName} [{p.Product.ProductName}]",
+                    Reason = p.Reason
+                }).ToList();
+        }
+    }
+}

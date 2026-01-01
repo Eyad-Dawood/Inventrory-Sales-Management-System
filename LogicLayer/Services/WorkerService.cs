@@ -25,7 +25,7 @@ namespace LogicLayer.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Worker MapWorker_AddDto(WorkerAddDto DTO)
+        private Worker MapWorker_AddDto(WorkerAddDto DTO)
         {
             return new Worker()
             {
@@ -33,7 +33,7 @@ namespace LogicLayer.Services
                 Person = PersonService.MapPerosn_AddDto(DTO.PersonAddDto)
             };
         }
-        public void ApplyWorkerUpdates(Worker worker , WorkerUpdateDto DTO)
+        private void ApplyWorkerUpdates(Worker worker , WorkerUpdateDto DTO)
         {
             //Update Worker
             worker.Craft = DTO.Craft;
@@ -42,7 +42,7 @@ namespace LogicLayer.Services
             //Update Person
             PersonService.UpdatePersonData(worker.Person, DTO.PersonUpdateDto);
         }
-        public WorkerReadDto MapWorker_ReadDto(Worker worker)
+        private WorkerReadDto MapWorker_ReadDto(Worker worker)
         {
             return new WorkerReadDto()
             {

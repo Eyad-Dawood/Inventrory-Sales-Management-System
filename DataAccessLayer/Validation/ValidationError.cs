@@ -11,7 +11,7 @@ namespace DataAccessLayer.Validation
         RequiredFieldMissing,
         ValueOutOfRange,
         InvalidFormat,
-        DuplicateEntry
+        DuplicateEntry,
     }
 
     public class ValidationError

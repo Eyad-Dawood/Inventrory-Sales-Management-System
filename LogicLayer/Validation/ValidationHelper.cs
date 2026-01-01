@@ -21,8 +21,7 @@ namespace LogicLayer.Validation
 
             if (!entity.Validate(errors))
             {
-                var errorManager = new ErrorMessagesManager();
-                var textErrors = errorManager.WriteValidationErrorsInArabic(errors);
+                var textErrors = ErrorMessagesManager.WriteValidationErrorsInArabic(errors);
 
                 throw new ValidationException(textErrors);
             }
