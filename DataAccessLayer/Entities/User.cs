@@ -28,7 +28,7 @@ namespace DataAccessLayer.Entities
         Delete = 16
     }
 
-    [DisplayName("المستخدم")]
+    [Display(Name= "المستخدم")]
     public class User : IValidatable
     {
         [Key]

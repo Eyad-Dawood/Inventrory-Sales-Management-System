@@ -11,7 +11,7 @@ using DataAccessLayer.Abstractions;
 
 namespace DataAccessLayer.Entities 
 {
-    [DisplayName("الزبون")]
+    [Display(Name = "الزبون")]
     public class Customer : IValidatable
     {
         [Key]

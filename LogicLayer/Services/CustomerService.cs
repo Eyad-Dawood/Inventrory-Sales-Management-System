@@ -1,16 +1,18 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Validation;
 using LogicLayer.DTOs.CustomerDTO;
+using LogicLayer.Services.Helpers;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
+using Microsoft.Extensions.Logging;
+using Serilog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LogicLayer.Services.Helpers;
-
 namespace LogicLayer.Services
 {
     public class CustomerService
@@ -18,12 +20,13 @@ namespace LogicLayer.Services
         private readonly ICustomerRepository _customerRepo;
         private readonly IRepository<Person> _personRepo;
         private readonly IUnitOfWork _unitOfWork;
-
-        public CustomerService(ICustomerRepository customerRepo, IRepository<Person> perosnRepo, IUnitOfWork unitOfWork)
+        private readonly ILogger<CustomerService> _logger;
+        public CustomerService(ICustomerRepository customerRepo, IRepository<Person> perosnRepo, IUnitOfWork unitOfWork,ILogger<CustomerService>logger)
         {
             _customerRepo = customerRepo;
             _personRepo = perosnRepo;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
 
@@ -61,18 +64,16 @@ namespace LogicLayer.Services
                 PersonUpdateDto = PersonService.MapPerosn_UpdateDto(customer.Person)
             };
         }
-       
+
 
         /// <exception cref="ValidationException">
-        /// Thrown when the Customer or person data violates validation rules
-        /// (e.g. invalid age, missing required fields).
+        /// Thrown when the entity fails validation rules.
         /// </exception>
-        /// <exception cref="Exception">
-        /// Thrown when an unexpected error occurs such as database failure
-        /// or infrastructure-related issues.
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
         /// </exception>
         public void AddCustomer(CustomerAddDto DTO)
-        {
+        {            
             Customer Customer = MapCustomer_AddDto(DTO);
 
             ValidationHelper.ValidateEntity(Customer);
@@ -83,54 +84,86 @@ namespace LogicLayer.Services
             //Map Nulls
             PersonService.MappNullStrings(Customer.Person);
 
-            using var transaction = _unitOfWork.BeginTransaction();
-
-            try
+            using (var transaction = _unitOfWork.BeginTransaction())
             {
-                _personRepo.Add(Customer.Person);
-                _unitOfWork.Save();
 
-                Customer.PersonId = Customer.Person.PersonId;
+                try
+                {
+                    _personRepo.Add(Customer.Person);
+                    _unitOfWork.Save();
+
+                    Customer.PersonId = Customer.Person.PersonId;
 
 
-                _customerRepo.Add(Customer);
-                _unitOfWork.Save();
+                    _customerRepo.Add(Customer);
+                    _unitOfWork.Save();
 
-                transaction.Commit();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    _logger.LogError(ex,
+                        "Failed to add customer {FirstName} {LastName}",
+                        Customer.Person.FirstName,
+                        Customer.Person.SecondName);
+
+                    throw new OperationFailedException();
+                }
             }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
-
-
         }
 
-        
 
-        /// <exception cref="ValidationException">
-        /// Thrown when the patient or person data violates validation rules
-        /// (e.g. invalid age, missing required fields).
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
         /// </exception>
-        /// <exception cref="Exception">
-        /// Thrown when an unexpected error occurs such as database failure
-        /// or infrastructure-related issues.
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails
         /// </exception>
         public void UpdateCustomer(CustomerUpdateDto DTO)
         {
             var customer = _customerRepo.GetWithPersonById(DTO.CustomerId);
-            if (customer == null||customer.Person==null)
+
+            if (customer == null || customer.Person == null)
+            {
                 throw new NotFoundException(typeof(Customer));
+            }
 
             ApplyCustomerUpdates(customer, DTO);
 
+
+            //Map Nulls
             PersonService.MappNullStrings(customer.Person);
 
+
+            //Validate
             ValidationHelper.ValidateEntity(customer);
 
-            _unitOfWork.Save();
+            try
+            {
+                _unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                        "Failed to Update Customer {CustomerId} Wit Person {PersonId}",
+                        customer.CustomerId,
+                        customer.PersonId);
+
+                throw new OperationFailedException();
+            }
         }
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         public void DeleteCustomer(int customerId)
         {
             Customer customer = _customerRepo.GetWithPersonById(customerId);
@@ -139,23 +172,38 @@ namespace LogicLayer.Services
             {
                 throw new NotFoundException(typeof(Customer));
             }
-            using var transaction = _unitOfWork.BeginTransaction();
-            try
-            {
-                _customerRepo.Delete(customer);
 
-                _personRepo.Delete(customer.Person);
-                _unitOfWork.Save();
-
-                transaction.Commit();
-            }
-            catch
+            using (var transaction = _unitOfWork.BeginTransaction())
             {
-                transaction.Rollback();
-                throw;
+                try
+                {
+                    _customerRepo.Delete(customer);
+
+                    _personRepo.Delete(customer.Person);
+                    
+
+
+                    _unitOfWork.Save();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    _logger.LogError(ex,
+                    "Failed to Delete Customer {CustomerId} With Person {PersonId}",
+                    customer.CustomerId,
+                    customer.PersonId);
+
+                    throw new OperationFailedException();
+                }
             }
         }
 
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
         public CustomerReadDto GetCustomerById(int customerId)
         {
             Customer customer = _customerRepo.GetWithPersonById(customerId);
@@ -167,6 +215,9 @@ namespace LogicLayer.Services
             return MapCustomer_ReadDto(customer);
         }
 
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
         public CustomerUpdateDto GetCustomerForUpdate(int customerId)
         {
             Customer customer = _customerRepo.GetWithPersonById(customerId);
@@ -177,8 +228,13 @@ namespace LogicLayer.Services
             return MapCustomer_UpdateDto(customer);
         }
 
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
         public List<CustomerListDto> GetAllCustomers(int PageNumber,int RowsPerPage)
         {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
             return _customerRepo.
                 GetAllWithPerson(PageNumber,RowsPerPage)
                 .Select(c=>new CustomerListDto 

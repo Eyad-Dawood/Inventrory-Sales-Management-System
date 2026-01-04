@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Validation;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,11 +29,6 @@ namespace LogicLayer.Validation
             var displayAttr = property.GetCustomAttribute<DisplayAttribute>();
             if (displayAttr != null)
                 return displayAttr.GetName();
-
-            // 2️ DisplayNameAttribute
-            var displayNameAttr = property.GetCustomAttribute<DisplayNameAttribute>();
-            if (displayNameAttr != null)
-                return displayNameAttr.DisplayName;
 
             return propertyName;
         }
@@ -80,6 +76,10 @@ namespace LogicLayer.Validation
 
         public static class ErrorMessages
         {
+            static public string OperationFailedErrorMessage()
+            {
+                return "حدث خطأ , راجع السجلات لتفاصيل أكثر";
+            }
             static public string NotFoundErrorMessage(Type ObjectType)
             {
                 ErrorMessagesManager errorMessagesManager = new ErrorMessagesManager();

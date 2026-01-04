@@ -11,7 +11,6 @@ using LogicLayer.DTOs.PersonDTO;
 
 namespace LogicLayer.DTOs.CustomerDTO
 {
-    [Display(Name = "بيانات الزبون")]
     public class CustomerUpdateDto
     {
         public int CustomerId { get; set; }

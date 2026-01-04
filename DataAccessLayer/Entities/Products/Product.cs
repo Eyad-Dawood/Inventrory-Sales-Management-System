@@ -22,7 +22,7 @@ namespace DataAccessLayer.Entities.Products
         NotAvilable = 3 }
 
 
-    [DisplayName("المنتج")]
+    [Display(Name= "المنتج")]
     public class Product : IValidatable
     {
         [Key]
@@ -46,7 +46,7 @@ namespace DataAccessLayer.Entities.Products
 
 
         [MaxLength(300)]
-        [DisplayName("إسم المنتج")]
+        [Display(Name= "إسم المنتج")]
         public string ProductName { get; set; }
 
 
@@ -60,7 +60,7 @@ namespace DataAccessLayer.Entities.Products
 
 
 
-        [DisplayName("نوع المنتج")]
+        [Display(Name= "نوع المنتج")]
         public ProductType ProductType { get; set; }
 
 
@@ -68,7 +68,7 @@ namespace DataAccessLayer.Entities.Products
         public int MasurementUnitId { get; set; }
 
 
-        [DisplayName("وحدة القياس")]
+        [Display(Name= "وحدة القياس")]
         public MasurementUnit MasurementUnit { get; set; }
 
 

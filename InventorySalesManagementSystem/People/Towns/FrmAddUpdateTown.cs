@@ -1,4 +1,5 @@
-﻿using InventorySalesManagementSystem.General;
+﻿using DataAccessLayer.Entities;
+using InventorySalesManagementSystem.General;
 using LogicLayer.DTOs.PersonDTO;
 using LogicLayer.DTOs.TownDTO;
 using LogicLayer.Services;
@@ -20,125 +21,152 @@ namespace InventorySalesManagementSystem.People.Towns
     public partial class FrmAddUpdateTown : Form
     {
         private Enums.FormStateEnum State { set; get; }
+        private TownService _townService { set; get; }
+
 
         private TownAddDto _townAdd { set; get; }
         private TownUpdateDto _townUpdate { set; get; }
 
 
-        private TownService _townService { set; get; }
 
 
-        
-       
-        public FrmAddUpdateTown()
+
+        private FrmAddUpdateTown(TownService townService)
         {
             InitializeComponent();
+
+            _townService = townService;
         }
-
-
-
-        private void AddNewModeOn()
+        
+        private void SetupAdd()
         {
             State = Enums.FormStateEnum.AddNew;
-            this.Text = "إضافة بلد/مدينة";
 
+            this.Text = "إضافة بلد/مدينة";
 
             _townAdd = new TownAddDto();
 
-            LoadAddNewScreen();
-        }
-        private void LoadAddNewScreen()
-        {
+            // UI defaults
             lb_TownId.Text = "??";
-
-            txtTownName.Text = "";
+            txtTownName.Text = string.Empty;
         }
-        public void Start(TownService townService)
-        {
-            _townService = townService;
-
-            this.Enabled = true;
-
-            AddNewModeOn();
-        }
-
-
-        private void UpdateModeOn()
+        private void SetupUpdate(TownUpdateDto dto)
         {
             State = Enums.FormStateEnum.Update;
             this.Text = "تعديل بلد/مدينة";
+            _townUpdate = dto;
 
-
-            LoadUpdateScreen();
+            //Load Data
+            LoadUpdateData(this._townUpdate);
         }
 
-        private void LoadUpdateScreen()
+        private void LoadUpdateData(TownUpdateDto dto)
         {
-            lb_TownId.Text = _townUpdate.TownId.ToString();
-
-            txtTownName.Text = _townUpdate.TownName;
+                this.lb_TownId.Text = dto.TownId.ToString();
+                this.txtTownName.Text = dto.TownName;
         }
 
-        public void Start(TownService townService, int townId)
+        public static FrmAddUpdateTown CreateForAdd(TownService service)
         {
-            
-
-
-            _townService = townService;
-            _townUpdate = _townService.GetTownForUpdate(townId);
-            
-            this.Enabled = true;
-
-            UpdateModeOn();
+            var form = new FrmAddUpdateTown(service);
+            form.SetupAdd();
+            return form;
         }
 
+        public static FrmAddUpdateTown CreateForUpdate(TownService service, int townId)
+        {
+                var dto = service.GetTownForUpdate(townId);
+
+                var form = new FrmAddUpdateTown(service);
+                form.SetupUpdate(dto);
+                return form;
+        }
+
+
+        private void SaveUpdates()
+        {
+            _townUpdate.TownName = this.txtTownName.Text;
+        }
+        private void SaveAddNew()
+        {
+            _townAdd.TownName = this.txtTownName.Text;
+        }
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void FillTownAdd()
+
+        private void UpdateTown()
         {
-            _townAdd.TownName = txtTownName.Text;
-        }
-        private void FillTownUpdate()
-        {
-            _townUpdate.TownName = txtTownName.Text;
-        }
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            
+            SaveUpdates();
+
             try
             {
-                if (State == Enums.FormStateEnum.AddNew)
-                {
-                    FillTownAdd();
-                    _townService.AddTown(_townAdd);
-
-                }
-                else if (State == Enums.FormStateEnum.Update)
-                {
-                    FillTownUpdate();
-                    _townService.UpdateTown(_townUpdate);
-
-                }
+                _townService.UpdateTown(_townUpdate);
             }
-            catch(NotFoundException ex)
+            catch (NotFoundException ex)
             {
-                MessageBox.Show(ex.message, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            catch(LogicLayer.Validation.Exceptions.ValidationException ex)
+            catch (LogicLayer.Validation.Exceptions.ValidationException ex)
             {
-                MessageBox.Show(String.Join("\n",ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(
+                          ex,
+                          "Unexpected error while Updating Town");
+                MessageBox.Show("حدث خطأ غير متوقع أثناء التحديث", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-
+            MessageBox.Show("تم التحديث بنجاح");
             this.Close();
         }
 
+        private void AddnNew()
+        {
+            SaveAddNew();
+
+            try
+            {
+                _townService.AddTown(_townAdd);
+            }
+            catch (LogicLayer.Validation.Exceptions.ValidationException ex)
+            {
+                MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            MessageBox.Show("تمت الإضافة بنجاح");
+            this.Close();
 
 
+        }
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+           if(State == Enums.FormStateEnum.AddNew)
+            {
+                AddnNew();
+            }
+            else if(State == Enums.FormStateEnum.Update)
+            {
+                UpdateTown();
+            }
+        }
     }
 }

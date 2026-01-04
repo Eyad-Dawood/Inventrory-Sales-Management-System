@@ -7,6 +7,7 @@ using LogicLayer.Services;
 using LogicLayer.Services.Helpers;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -27,69 +28,61 @@ namespace InventorySalesManagementSystem.Customers
         private CustomerAddDto _customerAdd { get; set; }
         private CustomerUpdateDto _customerUpdate { get; set; }
 
-        private IDbContextFactory<InventoryDbContext> _dbFactory { set; get; }
+        private IServiceProvider _serviceProvider { get; set; }
 
-        public frmAddUpdateCustomer()
+        public frmAddUpdateCustomer(IServiceProvider serviceProvider)
         {
             InitializeComponent();
+            _serviceProvider = serviceProvider;
         }
 
-        private void AddNewModeOn()
+
+        private void SetupAdd()
         {
             State = Enums.FormStateEnum.AddNew;
+
             lbTitle.Text = "إضافة زبون";
 
             _customerAdd = new CustomerAddDto();
 
-            LoadAddNewScreen();
+            lb_CustomerId.Text = "??";
+            uc_AddUpdatePerson1.Start(_serviceProvider);
         }
-        private void LoadAddNewScreen()
-        {
-            uc_AddUpdatePerson1.Start(_dbFactory);
-        }
-        public void Start(IDbContextFactory<InventoryDbContext> dbFactory)
-        {
-            _dbFactory = dbFactory;
-
-            this.Enabled = true;
-
-            AddNewModeOn();
-
-        }
-
-
-
-        private void UpdateModeOn()
+        public void SetupUpdate(CustomerUpdateDto dto)
         {
             State = Enums.FormStateEnum.Update;
-            lbTitle.Text = "تعديل الزبون";
 
-            LoadUpdateScreen();
+            lbTitle.Text = "تعديل زبون";
+
+            _customerUpdate = dto;
+
+            LoadUpdateData();
         }
-        private void LoadUpdateScreen()
-        {
-            
 
+        private void LoadUpdateData()
+        {
             lb_CustomerId.Text = _customerUpdate.CustomerId.ToString();
-
-            uc_AddUpdatePerson1.Start(_dbFactory, _customerUpdate.PersonUpdateDto);
+            uc_AddUpdatePerson1.Start(_serviceProvider, _customerUpdate.PersonUpdateDto);
         }
-        public void Start(IDbContextFactory<InventoryDbContext> dbFactory, int customerId)
+
+        public static frmAddUpdateCustomer CreateForAdd(IServiceProvider serviceProvider)
         {
-            _dbFactory = dbFactory;
-
-            using (var dbContext = _dbFactory.CreateDbContext())
+            var form = new frmAddUpdateCustomer(serviceProvider);
+            form.SetupAdd();
+            return form;
+        }
+        public static frmAddUpdateCustomer CreateForUpdate(IServiceProvider serviceProvider,int CustomerId)
+        {
+            using (var scope = serviceProvider.CreateScope())
             {
-                var Customerservice = ServiceHelper.CreateCustomerService(dbContext);
+                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
 
-                _customerUpdate = Customerservice.GetCustomerForUpdate(customerId);
+                var dto = service.GetCustomerForUpdate(CustomerId);
+
+                frmAddUpdateCustomer frm = new frmAddUpdateCustomer(serviceProvider);
+                frm.SetupUpdate(dto);
+                return frm;
             }
-
-
-             this.Enabled = true;
-
-             UpdateModeOn();
-            
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -99,7 +92,7 @@ namespace InventorySalesManagementSystem.Customers
 
         private void FillCustomerAdd()
         {
-            _customerAdd.PersonAddDto = uc_AddUpdatePerson1.GetAddPerson();
+            _customerAdd.PersonAddDto = uc_AddUpdatePerson1.GetAddPerson();           
         }
         private void FillCustomerUpdate()
         {
@@ -107,32 +100,49 @@ namespace InventorySalesManagementSystem.Customers
         }
 
 
+        private void UpdateCustomer(CustomerService CustomerService)
+        {
+            FillCustomerUpdate();
+
+            CustomerService.UpdateCustomer(_customerUpdate);
+
+            MessageBox.Show($"تم التحديث بنجاح");
+
+            this.Close();
+        }
+        private void AddCustomer(CustomerService CustomerService)
+        {
+            FillCustomerAdd();
+
+            CustomerService.AddCustomer(_customerAdd);
+
+            MessageBox.Show($"تمت الإضافة بنجاح");
+
+            this.Close();
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
-                using (var dbContext = _dbFactory.CreateDbContext())
+                using (var scope = _serviceProvider.CreateScope())
                 {
 
-                    var CustomerService = ServiceHelper.CreateCustomerService(dbContext);
+                    var CustomerService = scope.ServiceProvider.GetRequiredService<CustomerService>();
 
                     if (State == Enums.FormStateEnum.AddNew)
                     {
-                        FillCustomerAdd();
-
-                        CustomerService.AddCustomer(_customerAdd);
+                        AddCustomer(CustomerService);
                     }
                     else if (State == Enums.FormStateEnum.Update)
                     {
-                        FillCustomerUpdate();
-
-                        CustomerService.UpdateCustomer(_customerUpdate);
+                        UpdateCustomer(CustomerService);
                     }
                 }
             }
             catch (NotFoundException ex)
             {
-                MessageBox.Show(ex.message, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
@@ -140,15 +150,15 @@ namespace InventorySalesManagementSystem.Customers
                 MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(
+                      ex,
+                     "Unexpected error while Saving Customer");
 
-            string OperationName = State == Enums.FormStateEnum.AddNew?
-                                    "الإضافة":
-                                    "التعديل";
-
-
-            MessageBox.Show($"تم {OperationName} بنجاح");
-
-            this.Close();
+                MessageBox.Show("حدث خطأ غير متوقع", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
         }
     }
 }

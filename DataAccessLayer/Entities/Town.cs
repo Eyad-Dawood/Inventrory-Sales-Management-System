@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities
 {
-    [DisplayName("البلد/المدينة")]
+    [Display(Name= "البلد/المدينة")]
     public class Town : IValidatable
     {
         [Key]
         public int TownID { get; set; }
 
         [MaxLength(50)]
-        [DisplayName("إسم البلد/المدينة")]
+        [Display(Name= "إسم البلد/المدينة")]
         public string TownName { get; set; }
 
         public bool Validate(List<ValidationError> errors)

@@ -16,7 +16,7 @@ namespace LogicLayer.Services.Products
     {
         private readonly IProductStockMovementLogRepository _ProductStockMovementLogrepository;
         private readonly IUnitOfWork _unitOfWork;
-
+        
         public ProductStockMovementLogService(IProductStockMovementLogRepository productPriceLogrepository, IUnitOfWork unitOfWork)
         {
             _ProductStockMovementLogrepository = productPriceLogrepository;
@@ -41,10 +41,16 @@ namespace LogicLayer.Services.Products
 
             _ProductStockMovementLogrepository.Add(productStockMovementLog);
             _unitOfWork.Save();
+            //Cannot Handle Any Exceptions Here By Using Try Catch , Because Want THe Caller (Product Service) To Know If There Is An Exception and Handle It There Not Here
         }
 
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
         public List<ProductStockMovementLogListDto> GetAllProductMovments(int PageNumber,int RowsPerPage)
         {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
             return _ProductStockMovementLogrepository
                 .GetAllWithDetails(PageNumber, RowsPerPage)
                 .Select(p => new ProductStockMovementLogListDto()

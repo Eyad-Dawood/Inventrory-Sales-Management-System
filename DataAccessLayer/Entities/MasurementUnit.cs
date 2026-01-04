@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities
 {
-    [DisplayName("وحدة القياس")]
+    [Display(Name= "وحدة القياس")]
     public class MasurementUnit : IValidatable
     {
         [Key]
         public int MasurementUnitId { get; set; }
         [MaxLength(300)]
-        [DisplayName("إسم وحدة القياس")]
+        [Display(Name= "إسم وحدة القياس")]
         public string UnitName { get; set; }
 
         public bool Validate(List<ValidationError> errors)

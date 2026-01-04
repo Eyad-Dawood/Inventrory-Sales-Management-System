@@ -3,6 +3,7 @@ using DataAccessLayer.Entities;
 using LogicLayer.DTOs.MasurementUnitDTO;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,13 @@ namespace LogicLayer.Services
     {
         private readonly IRepository<MasurementUnit> _MasurementUnitRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<MasurementUnitService> _logger;
 
-        public MasurementUnitService(IRepository<MasurementUnit> MasurementUnitRepo, IUnitOfWork UnitOfWork)
+        public MasurementUnitService(IRepository<MasurementUnit> MasurementUnitRepo, IUnitOfWork UnitOfWork , ILogger<MasurementUnitService>logger)
         {
             _MasurementUnitRepo = MasurementUnitRepo;
             _unitOfWork = UnitOfWork;
+            _logger = logger;
         }
 
         private MasurementUnit MapMasurementUnit_AddDto(MasurementUnitAddDto DTO)
@@ -38,6 +41,12 @@ namespace LogicLayer.Services
         }
 
 
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         public void AddMasuremetUnit(MasurementUnitAddDto DTO)
         {
             MasurementUnit masurementUnit = MapMasurementUnit_AddDto(DTO);
@@ -45,8 +54,26 @@ namespace LogicLayer.Services
             ValidationHelper.ValidateEntity(masurementUnit);
 
             _MasurementUnitRepo.Add(masurementUnit);
-            _unitOfWork.Save();
+
+            try
+            {
+                _unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex,
+                    "Failed to add Unit {UnitName}",
+                    DTO.Name);
+
+                throw new OperationFailedException();
+            }
         }
+
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
         public MasurementUnitReadDto GetMasurementUnitById(int MasurementUnitid) 
         {
             MasurementUnit masurementUnit = _MasurementUnitRepo.GetById(MasurementUnitid);
@@ -57,6 +84,13 @@ namespace LogicLayer.Services
             }
             return MapMesuarmentUnit_ReadDto(masurementUnit);
         }
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         public void DeleteMasuremetUnitById(int MasurementUnitid)
         {
             MasurementUnit masurementUnit = _MasurementUnitRepo.GetById(MasurementUnitid);
@@ -67,11 +101,30 @@ namespace LogicLayer.Services
             }
 
             _MasurementUnitRepo.Delete(masurementUnit);
-            _unitOfWork.Save();
+
+            try
+            {
+                _unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                   "Failed to Delete Unit {UnitId}",
+                   MasurementUnitid);
+
+                throw new OperationFailedException();
+            }
         }
-        public List<MasurementUnitListDto>GetAllMasurementUnit()
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<MasurementUnitListDto>GetAllMasurementUnit(int PageNumber,int RowsPerPage)
         {
-            return _MasurementUnitRepo.GetAll()
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+            return _MasurementUnitRepo.GetAll(PageNumber,RowsPerPage)
                 .Select(m => new MasurementUnitListDto()
                 {
                     MasurementUnitId = m.MasurementUnitId,

@@ -1,14 +1,20 @@
 using DataAccessLayer;
 using DataAccessLayer.Abstractions;
+using DataAccessLayer.Abstractions.Products;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
 using LogicLayer.Services;
+using LogicLayer.Services.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic.Logging;
 using Serilog;
+using Serilog.Extensions.Logging;
+using Serilog.Filters;
 using Serilog.Sinks.File;
+using System.CodeDom;
 
 namespace InventorySalesManagementSystem
 {
@@ -23,29 +29,83 @@ namespace InventorySalesManagementSystem
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
 
+            //Logger Creation
             Serilog.Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
-            .WriteTo.File(
-                path: "Logs\\app-.log",
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 14,
-                shared: true)
+
+            // ===== Application Logs =====
+            .WriteTo.Logger(lc => lc
+                .Filter.ByExcluding(
+                    Matching.FromSource("Microsoft.EntityFrameworkCore"))
+                .WriteTo.File(
+                    path: "Logs\\app-.log",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 14,
+                    shared: true))
+
+            // ===== EF Core Logs =====
+            .WriteTo.Logger(lc => lc
+                .Filter.ByIncludingOnly(
+                    Matching.FromSource("Microsoft.EntityFrameworkCore"))
+                .WriteTo.File(
+                    path: "Logs\\ef-.log",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 14,
+                    shared: true))
+
             .CreateLogger();
 
 
+
+            //App Setting Config
             var configuration = new ConfigurationBuilder()
                     .SetBasePath(AppContext.BaseDirectory)
                     .AddJsonFile("appsettings.json", optional: false)
                     .Build();
 
+            //Conneciton String
             var connectionString =
-                configuration.GetConnectionString("HospitalDb");
+                configuration.GetConnectionString("InventorySales");
 
-
+            //Service Config
             var services = new ServiceCollection();
 
-            services.AddDbContextFactory<InventoryDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            services.AddDbContext<InventoryDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
+
+            services.AddLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddSerilog();
+            });
+
+            //Basics
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            //Special Repos
+            services.AddScoped<IProductPriceLogRepository, ProductPriceLogRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductStockMovementLogRepository, ProductStockMovementLogRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IWorkerRepository, WorkerRepository>();
+
+            //Generic Repos
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            //Services
+            services.AddScoped<ProductPriceLogService>();
+            services.AddScoped<ProductService>();
+            services.AddScoped<ProductStockMovementLogService>();
+            services.AddScoped<ProductTypeService>();
+            services.AddScoped<CustomerService>();
+            services.AddScoped<MasurementUnitService>();
+            services.AddScoped<PersonService>();
+            services.AddScoped<TownService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<WorkerService>();
+
 
             var serviceProvider = services.BuildServiceProvider();
 

@@ -10,14 +10,13 @@ namespace LogicLayer.Validation.Exceptions
 {
     public class NotFoundException : Exception
     {
-        public string message { get; set; }
+        public string MainBody { get; set; }
 
-        
         public NotFoundException(Type ObjectType)
             : base("فشل العثور علي الهدف")
         {
             
-            message = ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(ObjectType);
+            MainBody = ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(ObjectType);
         }
     }
 }

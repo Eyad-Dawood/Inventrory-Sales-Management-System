@@ -11,11 +11,19 @@ namespace LogicLayer.Validation
 {
     public static class ValidationHelper
     {
+
+      
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
         public static void ValidateEntity<T>(T entity)
             where T : IValidatable
         {
             if (entity == null)
-                throw new NotFoundException(typeof(T));
+                throw new ArgumentNullException();
 
             List<ValidationError> errors = new();
 
@@ -24,6 +32,23 @@ namespace LogicLayer.Validation
                 var textErrors = ErrorMessagesManager.WriteValidationErrorsInArabic(errors);
 
                 throw new ValidationException(textErrors);
+            }
+        }
+
+       
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public static void ValidatePageginArguments(int PageNumber,int RowsPerPage)
+        {
+            if(PageNumber < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(PageNumber));
+            }
+
+            if ( RowsPerPage < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(RowsPerPage));
             }
         }
     }

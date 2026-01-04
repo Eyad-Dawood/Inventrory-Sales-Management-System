@@ -1,19 +1,22 @@
-﻿using DataAccessLayer.Abstractions;
+﻿using DataAccessLayer;
+using DataAccessLayer.Abstractions;
+using DataAccessLayer.Abstractions.Products;
+using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.Products;
+using DataAccessLayer.Repos;
+using DataAccessLayer.Validation;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
+using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
 using LogicLayer.DTOs.ProductTypeDTO;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataAccessLayer.Repos;
-using DataAccessLayer.Validation;
-using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
-using DataAccessLayer.Abstractions.Products;
-using DataAccessLayer.Entities.Products;
 
 namespace LogicLayer.Services.Products
 {
@@ -23,13 +26,15 @@ namespace LogicLayer.Services.Products
         private readonly IUnitOfWork _unitOfWork;
         private readonly ProductPriceLogService _pricelogService;
         private readonly ProductStockMovementLogService _stockMovementService;
+        private readonly ILogger<ProductService> _logger;
 
-        public ProductService(IProductRepository productRepo, IUnitOfWork unitOfWork, ProductPriceLogService logService, ProductStockMovementLogService stockMovementService)
+        public ProductService(IProductRepository productRepo, IUnitOfWork unitOfWork, ProductPriceLogService PricelogService, ProductStockMovementLogService stockMovementService,ILogger<ProductService> logger)
         {
             _productRepo = productRepo;
             _unitOfWork = unitOfWork;
-            _pricelogService = logService;
+            _pricelogService = PricelogService;
             _stockMovementService = stockMovementService;
+            _logger = logger;
         }
 
         private Product MapProduct_AddDto(ProductAddDto DTO)
@@ -104,6 +109,12 @@ namespace LogicLayer.Services.Products
             };
         }
 
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         public void AddProduct(ProductAddDto DTO)
         {
             Product Product = MapProduct_AddDto(DTO);
@@ -111,8 +122,32 @@ namespace LogicLayer.Services.Products
             ValidationHelper.ValidateEntity(Product);
 
             _productRepo.Add(Product);
-            _unitOfWork.Save();
+
+            try
+            {
+                _unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "Failed to add product {ProductName}",
+                    DTO.ProductName);
+
+                throw new OperationFailedException();
+            }
         }
+
+
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails
+        /// </exception>
         public void UpdateProduct(ProductUpdateDto dto, int userId)
         {
             var product = _productRepo.GetById(dto.ProductId);
@@ -124,31 +159,52 @@ namespace LogicLayer.Services.Products
             var oldSellingPrice = product.SellingPrice;
 
             ApplyProductUpdate(product, dto);
-
             ValidationHelper.ValidateEntity(product);
 
-            _unitOfWork.Save();
 
-            if (oldBuyingPrice != product.BuyingPrice ||
-                oldSellingPrice != product.SellingPrice)
+            using (var Transaction = _unitOfWork.BeginTransaction())
             {
-                //Try Catch Because Dont Want To Make An Exception If Log Fails
                 try
                 {
-                    var logDto = MapProduct_PriceLogDto(
-                    product,
-                    oldBuyingPrice,
-                    oldSellingPrice,
-                    userId);
 
-                    _pricelogService.AddProductPriceLog(logDto);
+                    if (oldBuyingPrice != product.BuyingPrice ||
+                        oldSellingPrice != product.SellingPrice)
+                    {
+
+                        var logDto = MapProduct_PriceLogDto(
+                        product,
+                        oldBuyingPrice,
+                        oldSellingPrice,
+                        userId);
+
+                        _pricelogService.AddProductPriceLog(logDto);
+                    }
+
+                    _unitOfWork.Save();
+
+                    Transaction.Commit();
+
                 }
-                catch
+                catch (Exception ex)
                 {
-                    //Log Here Later 
+                    _logger.LogError(ex,
+                        "Failed to update product {ProductId} by user {UserId}",
+                        dto.ProductId,
+                        userId);
+
+                    Transaction.Rollback();
+
+                    throw new OperationFailedException();
                 }
             }
         }
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         public void DeleteProductById(int ProductId)
         {
             Product Product = _productRepo.GetById(ProductId);
@@ -158,9 +214,27 @@ namespace LogicLayer.Services.Products
                 throw new NotFoundException(typeof(Product));
             }
 
-            _productRepo.Delete(Product);
-            _unitOfWork.Save();
+
+            try
+            {
+                _productRepo.Delete(Product);
+                _unitOfWork.Save();
+            }
+            catch(Exception ex)
+            {
+
+                _logger.LogError(ex,
+                    "Failed to Delete product {ProductId}",
+                    ProductId);
+
+                throw new OperationFailedException();
+            }
         }
+
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
         public ProductReadDto GetProductById(int ProductId) 
         {
             Product product = _productRepo.GetWithProductType_And_UnitById(ProductId);
@@ -170,8 +244,16 @@ namespace LogicLayer.Services.Products
             }
             return MapProduct_ReadDto(product);
         }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
         public List<ProductListDto> GetProductList(int PageNumber, int RowsPerPage) 
         {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
             return _productRepo
                 .GetAllWithProductType_And_Unit(PageNumber, RowsPerPage)
                 .Select(p => new ProductListDto()
@@ -187,11 +269,19 @@ namespace LogicLayer.Services.Products
                 }).ToList();
         }
 
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         private void EditQuantity(int productId,decimal quantity,int userId,StockMovementReason reason,bool isAddition)
         {
             if (quantity <= 0)
             {
-
                 List<string> errors = new List<string>()
                 {
                     ErrorMessagesManager.WriteValidationErrorMessageInArabic(new ValidationError()
@@ -205,47 +295,87 @@ namespace LogicLayer.Services.Products
                 throw new ValidationException(errors);
             }
 
-            var product = _productRepo.GetById(productId)
-                ?? throw new NotFoundException(typeof(Product));
+            var product = _productRepo.GetById(productId);
+
+            if (product == null)
+                 throw new NotFoundException(typeof(Product));
 
             var oldQuantity = product.QuantityInStorage;
 
             if (isAddition)
+            {
                 product.QuantityInStorage = oldQuantity + quantity;
+            }
             else
             {
-                if(oldQuantity < quantity)
+                if (oldQuantity < quantity)
                 {
-                    throw new MessageException("المخزن لا يحتوي علي كمية كافية");
+                    throw new OperationFailedException("المخزن لا يحتوي علي كمية كافية");
                 }
-
                 product.QuantityInStorage = oldQuantity - quantity;
-
             }
 
             ValidationHelper.ValidateEntity(product);
 
-            _unitOfWork.Save();
-
-            try
+            using (var Transaction = _unitOfWork.BeginTransaction())
             {
-                var logDto = MapProduct_StockMovementLogDto(
-                    product,
-                    userId,
-                    reason,
-                    oldQuantity);
 
-                _stockMovementService.AddProductStockMovementLog(logDto);
-            }
-            catch (Exception)
-            {
-                // log later
+                try
+                {
+                    var logDto = MapProduct_StockMovementLogDto(
+                        product,
+                        userId,
+                        reason,
+                        oldQuantity);
+
+                    _stockMovementService.AddProductStockMovementLog(logDto);
+
+                    _unitOfWork.Save();
+                    Transaction.Commit();
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                        "Failed to change product {ProductId} quantity from {OldQuantity} by {QuantityChange} by user {UserId} for reason {Reason}",
+                        productId,
+                        oldQuantity,
+                        quantity,
+                        userId,
+                        reason);
+
+
+                    Transaction.Rollback();
+
+                    throw new OperationFailedException();
+                }
             }
         }
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         public void AddQuantity(int productId, decimal quantity, int userId, StockMovementReason reason)
         {
             EditQuantity(productId, quantity,userId,reason,true);
         }
+
+        
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         public void RemoveQuantity(int productId, decimal quantity, int userId, StockMovementReason reason)
         {
             EditQuantity(productId, quantity, userId, reason, false);

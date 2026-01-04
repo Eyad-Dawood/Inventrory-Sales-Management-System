@@ -9,6 +9,7 @@ using LogicLayer.Services;
 using LogicLayer.Services.Helpers;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,25 +30,79 @@ namespace InventorySalesManagementSystem.People
         private PersonUpdateDto _personUpdate { set; get; }
         
 
-        private IDbContextFactory<InventoryDbContext> _dbFactory { set; get; }
+        private IServiceProvider _serviceProvider { set; get; }
         private List<TownListDto> _towns { set; get; }
 
         public Uc_AddUpdatePerson()
         {
             InitializeComponent();
-
+            LoadDefualtValues();
         }
 
-        private void LoadTowns()
+
+        public void Start(IServiceProvider serviceProvider)
         {
-            if (_dbFactory == null)
+            _serviceProvider = serviceProvider;
+
+            State = Enums.FormStateEnum.AddNew;
+            _personAdd = new PersonAddDto();
+            this.pnAllControles.Enabled = true;
+
+            EnsureTownsLoaded();
+            LoadAddNewScreen();
+        }
+        public void Start(IServiceProvider serviceProvider, PersonUpdateDto Dto)
+        {
+            if (Dto != null)
             {
-                throw new InvalidOperationException("Town Service not initialized");
+                _serviceProvider = serviceProvider;
+
+
+                State = Enums.FormStateEnum.Update;
+                _personUpdate = Dto;
+                this.pnAllControles.Enabled = true;
+
+                EnsureTownsLoaded();
+                LoadUpdateScreen();
+            }
+        }
+
+        public PersonAddDto GetAddPerson()
+        {
+
+            if (State != Enums.FormStateEnum.AddNew || !this.pnAllControles.Enabled)
+            {
+                throw new InvalidOperationException("Cannot Access PersonAdd While In UpdateMode Or Control Is Disabled");
             }
 
-            using (var dbContext = _dbFactory.CreateDbContext())
+            FillAddPerson();
+            return _personAdd;
+        }
+        public PersonUpdateDto GetUpdatePerson()
+        {
+
+            if (State != Enums.FormStateEnum.Update || !this.pnAllControles.Enabled)
             {
-                var service = ServiceHelper.CreateTownService(dbContext);
+                throw new InvalidOperationException("Cannot Access PersonUpdate While In AddMode Or Control Is Disabled");
+            }
+
+            FillUpdatePerson();
+            return _personUpdate;
+        }
+
+        private void EnsureTownsLoaded()
+        {
+            if (_towns != null && _towns.Count > 0)
+                return;
+
+            LoadTowns();
+        }
+        private void LoadTowns()
+        {
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<TownService>();
 
                 _towns = service.GetAllTowns();
             }
@@ -55,19 +110,12 @@ namespace InventorySalesManagementSystem.People
             cmpTown.DisplayMember = nameof(TownListDto.TownName);
             cmpTown.ValueMember = nameof(TownListDto.TownID);
             cmpTown.DataSource = _towns;
+
+            cmpTown.SelectedIndex = -1;
         }
 
-        private void AddNewModeOn()
+        private void LoadDefualtValues()
         {
-            State = Enums.FormStateEnum.AddNew;
-            _personAdd = new PersonAddDto();
-
-            LoadAddNewScreen();
-        }
-        private void LoadAddNewScreen()
-        {
-            LoadTowns();
-
             lb_PerosnId.Text = "??";
             txtFirstName.Text = "";
             txtSecondName.Text = "";
@@ -79,17 +127,13 @@ namespace InventorySalesManagementSystem.People
             cmpTown.SelectedIndex = -1;
         }
 
-
-        private void UpdateModeOn()
+        private void LoadAddNewScreen()
         {
-            State = Enums.FormStateEnum.Update;
 
-            LoadUpdateScreen();
+            LoadDefualtValues();
         }
         private void LoadUpdateScreen()
         {
-            LoadTowns();
-
             lb_PerosnId.Text = _personUpdate.PersonId.ToString();
 
             txtFirstName.Text = _personUpdate.FirstName;
@@ -123,7 +167,6 @@ namespace InventorySalesManagementSystem.People
                 _personAdd.TownID = townId;
             }
         }
-
         private void FillUpdatePerson()
         {
             _personUpdate.FirstName = txtFirstName.Text;
@@ -141,75 +184,25 @@ namespace InventorySalesManagementSystem.People
             }
         }
 
-        public void Start(IDbContextFactory<InventoryDbContext> dbFactory)
-        {
-            _dbFactory = dbFactory;
-
-            pnAllControles.Enabled = true;
-
-            AddNewModeOn();
-        }
-
-        public void Start(IDbContextFactory<InventoryDbContext> dbFactory, PersonUpdateDto personDto)
-        {
-            if (personDto == null)
-                throw new NotFoundException(typeof(PersonUpdateDto));
-
-            _dbFactory = dbFactory;
-            _personUpdate = personDto;
-
-            pnAllControles.Enabled = true;
-
-            UpdateModeOn();
-        }
-
-        public PersonAddDto GetAddPerson()
-        {
-            if (State == Enums.FormStateEnum.AddNew)
-            {
-                FillAddPerson();
-
-                return _personAdd;
-            }
-            else
-            {
-                return new PersonAddDto();
-            }
-        }
-
-        public PersonUpdateDto GetUpdatePerson()
-        {
-            if (State == Enums.FormStateEnum.Update)
-            {
-                FillUpdatePerson();
-
-                return _personUpdate;
-            }
-            else
-            {
-                return new PersonUpdateDto();
-            }
-        }
 
         private void lkAddTown_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            FrmAddUpdateTown frm = new FrmAddUpdateTown();
 
-            using (var dbContext = _dbFactory.CreateDbContext())
+            using (var scope = _serviceProvider.CreateScope())
             {
-                var service = ServiceHelper.CreateTownService(dbContext);
+                var service = scope.ServiceProvider.GetRequiredService<TownService>();
 
                 try
                 {
-                    frm.Start(service);
+                    FrmAddUpdateTown frm = FrmAddUpdateTown.CreateForAdd(service);
+                    frm.ShowDialog();
                 }
-                catch(NotFoundException ex)
+                catch (Exception ex)
                 {
-                    MessageBox.Show(ex.message, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    Serilog.Log.Error(
+                           ex,
+                           "Unexpected error while opening Add Town form");
                 }
-
-                frm.ShowDialog();
             }
 
             LoadTowns();

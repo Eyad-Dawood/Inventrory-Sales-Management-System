@@ -35,6 +35,12 @@ namespace LogicLayer.Services
             };
         }
 
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="WrongPasswordException">
+        /// Thrown when the provided Password is Wrong.
         public UserReadDto ValidateUserCredentials(string UserName, string Password)
         {
             User user = _userRepository.GetByUserName(UserName);

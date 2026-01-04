@@ -38,15 +38,15 @@
             // 
             // lbTitle
             // 
-            lbTitle.AutoSize = true;
             lbTitle.Font = new Font("Calibri", 30F, FontStyle.Bold);
-            lbTitle.Location = new Point(258, 9);
+            lbTitle.Location = new Point(218, 9);
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(175, 49);
+            lbTitle.Size = new Size(241, 49);
             lbTitle.TabIndex = 15;
             lbTitle.Text = "إضافة زبون";
+            lbTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // uc_AddUpdatePerson1
             // 
@@ -115,7 +115,6 @@
             Controls.Add(btnSave);
             Controls.Add(uc_AddUpdatePerson1);
             Controls.Add(lbTitle);
-            Enabled = false;
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "frmAddUpdateCustomer";
             ResumeLayout(false);

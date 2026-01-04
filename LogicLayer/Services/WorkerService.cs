@@ -1,14 +1,16 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Validation;
+using LogicLayer.DTOs.CustomerDTO;
+using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Validation;
+using LogicLayer.Validation.Exceptions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LogicLayer.Validation.Exceptions;
-using LogicLayer.DTOs.WorkerDTO;
 
 namespace LogicLayer.Services
 {
@@ -17,12 +19,13 @@ namespace LogicLayer.Services
         private readonly IWorkerRepository _workerRepo;
         private readonly IRepository<Person> _personRepo;
         private readonly IUnitOfWork _unitOfWork;
-
-        public WorkerService(IWorkerRepository workerRepo, IRepository<Person> personRepo, IUnitOfWork unitOfWork)
+        private readonly ILogger<WorkerService> _logger;
+        public WorkerService(IWorkerRepository workerRepo, IRepository<Person> personRepo, IUnitOfWork unitOfWork, ILogger<WorkerService>logger)
         {
             _workerRepo = workerRepo;
             _personRepo = personRepo;
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         private Worker MapWorker_AddDto(WorkerAddDto DTO)
@@ -57,13 +60,12 @@ namespace LogicLayer.Services
             };
         }
 
+
         /// <exception cref="ValidationException">
-        /// Thrown when the Worker or person data violates validation rules
-        /// (e.g. invalid age, missing required fields).
+        /// Thrown when the entity fails validation rules.
         /// </exception>
-        /// <exception cref="Exception">
-        /// Thrown when an unexpected error occurs such as database failure
-        /// or infrastructure-related issues.
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
         /// </exception>
         public void AddWorker(WorkerAddDto DTO)
         {
@@ -77,56 +79,89 @@ namespace LogicLayer.Services
             //Mapp Null
             PersonService.MappNullStrings(worker.Person);
 
-            using var transaction = _unitOfWork.BeginTransaction();
+            using (var transaction = _unitOfWork.BeginTransaction())
+            { 
 
-            try
-            {
-                _personRepo.Add(worker.Person);
-                _unitOfWork.Save();
+                try
+                {
+                    _personRepo.Add(worker.Person);
+                    _unitOfWork.Save();
 
-                worker.PersonId = worker.Person.PersonId;
+                    worker.PersonId = worker.Person.PersonId;
 
 
-                _workerRepo.Add(worker);
-                _unitOfWork.Save();
+                    _workerRepo.Add(worker);
+                    _unitOfWork.Save();
 
-                transaction.Commit();
+                    transaction.Commit();
+                }
+                catch (Exception ex) 
+                {
+                    transaction.Rollback();
+
+                    _logger.LogError(ex,
+                        "Failed to add worker {FirstName} {LastName}",
+                        worker.Person.FirstName,
+                        worker.Person.SecondName);
+
+                    throw new OperationFailedException();
+                }
             }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
-
 
         }
 
 
-        /// <exception cref="ValidationException">
-        /// Thrown when the Worker or person data violates validation rules
-        /// (e.g. invalid age, missing required fields).
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
         /// </exception>
-        /// <exception cref="Exception">
-        /// Thrown when an unexpected error occurs such as database failure
-        /// or infrastructure-related issues.
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails
         /// </exception>
         public void UpdateWorker(WorkerUpdateDto DTO)
         {
             var worker = _workerRepo.GetWithPersonById(DTO.WorkerId);
+
             if (worker == null || worker.Person == null)
+            {
                 throw new NotFoundException(typeof(Worker));
+            }
 
-
+            //Apply Changes
             ApplyWorkerUpdates(worker,DTO);
 
+            //Mapping Nulls
             PersonService.MappNullStrings(worker.Person);
+
 
             ValidationHelper.ValidateEntity(worker);
 
-            _unitOfWork.Save();
+
+
+            try
+            {
+                _unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                        "Failed to Update Worker {WorkerId} Wit Person {PersonId}",
+                        worker.WorkerId,
+                        worker.PersonId);
+
+                throw new OperationFailedException();
+            }
         }
 
 
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
         public void DeleteWorker(int workerId)
         {
             Worker worker = _workerRepo.GetWithPersonById(workerId);
@@ -135,24 +170,37 @@ namespace LogicLayer.Services
             {
                 throw new NotFoundException(typeof(Worker));
             }
-            using var transaction = _unitOfWork.BeginTransaction();
-            try
-            {
-                _workerRepo.Delete(worker);
 
-                _personRepo.Delete(worker.Person);
-                _unitOfWork.Save();
+            using (var transaction = _unitOfWork.BeginTransaction())
+            { 
+                try
+                {
+                    _workerRepo.Delete(worker);
 
-                transaction.Commit();
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
+                    _personRepo.Delete(worker.Person);
+
+                    _unitOfWork.Save();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+
+                    _logger.LogError(ex,
+                    "Failed to Delete Worker {WorkerId} With Person {PersonId}",
+                    worker.WorkerId,
+                    worker.PersonId);
+
+                    throw new OperationFailedException();
+                } 
             }
         }
 
 
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
         public WorkerReadDto GetWorkerById(int workerId)
         {
             Worker worker = _workerRepo.GetWithPersonById(workerId);
@@ -164,8 +212,14 @@ namespace LogicLayer.Services
             return MapWorker_ReadDto(worker);
         }
 
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
         public List<WorkerListDto> GetAllWorkers(int PageNumber, int RowsPerPage)
         {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
             return _workerRepo
                 .GetAllWithPerson(PageNumber, RowsPerPage)
                 .Select(w => new WorkerListDto

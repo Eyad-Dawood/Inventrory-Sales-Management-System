@@ -4,6 +4,7 @@ using DataAccessLayer.Repos;
 using InventorySalesManagementSystem.Customers;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.Services;
+using LogicLayer.Validation.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,8 +23,6 @@ namespace InventorySalesManagementSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var dbFactory = _serviceProvider
-            .GetRequiredService<IDbContextFactory<InventoryDbContext>>();
 
             
         }

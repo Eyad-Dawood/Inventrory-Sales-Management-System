@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace LogicLayer.DTOs.TownDTO
 {
-    [Display(Name = "بيانات البلد/المدينة")]
     public class TownUpdateDto
     {
         public int TownId { get; set; }

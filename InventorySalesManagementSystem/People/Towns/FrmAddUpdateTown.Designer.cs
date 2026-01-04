@@ -115,7 +115,6 @@
             Controls.Add(lb_TownId);
             Controls.Add(label9);
             Controls.Add(label1);
-            Enabled = false;
             Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(4, 5, 4, 5);

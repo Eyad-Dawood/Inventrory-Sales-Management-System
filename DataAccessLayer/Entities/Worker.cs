@@ -19,7 +19,7 @@ namespace DataAccessLayer.Entities
         Painter = 2 
     }
 
-    [DisplayName("العامل")]
+    [Display(Name="العامل")]
     public class Worker : IValidatable
     { 
         [Key]

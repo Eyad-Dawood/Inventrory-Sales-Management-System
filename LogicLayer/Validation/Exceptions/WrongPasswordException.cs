@@ -8,12 +8,12 @@ namespace LogicLayer.Validation.Exceptions
 {
     public class WrongPasswordException : Exception
     {
-        string _message;
+        public string MainBody;
 
         public WrongPasswordException()
             : base("فشل تسجيل الدخول")
         {
-            _message = ErrorMessagesManager.ErrorMessages.WrongPasswordErrorMessage();
+            MainBody = ErrorMessagesManager.ErrorMessages.WrongPasswordErrorMessage();
         }
     }
 }

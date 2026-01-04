@@ -11,26 +11,26 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities
 {
-    [DisplayName("الشخص")]
+    [Display(Name= "معلومات الشخص")]
     public class Person : IValidatable
     {
         [Key]
         public int PersonId { get; set; }
 
         [MaxLength(50)]
-        [DisplayName("الإسم الأول")]
+        [Display(Name= "الإسم الأول")]
         public string FirstName { get; set; }
 
         [MaxLength(50)]
-        [DisplayName("الإسم الثاني")]
+        [Display(Name= "الإسم الثاني")]
         public string SecondName { get; set; }
 
         [MaxLength(50)]
-        [DisplayName("الإسم الثالث")]
+        [Display(Name= "الإسم الثالث")]
         public string? ThirdName { get; set; }
 
         [MaxLength(50)]
-        [DisplayName("الإسم الرابع")]
+        [Display(Name= "الإسم الرابع")]
         public string? FourthName { get; set; }
 
         [NotMapped]
@@ -48,17 +48,17 @@ namespace DataAccessLayer.Entities
         }
 
         [MaxLength(14)]
-        [DisplayName("رقم البطاقة")]
+        [Display(Name= "رقم البطاقة")]
         public string? NationalNumber { get; set; }
 
         [MaxLength(11)]
-        [DisplayName("رقم الهاتف")]
+        [Display(Name= "رقم الهاتف")]
         public string? PhoneNumber { get; set; }
 
 
         [ForeignKey(nameof(Town))]
         public int TownID { get; set; }
-        [DisplayName("بيانات المدينة")]
+        [Display(Name= "بيانات المدينة")]
         public Town Town { get; set; }
 
 

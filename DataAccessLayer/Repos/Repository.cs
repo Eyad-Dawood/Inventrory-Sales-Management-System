@@ -30,7 +30,11 @@ namespace DataAccessLayer.Repos
         public void Delete(int id)
         {
             var entity = _context.Set<T>().Find(id);
-            _context.Set<T>().Remove(entity);
+
+            if (entity != null)
+            {
+                _context.Set<T>().Remove(entity);
+            }
         }
         public void Delete(T entity)
         {
