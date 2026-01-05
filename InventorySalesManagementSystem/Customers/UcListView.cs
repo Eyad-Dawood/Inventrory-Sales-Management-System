@@ -55,14 +55,17 @@ namespace InventorySalesManagementSystem.Customers
         public bool IsDataFiltered = false;
         public Action<Filter> OnFilterApplied;
         public Action OnFilterCanceled;
+
+
+        [Browsable(false)]
         public Filter CurrentFilter
         {
             get
             {
-                if (IsFilterItemsConfigured 
-                    && cmpSearchBy.Items.Count > 0 
+                if (IsFilterItemsConfigured
+                    && cmpSearchBy.Items.Count > 0
                     && !string.IsNullOrWhiteSpace(txtSearchValue.Text)
-                    &&cmpSearchBy.SelectedValue != null)
+                    && cmpSearchBy.SelectedValue != null)
                 {
                     return new Filter
                     {
@@ -91,33 +94,35 @@ namespace InventorySalesManagementSystem.Customers
         }
         private void btnFilter_Click(object sender, EventArgs e)
         {
-                if (IsFilterItemsConfigured&&
-                    cmpSearchBy.Items.Count > 0
-                    && cmpSearchBy.SelectedValue != null
-                    && !string.IsNullOrWhiteSpace(txtSearchValue.Text))
+            if (IsFilterItemsConfigured &&
+                cmpSearchBy.Items.Count > 0
+                && cmpSearchBy.SelectedValue != null
+                && !string.IsNullOrWhiteSpace(txtSearchValue.Text))
+            {
+                var filter = new Filter()
                 {
-                    var filter = new Filter()
-                    {
-                        ColumnName = cmpSearchBy.SelectedValue.ToString(),
-                        FilterValue = txtSearchValue.Text
-                    };
-                    OnFilterApplied?.Invoke(filter);
+                    ColumnName = cmpSearchBy.SelectedValue.ToString(),
+                    FilterValue = txtSearchValue.Text
+                };
+                OnFilterApplied?.Invoke(filter);
 
                 //Disable Filter Controle
 
                 //Inform Me 
                 IsDataFiltered = true;
 
-                    cmpSearchBy.Enabled = false;
-                    txtSearchValue.Enabled = false;
-                    btnFilter.Enabled = false;
+                cmpSearchBy.Enabled = false;
+                txtSearchValue.Enabled = false;
+                btnFilter.Enabled = false;
                 btnCancelFilter.Enabled = true;
-                }
+            }
         }
-        private void btnCancelFilter_Click(object sender, EventArgs e)
+        public void RemoveFilter()
         {
             if (IsFilterItemsConfigured)
             {
+                IsDataFiltered = false;
+
                 OnFilterCanceled?.Invoke();
 
                 txtSearchValue.Text = string.Empty;
@@ -133,8 +138,12 @@ namespace InventorySalesManagementSystem.Customers
                 btnCancelFilter.Enabled = false;
             }
         }
+        private void btnCancelFilter_Click(object sender, EventArgs e)
+        {
+            RemoveFilter();
+        }
 
-
+        //************************************************************//
 
         private IReadOnlyList<object> _data;
 
@@ -194,7 +203,6 @@ namespace InventorySalesManagementSystem.Customers
                 {
                     return;
                 }
-
                 OnPreviousPage?.Invoke(_CurrentPageNumber - 1);
             }
         }
@@ -232,8 +240,8 @@ namespace InventorySalesManagementSystem.Customers
                 DisplayInternal(data);
 
                 _CurrentPageNumber = PageNumber;
-                _TotalPages = Math.Max(TotalPages,1);
-                
+                _TotalPages = Math.Max(TotalPages, 1);
+
 
                 UpdatePagingUI();
 
@@ -277,6 +285,5 @@ namespace InventorySalesManagementSystem.Customers
             ExcecuteOnPreviousPage();
         }
 
-        
     }
 }

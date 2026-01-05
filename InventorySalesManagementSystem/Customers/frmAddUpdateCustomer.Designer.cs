@@ -45,7 +45,7 @@
             lbTitle.RightToLeft = RightToLeft.Yes;
             lbTitle.Size = new Size(241, 49);
             lbTitle.TabIndex = 15;
-            lbTitle.Text = "إضافة زبون";
+            lbTitle.Text = "إضافة عميل";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // uc_AddUpdatePerson1
@@ -98,9 +98,9 @@
             label9.Location = new Point(542, 65);
             label9.Name = "label9";
             label9.RightToLeft = RightToLeft.Yes;
-            label9.Size = new Size(124, 25);
+            label9.Size = new Size(129, 25);
             label9.TabIndex = 31;
-            label9.Text = "معرف الزبون : ";
+            label9.Text = "معرف العميل : ";
             // 
             // frmAddUpdateCustomer
             // 

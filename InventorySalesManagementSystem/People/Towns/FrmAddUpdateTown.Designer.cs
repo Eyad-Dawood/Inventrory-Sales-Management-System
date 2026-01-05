@@ -118,6 +118,8 @@
             Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(4, 5, 4, 5);
+            MaximizeBox = false;
+            MdiChildrenMinimizedAnchorBottom = false;
             Name = "FrmAddUpdateTown";
             Text = "إضافة بلد/مدينة";
             ResumeLayout(false);

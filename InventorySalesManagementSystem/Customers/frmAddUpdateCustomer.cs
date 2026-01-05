@@ -30,7 +30,7 @@ namespace InventorySalesManagementSystem.Customers
 
         private IServiceProvider _serviceProvider { get; set; }
 
-        public frmAddUpdateCustomer(IServiceProvider serviceProvider)
+        private frmAddUpdateCustomer(IServiceProvider serviceProvider)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
@@ -41,7 +41,7 @@ namespace InventorySalesManagementSystem.Customers
         {
             State = Enums.FormStateEnum.AddNew;
 
-            lbTitle.Text = "إضافة زبون";
+            lbTitle.Text = "إضافة عميل";
 
             _customerAdd = new CustomerAddDto();
 
@@ -52,7 +52,7 @@ namespace InventorySalesManagementSystem.Customers
         {
             State = Enums.FormStateEnum.Update;
 
-            lbTitle.Text = "تعديل زبون";
+            lbTitle.Text = "تعديل عميل";
 
             _customerUpdate = dto;
 

@@ -11,11 +11,11 @@ using DataAccessLayer.Abstractions;
 
 namespace DataAccessLayer.Entities 
 {
-    [Display(Name = "الزبون")]
+    [Display(Name = "العميل")]
     public class Customer : IValidatable
     {
         [Key]
-        [Display(Name ="معرف الزبون")]
+        [Display(Name ="معرف العميل")]
         public int CustomerId { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
