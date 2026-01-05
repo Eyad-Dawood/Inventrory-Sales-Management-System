@@ -120,7 +120,7 @@ namespace LogicLayer.Services
                         Customer.Person.FirstName,
                         Customer.Person.SecondName);
 
-                    throw new OperationFailedException();
+                    throw new OperationFailedException(ex);
                 }
             }
         }
@@ -165,7 +165,7 @@ namespace LogicLayer.Services
                         customer.CustomerId,
                         customer.PersonId);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -207,7 +207,7 @@ namespace LogicLayer.Services
                     customer.CustomerId,
                     customer.PersonId);
 
-                    throw new OperationFailedException();
+                    throw new OperationFailedException(ex);
                 }
             }
         }

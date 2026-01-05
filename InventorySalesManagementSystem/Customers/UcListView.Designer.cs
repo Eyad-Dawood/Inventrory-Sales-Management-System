@@ -74,7 +74,6 @@
             dgvData.RowHeadersWidth = 15;
             dgvData.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dgvData.RowTemplate.Height = 20;
-            dgvData.ScrollBars = ScrollBars.Horizontal;
             dgvData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvData.ShowCellErrors = false;
             dgvData.ShowCellToolTips = false;
@@ -160,6 +159,7 @@
             btnCancelFilter.Anchor = AnchorStyles.Right;
             btnCancelFilter.BackgroundImage = Properties.Resources.cancel__1_;
             btnCancelFilter.BackgroundImageLayout = ImageLayout.Stretch;
+            btnCancelFilter.Enabled = false;
             btnCancelFilter.Location = new Point(382, 2);
             btnCancelFilter.Name = "btnCancelFilter";
             btnCancelFilter.Size = new Size(30, 30);

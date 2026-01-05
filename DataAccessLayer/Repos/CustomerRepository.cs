@@ -55,7 +55,7 @@ namespace DataAccessLayer.Repos
                         (c.Person.SecondName ?? "") + " " +
                         (c.Person.ThirdName ?? "") + " " +
                         (c.Person.FourthName ?? ""),
-                        $"%{name}%"))
+                        $"{name}%"))
                 .OrderBy(c => c.CustomerId)
                 .Skip((pageNumber - 1) * rowsPerPage)
                 .Take(rowsPerPage)
@@ -77,7 +77,7 @@ namespace DataAccessLayer.Repos
                 .ThenInclude(p => p.Town)
                 .Where(c => EF.Functions.Like(
                     c.Person.Town.TownName,
-                    $@"%{TownName}%"))
+                    $@"{TownName}%"))
                 .OrderBy(c => c.CustomerId)
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
@@ -100,7 +100,7 @@ namespace DataAccessLayer.Repos
                         (c.Person.SecondName ?? "") + " " +
                         (c.Person.ThirdName ?? "") + " " +
                         (c.Person.FourthName ?? ""),
-                        $"%{fullName}%"))
+                        $"{fullName}%"))
                 .Count();
 
             return (int)Math.Ceiling(totalCount / (double)rowsPerPage);
@@ -118,7 +118,7 @@ namespace DataAccessLayer.Repos
             int totalCount = _context.Customers
                 .AsNoTracking()
                 .Where(c =>
-                    EF.Functions.Like(c.Person.Town.TownName, $"%{townName}%"))
+                    EF.Functions.Like(c.Person.Town.TownName, $"{townName}%"))
                 .Count();
 
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);

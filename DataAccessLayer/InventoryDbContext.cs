@@ -64,6 +64,12 @@ namespace DataAccessLayer
             .ValueGeneratedOnAdd();
 
 
+            //Town
+            modelBuilder.Entity<Town>()
+                .HasIndex(u => u.TownName)
+                .IsUnique();
+
+
             foreach (var foreignKey in modelBuilder.Model
                        .GetEntityTypes()
                        .SelectMany(e => e.GetForeignKeys()))

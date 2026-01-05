@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -50,7 +52,7 @@ namespace InventorySalesManagementSystem.Customers
             }
         }
         private bool IsFilterItemsConfigured = false;
-        public bool IsDataFilterd = false;
+        public bool IsDataFiltered = false;
         public Action<Filter> OnFilterApplied;
         public Action OnFilterCanceled;
         public Filter CurrentFilter
@@ -104,11 +106,12 @@ namespace InventorySalesManagementSystem.Customers
                 //Disable Filter Controle
 
                 //Inform Me 
-                IsDataFilterd = true;
+                IsDataFiltered = true;
 
                     cmpSearchBy.Enabled = false;
                     txtSearchValue.Enabled = false;
                     btnFilter.Enabled = false;
+                btnCancelFilter.Enabled = true;
                 }
         }
         private void btnCancelFilter_Click(object sender, EventArgs e)
@@ -122,11 +125,12 @@ namespace InventorySalesManagementSystem.Customers
                 //Enable Filter Controles
 
                 //Inform Me
-                IsDataFilterd = false;
+                IsDataFiltered = false;
 
                 cmpSearchBy.Enabled = true;
                 txtSearchValue.Enabled = true;
                 btnFilter.Enabled = true;
+                btnCancelFilter.Enabled = false;
             }
         }
 
@@ -198,9 +202,8 @@ namespace InventorySalesManagementSystem.Customers
         {
             if (!IsGridConfigured)
             {
-                IsGridConfigured = true;
-
                 ConfigureGrid?.Invoke(this.dgvData);
+                IsGridConfigured = true;
             }
         }
         private void DisplayInternal<T>(IEnumerable<T> data)
@@ -229,7 +232,8 @@ namespace InventorySalesManagementSystem.Customers
                 DisplayInternal(data);
 
                 _CurrentPageNumber = PageNumber;
-                _TotalPages = TotalPages;
+                _TotalPages = Math.Max(TotalPages,1);
+                
 
                 UpdatePagingUI();
 

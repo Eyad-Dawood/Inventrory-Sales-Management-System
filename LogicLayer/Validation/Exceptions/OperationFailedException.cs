@@ -22,5 +22,11 @@ namespace LogicLayer.Validation.Exceptions
         {
             MainBody = Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage();
         }
+
+        public OperationFailedException(Exception ex)
+            : base("فشلت العملية", ex)
+        {
+            MainBody = Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage();
+        }
     }
 }

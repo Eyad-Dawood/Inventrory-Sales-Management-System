@@ -104,7 +104,7 @@ namespace LogicLayer.Services
                         worker.Person.FirstName,
                         worker.Person.SecondName);
 
-                    throw new OperationFailedException();
+                    throw new OperationFailedException(ex);
                 }
             }
 
@@ -151,7 +151,7 @@ namespace LogicLayer.Services
                         worker.WorkerId,
                         worker.PersonId);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -192,7 +192,7 @@ namespace LogicLayer.Services
                     worker.WorkerId,
                     worker.PersonId);
 
-                    throw new OperationFailedException();
+                    throw new OperationFailedException(ex);
                 } 
             }
         }

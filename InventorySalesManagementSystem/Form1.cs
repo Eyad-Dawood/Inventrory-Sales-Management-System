@@ -15,7 +15,7 @@ namespace InventorySalesManagementSystem
     public partial class Form1 : Form
     {
         private readonly IServiceProvider _serviceProvider;
-        private int RowsPerPage = 3; // Sample Data
+        private int RowsPerPage = 20; // Sample Data
 
         public Form1(IServiceProvider serviceProvider)
         {
@@ -41,7 +41,8 @@ namespace InventorySalesManagementSystem
             {
                 Name = nameof(CustomerListDto.CustomerId),
                 DataPropertyName = nameof(CustomerListDto.CustomerId),
-                HeaderText = "رقم العميل",
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Customer), nameof(Customer.CustomerId)),
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
             });
 
@@ -50,7 +51,8 @@ namespace InventorySalesManagementSystem
             {
                 Name = nameof(CustomerListDto.FullName),
                 DataPropertyName = nameof(CustomerListDto.FullName),
-                HeaderText = "الاسم الكامل",
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Person), nameof(Person.FullName)),
                 FillWeight = 35
             });
 
@@ -59,7 +61,8 @@ namespace InventorySalesManagementSystem
             {
                 Name = nameof(CustomerListDto.PhoneNumber),
                 DataPropertyName = nameof(CustomerListDto.PhoneNumber),
-                HeaderText = "رقم الهاتف",
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Person), nameof(Person.PhoneNumber)),
                 FillWeight = 15
             });
 
@@ -68,7 +71,8 @@ namespace InventorySalesManagementSystem
             {
                 Name = nameof(CustomerListDto.Balance),
                 DataPropertyName = nameof(CustomerListDto.Balance),
-                HeaderText = "الرصيد",
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Customer), nameof(Customer.Balance)),
                 FillWeight = 15,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -82,7 +86,8 @@ namespace InventorySalesManagementSystem
             {
                 Name = nameof(CustomerListDto.TownName),
                 DataPropertyName = nameof(CustomerListDto.TownName),
-                HeaderText = "المدينة",
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Town), nameof(Town.TownName)),
                 FillWeight = 25
             });
 
@@ -91,7 +96,8 @@ namespace InventorySalesManagementSystem
             {
                 Name = nameof(CustomerListDto.IsActive),
                 DataPropertyName = nameof(CustomerListDto.IsActive),
-                HeaderText = "نشط",
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Customer), nameof(Customer.IsActive)),
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
             });
 
@@ -102,67 +108,48 @@ namespace InventorySalesManagementSystem
             dgv.ColumnHeadersDefaultCellStyle.Alignment =
                 DataGridViewContentAlignment.MiddleCenter;
         }
-        public void OnNext(int newpageNumber)
+
+        private void ChangePage(int newPageNumber)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
 
-                if (ucListView1.IsDataFilterd)
+                if (ucListView1.IsDataFiltered)
                 {
                     var Filter = ucListView1.CurrentFilter;
 
-                    if (Filter.ColumnName==nameof(Customer.Person.FullName))
+                    if (Filter != null)
                     {
-                        var data = service.GetAllByFullName(newpageNumber, RowsPerPage,Filter.FilterValue);
+                        if (Filter.ColumnName == nameof(Customer.Person.FullName))
+                        {
+                            var data = service.GetAllByFullName(newPageNumber, RowsPerPage, Filter.FilterValue);
 
-                        ucListView1.DisplayData<CustomerListDto>(data, newpageNumber);
-                    }
-                    else if(Filter.ColumnName == nameof(Customer.Person.Town.TownName))
-                    {
-                        var data = service.GetAllByTownName(newpageNumber, RowsPerPage, Filter.FilterValue);
+                            ucListView1.DisplayData<CustomerListDto>(data, newPageNumber);
+                        }
+                        else if (Filter.ColumnName == nameof(Customer.Person.Town.TownName))
+                        {
+                            var data = service.GetAllByTownName(newPageNumber, RowsPerPage, Filter.FilterValue);
 
-                        ucListView1.DisplayData<CustomerListDto>(data, newpageNumber);
+                            ucListView1.DisplayData<CustomerListDto>(data, newPageNumber);
+                        }
                     }
                 }
                 else
                 {
-                    var data = service.GetAllCustomers(newpageNumber, RowsPerPage);
+                    var data = service.GetAllCustomers(newPageNumber, RowsPerPage);
 
-                    ucListView1.DisplayData<CustomerListDto>(data, newpageNumber);
+                    ucListView1.DisplayData<CustomerListDto>(data, newPageNumber);
                 }
             }
         }
+        public void OnNext(int newpageNumber)
+        {
+            ChangePage(newpageNumber);
+        }
         public void OnPrev(int newpageNumber)
         {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
-
-                if (ucListView1.IsDataFilterd)
-                {
-                    var Filter = ucListView1.CurrentFilter;
-
-                    if (Filter.ColumnName == nameof(Customer.Person.FullName))
-                    {
-                        var data = service.GetAllByFullName(newpageNumber, RowsPerPage, Filter.FilterValue);
-
-                        ucListView1.DisplayData<CustomerListDto>(data, newpageNumber);
-                    }
-                    else if (Filter.ColumnName == nameof(Customer.Person.Town.TownName))
-                    {
-                        var data = service.GetAllByTownName(newpageNumber, RowsPerPage, Filter.FilterValue);
-
-                        ucListView1.DisplayData<CustomerListDto>(data, newpageNumber);
-                    }
-                }
-                else
-                {
-                    var data = service.GetAllCustomers(newpageNumber, RowsPerPage);
-
-                    ucListView1.DisplayData<CustomerListDto>(data, newpageNumber);
-                }
-            }
+            ChangePage(newpageNumber);
         }
         public void ApplyFilter(UcListView.Filter filter)
         {
@@ -199,19 +186,10 @@ namespace InventorySalesManagementSystem
                 ucListView1.DisplayData<CustomerListDto>(data, 1, TotalPages);
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+
+        private void ConfigureFilter()
         {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
-
-                int TotalPages = service.GetTotalPageNumber(RowsPerPage);
-
-                var data = service.GetAllCustomers(1, RowsPerPage);
-
-                var dbcontext = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
-
-                var items = new List<UcListView.FilterItems>()
+            var items = new List<UcListView.FilterItems>()
                 {
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Person), nameof(Customer.Person.FullName)),
                                                  Value = nameof(Customer.Person.FullName)},
@@ -219,7 +197,18 @@ namespace InventorySalesManagementSystem
                                                  Value = nameof(Customer.Person.Town.TownName)}
                 };
 
-                ucListView1.ConfigureFilter(items);
+            ucListView1.ConfigureFilter(items);
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
+
+                int TotalPages = service.GetTotalPageNumber(RowsPerPage);
+                var data = service.GetAllCustomers(1, RowsPerPage);
+
+                ConfigureFilter();
                 ucListView1.DisplayData<CustomerListDto>(data, 1, TotalPages);
             }
         }
@@ -236,6 +225,11 @@ namespace InventorySalesManagementSystem
         private void ucListView1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            ucAddUpdatePerson1.Start(_serviceProvider);
         }
     }
 }

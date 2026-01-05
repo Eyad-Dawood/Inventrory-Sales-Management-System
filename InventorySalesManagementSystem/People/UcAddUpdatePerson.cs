@@ -152,14 +152,14 @@ namespace InventorySalesManagementSystem.People
 
         private void FillAddPerson()
         {
-            _personAdd.FirstName = txtFirstName.Text;
-            _personAdd.SecondName = txtSecondName.Text;
-            _personAdd.ThirdName = txtThirdName.Text;
-            _personAdd.FourthName = txtFourthName.Text;
+            _personAdd.FirstName = txtFirstName.Text.Trim();
+            _personAdd.SecondName = txtSecondName.Text.Trim();
+            _personAdd.ThirdName = txtThirdName.Text.Trim();
+            _personAdd.FourthName = txtFourthName.Text.Trim();
 
-            _personAdd.PhoneNumber = txtPhoneNumber.Text;
+            _personAdd.PhoneNumber = txtPhoneNumber.Text.Trim();
 
-            _personAdd.NationalNumber = txtNationalNumber.Text;
+            _personAdd.NationalNumber = txtNationalNumber.Text.Trim();
 
 
             if (cmpTown.SelectedValue is int townId)
@@ -169,14 +169,14 @@ namespace InventorySalesManagementSystem.People
         }
         private void FillUpdatePerson()
         {
-            _personUpdate.FirstName = txtFirstName.Text;
-            _personUpdate.SecondName = txtSecondName.Text;
-            _personUpdate.ThirdName = txtThirdName.Text;
-            _personUpdate.FourthName = txtFourthName.Text;
+            _personUpdate.FirstName = txtFirstName.Text.Trim();
+            _personUpdate.SecondName = txtSecondName.Text.Trim();
+            _personUpdate.ThirdName = txtThirdName.Text.Trim();
+            _personUpdate.FourthName = txtFourthName.Text.Trim();
 
-            _personUpdate.PhoneNumber = txtPhoneNumber.Text;
+            _personUpdate.PhoneNumber = txtPhoneNumber.Text.Trim();
 
-            _personUpdate.NationalNumber = txtNationalNumber.Text;
+            _personUpdate.NationalNumber = txtNationalNumber.Text.Trim();
 
             if (cmpTown.SelectedValue is int townId)
             {
@@ -187,24 +187,17 @@ namespace InventorySalesManagementSystem.People
 
         private void lkAddTown_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-
-            using (var scope = _serviceProvider.CreateScope())
+            try
             {
-                var service = scope.ServiceProvider.GetRequiredService<TownService>();
-
-                try
-                {
-                    FrmAddUpdateTown frm = FrmAddUpdateTown.CreateForAdd(service);
-                    frm.ShowDialog();
-                }
-                catch (Exception ex)
-                {
-                    Serilog.Log.Error(
-                           ex,
-                           "Unexpected error while opening Add Town form");
-                }
+                FrmAddUpdateTown frm = FrmAddUpdateTown.CreateForAdd(_serviceProvider);
+                frm.ShowDialog();
             }
-
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(
+                       ex,
+                       "Unexpected error while opening Add Town form");
+            }
             LoadTowns();
         }
     }

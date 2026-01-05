@@ -4,11 +4,13 @@ using LogicLayer.DTOs.PersonDTO;
 using LogicLayer.DTOs.TownDTO;
 using LogicLayer.Services;
 using LogicLayer.Validation.Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -21,7 +23,7 @@ namespace InventorySalesManagementSystem.People.Towns
     public partial class FrmAddUpdateTown : Form
     {
         private Enums.FormStateEnum State { set; get; }
-        private TownService _townService { set; get; }
+        private IServiceProvider _serviceProvider { set; get; }
 
 
         private TownAddDto _townAdd { set; get; }
@@ -31,11 +33,11 @@ namespace InventorySalesManagementSystem.People.Towns
 
 
 
-        private FrmAddUpdateTown(TownService townService)
+        private FrmAddUpdateTown(IServiceProvider serviceProvider)
         {
             InitializeComponent();
 
-            _townService = townService;
+            _serviceProvider = serviceProvider;
         }
         
         private void SetupAdd()
@@ -66,30 +68,38 @@ namespace InventorySalesManagementSystem.People.Towns
                 this.txtTownName.Text = dto.TownName;
         }
 
-        public static FrmAddUpdateTown CreateForAdd(TownService service)
+        public static FrmAddUpdateTown CreateForAdd(IServiceProvider serviceProvider)
         {
-            var form = new FrmAddUpdateTown(service);
-            form.SetupAdd();
-            return form;
+                var form = new FrmAddUpdateTown(serviceProvider);
+                form.SetupAdd();
+                return form;
         }
 
-        public static FrmAddUpdateTown CreateForUpdate(TownService service, int townId)
+        public static FrmAddUpdateTown CreateForUpdate(IServiceProvider serviceProvider, int townId)
         {
-                var dto = service.GetTownForUpdate(townId);
+            TownUpdateDto dto;
 
-                var form = new FrmAddUpdateTown(service);
-                form.SetupUpdate(dto);
-                return form;
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<TownService>();
+
+                dto = service.GetTownForUpdate(townId);
+            }
+
+            var form = new FrmAddUpdateTown(serviceProvider);
+            form.SetupUpdate(dto);
+
+            return form;
         }
 
 
         private void SaveUpdates()
         {
-            _townUpdate.TownName = this.txtTownName.Text;
+            _townUpdate.TownName = this.txtTownName.Text.Trim();
         }
         private void SaveAddNew()
         {
-            _townAdd.TownName = this.txtTownName.Text;
+            _townAdd.TownName = this.txtTownName.Text.Trim();
         }
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -103,7 +113,13 @@ namespace InventorySalesManagementSystem.People.Towns
 
             try
             {
-                _townService.UpdateTown(_townUpdate);
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var service = scope.ServiceProvider.GetRequiredService<TownService>();
+
+
+                    service.UpdateTown(_townUpdate);
+                }
             }
             catch (NotFoundException ex)
             {
@@ -132,14 +148,19 @@ namespace InventorySalesManagementSystem.People.Towns
             MessageBox.Show("تم التحديث بنجاح");
             this.Close();
         }
-
         private void AddnNew()
         {
             SaveAddNew();
 
             try
             {
-                _townService.AddTown(_townAdd);
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var service = scope.ServiceProvider.GetRequiredService<TownService>();
+
+
+                    service.AddTown(_townAdd);
+                }
             }
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
             {
@@ -148,6 +169,9 @@ namespace InventorySalesManagementSystem.People.Towns
             }
             catch (OperationFailedException ex)
             {
+                Serilog.Log.Error(ex.InnerException, "Operation Failed During Adding New Town {TownName}"
+                    , _townAdd.TownName);
+
                 MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }

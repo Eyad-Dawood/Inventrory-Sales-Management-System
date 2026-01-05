@@ -66,7 +66,7 @@ namespace LogicLayer.Services
                     "Failed to add Unit {UnitName}",
                     DTO.Name);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -112,7 +112,7 @@ namespace LogicLayer.Services
                    "Failed to Delete Unit {UnitId}",
                    MasurementUnitid);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 

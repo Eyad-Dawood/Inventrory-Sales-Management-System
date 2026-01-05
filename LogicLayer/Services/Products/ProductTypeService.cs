@@ -60,7 +60,7 @@ namespace LogicLayer.Services.Products
                     "Failed to add productType {ProductName}",
                     DTO.Name);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -92,7 +92,7 @@ namespace LogicLayer.Services.Products
                     "Failed to Delete productType {Id}",
                     ProductTypeId);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -129,7 +129,7 @@ namespace LogicLayer.Services.Products
                     "Failed to Update productType {Id}",
                     DTO.ProducTypetId);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 

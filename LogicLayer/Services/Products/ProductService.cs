@@ -133,7 +133,7 @@ namespace LogicLayer.Services.Products
                     "Failed to add product {ProductName}",
                     DTO.ProductName);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -194,7 +194,7 @@ namespace LogicLayer.Services.Products
 
                     Transaction.Rollback();
 
-                    throw new OperationFailedException();
+                    throw new OperationFailedException(ex);
                 }
             }
         }
@@ -227,7 +227,7 @@ namespace LogicLayer.Services.Products
                     "Failed to Delete product {ProductId}",
                     ProductId);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -347,7 +347,7 @@ namespace LogicLayer.Services.Products
 
                     Transaction.Rollback();
 
-                    throw new OperationFailedException();
+                    throw new OperationFailedException(ex);
                 }
             }
         }

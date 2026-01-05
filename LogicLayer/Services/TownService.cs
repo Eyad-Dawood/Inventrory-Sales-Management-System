@@ -71,7 +71,7 @@ namespace LogicLayer.Services
                     "Failed to add Town {Town}",
                     DTO.TownName);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -106,7 +106,7 @@ namespace LogicLayer.Services
                         "Failed to update Town {TownId}",
                         town.TownID);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
@@ -163,7 +163,7 @@ namespace LogicLayer.Services
                     "Failed to Delete Town {TownId}",
                     TownId);
 
-                throw new OperationFailedException();
+                throw new OperationFailedException(ex);
             }
         }
 
