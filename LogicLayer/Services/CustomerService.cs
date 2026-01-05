@@ -64,7 +64,18 @@ namespace LogicLayer.Services
                 PersonUpdateDto = PersonService.MapPerosn_UpdateDto(customer.Person)
             };
         }
-
+        private CustomerListDto MapCustomer_ListDto(Customer customer)
+        {
+            return new CustomerListDto
+            {
+                CustomerId = customer.CustomerId,
+                FullName = customer.Person.FullName,
+                PhoneNumber = customer.Person.PhoneNumber,
+                TownName = customer.Person.Town.TownName,
+                Balance = customer.Balance,
+                IsActive = customer.IsActive
+            };
+        }
 
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
@@ -237,16 +248,66 @@ namespace LogicLayer.Services
 
             return _customerRepo.
                 GetAllWithPerson(PageNumber,RowsPerPage)
-                .Select(c=>new CustomerListDto 
-                {
-                CustomerId =c.CustomerId,
-                FullName = c.Person.FullName,
-                PhoneNumber = c.Person.PhoneNumber,
-                TownName = c.Person.Town.TownName,
-                Balance = c.Balance,
-                IsActive = c.IsActive
-                })
+                .Select(c=> MapCustomer_ListDto(c))
                 .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageNumber(int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _customerRepo.GetTotalPages(RowsPerPage);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<CustomerListDto> GetAllByFullName(int PageNumber,int RowsPerPage,string Name)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return _customerRepo.
+                            GetAllByFullName(PageNumber, RowsPerPage,Name)
+                            .Select(c => MapCustomer_ListDto(c))
+                            .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<CustomerListDto> GetAllByTownName(int PageNumber, int RowsPerPage, string TownName)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return _customerRepo.
+                            GetAllByTownName(PageNumber, RowsPerPage, TownName)
+                            .Select(c => MapCustomer_ListDto(c))
+                            .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageByFullName(string Name,int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _customerRepo.GetTotalPagesByFullName(Name,RowsPerPage);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageByTownName(string TownName,int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _customerRepo.GetTotalPagesByTownName(TownName,RowsPerPage);
         }
 
     }

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             lbTitle = new Label();
-            uc_AddUpdatePerson1 = new InventorySalesManagementSystem.People.Uc_AddUpdatePerson();
+            uc_AddUpdatePerson1 = new InventorySalesManagementSystem.People.UcAddUpdatePerson();
             btnSave = new Button();
             btnCancel = new Button();
             lb_CustomerId = new Label();
@@ -124,7 +124,7 @@
         #endregion
 
         private Label lbTitle;
-        private People.Uc_AddUpdatePerson uc_AddUpdatePerson1;
+        private People.UcAddUpdatePerson uc_AddUpdatePerson1;
         private Button btnSave;
         private Button btnCancel;
         private Label lb_CustomerId;

@@ -34,6 +34,7 @@ namespace DataAccessLayer.Entities
         public string? FourthName { get; set; }
 
         [NotMapped]
+        [Display(Name ="الإسم الكامل")]
         public string FullName
         {
             get

@@ -10,38 +10,16 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using LogicLayer.Utilities;
 
 namespace LogicLayer.Validation
 {
     public class ErrorMessagesManager
     {
-        static private string GetArabicPropertyName(Type objectType, string propertyName)
-        {
-            var property = objectType.GetProperty(
-                propertyName,
-                BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy
-            );
-
-            if (property == null)
-                return propertyName;
-
-            // 1️ DisplayAttribute
-            var displayAttr = property.GetCustomAttribute<DisplayAttribute>();
-            if (displayAttr != null)
-                return displayAttr.GetName();
-
-            return propertyName;
-        }
-
-        private string GetArabicEntityName(Type objectType)
-        {
-            var displayAttr = objectType.GetCustomAttribute<DisplayAttribute>();
-            return displayAttr?.GetName() ?? objectType.Name;
-        }
 
         static public string WriteValidationErrorMessageInArabic(ValidationError Error)
         {
-            string ArabicPropertyName = GetArabicPropertyName(Error.ObjectType, Error.PropertyName);
+            string ArabicPropertyName = NamesManager.GetArabicPropertyName(Error.ObjectType, Error.PropertyName);
 
             switch (Error.Code)
             {
@@ -82,9 +60,7 @@ namespace LogicLayer.Validation
             }
             static public string NotFoundErrorMessage(Type ObjectType)
             {
-                ErrorMessagesManager errorMessagesManager = new ErrorMessagesManager();
-
-                string ArabicEntityName = errorMessagesManager.GetArabicEntityName(ObjectType);
+                string ArabicEntityName = NamesManager.GetArabicEntityName(ObjectType);
                 return $"{ArabicEntityName} غير موجود أو يتعذر العثور عليه";
             }
 

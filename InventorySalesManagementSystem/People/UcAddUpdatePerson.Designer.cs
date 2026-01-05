@@ -1,6 +1,6 @@
 ﻿namespace InventorySalesManagementSystem.People
 {
-    partial class Uc_AddUpdatePerson
+    partial class UcAddUpdatePerson
     {
         /// <summary> 
         /// Required designer variable.

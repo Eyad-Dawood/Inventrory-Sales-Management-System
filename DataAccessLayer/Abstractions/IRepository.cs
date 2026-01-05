@@ -15,6 +15,7 @@ namespace DataAccessLayer.Abstractions
         T GetById(int id);
         List<T> GetAll();
         List<T> GetAll(int PagerSize ,int RowsPerPage);
+        int GetTotalPages(int RowsPerPage);
 
     }
 }

@@ -41,12 +41,20 @@ namespace LogicLayer.Validation
         /// </exception>
         public static void ValidatePageginArguments(int PageNumber,int RowsPerPage)
         {
-            if(PageNumber < 1)
+            ValidatePageNumber(PageNumber);
+
+            ValidateRowsPerPage(RowsPerPage);
+        }
+        public static void ValidatePageNumber(int PageNumber)
+        {
+            if (PageNumber < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(PageNumber));
             }
-
-            if ( RowsPerPage < 1)
+        }
+        public static void ValidateRowsPerPage(in int RowsPerPage)
+        {
+            if (RowsPerPage < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(RowsPerPage));
             }

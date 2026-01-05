@@ -41,6 +41,13 @@ namespace DataAccessLayer.Repos
             _context.Set<T>().Remove(entity);
         }
 
+        public int GetTotalPages(int RowsPerPage)
+        {
+            var totalCount = _context.Set<T>().Count();
+
+            return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
+        }
+
         public List<T> GetAll()
         {
             return _context

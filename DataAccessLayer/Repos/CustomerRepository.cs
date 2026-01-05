@@ -34,5 +34,94 @@ namespace DataAccessLayer.Repos
                 .AsNoTracking()
                 .ToList();
         }
+
+        public List<Customer> GetAllByFullName(
+                int pageNumber,
+                int rowsPerPage,
+                string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return new List<Customer>();
+
+            name = name.Trim();
+
+            return _context.Customers
+                .AsNoTracking()
+                .Include(c => c.Person)
+                    .ThenInclude(p => p.Town)
+                .Where(c =>
+                    EF.Functions.Like(
+                        (c.Person.FirstName ?? "") + " " +
+                        (c.Person.SecondName ?? "") + " " +
+                        (c.Person.ThirdName ?? "") + " " +
+                        (c.Person.FourthName ?? ""),
+                        $"%{name}%"))
+                .OrderBy(c => c.CustomerId)
+                .Skip((pageNumber - 1) * rowsPerPage)
+                .Take(rowsPerPage)
+                .ToList();
+        }
+
+
+        public List<Customer> GetAllByTownName(int PageNumber,int RowsPerPage,string TownName)
+        {
+            if (string.IsNullOrWhiteSpace(TownName))
+            {
+                return new List<Customer>();
+            }
+
+            TownName = TownName.Trim();
+
+            return _context.Customers
+                .Include(c => c.Person)
+                .ThenInclude(p => p.Town)
+                .Where(c => EF.Functions.Like(
+                    c.Person.Town.TownName,
+                    $@"%{TownName}%"))
+                .OrderBy(c => c.CustomerId)
+                .Skip((PageNumber - 1) * RowsPerPage)
+                .Take(RowsPerPage)
+                .AsNoTracking()
+                .ToList();
+        }
+
+        public int GetTotalPagesByFullName(string fullName, int rowsPerPage)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+                return 0;
+
+            fullName = fullName.Trim();
+
+            int totalCount = _context.Customers
+                .AsNoTracking()
+                .Where(c =>
+                    EF.Functions.Like(
+                        (c.Person.FirstName ?? "") + " " +
+                        (c.Person.SecondName ?? "") + " " +
+                        (c.Person.ThirdName ?? "") + " " +
+                        (c.Person.FourthName ?? ""),
+                        $"%{fullName}%"))
+                .Count();
+
+            return (int)Math.Ceiling(totalCount / (double)rowsPerPage);
+        }
+
+
+
+        public int GetTotalPagesByTownName(string townName, int RowsPerPage)
+        {
+            if (string.IsNullOrWhiteSpace(townName))
+                return 0;
+
+            townName = townName.Trim();
+
+            int totalCount = _context.Customers
+                .AsNoTracking()
+                .Where(c =>
+                    EF.Functions.Like(c.Person.Town.TownName, $"%{townName}%"))
+                .Count();
+
+            return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
+        }
     }
 }

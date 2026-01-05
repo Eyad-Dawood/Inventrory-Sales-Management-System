@@ -22,7 +22,7 @@ using System.Windows.Forms;
 
 namespace InventorySalesManagementSystem.People
 {
-    public partial class Uc_AddUpdatePerson : UserControl
+    public partial class UcAddUpdatePerson : UserControl
     {
         private Enums.FormStateEnum State { set; get; }
 
@@ -33,7 +33,7 @@ namespace InventorySalesManagementSystem.People
         private IServiceProvider _serviceProvider { set; get; }
         private List<TownListDto> _towns { set; get; }
 
-        public Uc_AddUpdatePerson()
+        public UcAddUpdatePerson()
         {
             InitializeComponent();
             LoadDefualtValues();

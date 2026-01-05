@@ -15,9 +15,11 @@ namespace DataAccessLayer.Entities
     public class Customer : IValidatable
     {
         [Key]
+        [Display(Name ="معرف الزبون")]
         public int CustomerId { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
+        [Display(Name ="الرصيد")]
         public decimal Balance { get; set; }
 
         [ForeignKey(nameof(Person))]
@@ -25,6 +27,7 @@ namespace DataAccessLayer.Entities
         [Display(Name = "معلومات الشخص")]
         public Person Person { get; set; }
 
+        [Display(Name ="النشاط")]
         public bool IsActive { get; set; }
 
         public bool Validate(List<ValidationError>errors)
