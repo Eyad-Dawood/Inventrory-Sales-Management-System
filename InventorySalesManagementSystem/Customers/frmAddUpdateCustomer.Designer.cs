@@ -116,6 +116,7 @@
             Controls.Add(uc_AddUpdatePerson1);
             Controls.Add(lbTitle);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MaximizeBox = false;
             Name = "frmAddUpdateCustomer";
             ResumeLayout(false);
             PerformLayout();

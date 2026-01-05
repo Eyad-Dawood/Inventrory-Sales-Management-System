@@ -54,6 +54,13 @@ namespace LogicLayer.Validation
 
         public static class ErrorMessages
         {
+            static public string NotFoundErrorMessage(Type ObjectType,string PropertyName)
+            {
+                string ArabicName = NamesManager.GetArabicPropertyName(ObjectType, PropertyName);
+
+                return $@"{ArabicName} لم يتم العثور عليه";
+            }
+
             static public string OperationFailedErrorMessage()
             {
                 return "حدث خطأ , راجع السجلات لتفاصيل أكثر";

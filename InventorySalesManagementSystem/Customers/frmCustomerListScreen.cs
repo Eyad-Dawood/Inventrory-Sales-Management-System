@@ -27,7 +27,10 @@ namespace InventorySalesManagementSystem.Customers
             _serviceProvider = serviceProvider;
         }
 
-
+        private void ConfigureContextMenuStrip(DataGridView dgv)
+        {
+            dgv.ContextMenuStrip = this.cms;
+        }
         private void ConfigureGrid(DataGridView dgv)
         {
             dgv.AutoGenerateColumns = false;
@@ -112,6 +115,10 @@ namespace InventorySalesManagementSystem.Customers
 
             dgv.ColumnHeadersDefaultCellStyle.Alignment =
                 DataGridViewContentAlignment.MiddleCenter;
+
+
+
+            ConfigureContextMenuStrip(dgv);
         }
 
 
@@ -174,7 +181,7 @@ namespace InventorySalesManagementSystem.Customers
                                                              filter.FilterValue);
 
 
-                        ucListView1.DisplayData<CustomerListDto>(results,newPageNumber);
+                        ucListView1.DisplayData<CustomerListDto>(results, newPageNumber);
                     }
                 }
                 else
@@ -187,7 +194,7 @@ namespace InventorySalesManagementSystem.Customers
         }
 
         //This For Listing Filtered Data With Pages (Alowas Loads Page Number 1)
-        private void LoadFilteredPage(UcListView.Filter filter)
+        private void LoadFilteredPage(UcListView.Filter filter,int PageNumber)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -195,7 +202,7 @@ namespace InventorySalesManagementSystem.Customers
 
                 List<CustomerListDto> results = GetFilteredData(service,
                                                             filter.ColumnName,
-                                                            1,
+                                                            PageNumber,
                                                             RowsPerPage,
                                                             filter.FilterValue);
                 int TotalPage = GetTotalFilteredPages(service,
@@ -204,7 +211,7 @@ namespace InventorySalesManagementSystem.Customers
                                                        filter.FilterValue);
 
 
-                ucListView1.DisplayData<CustomerListDto>(results, 1, TotalPage);
+                ucListView1.DisplayData<CustomerListDto>(results, PageNumber, TotalPage);
             }
         }
 
@@ -231,9 +238,9 @@ namespace InventorySalesManagementSystem.Customers
         {
             ChangePage(newpageNumber);
         }
-        public void ApplyFilter(UcListView.Filter filter)
+        public void ApplyFilter(UcListView.Filter filter,int PageNumber)
         {
-            LoadFilteredPage(filter);
+            LoadFilteredPage(filter,PageNumber);
         }
         public void CancelFilter()
         {
@@ -251,13 +258,16 @@ namespace InventorySalesManagementSystem.Customers
 
             ucListView1.ConfigureFilter(items);
         }
-
+        private void OnFilterApplied(UcListView.Filter filter)
+        {
+            ApplyFilter(filter, 1);
+        }
         private void frmCustomerListScreen_Load(object sender, EventArgs e)
         {
             ucListView1.ConfigureGrid = ConfigureGrid;
             ucListView1.OnNextPage = OnNext;
             ucListView1.OnPreviousPage = OnPrev;
-            ucListView1.OnFilterApplied = ApplyFilter;
+            ucListView1.OnFilterApplied = OnFilterApplied;
             ucListView1.OnFilterCanceled = CancelFilter;
 
 
@@ -265,13 +275,56 @@ namespace InventorySalesManagementSystem.Customers
             ConfigureFilter();
         }
 
+        private void RefreshData()
+        {
+            if (ucListView1.IsDataFiltered && ucListView1.LastFilter != null)
+            {
+                ApplyFilter(ucListView1.LastFilter,ucListView1.LastPageNumber);
+            }
+            else
+            {
+                ChangePage(ucListView1.LastPageNumber);
+            }
+        }
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
             var frm = frmAddUpdateCustomer.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
-            ucListView1.RemoveFilter();
-            LoadInitialPage();
+            RefreshData();
+        }
+
+        /// <summary>
+        /// Get Selected Id From Data Grid View 
+        /// </summary>
+        /// <returns>-1 if null</returns>
+        private int GetSelectedId()
+        {
+            var selecteditem = 
+             ucListView1.SelectedItem<CustomerListDto>();
+
+            if(selecteditem != null)
+            {
+                return selecteditem.CustomerId;
+            }
+            
+            return -1;
+        }
+        private void updateMenustripItem_Click(object sender, EventArgs e)
+        {
+            int id = GetSelectedId();
+
+            if(id<0)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Customer)));
+                return;
+            }
+
+            var frm = frmAddUpdateCustomer.CreateForUpdate(_serviceProvider,id);
+            frm.ShowDialog();
+
+            RefreshData();
         }
     }
 }

@@ -36,6 +36,11 @@ namespace InventorySalesManagementSystem.Customers
         private IReadOnlyList<FilterItems> _filterItems;
         private bool _allowFilter = true;
 
+        [Browsable(false)]
+        [DefaultValue(true)]
+        public Filter LastFilter { get; set; }
+
+
         [Browsable(true)]
         [DefaultValue(true)]
         public bool AllowFilter
@@ -51,7 +56,7 @@ namespace InventorySalesManagementSystem.Customers
                 _allowFilter = value;
             }
         }
-        private bool IsFilterItemsConfigured = false;
+        private bool _IsFilterItemsConfigured = false;
         public bool IsDataFiltered = false;
         public Action<Filter> OnFilterApplied;
         public Action OnFilterCanceled;
@@ -62,7 +67,7 @@ namespace InventorySalesManagementSystem.Customers
         {
             get
             {
-                if (IsFilterItemsConfigured
+                if (_IsFilterItemsConfigured
                     && cmpSearchBy.Items.Count > 0
                     && !string.IsNullOrWhiteSpace(txtSearchValue.Text)
                     && cmpSearchBy.SelectedValue != null)
@@ -84,7 +89,7 @@ namespace InventorySalesManagementSystem.Customers
                 return;
             }
 
-            IsFilterItemsConfigured = true;
+            _IsFilterItemsConfigured = true;
             _filterItems = items;
 
             cmpSearchBy.DisplayMember = nameof(FilterItems.DisplayName);
@@ -94,7 +99,7 @@ namespace InventorySalesManagementSystem.Customers
         }
         private void btnFilter_Click(object sender, EventArgs e)
         {
-            if (IsFilterItemsConfigured &&
+            if (_IsFilterItemsConfigured &&
                 cmpSearchBy.Items.Count > 0
                 && cmpSearchBy.SelectedValue != null
                 && !string.IsNullOrWhiteSpace(txtSearchValue.Text))
@@ -104,8 +109,8 @@ namespace InventorySalesManagementSystem.Customers
                     ColumnName = cmpSearchBy.SelectedValue.ToString(),
                     FilterValue = txtSearchValue.Text
                 };
+                LastFilter = filter;
                 OnFilterApplied?.Invoke(filter);
-
                 //Disable Filter Controle
 
                 //Inform Me 
@@ -119,9 +124,10 @@ namespace InventorySalesManagementSystem.Customers
         }
         public void RemoveFilter()
         {
-            if (IsFilterItemsConfigured)
+            if (_IsFilterItemsConfigured)
             {
                 IsDataFiltered = false;
+                LastFilter = null;
 
                 OnFilterCanceled?.Invoke();
 
@@ -142,7 +148,6 @@ namespace InventorySalesManagementSystem.Customers
         {
             RemoveFilter();
         }
-
         //************************************************************//
 
         private IReadOnlyList<object> _data;
@@ -150,6 +155,7 @@ namespace InventorySalesManagementSystem.Customers
         private int _CurrentPageNumber = 1;
         private int _TotalPages = 0;
         private bool _allowPagin = true;
+        public int LastPageNumber = 1;
 
         [Browsable(true)]
         [DefaultValue(true)]
@@ -192,6 +198,7 @@ namespace InventorySalesManagementSystem.Customers
                     return;
                 }
 
+                LastPageNumber = _CurrentPageNumber+1;
                 OnNextPage?.Invoke(_CurrentPageNumber + 1);
             }
         }
@@ -203,6 +210,8 @@ namespace InventorySalesManagementSystem.Customers
                 {
                     return;
                 }
+
+                LastPageNumber = _CurrentPageNumber - 1;
                 OnPreviousPage?.Invoke(_CurrentPageNumber - 1);
             }
         }
@@ -241,7 +250,6 @@ namespace InventorySalesManagementSystem.Customers
 
                 _CurrentPageNumber = PageNumber;
                 _TotalPages = Math.Max(TotalPages, 1);
-
 
                 UpdatePagingUI();
 
@@ -283,6 +291,13 @@ namespace InventorySalesManagementSystem.Customers
         private void btnPrevious_Click(object sender, EventArgs e)
         {
             ExcecuteOnPreviousPage();
+        }
+
+
+
+        public T? SelectedItem<T>() where T : class
+        {
+            return dgvData.CurrentRow?.DataBoundItem as T;
         }
 
     }

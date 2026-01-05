@@ -28,15 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             panel1 = new Panel();
             ucListView1 = new UcListView();
             panel2 = new Panel();
             lbTitle = new Label();
             panel4 = new Panel();
             btnAdd = new Button();
+            cms = new ContextMenuStrip(components);
+            updateMenustripItem = new ToolStripMenuItem();
+            deleteMenustripItem = new ToolStripMenuItem();
+            ShowMenustripItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel4.SuspendLayout();
+            cms.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -101,6 +107,48 @@
             btnAdd.UseVisualStyleBackColor = true;
             btnAdd.Click += btnAdd_Click;
             // 
+            // cms
+            // 
+            cms.ImageScalingSize = new Size(24, 24);
+            cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem });
+            cms.Name = "contextMenuStrip1";
+            cms.RightToLeft = RightToLeft.Yes;
+            cms.Size = new Size(189, 116);
+            // 
+            // updateMenustripItem
+            // 
+            updateMenustripItem.Alignment = ToolStripItemAlignment.Right;
+            updateMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            updateMenustripItem.Image = Properties.Resources.edit__1_;
+            updateMenustripItem.Name = "updateMenustripItem";
+            updateMenustripItem.RightToLeft = RightToLeft.Yes;
+            updateMenustripItem.ShortcutKeyDisplayString = "";
+            updateMenustripItem.Size = new Size(188, 30);
+            updateMenustripItem.Tag = "";
+            updateMenustripItem.Text = "تعديل البيانات";
+            updateMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
+            updateMenustripItem.Click += updateMenustripItem_Click;
+            // 
+            // deleteMenustripItem
+            // 
+            deleteMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            deleteMenustripItem.Image = Properties.Resources.bin__1_;
+            deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
+            deleteMenustripItem.Name = "deleteMenustripItem";
+            deleteMenustripItem.RightToLeft = RightToLeft.Yes;
+            deleteMenustripItem.Size = new Size(188, 30);
+            deleteMenustripItem.Text = "حذف البيانات";
+            // 
+            // ShowMenustripItem
+            // 
+            ShowMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            ShowMenustripItem.Image = Properties.Resources.driver_license__1_;
+            ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
+            ShowMenustripItem.Name = "ShowMenustripItem";
+            ShowMenustripItem.RightToLeft = RightToLeft.Yes;
+            ShowMenustripItem.Size = new Size(188, 30);
+            ShowMenustripItem.Text = "عرض البيانات";
+            // 
             // frmCustomerListScreen
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -115,6 +163,7 @@
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel4.ResumeLayout(false);
+            cms.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -126,5 +175,9 @@
         private Panel panel4;
         private Label lbTitle;
         private Button btnAdd;
+        private ContextMenuStrip cms;
+        private ToolStripMenuItem updateMenustripItem;
+        private ToolStripMenuItem deleteMenustripItem;
+        private ToolStripMenuItem ShowMenustripItem;
     }
 }
