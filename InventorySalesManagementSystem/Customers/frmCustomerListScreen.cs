@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Entities;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.Services;
+using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ namespace InventorySalesManagementSystem.Customers
             _serviceProvider = serviceProvider;
         }
 
+        #region Config
         private void ConfigureContextMenuStrip(DataGridView dgv)
         {
             dgv.ContextMenuStrip = this.cms;
@@ -120,14 +122,30 @@ namespace InventorySalesManagementSystem.Customers
 
             ConfigureContextMenuStrip(dgv);
         }
+        private void ConfigureFilter()
+        {
+            var items = new List<UcListView.FilterItems>()
+                {
+                    new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Person), nameof(Customer.Person.FullName)),
+                                                 Value = nameof(Customer.Person.FullName)},
+                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Town), nameof(Customer.Person.Town.TownName)),
+                                                 Value = nameof(Customer.Person.Town.TownName)}
+                };
 
+            ucListView1.ConfigureFilter(items);
+        }
+        #endregion
 
-        //
+        #region DataGetter
+        private List<CustomerListDto> GetData(CustomerService service,
+                                              int PageNumber)
+        {
+            return service.GetAllCustomers(PageNumber, RowsPerPage);
+        }
         private List<CustomerListDto> GetFilteredData(
             CustomerService service,
             string columnName,
             int PageNumber,
-            int RowsPerPage,
             string value)
         {
             return columnName switch
@@ -145,7 +163,6 @@ namespace InventorySalesManagementSystem.Customers
         private int GetTotalFilteredPages(
             CustomerService service,
             string columnName,
-            int RowsPerPage,
             string value)
         {
             return columnName switch
@@ -160,140 +177,88 @@ namespace InventorySalesManagementSystem.Customers
             };
         }
 
-        //For Next And Previous , So I Dont Need To Calculate Total Page Here
-        //Also , I Commit To The Filter Applied Inside The Control
-        private void ChangePage(int newPageNumber)
+        private int GetTotalPages(CustomerService service)
+        {
+            return service.GetTotalPageNumber(RowsPerPage);
+        }
+        #endregion
+
+
+        private void DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
+                var service = scope.ServiceProvider.GetService<CustomerService>();
 
                 if (ucListView1.IsDataFiltered)
                 {
-                    var filter = ucListView1.CurrentFilter;
-
-                    if (filter != null)
-                    {
-                        List<CustomerListDto> results = GetFilteredData(service,
-                                                             filter.ColumnName,
-                                                             newPageNumber,
-                                                             RowsPerPage,
-                                                             filter.FilterValue);
-
-
-                        ucListView1.DisplayData<CustomerListDto>(results, newPageNumber);
-                    }
+                    ucListView1.DisplayData<CustomerListDto>(GetFilteredData(service, filter.ColumnName, PageNumber, filter.FilterValue),
+                         PageNumber,
+                         GetTotalFilteredPages(service, filter.ColumnName, filter.FilterValue));
                 }
                 else
                 {
-                    var data = service.GetAllCustomers(newPageNumber, RowsPerPage);
-
-                    ucListView1.DisplayData<CustomerListDto>(data, newPageNumber);
+                    ucListView1.DisplayData<CustomerListDto>(GetData(service, PageNumber),
+                        PageNumber,
+                        GetTotalPages(service));
                 }
             }
         }
-
-        //This For Listing Filtered Data With Pages (Alowas Loads Page Number 1)
-        private void LoadFilteredPage(UcListView.Filter filter,int PageNumber)
+        private void DisplayPage(int PageNumber)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
+                var service = scope.ServiceProvider.GetService<CustomerService>();
 
-                List<CustomerListDto> results = GetFilteredData(service,
-                                                            filter.ColumnName,
-                                                            PageNumber,
-                                                            RowsPerPage,
-                                                            filter.FilterValue);
-                int TotalPage = GetTotalFilteredPages(service,
-                                                       filter.ColumnName,
-                                                       RowsPerPage,
-                                                       filter.FilterValue);
-
-
-                ucListView1.DisplayData<CustomerListDto>(results, PageNumber, TotalPage);
+                ucListView1.DisplayData<CustomerListDto>(GetData(service, PageNumber),
+                    PageNumber,
+                    GetTotalPages(service));
             }
         }
 
-        //This Loads The Raw Data In Pages Without ANy FIlters
-        private void LoadInitialPage()
-        {
-            using (var scope = _serviceProvider.CreateScope())
-            {
-                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
 
-                int TotalPages = service.GetTotalPageNumber(RowsPerPage);
-                var data = service.GetAllCustomers(1, RowsPerPage);
+        private void OnFilterClicked(UcListView.Filter filter)
+        {
+            DisplayFilteredPage(1, filter);
+        }
+        private void OnFilterCanceled()
+        {
+            DisplayPage(1);
+        }
+        private void OnPageChanged(int PageNumber, UcListView.Filter filter)
+        {
+            DisplayFilteredPage(PageNumber, filter);
+        }
+        private void OnOperationFinished(int PageNumber, UcListView.Filter filter)
+        {
+            DisplayFilteredPage(PageNumber, filter);
+        }
 
-
-                ucListView1.DisplayData<CustomerListDto>(data, 1, TotalPages);
-            }
-        }
-
-        public void OnNext(int newpageNumber)
-        {
-            ChangePage(newpageNumber);
-        }
-        public void OnPrev(int newpageNumber)
-        {
-            ChangePage(newpageNumber);
-        }
-        public void ApplyFilter(UcListView.Filter filter,int PageNumber)
-        {
-            LoadFilteredPage(filter,PageNumber);
-        }
-        public void CancelFilter()
-        {
-            LoadInitialPage();
-        }
-        private void ConfigureFilter()
-        {
-            var items = new List<UcListView.FilterItems>()
-                {
-                    new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Person), nameof(Customer.Person.FullName)),
-                                                 Value = nameof(Customer.Person.FullName)},
-                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Town), nameof(Customer.Person.Town.TownName)),
-                                                 Value = nameof(Customer.Person.Town.TownName)}
-                };
-
-            ucListView1.ConfigureFilter(items);
-        }
-        private void OnFilterApplied(UcListView.Filter filter)
-        {
-            ApplyFilter(filter, 1);
-        }
         private void frmCustomerListScreen_Load(object sender, EventArgs e)
         {
+            ucListView1.OnFilterClicked = OnFilterClicked;
+            ucListView1.OnFilterCanceled = OnFilterCanceled;
+            ucListView1.OnNextPage = OnPageChanged;
+            ucListView1.OnPreviousPage = OnPageChanged;
+            ucListView1.OnRefreshAfterOperation = OnOperationFinished;
+
             ucListView1.ConfigureGrid = ConfigureGrid;
-            ucListView1.OnNextPage = OnNext;
-            ucListView1.OnPreviousPage = OnPrev;
-            ucListView1.OnFilterApplied = OnFilterApplied;
-            ucListView1.OnFilterCanceled = CancelFilter;
 
-
-            LoadInitialPage();
+            DisplayPage(1);
             ConfigureFilter();
         }
 
-        private void RefreshData()
-        {
-            if (ucListView1.IsDataFiltered && ucListView1.LastFilter != null)
-            {
-                ApplyFilter(ucListView1.LastFilter,ucListView1.LastPageNumber);
-            }
-            else
-            {
-                ChangePage(ucListView1.LastPageNumber);
-            }
-        }
+
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
             var frm = frmAddUpdateCustomer.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
-            RefreshData();
+            ucListView1.RefreshAfterOperation();
         }
+
+
 
         /// <summary>
         /// Get Selected Id From Data Grid View 
@@ -301,30 +266,70 @@ namespace InventorySalesManagementSystem.Customers
         /// <returns>-1 if null</returns>
         private int GetSelectedId()
         {
-            var selecteditem = 
-             ucListView1.SelectedItem<CustomerListDto>();
+            var selecteditem =
+             ucListView1.GetSelectedItem<CustomerListDto>();
 
-            if(selecteditem != null)
+            if (selecteditem != null)
             {
                 return selecteditem.CustomerId;
             }
-            
+
             return -1;
         }
+
         private void updateMenustripItem_Click(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
-            if(id<0)
+            if (id < 0)
             {
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Customer)));
                 return;
             }
 
-            var frm = frmAddUpdateCustomer.CreateForUpdate(_serviceProvider,id);
+            var frm = frmAddUpdateCustomer.CreateForUpdate(_serviceProvider, id);
             frm.ShowDialog();
 
-            RefreshData();
+            ucListView1.RefreshAfterOperation();
+        }
+
+        private void deleteMenustripItem_Click(object sender, EventArgs e)
+        {
+            int id = GetSelectedId();
+
+            if (id < 0)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Customer)));
+                return;
+            }
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
+
+                try
+                {
+                    service.DeleteCustomer(id);
+                }
+                catch (NotFoundException ex)
+                {
+                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Customer)));
+                    return;
+                }
+                catch (OperationFailedException ex)
+                {
+                    Serilog.Log.Error(ex.InnerException, "Unexcepected Error During Deleting Customer ");
+
+                    MessageBox.Show(ex.MainBody, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Error(ex,"Unexcepected Error During Deleting Customer ");
+                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage());
+                }
+
+                ucListView1.RefreshAfterOperation();
+            }
         }
     }
 }

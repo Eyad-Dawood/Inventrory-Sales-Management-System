@@ -138,6 +138,7 @@
             deleteMenustripItem.RightToLeft = RightToLeft.Yes;
             deleteMenustripItem.Size = new Size(188, 30);
             deleteMenustripItem.Text = "حذف البيانات";
+            deleteMenustripItem.Click += deleteMenustripItem_Click;
             // 
             // ShowMenustripItem
             // 
