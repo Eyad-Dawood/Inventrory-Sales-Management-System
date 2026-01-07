@@ -309,5 +309,33 @@ namespace LogicLayer.Services
             return _customerRepo.GetTotalPagesByTownName(TownName,RowsPerPage);
         }
 
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public void ChangeActivationState(int CustomerId, bool State)
+        {
+            Customer worker = _customerRepo.GetById(CustomerId);
+
+            if (worker == null)
+            {
+                throw new NotFoundException(typeof(Customer));
+            }
+
+            worker.IsActive = State;
+
+            try
+            {
+                _unitOfWork.Save();
+                _logger.LogInformation("تم تغيير حالة العميل {CutomerId} إلى {State}", CustomerId, State);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "فشل تغيير حالة تنشيط العميل {CutomerId}", CustomerId);
+                throw new OperationFailedException(ex);
+            }
+        }
     }
 }

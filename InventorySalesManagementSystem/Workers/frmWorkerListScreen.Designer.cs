@@ -38,6 +38,8 @@
             updateMenustripItem = new ToolStripMenuItem();
             deleteMenustripItem = new ToolStripMenuItem();
             ShowMenustripItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            changeActivationStateMenuStripItem = new ToolStripMenuItem();
             panel2.SuspendLayout();
             panel4.SuspendLayout();
             cms.SuspendLayout();
@@ -98,10 +100,10 @@
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
-            cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem });
+            cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem, toolStripSeparator1, changeActivationStateMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(189, 116);
+            cms.Size = new Size(195, 152);
             // 
             // updateMenustripItem
             // 
@@ -111,7 +113,7 @@
             updateMenustripItem.Name = "updateMenustripItem";
             updateMenustripItem.RightToLeft = RightToLeft.Yes;
             updateMenustripItem.ShortcutKeyDisplayString = "";
-            updateMenustripItem.Size = new Size(188, 30);
+            updateMenustripItem.Size = new Size(194, 30);
             updateMenustripItem.Tag = "";
             updateMenustripItem.Text = "تعديل البيانات";
             updateMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
@@ -124,7 +126,7 @@
             deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             deleteMenustripItem.Name = "deleteMenustripItem";
             deleteMenustripItem.RightToLeft = RightToLeft.Yes;
-            deleteMenustripItem.Size = new Size(188, 30);
+            deleteMenustripItem.Size = new Size(194, 30);
             deleteMenustripItem.Text = "حذف البيانات";
             deleteMenustripItem.Click += deleteMenustripItem_Click_1;
             // 
@@ -135,9 +137,28 @@
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
-            ShowMenustripItem.Size = new Size(188, 30);
+            ShowMenustripItem.Size = new Size(194, 30);
             ShowMenustripItem.Text = "عرض البيانات";
             ShowMenustripItem.Click += ShowMenustripItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(191, 6);
+            // 
+            // changeActivationStateMenuStripItem
+            // 
+            changeActivationStateMenuStripItem.Alignment = ToolStripItemAlignment.Right;
+            changeActivationStateMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            changeActivationStateMenuStripItem.Image = Properties.Resources.power_button__1_;
+            changeActivationStateMenuStripItem.Name = "changeActivationStateMenuStripItem";
+            changeActivationStateMenuStripItem.RightToLeft = RightToLeft.Yes;
+            changeActivationStateMenuStripItem.ShortcutKeyDisplayString = "";
+            changeActivationStateMenuStripItem.Size = new Size(194, 30);
+            changeActivationStateMenuStripItem.Tag = "";
+            changeActivationStateMenuStripItem.Text = "تغيير حالة النشاط";
+            changeActivationStateMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
+            changeActivationStateMenuStripItem.Click += changeActivationStateMenuStripItem_Click;
             // 
             // frmWorkerListScreen
             // 
@@ -166,5 +187,7 @@
         private ToolStripMenuItem updateMenustripItem;
         private ToolStripMenuItem deleteMenustripItem;
         private ToolStripMenuItem ShowMenustripItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem changeActivationStateMenuStripItem;
     }
 }

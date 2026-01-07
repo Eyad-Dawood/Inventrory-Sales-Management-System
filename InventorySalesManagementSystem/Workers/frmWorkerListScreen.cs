@@ -273,7 +273,7 @@ namespace InventorySalesManagementSystem.Workers
         {
             int id = GetSelectedId();
 
-            if (id < 0)
+            if (id <= 0)
             {
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Worker)));
                 return;
@@ -300,7 +300,7 @@ namespace InventorySalesManagementSystem.Workers
         {
             int id = GetSelectedId();
 
-            if (id < 0)
+            if (id <= 0)
             {
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Worker)));
                 return;
@@ -325,14 +325,14 @@ namespace InventorySalesManagementSystem.Workers
         {
             int id = GetSelectedId();
 
-            if (id < 0)
+            if (id <= 0)
             {
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Worker)));
                 return;
             }
 
             var selectedWorker = ucListView1.GetSelectedItem<WorkerListDto>();
-            string name = selectedWorker?.FullName ?? id.ToString();           
+            string name = selectedWorker?.FullName ?? id.ToString();
 
             string message = $"هل أنت متأكد من حذف العامل؟\n\n" +
                              $"المعرف: {selectedWorker.WorkerId}\n" +
@@ -374,5 +374,56 @@ namespace InventorySalesManagementSystem.Workers
                 ucListView1.RefreshAfterOperation();
             }
         }
+
+        private void changeActivationStateMenuStripItem_Click(object sender, EventArgs e)
+        {
+            int id = GetSelectedId();
+
+            if (id <= 0)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Worker)));
+                return;
+            }
+            var selectedWorker = ucListView1.GetSelectedItem<WorkerListDto>();
+
+
+            string action = selectedWorker.IsActive ? "إيقاف تنشيط" : "تنشيط";
+            if (MessageBox.Show($"هل أنت متأكد من {action} العامل {selectedWorker.FullName}؟",
+                "تأكيد", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            {
+                return;
+            }
+
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<WorkerService>();
+                try
+                {
+                    service.ChangeActivationState(id, !selectedWorker.IsActive);
+                }
+                catch (NotFoundException ex)
+                {
+                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Worker)));
+                    return;
+                }
+                catch (OperationFailedException ex)
+                {
+                    Serilog.Log.Error(ex.InnerException, "Unexcepected Error During Changing Worker Activation State ");
+                    MessageBox.Show(ex.MainBody, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Error(ex, "Unexcepected Error During Changing Worker Activation State ");
+                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage());
+                }
+            }
+
+            ucListView1.RefreshAfterOperation();
+        }
+
+       
     }
 }
