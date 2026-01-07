@@ -165,6 +165,11 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                 MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Error while adding Product Type");
+                MessageBox.Show("حدث خطأ غير متوقع", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             MessageBox.Show("تمت الإضافة بنجاح");
             this.Close();

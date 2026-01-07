@@ -2,6 +2,7 @@
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
 using InventorySalesManagementSystem.Customers;
+using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.Products.ProductsTypes;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.CustomerDTO;
@@ -40,13 +41,19 @@ namespace InventorySalesManagementSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            using(var frm = new frmProductTypeListScreen(_serviceProvider, selectMode: true))
+            using (var frm = new frmProductTypeListScreen(_serviceProvider, selectMode: true))
             {
-                if(frm.ShowDialog()==DialogResult.OK)
+                if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    MessageBox.Show(frm.SelectedProductType.Name,frm.SelectedProductType.ProductTypeId.ToString());
+                    MessageBox.Show(frm.SelectedProductType.Name, frm.SelectedProductType.ProductTypeId.ToString());
                 }
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var frm = frmAddUpdateProduct.CreateForUpdate(_serviceProvider,4);
+            frm.ShowDialog();
         }
     }
 }

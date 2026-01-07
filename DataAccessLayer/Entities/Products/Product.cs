@@ -1,26 +1,10 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Validation;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities.Products
 {
-    public enum Status
-        {
-        [Display(Name ="متاح")]
-        Avilable = 1,
-        [Display(Name ="منتهي")]
-        OutOfStock = 2,
-        [Display(Name ="غير متاح")]
-        NotAvilable = 3 }
-
 
     [Display(Name= "المنتج")]
     public class Product : IValidatable
@@ -49,11 +33,7 @@ namespace DataAccessLayer.Entities.Products
         [Display(Name= "إسم المنتج")]
         public string ProductName { get; set; }
 
-
-
-        public Status Status { get; set; }
-
-
+        public bool IsAvailable { get; set; }
 
         [ForeignKey(nameof(ProductType))]
         public int ProductTypeId { get; set; }
@@ -134,6 +114,31 @@ namespace DataAccessLayer.Entities.Products
                         Code = ValidationErrorCode.ValueOutOfRange
                     });
             }
+
+            //Validate SellilngPrice
+            if(SellingPrice<=0)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Product),
+                        PropertyName = nameof(SellingPrice),
+                        Code = ValidationErrorCode.ValueOutOfRange
+                    });
+            }
+
+            //Validate BuyingPrice
+            if (BuyingPrice <= 0)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Product),
+                        PropertyName = nameof(BuyingPrice),
+                        Code = ValidationErrorCode.ValueOutOfRange
+                    });
+            }
+
 
             return errors.Count == 0;
         }

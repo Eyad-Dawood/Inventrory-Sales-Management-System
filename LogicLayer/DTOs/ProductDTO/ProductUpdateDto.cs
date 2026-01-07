@@ -13,8 +13,6 @@ namespace LogicLayer.DTOs.ProductDTO
         public decimal BuyingPrice { get; set; }
         public decimal SellingPrice { get; set; }
         public string ProductName { get; set; }
-        public Status Status { get; set; }
-        public int ProductTypeId { get; set; }
-        public int MasurementUnitId { get; set; }
+        public bool IsAvilable { get; set; }
     }
 }

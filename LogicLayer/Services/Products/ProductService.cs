@@ -5,10 +5,12 @@ using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Repos;
 using DataAccessLayer.Validation;
+using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
 using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
 using LogicLayer.DTOs.ProductTypeDTO;
+using LogicLayer.Utilities;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -47,17 +49,15 @@ namespace LogicLayer.Services.Products
                 ProductName = DTO.ProductName,
                 ProductTypeId = DTO.ProductTypeId,
                 QuantityInStorage = DTO.QuantityInStorage,
-                Status = DTO.Status
+                IsAvailable = DTO.IsAvailable
             };
         }
         private void ApplyProductUpdate(Product product,ProductUpdateDto DTO)
         {
             product.SellingPrice = DTO.SellingPrice;
             product.BuyingPrice = DTO.BuyingPrice;
-            product.MasurementUnitId = DTO.MasurementUnitId;
-            product.ProductTypeId = DTO.ProductTypeId;
             product.ProductName = DTO.ProductName;
-            product.Status = DTO.Status;
+            product.IsAvailable = DTO.IsAvilable;
         }
         private ProductReadDto MapProduct_ReadDto(Product product)
         {
@@ -68,9 +68,21 @@ namespace LogicLayer.Services.Products
                 SellingPrice = product.SellingPrice,
                 ProductId = product.ProductId,
                 ProductName = product.ProductName,
-                Status = product.Status,
+                IsAvailable = product.IsAvailable,
                 ProductTypeName = product.ProductType.ProductTypeName,
                 QuantityInStorage = product.QuantityInStorage
+            };
+        }
+
+        private ProductUpdateDto MapProduct_UpdateDto(Product product)
+        {
+            return new ProductUpdateDto()
+            {
+                BuyingPrice = product.BuyingPrice,
+                IsAvilable = product.IsAvailable,
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                SellingPrice = product.SellingPrice,
             };
         }
         private ProductPriceLogAddDto MapProduct_PriceLogDto(
@@ -115,25 +127,53 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddProduct(ProductAddDto DTO)
+        public void AddProduct(ProductAddDto DTO,int UserId)
         {
             Product Product = MapProduct_AddDto(DTO);
 
             ValidationHelper.ValidateEntity(Product);
 
-            _productRepo.Add(Product);
-
-            try
+            using (var Transaction = _unitOfWork.BeginTransaction())
             {
-                _unitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,
-                    "Failed to add product {ProductName}",
-                    DTO.ProductName);
 
-                throw new OperationFailedException(ex);
+                try
+                {
+                    _productRepo.Add(Product);
+
+                    //To Get Id 
+                    _unitOfWork.Save();
+
+
+                    //Log
+                    var logDto = MapProduct_StockMovementLogDto(
+                                Product,
+                                UserId,
+                                StockMovementReason.InitialStock,
+                                0);
+
+                    _stockMovementService.AddProductStockMovementLog(logDto);
+
+
+                    _unitOfWork.Save();
+                    Transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                        "Failed to add product {ProductName}",
+                        DTO.ProductName);
+
+                    _logger.LogError(ex,
+                       "Failed to change product {ProductId} quantity from {OldQuantity} by {QuantityChange} by user {UserId} for reason {Reason}",
+                       Product.ProductId,
+                       0,
+                       Product.QuantityInStorage,
+                       UserId,
+                       StockMovementReason.InitialStock);
+
+                    Transaction.Rollback();
+                    throw new OperationFailedException(ex);
+                }
             }
         }
 
@@ -259,7 +299,7 @@ namespace LogicLayer.Services.Products
                 .Select(p => new ProductListDto()
                 {
                     SellingPrice = p.SellingPrice,
-                    Status = p.Status,
+                    IsAvilable = p.IsAvailable,
                     BuyingPrice = p.BuyingPrice,
                     MesurementUnitName = p.MasurementUnit.UnitName,
                     ProductId = p.ProductId,
@@ -363,6 +403,12 @@ namespace LogicLayer.Services.Products
         /// </exception>
         public void AddQuantity(int productId, decimal quantity, int userId, StockMovementReason reason)
         {
+            //Check For Increasing Reasons Only
+            if (reason != StockMovementReason.Purchase)
+            {
+                throw new OperationFailedException($"هذا السبب [{reason.GetDisplayName()}] لا يمكن أن يزيد من الكمية");
+            }
+
             EditQuantity(productId, quantity,userId,reason,true);
         }
 
@@ -378,7 +424,29 @@ namespace LogicLayer.Services.Products
         /// </exception>
         public void RemoveQuantity(int productId, decimal quantity, int userId, StockMovementReason reason)
         {
+            //Check For Decreasing Reasons Only
+            if(reason!=StockMovementReason.Adjustment
+                &&reason!= StockMovementReason.Sale
+                &&reason!= StockMovementReason.Damage)
+            {
+                throw new OperationFailedException($"هذا السبب {reason.GetDisplayName()} لا يمكن أن يقلل من الكمية");
+            }
+
             EditQuantity(productId, quantity, userId, reason, false);
+        }
+
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        public ProductUpdateDto GetProductForUpdate(int ProductId)
+        {
+            Product product = _productRepo.GetById(ProductId);
+            if (product == null)
+            {
+                throw new NotFoundException(typeof(Product));
+            }
+            return MapProduct_UpdateDto(product);
         }
     }
 }

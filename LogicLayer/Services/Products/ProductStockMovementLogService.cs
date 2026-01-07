@@ -40,7 +40,8 @@ namespace LogicLayer.Services.Products
             ProductStockMovementLog productStockMovementLog = MapProductStockMovementLog_AddDto(DTO);
 
             _ProductStockMovementLogrepository.Add(productStockMovementLog);
-            _unitOfWork.Save();
+            //Do Not Save and leave it to the main caller
+            //_unitOfWork.Save();
             //Cannot Handle Any Exceptions Here By Using Try Catch , Because Want THe Caller (Product Service) To Know If There Is An Exception and Handle It There Not Here
         }
 

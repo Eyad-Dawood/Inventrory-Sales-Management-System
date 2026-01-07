@@ -104,6 +104,9 @@ namespace InventorySalesManagementSystem.Customers
         {
             FillCustomerUpdate();
 
+            //Validate Values Format
+            LogicLayer.Validation.Custom_Validation.PersonFormatValidation.ValidateValues(_customerUpdate.PersonUpdateDto);
+
             CustomerService.UpdateCustomer(_customerUpdate);
 
             //If Exception Is Thrown it Will Stop Here
@@ -114,12 +117,16 @@ namespace InventorySalesManagementSystem.Customers
         {
             FillCustomerAdd();
 
+            //Validate Values Format
+            LogicLayer.Validation.Custom_Validation.PersonFormatValidation.ValidateValues(_customerAdd.PersonAddDto);
+
             CustomerService.AddCustomer(_customerAdd);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تمت الإضافة بنجاح");
             this.Close();
         }
+
 
         private void btnSave_Click(object sender, EventArgs e)
         {

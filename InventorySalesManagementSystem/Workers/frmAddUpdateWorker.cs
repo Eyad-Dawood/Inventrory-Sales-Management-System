@@ -118,6 +118,10 @@ namespace InventorySalesManagementSystem.Workers
         {
             FillWorkerUpdate();
 
+            //Validate Values Format
+            LogicLayer.Validation.Custom_Validation.PersonFormatValidation.ValidateValues(_workerUpdate.PersonUpdateDto);
+
+
             WorkerService.UpdateWorker(_workerUpdate);
 
             //If Exception Is Thrown it Will Stop Here
@@ -127,6 +131,9 @@ namespace InventorySalesManagementSystem.Workers
         private void AddWorker(WorkerService WorkerService)
         {
             FillWorkerAdd();
+
+            //Validate Values Format
+            LogicLayer.Validation.Custom_Validation.PersonFormatValidation.ValidateValues(_workerAdd.PersonAddDto);
 
 
             WorkerService.AddWorker(_workerAdd);

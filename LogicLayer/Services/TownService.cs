@@ -38,7 +38,7 @@ namespace LogicLayer.Services
         {
             town.TownName = DTO.TownName;
         }
-        private TownUpdateDto MapTow_UpdateDto(Town town)
+        private TownUpdateDto MapTown_UpdateDto(Town town)
         {
             return new TownUpdateDto()
             {
@@ -179,7 +179,7 @@ namespace LogicLayer.Services
                 throw new NotFoundException(typeof(Town));
             }
 
-            return MapTow_UpdateDto(Town);
+            return MapTown_UpdateDto(Town);
         }
     }
 }

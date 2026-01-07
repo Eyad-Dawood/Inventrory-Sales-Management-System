@@ -51,6 +51,14 @@ namespace LogicLayer.Services.Products
             };
         }
 
+        private ProductTypeReadDto MapProductType_ReadDto(ProductType productType)
+        {
+            return new ProductTypeReadDto()
+            {
+                Name = productType.ProductTypeName
+            };
+        }
+
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
@@ -239,6 +247,21 @@ namespace LogicLayer.Services.Products
 
                 throw new OperationFailedException(ex);
             }
+        }
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        public ProductTypeReadDto GetProductTypeById(int ProductTypeId)
+        {
+            ProductType ProductType = _productTypeRepo.GetById(ProductTypeId);
+
+            if (ProductType == null)
+            {
+                throw new NotFoundException(typeof(ProductType));
+            }
+
+            return MapProductType_ReadDto(ProductType);
         }
     }
 }

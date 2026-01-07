@@ -1,6 +1,6 @@
-﻿using DataAccessLayer.Entities;
-using InventorySalesManagementSystem.General;
-using LogicLayer.DTOs.PersonDTO;
+﻿using InventorySalesManagementSystem.General;
+using InventorySalesManagementSystem.People.Towns;
+using LogicLayer.DTOs.MasurementUnitDTO;
 using LogicLayer.DTOs.TownDTO;
 using LogicLayer.Services;
 using LogicLayer.Validation.Exceptions;
@@ -8,35 +8,28 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
-namespace InventorySalesManagementSystem.People.Towns
+namespace InventorySalesManagementSystem.MasurementUnits
 {
-    public partial class FrmAddUpdateTown : Form
+    public partial class frmAddUpdateMasurementUnit : Form
     {
         private Enums.FormStateEnum State { set; get; }
         private IServiceProvider _serviceProvider { set; get; }
 
 
-        private TownAddDto _townAdd { set; get; }
-        private TownUpdateDto _townUpdate { set; get; }
+        private MasurementUnitAddDto _UnitAdd { get; set; }
+        private MasurementUnitUpdateDto _UnitUpdate { get; set; }
 
 
-
-
-
-        private FrmAddUpdateTown(IServiceProvider serviceProvider)
+        public frmAddUpdateMasurementUnit(IServiceProvider serviceProvider)
         {
             InitializeComponent();
-
             _serviceProvider = serviceProvider;
         }
 
@@ -44,70 +37,68 @@ namespace InventorySalesManagementSystem.People.Towns
         {
             State = Enums.FormStateEnum.AddNew;
 
-            this.Text = "إضافة بلد/مدينة";
+            this.Text = "إضافة وحدة قياس";
 
-            _townAdd = new TownAddDto();
+            _UnitAdd = new MasurementUnitAddDto();
 
             // UI defaults
             lb_TownId.Text = "---";
             txtTownName.Text = string.Empty;
         }
-        private void SetupUpdate(TownUpdateDto dto)
+        private void SetupUpdate(MasurementUnitUpdateDto dto)
         {
             State = Enums.FormStateEnum.Update;
-            this.Text = "تعديل بلد/مدينة";
-            _townUpdate = dto;
+            this.Text = "تعديل وحدة قياس";
+            _UnitUpdate = dto;
 
             //Load Data
-            LoadUpdateData(this._townUpdate);
+            LoadUpdateData(this._UnitUpdate);
+        }
+        private void LoadUpdateData(MasurementUnitUpdateDto dto)
+        {
+            this.lb_TownId.Text = dto.MasurementUnitId.ToString();
+            this.txtTownName.Text = dto.MasurementUnitName;
         }
 
-        private void LoadUpdateData(TownUpdateDto dto)
+        public static frmAddUpdateMasurementUnit CreateForAdd(IServiceProvider serviceProvider)
         {
-            this.lb_TownId.Text = dto.TownId.ToString();
-            this.txtTownName.Text = dto.TownName;
-        }
-
-        public static FrmAddUpdateTown CreateForAdd(IServiceProvider serviceProvider)
-        {
-            var form = new FrmAddUpdateTown(serviceProvider);
+            var form = new frmAddUpdateMasurementUnit(serviceProvider);
             form.SetupAdd();
             return form;
         }
 
-        public static FrmAddUpdateTown CreateForUpdate(IServiceProvider serviceProvider, int townId)
+        public static frmAddUpdateMasurementUnit CreateForUpdate(IServiceProvider serviceProvider, int townId)
         {
-            TownUpdateDto dto;
+            MasurementUnitUpdateDto dto;
 
             using (var scope = serviceProvider.CreateScope())
             {
-                var service = scope.ServiceProvider.GetRequiredService<TownService>();
+                var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 
-                dto = service.GetTownForUpdate(townId);
+                dto = service.GetUnitForUpdate(townId);
             }
 
-            var form = new FrmAddUpdateTown(serviceProvider);
+            var form = new frmAddUpdateMasurementUnit(serviceProvider);
             form.SetupUpdate(dto);
 
             return form;
         }
 
-
         private void SaveUpdates()
         {
-            _townUpdate.TownName = this.txtTownName.Text.Trim();
+            _UnitUpdate.MasurementUnitName = this.txtTownName.Text.Trim();
         }
         private void SaveAddNew()
         {
-            _townAdd.TownName = this.txtTownName.Text.Trim();
+            _UnitAdd.Name = this.txtTownName.Text.Trim();
         }
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-
-        private void UpdateTown()
+        private void UpdateMasurementUnit()
         {
             SaveUpdates();
 
@@ -115,10 +106,10 @@ namespace InventorySalesManagementSystem.People.Towns
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<TownService>();
+                    var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 
 
-                    service.UpdateTown(_townUpdate);
+                    service.UpdateMasurementUnit(_UnitUpdate);
                 }
             }
             catch (NotFoundException ex)
@@ -148,6 +139,8 @@ namespace InventorySalesManagementSystem.People.Towns
             MessageBox.Show("تم التحديث بنجاح");
             this.Close();
         }
+
+
         private void AddNew()
         {
             SaveAddNew();
@@ -156,10 +149,10 @@ namespace InventorySalesManagementSystem.People.Towns
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<TownService>();
+                    var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 
 
-                    service.AddTown(_townAdd);
+                    service.AddMasuremetUnit(_UnitAdd);
                 }
             }
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
@@ -172,9 +165,9 @@ namespace InventorySalesManagementSystem.People.Towns
                 MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
-                Serilog.Log.Error(ex, "Error while adding Town");
+                Serilog.Log.Error(ex, "Error while adding Measurement Unit");
                 MessageBox.Show("حدث خطأ غير متوقع", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
@@ -183,6 +176,7 @@ namespace InventorySalesManagementSystem.People.Towns
 
 
         }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (State == Enums.FormStateEnum.AddNew)
@@ -191,7 +185,7 @@ namespace InventorySalesManagementSystem.People.Towns
             }
             else if (State == Enums.FormStateEnum.Update)
             {
-                UpdateTown();
+                UpdateMasurementUnit();
             }
         }
     }

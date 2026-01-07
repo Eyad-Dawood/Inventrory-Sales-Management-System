@@ -69,6 +69,16 @@ namespace DataAccessLayer
                 .HasIndex(u => u.TownName)
                 .IsUnique();
 
+            //MasurementUnit
+            modelBuilder.Entity<MasurementUnit>()
+                .HasIndex(u=>u.UnitName)
+                .IsUnique();
+
+            //Product Type
+            modelBuilder.Entity<ProductType>()
+                .HasIndex(u => u.ProductTypeName)
+                .IsUnique();
+
 
             foreach (var foreignKey in modelBuilder.Model
                        .GetEntityTypes()
