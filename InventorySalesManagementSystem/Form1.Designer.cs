@@ -30,6 +30,7 @@
         {
             button1 = new Button();
             button4 = new Button();
+            button2 = new Button();
             SuspendLayout();
             // 
             // button1
@@ -54,11 +55,23 @@
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
             // 
+            // button2
+            // 
+            button2.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button2.Location = new Point(218, 50);
+            button2.Name = "button2";
+            button2.Size = new Size(172, 102);
+            button2.TabIndex = 5;
+            button2.Text = "ProductTypes Screen";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1182, 735);
+            Controls.Add(button2);
             Controls.Add(button4);
             Controls.Add(button1);
             Name = "Form1";
@@ -69,5 +82,6 @@
         #endregion
         private Button button1;
         private Button button4;
+        private Button button2;
     }
 }

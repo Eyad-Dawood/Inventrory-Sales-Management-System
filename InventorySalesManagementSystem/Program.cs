@@ -90,6 +90,7 @@ namespace InventorySalesManagementSystem
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IWorkerRepository, WorkerRepository>();
+            services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
 
             //Generic Repos
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -105,7 +106,6 @@ namespace InventorySalesManagementSystem
             services.AddScoped<TownService>();
             services.AddScoped<UserService>();
             services.AddScoped<WorkerService>();
-
 
             var serviceProvider = services.BuildServiceProvider();
 

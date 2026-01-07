@@ -1,42 +1,34 @@
-﻿using DataAccessLayer.Entities;
-using InventorySalesManagementSystem.General;
-using LogicLayer.DTOs.PersonDTO;
+﻿using InventorySalesManagementSystem.General;
+using InventorySalesManagementSystem.People.Towns;
+using LogicLayer.DTOs.ProductTypeDTO;
 using LogicLayer.DTOs.TownDTO;
 using LogicLayer.Services;
+using LogicLayer.Services.Products;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
-namespace InventorySalesManagementSystem.People.Towns
+namespace InventorySalesManagementSystem.Products.ProductsTypes
 {
-    public partial class FrmAddUpdateTown : Form
+    public partial class frmAddUpdateProductType : Form
     {
         private Enums.FormStateEnum State { set; get; }
         private IServiceProvider _serviceProvider { set; get; }
 
+        private ProductTypeAddDto _ProductTypeAdd { set; get; }
+        private ProductTypeUpdateDto _ProductTypeUpdate { set; get; }
 
-        private TownAddDto _townAdd { set; get; }
-        private TownUpdateDto _townUpdate { set; get; }
-
-
-
-
-
-        private FrmAddUpdateTown(IServiceProvider serviceProvider)
+        private frmAddUpdateProductType(IServiceProvider serviceProvider)
         {
             InitializeComponent();
-
             _serviceProvider = serviceProvider;
         }
 
@@ -44,49 +36,48 @@ namespace InventorySalesManagementSystem.People.Towns
         {
             State = Enums.FormStateEnum.AddNew;
 
-            this.Text = "إضافة بلد/مدينة";
+            this.Text = "إضافة موديل";
 
-            _townAdd = new TownAddDto();
+            _ProductTypeAdd = new ProductTypeAddDto();
 
             // UI defaults
-            lb_TownId.Text = "---";
-            txtTownName.Text = string.Empty;
+            lbId.Text = "---";
+            txtName.Text = string.Empty;
         }
-        private void SetupUpdate(TownUpdateDto dto)
+        private void SetupUpdate(ProductTypeUpdateDto dto)
         {
             State = Enums.FormStateEnum.Update;
-            this.Text = "تعديل بلد/مدينة";
-            _townUpdate = dto;
+            this.Text = "تعديل موديل";
+            _ProductTypeUpdate = dto;
 
             //Load Data
-            LoadUpdateData(this._townUpdate);
+            LoadUpdateData(this._ProductTypeUpdate);
         }
 
-        private void LoadUpdateData(TownUpdateDto dto)
+        private void LoadUpdateData(ProductTypeUpdateDto dto)
         {
-            this.lb_TownId.Text = dto.TownId.ToString();
-            this.txtTownName.Text = dto.TownName;
+            this.lbId.Text = dto.ProductTypeId.ToString();
+            this.txtName.Text = dto.Name;
         }
 
-        public static FrmAddUpdateTown CreateForAdd(IServiceProvider serviceProvider)
+        public static frmAddUpdateProductType CreateForAdd(IServiceProvider serviceProvider)
         {
-            var form = new FrmAddUpdateTown(serviceProvider);
+            var form = new frmAddUpdateProductType(serviceProvider);
             form.SetupAdd();
             return form;
         }
-
-        public static FrmAddUpdateTown CreateForUpdate(IServiceProvider serviceProvider, int townId)
+        public static frmAddUpdateProductType CreateForUpdate(IServiceProvider serviceProvider, int ProductTypeId)
         {
-            TownUpdateDto dto;
+            ProductTypeUpdateDto dto;
 
             using (var scope = serviceProvider.CreateScope())
             {
-                var service = scope.ServiceProvider.GetRequiredService<TownService>();
+                var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
-                dto = service.GetTownForUpdate(townId);
+                dto = service.GetProductTypeForUpdate(ProductTypeId);
             }
 
-            var form = new FrmAddUpdateTown(serviceProvider);
+            var form = new frmAddUpdateProductType(serviceProvider);
             form.SetupUpdate(dto);
 
             return form;
@@ -95,19 +86,20 @@ namespace InventorySalesManagementSystem.People.Towns
 
         private void SaveUpdates()
         {
-            _townUpdate.TownName = this.txtTownName.Text.Trim();
+            _ProductTypeUpdate.Name = this.txtName.Text.Trim();
         }
+
         private void SaveAddNew()
         {
-            _townAdd.TownName = this.txtTownName.Text.Trim();
+            _ProductTypeAdd.Name = this.txtName.Text.Trim();
         }
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-
-        private void UpdateTown()
+        private void UpdateProductType()
         {
             SaveUpdates();
 
@@ -115,10 +107,10 @@ namespace InventorySalesManagementSystem.People.Towns
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<TownService>();
+                    var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
 
-                    service.UpdateTown(_townUpdate);
+                    service.UpdateProductType(_ProductTypeUpdate);
                 }
             }
             catch (NotFoundException ex)
@@ -140,7 +132,7 @@ namespace InventorySalesManagementSystem.People.Towns
             {
                 Serilog.Log.Error(
                           ex,
-                          "Unexpected error while Updating Town");
+                          "Unexpected error while Updating Product Type");
                 MessageBox.Show("حدث خطأ غير متوقع أثناء التحديث", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -148,7 +140,8 @@ namespace InventorySalesManagementSystem.People.Towns
             MessageBox.Show("تم التحديث بنجاح");
             this.Close();
         }
-        private void AddnNew()
+
+        private void AddNew()
         {
             SaveAddNew();
 
@@ -156,10 +149,10 @@ namespace InventorySalesManagementSystem.People.Towns
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<TownService>();
+                    var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
 
-                    service.AddTown(_townAdd);
+                    service.AddProductType(_ProductTypeAdd);
                 }
             }
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
@@ -178,15 +171,16 @@ namespace InventorySalesManagementSystem.People.Towns
 
 
         }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (State == Enums.FormStateEnum.AddNew)
             {
-                AddnNew();
+                AddNew();
             }
             else if (State == Enums.FormStateEnum.Update)
             {
-                UpdateTown();
+                UpdateProductType();
             }
         }
     }

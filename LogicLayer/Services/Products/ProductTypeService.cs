@@ -2,25 +2,19 @@
 using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Products;
 using LogicLayer.DTOs.ProductTypeDTO;
-using LogicLayer.DTOs.TownDTO;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogicLayer.Services.Products
 {
     public class ProductTypeService
     {
-        private readonly IRepository<ProductType> _productTypeRepo;
+        private readonly IProductTypeRepository _productTypeRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<ProductTypeService> _logger;
 
-        public ProductTypeService(IRepository<ProductType> productTypeRepository, IUnitOfWork unitOfWork,ILogger<ProductTypeService>logger)
+        public ProductTypeService(IProductTypeRepository productTypeRepository, IUnitOfWork unitOfWork,ILogger<ProductTypeService>logger)
         {
             _productTypeRepo = productTypeRepository;
             _unitOfWork = unitOfWork;
@@ -38,7 +32,25 @@ namespace LogicLayer.Services.Products
             productType.ProductTypeName = DTO.Name;
         }
 
-        
+        private ProductTypeUpdateDto MapProductType_UpdateDto(ProductType product)
+        {
+            return new ProductTypeUpdateDto()
+            {
+                Name = product.ProductTypeName,
+                ProductTypeId = product.ProductTypeId
+            };
+        }
+
+
+        private ProductTypeListDto MapProductType_ListDto(ProductType product)
+        {
+            return new ProductTypeListDto()
+            {
+                ProductTypeId = product.ProductTypeId,
+                Name = product.ProductTypeName
+            };
+        }
+
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
@@ -108,7 +120,7 @@ namespace LogicLayer.Services.Products
         /// </exception>
         public void UpdateProductType(ProductTypeUpdateDto DTO)
         {
-            ProductType productType = _productTypeRepo.GetById(DTO.ProducTypetId);
+            ProductType productType = _productTypeRepo.GetById(DTO.ProductTypeId);
 
             if (productType == null)
             {
@@ -127,7 +139,7 @@ namespace LogicLayer.Services.Products
             {
                 _logger.LogError(ex,
                     "Failed to Update productType {Id}",
-                    DTO.ProducTypetId);
+                    DTO.ProductTypeId);
 
                 throw new OperationFailedException(ex);
             }
@@ -148,5 +160,85 @@ namespace LogicLayer.Services.Products
                 }).ToList();
         }
 
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        public ProductTypeUpdateDto GetProductTypeForUpdate(int ProductTypeId)
+        {
+            ProductType ProductType = _productTypeRepo.GetById(ProductTypeId);
+
+            if (ProductType == null)
+            {
+                throw new NotFoundException(typeof(ProductType));
+            }
+
+            return MapProductType_UpdateDto(ProductType);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<ProductTypeListDto> GetAllByProductTypeName(int PageNumber, int RowsPerPage, string TypeName)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return _productTypeRepo.
+                            GetAllByProductTypeName(PageNumber, RowsPerPage, TypeName)
+                            .Select(p => MapProductType_ListDto(p))
+                            .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPagesByProductTypeName(string Name, int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _productTypeRepo.GetTotalPagesByProductTypeName(Name, RowsPerPage);
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageNumber(int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _productTypeRepo.GetTotalPages(RowsPerPage);
+        }
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public void DeleteById(int ProductTypeId)
+        {
+            ProductType productType = _productTypeRepo.GetById(ProductTypeId);
+
+            if (productType == null)
+            {
+                throw new NotFoundException(typeof(ProductType));
+            }
+
+            _productTypeRepo.Delete(ProductTypeId);
+
+            try
+            {
+                _unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                   "Failed to Delete ProductType {TypeId}",
+                   ProductTypeId);
+
+                throw new OperationFailedException(ex);
+            }
+        }
     }
 }

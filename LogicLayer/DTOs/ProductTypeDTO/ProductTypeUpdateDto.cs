@@ -8,7 +8,7 @@ namespace LogicLayer.DTOs.ProductTypeDTO
 {
     public class ProductTypeUpdateDto
     {
-        public int ProducTypetId { get; set; }
+        public int ProductTypeId { get; set; }
 
         public string Name { get; set; }
 

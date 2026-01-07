@@ -11,13 +11,14 @@ using DataAccessLayer.Abstractions;
 
 namespace DataAccessLayer.Entities.Products
 {
-    [Display(Name= "تصنيف المنتج")]
+    [Display(Name= "الموديل")]
     public class ProductType : IValidatable
     {
         [Key]
+        [Display(Name ="معرف الموديل")]
         public int ProductTypeId { get; set; }
         [MaxLength(300)]
-        [Display(Name= "نوع المنتج")]
+        [Display(Name= "إسم الموديل")]
         public string ProductTypeName { get; set; }
 
         public bool Validate(List<ValidationError> errors)

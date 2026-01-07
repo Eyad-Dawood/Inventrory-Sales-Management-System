@@ -31,10 +31,12 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             dgvData = new DataGridView();
             pnBottomBar = new Panel();
-            lbrowsCount = new Label();
-            lbPageNumber = new Label();
-            btnPrevious = new Button();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            flowLayoutPanel1 = new FlowLayoutPanel();
             btnNext = new Button();
+            btnPrevious = new Button();
+            lbPageNumber = new Label();
+            lbrowsCount = new Label();
             pnUpperBar = new Panel();
             btnCancelFilter = new Button();
             label1 = new Label();
@@ -43,6 +45,8 @@
             txtSearchValue = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             pnBottomBar.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             pnUpperBar.SuspendLayout();
             SuspendLayout();
             // 
@@ -79,68 +83,95 @@
             dgvData.ShowCellToolTips = false;
             dgvData.ShowEditingIcon = false;
             dgvData.ShowRowErrors = false;
-            dgvData.Size = new Size(980, 402);
+            dgvData.Size = new Size(980, 401);
             dgvData.TabIndex = 0;
             dgvData.CellMouseClick += dgvData_CellMouseClick;
             // 
             // pnBottomBar
             // 
-            pnBottomBar.Controls.Add(lbrowsCount);
-            pnBottomBar.Controls.Add(lbPageNumber);
-            pnBottomBar.Controls.Add(btnPrevious);
-            pnBottomBar.Controls.Add(btnNext);
+            pnBottomBar.Controls.Add(tableLayoutPanel1);
             pnBottomBar.Dock = DockStyle.Bottom;
-            pnBottomBar.Location = new Point(0, 437);
+            pnBottomBar.Location = new Point(0, 436);
             pnBottomBar.Name = "pnBottomBar";
-            pnBottomBar.Size = new Size(980, 33);
+            pnBottomBar.Size = new Size(980, 34);
             pnBottomBar.TabIndex = 1;
             // 
-            // lbrowsCount
+            // tableLayoutPanel1
             // 
-            lbrowsCount.Anchor = AnchorStyles.Left;
-            lbrowsCount.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbrowsCount.Location = new Point(1, 6);
-            lbrowsCount.Name = "lbrowsCount";
-            lbrowsCount.RightToLeft = RightToLeft.Yes;
-            lbrowsCount.Size = new Size(126, 23);
-            lbrowsCount.TabIndex = 4;
-            lbrowsCount.Text = "00 عنصر";
-            lbrowsCount.TextAlign = ContentAlignment.MiddleCenter;
+            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Controls.Add(flowLayoutPanel1, 2, 0);
+            tableLayoutPanel1.Controls.Add(lbPageNumber, 1, 0);
+            tableLayoutPanel1.Controls.Add(lbrowsCount, 0, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new Size(980, 34);
+            tableLayoutPanel1.TabIndex = 5;
             // 
-            // lbPageNumber
+            // flowLayoutPanel1
             // 
-            lbPageNumber.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            lbPageNumber.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbPageNumber.Location = new Point(370, 4);
-            lbPageNumber.Name = "lbPageNumber";
-            lbPageNumber.Size = new Size(241, 23);
-            lbPageNumber.TabIndex = 2;
-            lbPageNumber.Text = "1/??";
-            lbPageNumber.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnPrevious
-            // 
-            btnPrevious.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnPrevious.BackgroundImage = Properties.Resources.right_arrow__1_1;
-            btnPrevious.BackgroundImageLayout = ImageLayout.Stretch;
-            btnPrevious.Location = new Point(903, 4);
-            btnPrevious.Name = "btnPrevious";
-            btnPrevious.Size = new Size(34, 26);
-            btnPrevious.TabIndex = 1;
-            btnPrevious.UseVisualStyleBackColor = true;
-            btnPrevious.Click += btnPrevious_Click;
+            flowLayoutPanel1.Controls.Add(btnNext);
+            flowLayoutPanel1.Controls.Add(btnPrevious);
+            flowLayoutPanel1.Dock = DockStyle.Fill;
+            flowLayoutPanel1.FlowDirection = FlowDirection.RightToLeft;
+            flowLayoutPanel1.Location = new Point(655, 3);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(322, 28);
+            flowLayoutPanel1.TabIndex = 16;
             // 
             // btnNext
             // 
             btnNext.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnNext.BackgroundImage = Properties.Resources.right_arrow__1_;
             btnNext.BackgroundImageLayout = ImageLayout.Stretch;
-            btnNext.Location = new Point(943, 4);
+            btnNext.Location = new Point(289, 3);
             btnNext.Name = "btnNext";
-            btnNext.Size = new Size(34, 26);
-            btnNext.TabIndex = 0;
+            btnNext.Size = new Size(30, 27);
+            btnNext.TabIndex = 14;
             btnNext.UseVisualStyleBackColor = true;
             btnNext.Click += btnNext_Click;
+            // 
+            // btnPrevious
+            // 
+            btnPrevious.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnPrevious.BackgroundImage = Properties.Resources.right_arrow__1_1;
+            btnPrevious.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPrevious.Location = new Point(253, 3);
+            btnPrevious.Name = "btnPrevious";
+            btnPrevious.Padding = new Padding(0, 0, 0, 5);
+            btnPrevious.Size = new Size(30, 27);
+            btnPrevious.TabIndex = 16;
+            btnPrevious.UseVisualStyleBackColor = true;
+            btnPrevious.Click += btnPrevious_Click;
+            // 
+            // lbPageNumber
+            // 
+            lbPageNumber.Dock = DockStyle.Fill;
+            lbPageNumber.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbPageNumber.Location = new Point(330, 0);
+            lbPageNumber.Name = "lbPageNumber";
+            lbPageNumber.Size = new Size(319, 34);
+            lbPageNumber.TabIndex = 6;
+            lbPageNumber.Text = "1/??";
+            lbPageNumber.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lbrowsCount
+            // 
+            lbrowsCount.Anchor = AnchorStyles.Left;
+            lbrowsCount.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbrowsCount.Location = new Point(3, 5);
+            lbrowsCount.Name = "lbrowsCount";
+            lbrowsCount.RightToLeft = RightToLeft.Yes;
+            lbrowsCount.Size = new Size(111, 23);
+            lbrowsCount.TabIndex = 5;
+            lbrowsCount.Text = "00 عنصر";
+            lbrowsCount.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnUpperBar
             // 
@@ -223,6 +254,8 @@
             Size = new Size(980, 470);
             ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
             pnBottomBar.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
             pnUpperBar.ResumeLayout(false);
             pnUpperBar.PerformLayout();
             ResumeLayout(false);
@@ -232,15 +265,17 @@
 
         private DataGridView dgvData;
         private Panel pnBottomBar;
-        private Button btnPrevious;
-        private Button btnNext;
-        private Label lbPageNumber;
-        private Label lbrowsCount;
         private Panel pnUpperBar;
         private Button btnFilter;
         private TextBox txtSearchValue;
         private Label label1;
         private ComboBox cmpSearchBy;
         private Button btnCancelFilter;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Label lbPageNumber;
+        private Label lbrowsCount;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private Button btnNext;
+        private Button btnPrevious;
     }
 }

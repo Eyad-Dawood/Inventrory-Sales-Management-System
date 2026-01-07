@@ -16,6 +16,43 @@ namespace InventorySalesManagementSystem.UserControles
 {
     public partial class UcListView : UserControl
     {
+        //UI Properties
+        #region UIProperties
+        private bool _allowPagin = true;
+        [Browsable(true)]
+        [DefaultValue(true)]
+        public bool AllowPaging
+        {
+            get
+            {
+                return _allowPagin;
+            }
+            set
+            {
+                _allowPagin = value;
+                ChangePagginUI(_allowPagin);
+            }
+        }
+
+        private bool _allowFilter = true;
+        [Browsable(true)]
+        [DefaultValue(true)]
+        public bool AllowFilter
+        {
+            get
+            {
+                return _allowFilter;
+            }
+            set
+            {
+                _allowFilter = value;
+                ChangeFilterUI(_allowFilter);
+            }
+        }
+
+        #endregion
+
+
         enum RefreshDataOperation { NextPage = 0, PreviousPage = 1, DirectFilter = 2, DirectFilterCancel = 3, Operation = 4 }
         public UcListView()
         {
@@ -184,37 +221,6 @@ namespace InventorySalesManagementSystem.UserControles
         }
 
 
-        #region Misc
-        [Browsable(true)]
-        [DefaultValue(true)]
-        public bool AllowPaging
-        {
-            get
-            {
-                return _allowPagin;
-            }
-            set
-            {
-                _allowPagin = value;
-                ChangePagginUI(_allowPagin);
-            }
-        }
-
-        [Browsable(true)]
-        [DefaultValue(true)]
-        public bool AllowFilter
-        {
-            get
-            {
-                return _allowFilter;
-            }
-            set
-            {
-                _allowFilter = value;
-                ChangeFilterUI(_allowFilter);
-            }
-        }
-        #endregion
 
         public Action<DataGridView> ConfigureGrid;
 
@@ -225,9 +231,7 @@ namespace InventorySalesManagementSystem.UserControles
         public Action<int, Filter> OnRefreshAfterOperation;
 
         private bool _IsFilterItemsConfigured = false;
-        private bool _allowFilter = true;
         public bool IsDataFiltered = false;
-        private bool _allowPagin = true;
         private bool IsGridConfigured = false;
         private bool IsFilterSettingsValid
         {
@@ -389,5 +393,8 @@ namespace InventorySalesManagementSystem.UserControles
                 }
             }
         }
+
+
+
     }
 }
