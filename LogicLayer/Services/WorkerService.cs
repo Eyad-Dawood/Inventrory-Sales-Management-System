@@ -3,24 +3,26 @@ using DataAccessLayer.Entities;
 using DataAccessLayer.Validation;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.WorkerDTO;
+using LogicLayer.Utilities;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace LogicLayer.Services
 {
-    public class WorkerService 
+    public class WorkerService
     {
         private readonly IWorkerRepository _workerRepo;
         private readonly IRepository<Person> _personRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<WorkerService> _logger;
-        public WorkerService(IWorkerRepository workerRepo, IRepository<Person> personRepo, IUnitOfWork unitOfWork, ILogger<WorkerService>logger)
+        public WorkerService(IWorkerRepository workerRepo, IRepository<Person> personRepo, IUnitOfWork unitOfWork, ILogger<WorkerService> logger)
         {
             _workerRepo = workerRepo;
             _personRepo = personRepo;
@@ -36,11 +38,10 @@ namespace LogicLayer.Services
                 Person = PersonService.MapPerosn_AddDto(DTO.PersonAddDto)
             };
         }
-        private void ApplyWorkerUpdates(Worker worker , WorkerUpdateDto DTO)
+        private void ApplyWorkerUpdates(Worker worker, WorkerUpdateDto DTO)
         {
             //Update Worker
             worker.Craft = DTO.Craft;
-            worker.IsActive = DTO.IsActive;
 
             //Update Person
             PersonService.UpdatePersonData(worker.Person, DTO.PersonUpdateDto);
@@ -54,12 +55,32 @@ namespace LogicLayer.Services
                 IsActive = worker.IsActive,
                 WorkerId = worker.WorkerId,
                 NationalNumber = worker.Person.NationalNumber,
-                PersonId = worker.Person.PersonId,
                 PhoneNumber = worker.Person.PhoneNumber,
                 TownName = worker.Person.Town.TownName
             };
         }
 
+        private WorkerListDto MapWorker_ListDto(Worker worker)
+        {
+            return new WorkerListDto()
+            {
+                WorkerId = worker.WorkerId,
+                FullName = worker.Person.FullName,
+                Craft = (worker.Craft.ToDisplayText()),
+                IsActive = worker.IsActive,
+                PhoneNumber = worker.Person.PhoneNumber,
+                TownName = worker.Person.Town.TownName
+            };
+        }
+        private WorkerUpdateDto MapWorker_UpdateDto(Worker worker)
+        {
+            return new WorkerUpdateDto()
+            {
+                WorkerId = worker.WorkerId,
+                Craft = worker.Craft,
+                PersonUpdateDto = PersonService.MapPerosn_UpdateDto(worker.Person)
+            };
+        }
 
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
@@ -80,7 +101,7 @@ namespace LogicLayer.Services
             PersonService.MappNullStrings(worker.Person);
 
             using (var transaction = _unitOfWork.BeginTransaction())
-            { 
+            {
 
                 try
                 {
@@ -95,7 +116,7 @@ namespace LogicLayer.Services
 
                     transaction.Commit();
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     transaction.Rollback();
 
@@ -130,7 +151,7 @@ namespace LogicLayer.Services
             }
 
             //Apply Changes
-            ApplyWorkerUpdates(worker,DTO);
+            ApplyWorkerUpdates(worker, DTO);
 
             //Mapping Nulls
             PersonService.MappNullStrings(worker.Person);
@@ -172,7 +193,7 @@ namespace LogicLayer.Services
             }
 
             using (var transaction = _unitOfWork.BeginTransaction())
-            { 
+            {
                 try
                 {
                     _workerRepo.Delete(worker);
@@ -193,7 +214,7 @@ namespace LogicLayer.Services
                     worker.PersonId);
 
                     throw new OperationFailedException(ex);
-                } 
+                }
             }
         }
 
@@ -203,7 +224,7 @@ namespace LogicLayer.Services
         /// </exception>
         public WorkerReadDto GetWorkerById(int workerId)
         {
-            Worker worker = _workerRepo.GetWithPersonById(workerId);
+            Worker worker = _workerRepo.GetWithDetailsById(workerId);
             if (worker == null)
             {
                 throw new NotFoundException(typeof(Worker));
@@ -222,16 +243,81 @@ namespace LogicLayer.Services
 
             return _workerRepo
                 .GetAllWithPerson(PageNumber, RowsPerPage)
-                .Select(w => new WorkerListDto
-                {
-                    WorkerId = w.WorkerId,
-                    FullName = w.Person.FullName,
-                    PhoneNumber = w.Person.PhoneNumber,
-                    TownName = w.Person.Town.TownName,
-                    IsActive = w.IsActive,
-                    Craft = w.Craft
-                }
+                .Select(w => MapWorker_ListDto(w)
                 ).ToList();
+        }
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        public WorkerUpdateDto GetWorkerForUpdate(int WorkerId)
+        {
+            Worker worker = _workerRepo.GetWithPersonById(WorkerId);
+            if (worker == null)
+            {
+                throw new NotFoundException(typeof(Worker));
+            }
+            return MapWorker_UpdateDto(worker);
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageNumber(int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _workerRepo.GetTotalPages(RowsPerPage);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<WorkerListDto> GetAllByFullName(int PageNumber, int RowsPerPage, string Name)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return _workerRepo.
+                            GetAllByFullName(PageNumber, RowsPerPage, Name)
+                            .Select(w => MapWorker_ListDto(w))
+                            .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<WorkerListDto> GetAllByTownName(int PageNumber, int RowsPerPage, string TownName)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return _workerRepo.
+                            GetAllByTownName(PageNumber, RowsPerPage, TownName)
+                            .Select(w => MapWorker_ListDto(w))
+                            .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageByFullName(string Name, int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _workerRepo.GetTotalPagesByFullName(Name, RowsPerPage);
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageByTownName(string TownName, int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _workerRepo.GetTotalPagesByTownName(TownName, RowsPerPage);
         }
 
     }

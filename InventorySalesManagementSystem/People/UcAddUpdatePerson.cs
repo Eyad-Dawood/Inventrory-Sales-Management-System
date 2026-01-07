@@ -116,7 +116,7 @@ namespace InventorySalesManagementSystem.People
 
         private void LoadDefualtValues()
         {
-            lb_PerosnId.Text = "??";
+            lb_PerosnId.Text = "---";
             txtFirstName.Text = "";
             txtSecondName.Text = "";
             txtThirdName.Text = "";

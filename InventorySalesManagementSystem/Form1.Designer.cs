@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             button1 = new Button();
+            button4 = new Button();
             SuspendLayout();
             // 
             // button1
@@ -42,11 +43,23 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // button4
+            // 
+            button4.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button4.Location = new Point(40, 158);
+            button4.Name = "button4";
+            button4.Size = new Size(172, 102);
+            button4.TabIndex = 4;
+            button4.Text = "Workers Screen";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1182, 735);
+            Controls.Add(button4);
             Controls.Add(button1);
             Name = "Form1";
             Text = "Form1";
@@ -55,5 +68,6 @@
 
         #endregion
         private Button button1;
+        private Button button4;
     }
 }

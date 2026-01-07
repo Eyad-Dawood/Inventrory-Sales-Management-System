@@ -1,4 +1,4 @@
-﻿namespace InventorySalesManagementSystem.Customers
+﻿namespace InventorySalesManagementSystem.UserControles
 {
     partial class UcListView
     {
@@ -81,6 +81,7 @@
             dgvData.ShowRowErrors = false;
             dgvData.Size = new Size(980, 402);
             dgvData.TabIndex = 0;
+            dgvData.CellMouseClick += dgvData_CellMouseClick;
             // 
             // pnBottomBar
             // 

@@ -11,8 +11,10 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities
 {
+    [Flags]
     public enum WorkersCraftsEnum {
 
+        None = 0,
         [Display(Name ="نجار")]
         Carpenter = 1 ,
         [Display(Name = "نقاش")]
@@ -23,11 +25,13 @@ namespace DataAccessLayer.Entities
     public class Worker : IValidatable
     { 
         [Key]
+        [Display(Name = "معرف العامل")]
         public int WorkerId { get; set; }
 
+        [Display(Name = "الحرفة")]
         public WorkersCraftsEnum Craft { get; set; }
-        
 
+        [Display(Name = "النشاط")]
         public bool IsActive { get; set; }
 
         [ForeignKey(nameof(Person))]

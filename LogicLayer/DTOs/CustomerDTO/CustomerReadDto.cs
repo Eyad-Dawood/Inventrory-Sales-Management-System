@@ -15,8 +15,6 @@ namespace LogicLayer.DTOs.CustomerDTO
     {
         public int CustomerId { get; set; }
 
-        public int PersonId { get; set; }
-
         public decimal Balance { get; set; }
 
         public string FullName { get; set; }

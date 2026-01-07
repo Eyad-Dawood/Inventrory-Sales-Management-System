@@ -2,6 +2,7 @@
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
 using InventorySalesManagementSystem.Customers;
+using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.Services;
 using LogicLayer.Validation.Exceptions;
@@ -22,13 +23,18 @@ namespace InventorySalesManagementSystem
             _serviceProvider = serviceProvider;
         }
 
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
+
             var frm = new frmCustomerListScreen(_serviceProvider);
             frm.ShowDialog();
         }
 
-
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var frm = new frmWorkerListScreen(_serviceProvider);
+            frm.ShowDialog();
+        }
     }
 }

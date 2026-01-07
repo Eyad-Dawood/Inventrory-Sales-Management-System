@@ -88,7 +88,7 @@
             lb_CustomerId.RightToLeft = RightToLeft.Yes;
             lb_CustomerId.Size = new Size(179, 25);
             lb_CustomerId.TabIndex = 32;
-            lb_CustomerId.Text = "??";
+            lb_CustomerId.Text = "---";
             // 
             // label9
             // 

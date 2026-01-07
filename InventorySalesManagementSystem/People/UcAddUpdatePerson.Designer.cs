@@ -86,7 +86,7 @@
             lb_PerosnId.RightToLeft = RightToLeft.Yes;
             lb_PerosnId.Size = new Size(162, 25);
             lb_PerosnId.TabIndex = 30;
-            lb_PerosnId.Text = "??";
+            lb_PerosnId.Text = "----";
             // 
             // label9
             // 
@@ -259,12 +259,12 @@
             label1.TabIndex = 13;
             label1.Text = "الإسم : ";
             // 
-            // Uc_AddUpdatePerson
+            // UcAddUpdatePerson
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(pnAllControles);
-            Name = "Uc_AddUpdatePerson";
+            Name = "UcAddUpdatePerson";
             Size = new Size(632, 208);
             pnAllControles.ResumeLayout(false);
             pnAllControles.PerformLayout();

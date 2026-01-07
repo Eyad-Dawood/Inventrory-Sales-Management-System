@@ -23,6 +23,15 @@ namespace DataAccessLayer.Repos
                 .FirstOrDefault();
         }
 
+        public Customer GetWithDetailsById(int CustomerId)
+        {
+            return _context.Customers
+                .Where(c => c.CustomerId == CustomerId)
+                .AsNoTracking()
+                .Include(c => c.Person)
+                .ThenInclude(p=>p.Town)
+                .FirstOrDefault();
+        }
         public List<Customer> GetAllWithPerson(int PageNumber, int RowsPerPage)
         {
             return _context.Customers

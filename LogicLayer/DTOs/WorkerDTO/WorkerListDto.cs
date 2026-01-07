@@ -13,12 +13,8 @@ namespace LogicLayer.DTOs.WorkerDTO
         public string? PhoneNumber { get; set; }
         public string TownName { get; set; }
         public bool IsActive { get; set; }
-        public DataAccessLayer.Entities.WorkersCraftsEnum Craft { get; set; }
+        public string Craft { get; set; }
 
-        public List<string> CraftName { get
-        {
-            return Craft.ToDisplayNames();
-        }}
-
+        
     }
 }

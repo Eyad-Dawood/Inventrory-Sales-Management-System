@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace InventorySalesManagementSystem.Customers
+namespace InventorySalesManagementSystem.UserControles
 {
     public partial class UcListView : UserControl
     {
-        enum RefreshDataOperation { NextPage = 0,PreviousPage = 1 ,DirectFilter = 2, DirectFilterCancel = 3, Operation = 4 }
+        enum RefreshDataOperation { NextPage = 0, PreviousPage = 1, DirectFilter = 2, DirectFilterCancel = 3, Operation = 4 }
         public UcListView()
         {
             InitializeComponent();
@@ -68,7 +68,7 @@ namespace InventorySalesManagementSystem.Customers
 
                 case RefreshDataOperation.Operation:
                     RefreshDataAfterOperation();
-                     break;
+                    break;
 
                 default:
                     // No operation / unrecognized -> do nothing
@@ -84,7 +84,7 @@ namespace InventorySalesManagementSystem.Customers
                     return;
                 }
 
-                OnNextPage?.Invoke(_CurrentPageNumber + 1,GetFilter);
+                OnNextPage?.Invoke(_CurrentPageNumber + 1, GetFilter);
             }
         }
         private void ExcecuteOnPreviousPage()
@@ -96,7 +96,7 @@ namespace InventorySalesManagementSystem.Customers
                     return;
                 }
 
-                OnPreviousPage?.Invoke(_CurrentPageNumber - 1,GetFilter);
+                OnPreviousPage?.Invoke(_CurrentPageNumber - 1, GetFilter);
             }
         }
         private void ApplyDirictFilter()
@@ -130,7 +130,7 @@ namespace InventorySalesManagementSystem.Customers
                 {
                     SetFilterState(true);
 
-                    OnRefreshAfterOperation?.Invoke(_CurrentPageNumber,GetFilter);
+                    OnRefreshAfterOperation?.Invoke(_CurrentPageNumber, GetFilter);
                 }
             }
             //لو رجعت لقيتها مش مفلترة بردو اعمل زيها
@@ -138,7 +138,7 @@ namespace InventorySalesManagementSystem.Customers
             {
                 SetFilterState(false);
 
-                OnRefreshAfterOperation?.Invoke(_CurrentPageNumber,GetFilter);
+                OnRefreshAfterOperation?.Invoke(_CurrentPageNumber, GetFilter);
             }
         }
 
@@ -218,24 +218,27 @@ namespace InventorySalesManagementSystem.Customers
 
         public Action<DataGridView> ConfigureGrid;
 
-        public Action<int,Filter> OnNextPage;
-        public Action<int,Filter> OnPreviousPage;
+        public Action<int, Filter> OnNextPage;
+        public Action<int, Filter> OnPreviousPage;
         public Action<Filter> OnFilterClicked;
         public Action OnFilterCanceled;
-        public Action<int,Filter> OnRefreshAfterOperation;
+        public Action<int, Filter> OnRefreshAfterOperation;
 
         private bool _IsFilterItemsConfigured = false;
         private bool _allowFilter = true;
         public bool IsDataFiltered = false;
         private bool _allowPagin = true;
         private bool IsGridConfigured = false;
-        private bool IsFilterSettingsValid { get
+        private bool IsFilterSettingsValid
+        {
+            get
             {
                 return _IsFilterItemsConfigured
                     && cmpSearchBy.Items.Count > 0
                     && !string.IsNullOrWhiteSpace(txtSearchValue.Text)
                     && cmpSearchBy.SelectedValue != null;
-            } }
+            }
+        }
 
 
         private int _CurrentPageNumber = 1;
@@ -339,8 +342,8 @@ namespace InventorySalesManagementSystem.Customers
             {
                 DisplayInternal(data);
 
-                _CurrentPageNumber = PageNumber;
                 _TotalPages = Math.Max(TotalPages, 1);
+                _CurrentPageNumber = Math.Min(_TotalPages, PageNumber);
 
                 UpdatePagingUI();
                 ExcecuteConfigureGrid();
@@ -376,5 +379,15 @@ namespace InventorySalesManagementSystem.Customers
             RefreshData(RefreshDataOperation.Operation);
         }
 
+        private void dgvData_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (e.RowIndex >= 0)// Ensure Its Not The Header
+                {
+                    dgvData.CurrentCell = dgvData.Rows[e.RowIndex].Cells[0];
+                }
+            }
+        }
     }
 }

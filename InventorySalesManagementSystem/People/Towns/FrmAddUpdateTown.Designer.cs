@@ -57,7 +57,7 @@
             lb_TownId.RightToLeft = RightToLeft.Yes;
             lb_TownId.Size = new Size(60, 25);
             lb_TownId.TabIndex = 32;
-            lb_TownId.Text = "??";
+            lb_TownId.Text = "---";
             // 
             // label9
             // 

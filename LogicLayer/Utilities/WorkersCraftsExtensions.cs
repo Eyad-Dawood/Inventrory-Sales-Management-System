@@ -15,14 +15,15 @@ namespace LogicLayer.Utilities
         {
             return Enum.GetValues(typeof(WorkersCraftsEnum))
                 .Cast<WorkersCraftsEnum>()
-                .Where(p =>(WorkersCrafts & p) == p)
+                //Dont Get None
+                .Where(p => (int)p > 0 && (WorkersCrafts & p) == p)
                 .Select(p => p.GetDisplayName())
                 .ToList();
         }
 
         public static string ToDisplayText(this WorkersCraftsEnum WorkersCrafts)
         {
-            return string.Join(" ، ", WorkersCrafts.ToDisplayNames());
+            return string.Join(" و ", WorkersCrafts.ToDisplayNames());
         }
     }
 }

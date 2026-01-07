@@ -42,7 +42,6 @@ namespace LogicLayer.Services
             return new CustomerReadDto()
             {
                 CustomerId = customer.CustomerId,
-                PersonId = customer.PersonId,
                 Balance = customer.Balance,
                 IsActive = customer.IsActive,
                 FullName = customer.Person.FullName,
@@ -217,7 +216,7 @@ namespace LogicLayer.Services
         /// </exception>
         public CustomerReadDto GetCustomerById(int customerId)
         {
-            Customer customer = _customerRepo.GetWithPersonById(customerId);
+            Customer customer = _customerRepo.GetWithDetailsById(customerId);
 
             if (customer == null)
             {

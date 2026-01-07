@@ -16,8 +16,6 @@ namespace LogicLayer.DTOs.WorkerDTO
 
         public WorkersCraftsEnum Craft { get; set; }
 
-        public bool IsActive { get; set; }
-
         public PersonUpdateDto PersonUpdateDto { get; set; }
     }
 }

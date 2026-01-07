@@ -45,10 +45,10 @@ namespace InventorySalesManagementSystem.Customers
 
             _customerAdd = new CustomerAddDto();
 
-            lb_CustomerId.Text = "??";
+            lb_CustomerId.Text = "---";
             uc_AddUpdatePerson1.Start(_serviceProvider);
         }
-        public void SetupUpdate(CustomerUpdateDto dto)
+        private void SetupUpdate(CustomerUpdateDto dto)
         {
             State = Enums.FormStateEnum.Update;
 
@@ -106,8 +106,8 @@ namespace InventorySalesManagementSystem.Customers
 
             CustomerService.UpdateCustomer(_customerUpdate);
 
+            //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تم التحديث بنجاح");
-
             this.Close();
         }
         private void AddCustomer(CustomerService CustomerService)
@@ -116,8 +116,8 @@ namespace InventorySalesManagementSystem.Customers
 
             CustomerService.AddCustomer(_customerAdd);
 
+            //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تمت الإضافة بنجاح");
-
             this.Close();
         }
 

@@ -49,7 +49,7 @@ namespace InventorySalesManagementSystem.People.Towns
             _townAdd = new TownAddDto();
 
             // UI defaults
-            lb_TownId.Text = "??";
+            lb_TownId.Text = "---";
             txtTownName.Text = string.Empty;
         }
         private void SetupUpdate(TownUpdateDto dto)

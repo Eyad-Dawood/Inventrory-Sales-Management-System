@@ -12,7 +12,6 @@ namespace LogicLayer.DTOs.WorkerDTO
     public class WorkerReadDto
     {
         public int WorkerId { get; set; }
-        public int PersonId { get; set; }
         public WorkersCraftsEnum Craft { get; set; }
         public bool IsActive { get; set; }
         public string FullName { get; set; }

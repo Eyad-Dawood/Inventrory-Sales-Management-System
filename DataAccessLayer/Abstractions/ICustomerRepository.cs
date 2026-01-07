@@ -10,6 +10,7 @@ namespace DataAccessLayer.Abstractions
     public interface ICustomerRepository : IRepository<Customer>
     {
         public Customer GetWithPersonById(int CustomerId);
+        public Customer GetWithDetailsById(int CustomerId);
         public List<Customer> GetAllWithPerson(int PageNumber,int RowsPerPage);
         public List<Customer> GetAllByFullName(int PageNumber, int RowsPerPage,string FullName);
         public List<Customer> GetAllByTownName(int PageNumber, int RowsPerPage,string townName);

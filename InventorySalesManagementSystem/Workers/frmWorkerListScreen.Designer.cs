@@ -1,6 +1,6 @@
-﻿namespace InventorySalesManagementSystem.Customers
+﻿namespace InventorySalesManagementSystem.Workers
 {
-    partial class frmCustomerListScreen
+    partial class frmWorkerListScreen
     {
         /// <summary>
         /// Required designer variable.
@@ -29,61 +29,71 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            panel1 = new Panel();
             ucListView1 = new InventorySalesManagementSystem.UserControles.UcListView();
-            panel4 = new Panel();
+            panel2 = new Panel();
+            lbTitle = new Label();
             btnAdd = new Button();
+            panel4 = new Panel();
             cms = new ContextMenuStrip(components);
             updateMenustripItem = new ToolStripMenuItem();
             deleteMenustripItem = new ToolStripMenuItem();
             ShowMenustripItem = new ToolStripMenuItem();
-            panel2 = new Panel();
-            lbTitle = new Label();
-            panel1.SuspendLayout();
+            panel2.SuspendLayout();
             panel4.SuspendLayout();
             cms.SuspendLayout();
-            panel2.SuspendLayout();
             SuspendLayout();
-            // 
-            // panel1
-            // 
-            panel1.BackColor = SystemColors.AppWorkspace;
-            panel1.Controls.Add(ucListView1);
-            panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 129);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(1214, 532);
-            panel1.TabIndex = 0;
             // 
             // ucListView1
             // 
             ucListView1.BackColor = SystemColors.Control;
             ucListView1.Dock = DockStyle.Fill;
-            ucListView1.Location = new Point(0, 0);
+            ucListView1.Location = new Point(0, 138);
             ucListView1.Name = "ucListView1";
-            ucListView1.Size = new Size(1214, 532);
-            ucListView1.TabIndex = 0;
+            ucListView1.Size = new Size(1214, 523);
+            ucListView1.TabIndex = 21;
             // 
-            // panel4
+            // panel2
             // 
-            panel4.Controls.Add(btnAdd);
-            panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 88);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(1214, 41);
-            panel4.TabIndex = 19;
+            panel2.Controls.Add(lbTitle);
+            panel2.Dock = DockStyle.Top;
+            panel2.Location = new Point(0, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(1214, 95);
+            panel2.TabIndex = 22;
+            // 
+            // lbTitle
+            // 
+            lbTitle.Dock = DockStyle.Fill;
+            lbTitle.Font = new Font("Calibri", 60F, FontStyle.Bold);
+            lbTitle.Location = new Point(0, 0);
+            lbTitle.Margin = new Padding(4, 0, 4, 0);
+            lbTitle.Name = "lbTitle";
+            lbTitle.RightToLeft = RightToLeft.Yes;
+            lbTitle.Size = new Size(1214, 95);
+            lbTitle.TabIndex = 19;
+            lbTitle.Text = "شاشة العاملين";
+            lbTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnAdd
             // 
             btnAdd.Anchor = AnchorStyles.Right;
             btnAdd.BackgroundImage = Properties.Resources.add__1_;
             btnAdd.BackgroundImageLayout = ImageLayout.Stretch;
-            btnAdd.Location = new Point(1162, 0);
+            btnAdd.Location = new Point(1162, 1);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(40, 40);
             btnAdd.TabIndex = 2;
             btnAdd.UseVisualStyleBackColor = true;
             btnAdd.Click += btnAdd_Click;
+            // 
+            // panel4
+            // 
+            panel4.Controls.Add(btnAdd);
+            panel4.Dock = DockStyle.Top;
+            panel4.Location = new Point(0, 95);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(1214, 43);
+            panel4.TabIndex = 23;
             // 
             // cms
             // 
@@ -91,7 +101,7 @@
             cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(175, 94);
+            cms.Size = new Size(189, 116);
             // 
             // updateMenustripItem
             // 
@@ -101,7 +111,7 @@
             updateMenustripItem.Name = "updateMenustripItem";
             updateMenustripItem.RightToLeft = RightToLeft.Yes;
             updateMenustripItem.ShortcutKeyDisplayString = "";
-            updateMenustripItem.Size = new Size(174, 30);
+            updateMenustripItem.Size = new Size(188, 30);
             updateMenustripItem.Tag = "";
             updateMenustripItem.Text = "تعديل البيانات";
             updateMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
@@ -114,9 +124,9 @@
             deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             deleteMenustripItem.Name = "deleteMenustripItem";
             deleteMenustripItem.RightToLeft = RightToLeft.Yes;
-            deleteMenustripItem.Size = new Size(174, 30);
+            deleteMenustripItem.Size = new Size(188, 30);
             deleteMenustripItem.Text = "حذف البيانات";
-            deleteMenustripItem.Click += deleteMenustripItem_Click;
+            deleteMenustripItem.Click += deleteMenustripItem_Click_1;
             // 
             // ShowMenustripItem
             // 
@@ -125,61 +135,36 @@
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
-            ShowMenustripItem.Size = new Size(174, 30);
+            ShowMenustripItem.Size = new Size(188, 30);
             ShowMenustripItem.Text = "عرض البيانات";
             ShowMenustripItem.Click += ShowMenustripItem_Click;
             // 
-            // panel2
-            // 
-            panel2.Controls.Add(lbTitle);
-            panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(0, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(1214, 88);
-            panel2.TabIndex = 21;
-            // 
-            // lbTitle
-            // 
-            lbTitle.Dock = DockStyle.Fill;
-            lbTitle.Font = new Font("Calibri", 60F, FontStyle.Bold);
-            lbTitle.Location = new Point(0, 0);
-            lbTitle.Margin = new Padding(4, 0, 4, 0);
-            lbTitle.Name = "lbTitle";
-            lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(1214, 88);
-            lbTitle.TabIndex = 19;
-            lbTitle.Text = "شاشة العملاء";
-            lbTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // frmCustomerListScreen
+            // frmWorkerListScreen
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1214, 661);
-            Controls.Add(panel1);
+            Controls.Add(ucListView1);
             Controls.Add(panel4);
             Controls.Add(panel2);
             MinimumSize = new Size(900, 700);
-            Name = "frmCustomerListScreen";
-            Load += frmCustomerListScreen_Load;
-            panel1.ResumeLayout(false);
+            Name = "frmWorkerListScreen";
+            Load += frmWorkerListScreen_Load;
+            panel2.ResumeLayout(false);
             panel4.ResumeLayout(false);
             cms.ResumeLayout(false);
-            panel2.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Panel panel1;
-        private InventorySalesManagementSystem.UserControles.UcListView ucListView1;
-        private Panel panel4;
+        private UserControles.UcListView ucListView1;
+        private Panel panel2;
+        private Label lbTitle;
         private Button btnAdd;
+        private Panel panel4;
         private ContextMenuStrip cms;
         private ToolStripMenuItem updateMenustripItem;
         private ToolStripMenuItem deleteMenustripItem;
         private ToolStripMenuItem ShowMenustripItem;
-        private Panel panel2;
-        private Label lbTitle;
     }
 }
