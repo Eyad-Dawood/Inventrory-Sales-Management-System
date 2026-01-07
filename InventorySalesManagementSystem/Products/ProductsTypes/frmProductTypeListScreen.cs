@@ -22,13 +22,35 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 {
     public partial class frmProductTypeListScreen : Form
     {
+        public ProductTypeListDto SelectedProductType { get; private set; }
+        private bool _selectMode = false;
+
+        [Browsable(false)]
+        [DefaultValue(false)]
+        public bool SelectMode 
+        {
+            get 
+            {
+            return _selectMode;
+            }
+                set
+            {
+                btnSelect.Visible = value;
+                btnSelect.Enabled = value;
+
+            _selectMode = value;
+            }
+        }
+      
+
         private readonly IServiceProvider _serviceProvider;
         private const int RowsPerPage = 30;
 
-        public frmProductTypeListScreen(IServiceProvider serviceProvider)
+        public frmProductTypeListScreen(IServiceProvider serviceProvider, bool selectMode)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
+            SelectMode = selectMode;
         }
 
         #region Config
@@ -301,6 +323,16 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                 ucListView1.RefreshAfterOperation();
             }
 
-        }       
+        }
+
+        private void btnSelect_Click(object sender, EventArgs e)
+        {
+            SelectedProductType = ucListView1.GetSelectedItem<ProductTypeListDto>();
+
+            if (SelectMode && SelectedProductType!=null)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
+        }
     }
 }

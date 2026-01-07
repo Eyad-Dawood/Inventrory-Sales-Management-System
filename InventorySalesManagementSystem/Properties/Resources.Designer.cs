@@ -93,6 +93,16 @@ namespace InventorySalesManagementSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap check__3___1_ {
+            get {
+                object obj = ResourceManager.GetObject("check (3) (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap driver_license__1_ {
             get {
                 object obj = ResourceManager.GetObject("driver-license (1)", resourceCulture);

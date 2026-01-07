@@ -40,8 +40,13 @@ namespace InventorySalesManagementSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var frm = new frmProductTypeListScreen(_serviceProvider);
-            frm.ShowDialog();
+            using(var frm = new frmProductTypeListScreen(_serviceProvider, selectMode: true))
+            {
+                if(frm.ShowDialog()==DialogResult.OK)
+                {
+                    MessageBox.Show(frm.SelectedProductType.Name,frm.SelectedProductType.ProductTypeId.ToString());
+                }
+            }
         }
     }
 }

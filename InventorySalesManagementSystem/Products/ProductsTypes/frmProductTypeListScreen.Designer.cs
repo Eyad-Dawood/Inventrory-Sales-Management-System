@@ -32,6 +32,7 @@
             panel2 = new Panel();
             lbTitle = new Label();
             panel4 = new Panel();
+            btnSelect = new Button();
             btnAdd = new Button();
             cms = new ContextMenuStrip(components);
             updateMenustripItem = new ToolStripMenuItem();
@@ -68,12 +69,27 @@
             // 
             // panel4
             // 
+            panel4.Controls.Add(btnSelect);
             panel4.Controls.Add(btnAdd);
             panel4.Dock = DockStyle.Top;
             panel4.Location = new Point(0, 55);
             panel4.Name = "panel4";
             panel4.Size = new Size(604, 41);
             panel4.TabIndex = 23;
+            // 
+            // btnSelect
+            // 
+            btnSelect.Anchor = AnchorStyles.Right;
+            btnSelect.BackgroundImage = Properties.Resources.check__3___1_;
+            btnSelect.BackgroundImageLayout = ImageLayout.Stretch;
+            btnSelect.Enabled = false;
+            btnSelect.Location = new Point(518, 0);
+            btnSelect.Name = "btnSelect";
+            btnSelect.Size = new Size(40, 40);
+            btnSelect.TabIndex = 3;
+            btnSelect.UseVisualStyleBackColor = true;
+            btnSelect.Visible = false;
+            btnSelect.Click += btnSelect_Click;
             // 
             // btnAdd
             // 
@@ -169,5 +185,6 @@
         private ToolStripMenuItem deleteMenustripItem;
         private Panel panel1;
         private UserControles.UcListView ucListView1;
+        private Button btnSelect;
     }
 }
