@@ -39,5 +39,93 @@ namespace DataAccessLayer.Repos
                 .AsNoTracking()
                 .ToList();
         }
+
+        public List<Product> GetAllByProductTypeName(int PageNumber, int RowsPerPage, string ProductTypeName)
+        {
+            if (string.IsNullOrWhiteSpace(ProductTypeName))
+            {
+                return new List<Product>();
+            }
+
+            ProductTypeName = ProductTypeName.Trim();
+
+            return _context.Products
+                .AsNoTracking()
+                .Include(p=>p.ProductType)
+                .Include(p=>p.MasurementUnit)
+                .Where(p => EF.Functions.Like(
+                    p.ProductType.ProductTypeName,
+                    $@"{ProductTypeName}%"))
+                .OrderBy(c => c.ProductId)
+                .Skip((PageNumber - 1) * RowsPerPage)
+                .Take(RowsPerPage)
+                .ToList();
+        }
+
+        public List<Product> GetAllByFullName(
+        int pageNumber,
+        int rowsPerPage,
+        string ProductTypeName,
+        string ProductName)
+        {
+            //Both Should Be Null TO Go Back
+            if (string.IsNullOrWhiteSpace(ProductTypeName)&& string.IsNullOrWhiteSpace(ProductName))
+                return new List<Product>();
+
+            ProductName = ProductName.Trim();
+            ProductTypeName = ProductTypeName.Trim();
+
+            return _context.Products
+                .AsNoTracking()
+                .Include(p => p.ProductType)
+                 .Include(p=>p.MasurementUnit)
+                .Where(p => p.ProductType.ProductTypeName.
+                StartsWith(ProductTypeName)
+                &&
+                 p.ProductName.StartsWith(ProductName))
+                .OrderBy(c => c.ProductId)
+                .Skip((pageNumber - 1) * rowsPerPage)
+                .Take(rowsPerPage)
+                .ToList();
+        }
+
+        public int GetTotalPagesByFullName(string ProductTypeName,string ProductName, int rowsPerPage)
+        {
+            //Both Should Be Null TO Go Back
+            if (string.IsNullOrWhiteSpace(ProductTypeName) && string.IsNullOrWhiteSpace(ProductName))
+                return 0;
+
+
+            ProductName = ProductName.Trim();
+            ProductTypeName = ProductTypeName.Trim();
+
+            int totalCount = _context.Products
+                .AsNoTracking()
+                .Where(p => p.ProductType.ProductTypeName.
+                StartsWith(ProductTypeName)
+                &&
+                 p.ProductName.StartsWith(ProductName))
+                .Count();
+
+            return (int)Math.Ceiling(totalCount / (double)rowsPerPage);
+        }
+
+
+        public int GetTotalPagesByProductTypeName(string ProductTypeName, int RowsPerPage)
+        {
+            if (string.IsNullOrWhiteSpace(ProductTypeName))
+                return 0;
+
+            ProductTypeName = ProductTypeName.Trim();
+
+            int totalCount = _context.Products
+                .AsNoTracking()
+                .Where(p =>
+                    EF.Functions.Like(p.ProductType.ProductTypeName, $"{ProductTypeName}%"))
+                .Count();
+
+            return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
+        }
+
     }
 }

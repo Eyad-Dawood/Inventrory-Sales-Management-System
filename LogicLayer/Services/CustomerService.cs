@@ -317,14 +317,14 @@ namespace LogicLayer.Services
         /// </exception>
         public void ChangeActivationState(int CustomerId, bool State)
         {
-            Customer worker = _customerRepo.GetById(CustomerId);
+            Customer customer = _customerRepo.GetById(CustomerId);
 
-            if (worker == null)
+            if (customer == null)
             {
                 throw new NotFoundException(typeof(Customer));
             }
 
-            worker.IsActive = State;
+            customer.IsActive = State;
 
             try
             {

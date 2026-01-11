@@ -39,8 +39,11 @@
             ShowMenustripItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             changeActivationStateMenuStripItem = new ToolStripMenuItem();
+            WithDrawMenuStripItem = new ToolStripMenuItem();
             panel2 = new Panel();
             lbTitle = new Label();
+            toolStripSeparator2 = new ToolStripSeparator();
+            toolStripMenuItem1 = new ToolStripMenuItem();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             cms.SuspendLayout();
@@ -90,10 +93,10 @@
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
-            cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem, toolStripSeparator1, changeActivationStateMenuStripItem });
+            cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem, toolStripSeparator1, changeActivationStateMenuStripItem, toolStripSeparator2, toolStripMenuItem1, WithDrawMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(195, 130);
+            cms.Size = new Size(195, 218);
             // 
             // updateMenustripItem
             // 
@@ -150,6 +153,19 @@
             changeActivationStateMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
             changeActivationStateMenuStripItem.Click += changeActivationStateMenuStripItem_Click;
             // 
+            // WithDrawMenuStripItem
+            // 
+            WithDrawMenuStripItem.Alignment = ToolStripItemAlignment.Right;
+            WithDrawMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            WithDrawMenuStripItem.Image = Properties.Resources.power_button__1_;
+            WithDrawMenuStripItem.Name = "WithDrawMenuStripItem";
+            WithDrawMenuStripItem.RightToLeft = RightToLeft.Yes;
+            WithDrawMenuStripItem.ShortcutKeyDisplayString = "";
+            WithDrawMenuStripItem.Size = new Size(194, 30);
+            WithDrawMenuStripItem.Tag = "";
+            WithDrawMenuStripItem.Text = "سحب كمية";
+            WithDrawMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
+            // 
             // panel2
             // 
             panel2.Controls.Add(lbTitle);
@@ -171,6 +187,24 @@
             lbTitle.TabIndex = 19;
             lbTitle.Text = "شاشة العملاء";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(191, 6);
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Alignment = ToolStripItemAlignment.Right;
+            toolStripMenuItem1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            toolStripMenuItem1.Image = Properties.Resources.power_button__1_;
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.RightToLeft = RightToLeft.Yes;
+            toolStripMenuItem1.ShortcutKeyDisplayString = "";
+            toolStripMenuItem1.Size = new Size(194, 30);
+            toolStripMenuItem1.Tag = "";
+            toolStripMenuItem1.Text = "إضافة كمية";
+            toolStripMenuItem1.TextDirection = ToolStripTextDirection.Horizontal;
             // 
             // frmCustomerListScreen
             // 
@@ -204,5 +238,8 @@
         private Label lbTitle;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem changeActivationStateMenuStripItem;
+        private ToolStripMenuItem WithDrawMenuStripItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem toolStripMenuItem1;
     }
 }

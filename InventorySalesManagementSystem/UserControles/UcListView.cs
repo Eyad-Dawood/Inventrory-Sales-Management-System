@@ -50,6 +50,22 @@ namespace InventorySalesManagementSystem.UserControles
             }
         }
 
+        private bool _allowSecondSearchBox = false;
+        [Browsable(true)]
+        [DefaultValue(false)]
+        public bool AllowSecondSearchBox
+        {
+            get
+            {
+                return _allowSecondSearchBox;
+            }
+            set
+            {
+                _allowSecondSearchBox = value;
+                ChangeSecondFilterUi(_allowSecondSearchBox);
+            }
+        }
+
         #endregion
 
 
@@ -147,14 +163,14 @@ namespace InventorySalesManagementSystem.UserControles
         }
         private void CancelFilter()
         {
-            if (_IsFilterItemsConfigured)
+            if (_IsFilterItemsConfigured&&IsDataFiltered)
             {
                 SetFilterState(false);
                 OnFilterCanceled?.Invoke();
 
                 //Update Txtboxes
-                txtSearchValue.Text = string.Empty;
-
+                txtSearchValue1.Text = string.Empty;
+                txtSearchValue2.Text = string.Empty;
 
             }
         }
@@ -182,23 +198,23 @@ namespace InventorySalesManagementSystem.UserControles
         private void SetFilterState(bool filtered)
         {
             IsDataFiltered = filtered;
-            UpdateFilterUI(filtered);
         }
         private void ChangeFilterUI(bool filtered)
         {
             pnUpperBar.Enabled = filtered;
             pnUpperBar.Visible = filtered;
         }
-        private void UpdateFilterUI(bool value)
+        private void ChangeSecondFilterUi(bool Allow)
         {
-            //Disable Controls
-            cmpSearchBy.Enabled = !value;
-            txtSearchValue.Enabled = !value;
-            btnFilter.Enabled = !value;
+            txtSearchValue2.Enabled = Allow;
+            txtSearchValue2.Visible = Allow;
 
-            //Enable Controls
-            btnCancelFilter.Enabled = value;
+            if(Allow)
+                pnUpperButtons.Width -= txtSearchValue2.Width + 10;
+            else
+                pnUpperButtons.Width += txtSearchValue2.Width + 10;
         }
+
         private void ChangePagginUI(bool value)
         {
             lbPageNumber.Visible = value;
@@ -237,12 +253,20 @@ namespace InventorySalesManagementSystem.UserControles
         {
             get
             {
+                bool hasTxt1 = !string.IsNullOrWhiteSpace(txtSearchValue1.Text);
+                bool hasTxt2 = !string.IsNullOrWhiteSpace(txtSearchValue2.Text);
+
+                bool hasValidData = _allowSecondSearchBox
+                    ? (hasTxt1 || hasTxt2)
+                    : hasTxt1;
+
                 return _IsFilterItemsConfigured
                     && cmpSearchBy.Items.Count > 0
-                    && !string.IsNullOrWhiteSpace(txtSearchValue.Text)
-                    && cmpSearchBy.SelectedValue != null;
+                    && cmpSearchBy.SelectedValue != null
+                    && hasValidData;
             }
         }
+
 
 
         private int _CurrentPageNumber = 1;
@@ -261,7 +285,11 @@ namespace InventorySalesManagementSystem.UserControles
                     return new Filter
                     {
                         ColumnName = cmpSearchBy.SelectedValue.ToString(),
-                        FilterValue = txtSearchValue.Text
+                        FilterValues = new string[]
+                        {
+                            txtSearchValue1.Text.Trim(),
+                            _allowSecondSearchBox?txtSearchValue2.Text.Trim():string.Empty
+                        }
                     };
                 }
                 else
@@ -283,7 +311,7 @@ namespace InventorySalesManagementSystem.UserControles
         public class Filter
         {
             public string ColumnName { get; set; }
-            public string FilterValue { get; set; }
+            public string[] FilterValues { get; set; }
         }
 
 
@@ -383,18 +411,15 @@ namespace InventorySalesManagementSystem.UserControles
             RefreshData(RefreshDataOperation.Operation);
         }
 
-        private void dgvData_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dgvData_CellMouseDoun(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
             {
-                if (e.RowIndex >= 0)// Ensure Its Not The Header
-                {
-                    dgvData.CurrentCell = dgvData.Rows[e.RowIndex].Cells[0];
-                }
+                dgvData.ClearSelection();
+                dgvData.CurrentCell = dgvData.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                dgvData.Rows[e.RowIndex].Selected = true;
             }
         }
-
-
 
     }
 }

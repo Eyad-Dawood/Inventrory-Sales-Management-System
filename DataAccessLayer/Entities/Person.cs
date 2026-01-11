@@ -33,20 +33,9 @@ namespace DataAccessLayer.Entities
         [Display(Name= "الإسم الرابع")]
         public string? FourthName { get; set; }
 
-        [NotMapped]
         [Display(Name ="الإسم الكامل")]
-        public string FullName
-        {
-            get
-            {
-                List<string> names = new List<string> { FirstName, SecondName };
-                if (!string.IsNullOrWhiteSpace(ThirdName))
-                    names.Add(ThirdName);
-                if (!string.IsNullOrWhiteSpace(FourthName))
-                    names.Add(FourthName);
-                return string.Join(" ", names);
-            }
-        }
+        public string FullName { get; set; }
+           
 
         [MaxLength(14)]
         [Display(Name= "رقم البطاقة")]

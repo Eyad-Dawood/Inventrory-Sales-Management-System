@@ -168,13 +168,13 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.FilterValue)
+                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.FilterValues[0])
                     : GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.FilterValue)
+                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.FilterValues[0])
                     : GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<ProductTypeListDto>(data, pageToRequest, totalPages);
@@ -215,6 +215,8 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
             DisplayPage(1);
             ConfigureFilter();
+
+            ucListView1.Focus();
         }
 
         private void btnAdd_Click(object sender, EventArgs e)

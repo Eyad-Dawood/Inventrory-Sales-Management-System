@@ -13,6 +13,7 @@ namespace LogicLayer.DTOs.ProductDTO.StockMovementLogDTO
 
         public decimal OldQuantity { get; set; }
         public decimal NewQuantity { get; set; }
+        public string? Notes { get; set; }
 
         public StockMovementReason Reason { get; set; }
 

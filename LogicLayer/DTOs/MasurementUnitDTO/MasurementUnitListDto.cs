@@ -10,6 +10,6 @@ namespace LogicLayer.DTOs.MasurementUnitDTO
     {
         public int MasurementUnitId { get; set; }
 
-        public string Name { get; set; }
+        public string UnitName { get; set; }
     }
 }

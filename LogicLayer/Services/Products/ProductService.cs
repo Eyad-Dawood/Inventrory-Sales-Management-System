@@ -5,7 +5,7 @@ using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Repos;
 using DataAccessLayer.Validation;
-using LogicLayer.DTOs.CustomerDTO;
+using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
 using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
@@ -70,7 +70,23 @@ namespace LogicLayer.Services.Products
                 ProductName = product.ProductName,
                 IsAvailable = product.IsAvailable,
                 ProductTypeName = product.ProductType.ProductTypeName,
-                QuantityInStorage = product.QuantityInStorage
+                QuantityInStorage = product.QuantityInStorage,
+                TotalSlaes = 0
+            };
+        }
+
+        private ProductListDto MapProduct_ListDto(Product product)
+        {
+            return new ProductListDto()
+            {
+                SellingPrice = product.SellingPrice,
+                IsAvilable = product.IsAvailable,
+                BuyingPrice = product.BuyingPrice,
+                MesurementUnitName = product.MasurementUnit.UnitName,
+                ProductId = product.ProductId,
+                QuantityInStorage = product.QuantityInStorage,
+                ProductName = product.ProductName,
+                ProductTypeName = product.ProductType.ProductTypeName
             };
         }
 
@@ -107,7 +123,8 @@ namespace LogicLayer.Services.Products
             Product product,
             int UserId,
             StockMovementReason Reason,
-            decimal oldQuantity
+            decimal oldQuantity,
+            string? Notes
 
             )
         {
@@ -117,7 +134,8 @@ namespace LogicLayer.Services.Products
                 ProductId = product.ProductId,
                 Reason = Reason,
                 NewQuantity = product.QuantityInStorage,
-                OldQuantity = oldQuantity
+                OldQuantity = oldQuantity,
+                Notes = Notes
             };
         }
 
@@ -149,7 +167,8 @@ namespace LogicLayer.Services.Products
                                 Product,
                                 UserId,
                                 StockMovementReason.InitialStock,
-                                0);
+                                0,
+                                null);
 
                     _stockMovementService.AddProductStockMovementLog(logDto);
 
@@ -282,6 +301,7 @@ namespace LogicLayer.Services.Products
             {
                 throw new NotFoundException(typeof(Product));
             }
+            //Get Total Salse
             return MapProduct_ReadDto(product);
         }
 
@@ -289,24 +309,14 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductListDto> GetProductList(int PageNumber, int RowsPerPage) 
+        public List<ProductListDto> GetAllProducts(int PageNumber, int RowsPerPage) 
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
             return _productRepo
                 .GetAllWithProductType_And_Unit(PageNumber, RowsPerPage)
-                .Select(p => new ProductListDto()
-                {
-                    SellingPrice = p.SellingPrice,
-                    IsAvilable = p.IsAvailable,
-                    BuyingPrice = p.BuyingPrice,
-                    MesurementUnitName = p.MasurementUnit.UnitName,
-                    ProductId = p.ProductId,
-                    QuantityInStorage = p.QuantityInStorage,
-                    ProductName = p.ProductName,
-                    ProductTypeName = p.ProductType.ProductTypeName
-                }).ToList();
+                .Select(p => MapProduct_ListDto(p)).ToList();
         }
 
         /// <exception cref="NotFoundException">
@@ -318,7 +328,7 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        private void EditQuantity(int productId,decimal quantity,int userId,StockMovementReason reason,bool isAddition)
+        private void EditQuantity(int productId,decimal quantity,int userId,StockMovementReason reason,bool isAddition,string Notes)
         {
             if (quantity <= 0)
             {
@@ -366,7 +376,8 @@ namespace LogicLayer.Services.Products
                         product,
                         userId,
                         reason,
-                        oldQuantity);
+                        oldQuantity,
+                        Notes);
 
                     _stockMovementService.AddProductStockMovementLog(logDto);
 
@@ -401,15 +412,15 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddQuantity(int productId, decimal quantity, int userId, StockMovementReason reason)
+        public void AddQuantity(int productId, decimal quantity, int userId, StockMovementReason reason, string Notes)
         {
             //Check For Increasing Reasons Only
-            if (reason != StockMovementReason.Purchase)
+            if (reason != StockMovementReason.Purchase && reason != StockMovementReason.Adjustment)
             {
                 throw new OperationFailedException($"هذا السبب [{reason.GetDisplayName()}] لا يمكن أن يزيد من الكمية");
             }
 
-            EditQuantity(productId, quantity,userId,reason,true);
+            EditQuantity(productId, quantity,userId,reason,true, Notes);
         }
 
         
@@ -422,7 +433,7 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void RemoveQuantity(int productId, decimal quantity, int userId, StockMovementReason reason)
+        public void RemoveQuantity(int productId, decimal quantity, int userId, StockMovementReason reason, string Notes)
         {
             //Check For Decreasing Reasons Only
             if(reason!=StockMovementReason.Adjustment
@@ -432,7 +443,7 @@ namespace LogicLayer.Services.Products
                 throw new OperationFailedException($"هذا السبب {reason.GetDisplayName()} لا يمكن أن يقلل من الكمية");
             }
 
-            EditQuantity(productId, quantity, userId, reason, false);
+            EditQuantity(productId, quantity, userId, reason, false, Notes);
         }
 
 
@@ -447,6 +458,95 @@ namespace LogicLayer.Services.Products
                 throw new NotFoundException(typeof(Product));
             }
             return MapProduct_UpdateDto(product);
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<ProductListDto> GetAllByProductTypeName(int PageNumber, int RowsPerPage, string ProductTypeName)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return _productRepo.
+                            GetAllByProductTypeName(PageNumber, RowsPerPage, ProductTypeName)
+                            .Select(c => MapProduct_ListDto(c))
+                            .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<ProductListDto> GetAllByFullName(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return _productRepo.
+                            GetAllByFullName(PageNumber, RowsPerPage, ProductTypeName, ProductName)
+                            .Select(c => MapProduct_ListDto(c))
+                            .ToList();
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageByFullName(string ProductTypeName,string ProductName, int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _productRepo.GetTotalPagesByFullName(ProductTypeName, ProductName, RowsPerPage);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageByProductTypeName(string TownName, int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _productRepo.GetTotalPagesByProductTypeName(TownName, RowsPerPage);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageNumber(int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _productRepo.GetTotalPages(RowsPerPage);
+        }
+
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public void ChangeAvaliableState(int ProductId, bool State)
+        {
+            Product product = _productRepo.GetById(ProductId);
+
+            if (product == null)
+            {
+                throw new NotFoundException(typeof(Product));
+            }
+
+            product.IsAvailable = State;
+
+            try
+            {
+                _unitOfWork.Save();
+                _logger.LogInformation("تم تغيير حالة المنتج {ProductId} إلى {State}", ProductId, State);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "فشل تغيير حالة إتاحة المنتج {ProductId}", ProductId);
+                throw new OperationFailedException(ex);
+            }
         }
     }
 }

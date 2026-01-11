@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260109093839_FullNameComputedCOlumnImplementation")]
+    partial class FullNameComputedCOlumnImplementation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,8 +161,6 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("MasurementUnitId");
 
-                    b.HasIndex("ProductName");
-
                     b.HasIndex("ProductTypeId");
 
                     b.ToTable("Products");
@@ -223,10 +224,6 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<decimal>("NewQuantity")
                         .HasColumnType("decimal(10,4)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<decimal>("OldQuantity")
                         .HasColumnType("decimal(10,4)");

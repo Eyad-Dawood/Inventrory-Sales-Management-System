@@ -23,6 +23,12 @@ namespace LogicLayer.Services.Products
             _unitOfWork = unitOfWork;
         }
 
+        private void MapNullValues(ProductStockMovementLogAddDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Notes))
+                dto.Notes = null;
+        }
+
         public ProductStockMovementLog MapProductStockMovementLog_AddDto(ProductStockMovementLogAddDto dto)
         {
             return new ProductStockMovementLog()
@@ -32,12 +38,15 @@ namespace LogicLayer.Services.Products
              OldQuantity = dto.OldQuantity,
              NewQuantity = dto.NewQuantity,
              Reason = dto.Reason,
+             Notes = dto.Notes
             };
         }
 
         public void AddProductStockMovementLog(ProductStockMovementLogAddDto DTO)
         {
             ProductStockMovementLog productStockMovementLog = MapProductStockMovementLog_AddDto(DTO);
+
+            MapNullValues(DTO);
 
             _ProductStockMovementLogrepository.Add(productStockMovementLog);
             //Do Not Save and leave it to the main caller
@@ -62,7 +71,8 @@ namespace LogicLayer.Services.Products
                     NewQuantity = p.NewQuantity,
                     OldQuantity = p.OldQuantity,
                     ProductName = $@"{p.Product.ProductType.ProductTypeName} [{p.Product.ProductName}]",
-                    Reason = p.Reason
+                    Reason = p.Reason,
+                    Notes = p.Notes,
                 }).ToList();
         }
     }

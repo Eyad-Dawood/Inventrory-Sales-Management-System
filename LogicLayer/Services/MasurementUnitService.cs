@@ -141,7 +141,7 @@ namespace LogicLayer.Services
                 .Select(m => new MasurementUnitListDto()
                 {
                     MasurementUnitId = m.MasurementUnitId,
-                    Name = m.UnitName
+                    UnitName = m.UnitName
                 }).ToList();
         }
 
@@ -152,7 +152,7 @@ namespace LogicLayer.Services
                 .Select(m => new MasurementUnitListDto()
                 {
                     MasurementUnitId = m.MasurementUnitId,
-                    Name = m.UnitName
+                    UnitName = m.UnitName
                 }).ToList();
         }
 

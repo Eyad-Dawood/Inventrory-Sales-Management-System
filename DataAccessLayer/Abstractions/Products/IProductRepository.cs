@@ -14,5 +14,10 @@ namespace DataAccessLayer.Abstractions.Products
 
         public List<Product> GetAllWithProductType_And_Unit(int PageNumber, int RowsPerPage);
 
+        public List<Product> GetAllByFullName(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName);
+        public List<Product> GetAllByProductTypeName(int PageNumber, int RowsPerPage, string ProductTypeName);
+        public int GetTotalPagesByFullName(string ProductTypeName,string ProductName, int RowsPerPage);
+        public int GetTotalPagesByProductTypeName(string ProductTypeName, int RowsPerPage);
+
     }
 }

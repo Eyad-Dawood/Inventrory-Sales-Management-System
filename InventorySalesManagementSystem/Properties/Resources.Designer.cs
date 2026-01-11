@@ -101,6 +101,15 @@ namespace InventorySalesManagementSystem.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to جنيها.
+        /// </summary>
+        internal static string CurrencyName {
+            get {
+                return ResourceManager.GetString("CurrencyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap driver_license__1_ {

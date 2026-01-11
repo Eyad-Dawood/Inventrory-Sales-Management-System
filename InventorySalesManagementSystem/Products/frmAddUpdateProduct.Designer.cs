@@ -57,7 +57,7 @@
             btnCancel.Location = new Point(513, 229);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(96, 30);
-            btnCancel.TabIndex = 4;
+            btnCancel.TabIndex = 9;
             btnCancel.Text = "إلغاء";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
@@ -69,7 +69,7 @@
             btnSave.Location = new Point(615, 229);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(96, 30);
-            btnSave.TabIndex = 3;
+            btnSave.TabIndex = 8;
             btnSave.Text = "حفظ";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
@@ -126,7 +126,7 @@
             txtProductName.Name = "txtProductName";
             txtProductName.RightToLeft = RightToLeft.Yes;
             txtProductName.Size = new Size(259, 23);
-            txtProductName.TabIndex = 38;
+            txtProductName.TabIndex = 1;
             // 
             // label2
             // 
@@ -147,7 +147,7 @@
             cmpUnit.Name = "cmpUnit";
             cmpUnit.RightToLeft = RightToLeft.Yes;
             cmpUnit.Size = new Size(203, 23);
-            cmpUnit.TabIndex = 40;
+            cmpUnit.TabIndex = 2;
             // 
             // txtProductTypeName
             // 
@@ -159,6 +159,7 @@
             txtProductTypeName.RightToLeft = RightToLeft.Yes;
             txtProductTypeName.Size = new Size(299, 23);
             txtProductTypeName.TabIndex = 42;
+            txtProductTypeName.TabStop = false;
             // 
             // lkSelectProductType
             // 
@@ -168,7 +169,7 @@
             lkSelectProductType.Name = "lkSelectProductType";
             lkSelectProductType.RightToLeft = RightToLeft.Yes;
             lkSelectProductType.Size = new Size(25, 13);
-            lkSelectProductType.TabIndex = 43;
+            lkSelectProductType.TabIndex = 0;
             lkSelectProductType.TabStop = true;
             lkSelectProductType.Text = "أختر";
             lkSelectProductType.LinkClicked += lkSelectProductType_LinkClicked;
@@ -186,11 +187,10 @@
             // 
             // txtBuyingPrice
             // 
-            txtBuyingPrice.Location = new Point(21, 111);
+            txtBuyingPrice.Location = new Point(12, 111);
             txtBuyingPrice.Name = "txtBuyingPrice";
-            txtBuyingPrice.RightToLeft = RightToLeft.Yes;
-            txtBuyingPrice.Size = new Size(72, 23);
-            txtBuyingPrice.TabIndex = 46;
+            txtBuyingPrice.Size = new Size(94, 23);
+            txtBuyingPrice.TabIndex = 4;
             // 
             // label4
             // 
@@ -205,11 +205,10 @@
             // 
             // txtSellingPrice
             // 
-            txtSellingPrice.Location = new Point(21, 148);
+            txtSellingPrice.Location = new Point(12, 148);
             txtSellingPrice.Name = "txtSellingPrice";
-            txtSellingPrice.RightToLeft = RightToLeft.Yes;
-            txtSellingPrice.Size = new Size(72, 23);
-            txtSellingPrice.TabIndex = 48;
+            txtSellingPrice.Size = new Size(94, 23);
+            txtSellingPrice.TabIndex = 5;
             // 
             // label5
             // 
@@ -230,7 +229,7 @@
             lkAddUnit.Name = "lkAddUnit";
             lkAddUnit.RightToLeft = RightToLeft.Yes;
             lkAddUnit.Size = new Size(36, 13);
-            lkAddUnit.TabIndex = 41;
+            lkAddUnit.TabIndex = 3;
             lkAddUnit.TabStop = true;
             lkAddUnit.Text = "إضافة";
             lkAddUnit.LinkClicked += lkAddUnit_LinkClicked;
@@ -244,17 +243,16 @@
             chkAvilable.Location = new Point(23, 222);
             chkAvilable.Name = "chkAvilable";
             chkAvilable.Size = new Size(64, 29);
-            chkAvilable.TabIndex = 49;
+            chkAvilable.TabIndex = 7;
             chkAvilable.Text = "متاح";
             chkAvilable.UseVisualStyleBackColor = true;
             // 
             // txtQuantity
             // 
-            txtQuantity.Location = new Point(21, 186);
+            txtQuantity.Location = new Point(12, 186);
             txtQuantity.Name = "txtQuantity";
-            txtQuantity.RightToLeft = RightToLeft.Yes;
-            txtQuantity.Size = new Size(72, 23);
-            txtQuantity.TabIndex = 51;
+            txtQuantity.Size = new Size(94, 23);
+            txtQuantity.TabIndex = 6;
             // 
             // lbStorageQuantity
             // 
@@ -269,8 +267,10 @@
             // 
             // frmAddUpdateProduct
             // 
+            AcceptButton = btnSave;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = btnCancel;
             ClientSize = new Size(724, 263);
             Controls.Add(txtQuantity);
             Controls.Add(lbStorageQuantity);

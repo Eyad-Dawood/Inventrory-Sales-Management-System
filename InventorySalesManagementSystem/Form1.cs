@@ -50,9 +50,11 @@ namespace InventorySalesManagementSystem
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+       
+
+        private void button3_Click_1(object sender, EventArgs e)
         {
-            var frm = frmAddUpdateProduct.CreateForUpdate(_serviceProvider,4);
+            var frm = new frmProductListScreen(_serviceProvider);
             frm.ShowDialog();
         }
     }

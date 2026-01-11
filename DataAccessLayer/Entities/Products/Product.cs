@@ -10,14 +10,17 @@ namespace DataAccessLayer.Entities.Products
     public class Product : IValidatable
     {
         [Key]
+        [Display(Name = "معرف المنتج")]
         public int ProductId { get; set; }
 
 
         [Column(TypeName = "decimal(10,2)")]
+        [Display(Name = "سعر الشراء")]
         public decimal BuyingPrice { get; set; }
 
 
         [Column(TypeName = "decimal(10,2)")]
+        [Display(Name = "سعر البيع")]
         public decimal SellingPrice { get; set; }
 
         [NotMapped]
@@ -25,6 +28,7 @@ namespace DataAccessLayer.Entities.Products
 
 
         [Column(TypeName = "decimal(10,4)")]
+        [Display(Name = "كمية المخزون")]
         public decimal QuantityInStorage { get; set; }
 
 
@@ -33,14 +37,15 @@ namespace DataAccessLayer.Entities.Products
         [Display(Name= "إسم المنتج")]
         public string ProductName { get; set; }
 
+        [Display(Name = "متاح")]
         public bool IsAvailable { get; set; }
 
         [ForeignKey(nameof(ProductType))]
         public int ProductTypeId { get; set; }
 
 
+     
 
-        [Display(Name= "نوع المنتج")]
         public ProductType ProductType { get; set; }
 
 
@@ -48,7 +53,6 @@ namespace DataAccessLayer.Entities.Products
         public int MasurementUnitId { get; set; }
 
 
-        [Display(Name= "وحدة القياس")]
         public MasurementUnit MasurementUnit { get; set; }
 
 

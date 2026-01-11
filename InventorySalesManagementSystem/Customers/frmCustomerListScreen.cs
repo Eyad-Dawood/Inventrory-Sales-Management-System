@@ -200,13 +200,13 @@ namespace InventorySalesManagementSystem.Customers
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.FilterValue)
+                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.FilterValues[0])
                     : GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.FilterValue)
+                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.FilterValues[0])
                     : GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<CustomerListDto>(data, pageToRequest, totalPages);
@@ -388,11 +388,11 @@ namespace InventorySalesManagementSystem.Customers
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Customer)));
                 return;
             }
-            var selectedWorker = ucListView1.GetSelectedItem<CustomerListDto>();
+            var selectedCustomer = ucListView1.GetSelectedItem<CustomerListDto>();
 
 
-            string action = selectedWorker.IsActive ? "إيقاف تنشيط" : "تنشيط";
-            if (MessageBox.Show($"هل أنت متأكد من {action} العميل {selectedWorker.FullName}؟",
+            string action = selectedCustomer.IsActive ? "إيقاف تنشيط" : "تنشيط";
+            if (MessageBox.Show($"هل أنت متأكد من {action} العميل {selectedCustomer.FullName}؟",
                 "تأكيد",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question,
@@ -407,7 +407,7 @@ namespace InventorySalesManagementSystem.Customers
                 var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
                 try
                 {
-                    service.ChangeActivationState(id,!selectedWorker.IsActive);
+                    service.ChangeActivationState(id, !selectedCustomer.IsActive);
                 }
                 catch (NotFoundException ex)
                 {
@@ -421,12 +421,14 @@ namespace InventorySalesManagementSystem.Customers
                 }
                 catch (Exception ex)
                 {
-                    Serilog.Log.Error(ex, "Unexcepected Error During Customer Worker Activation State ");
+                    Serilog.Log.Error(ex, "Unexcepected Error During Customer Activation State ");
                     MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage());
                 }
             }
 
             ucListView1.RefreshAfterOperation();
         }
+
+        
     }
 }

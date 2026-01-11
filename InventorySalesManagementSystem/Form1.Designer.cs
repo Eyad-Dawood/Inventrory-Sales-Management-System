@@ -70,13 +70,13 @@
             // button3
             // 
             button3.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button3.Location = new Point(998, 621);
+            button3.Location = new Point(218, 158);
             button3.Name = "button3";
             button3.Size = new Size(172, 102);
             button3.TabIndex = 6;
-            button3.Text = "ProductTypes Screen";
+            button3.Text = "Products Screen";
             button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            button3.Click += button3_Click_1;
             // 
             // Form1
             // 

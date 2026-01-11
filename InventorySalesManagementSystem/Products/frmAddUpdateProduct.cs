@@ -6,6 +6,7 @@ using InventorySalesManagementSystem.MasurementUnits;
 using InventorySalesManagementSystem.People;
 using InventorySalesManagementSystem.Products.ProductsTypes;
 using LogicLayer.DTOs.CustomerDTO;
+using LogicLayer.DTOs.MasurementUnitDTO;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductTypeDTO;
 using LogicLayer.Services;
@@ -53,8 +54,8 @@ namespace InventorySalesManagementSystem.Products
                 var units = service.GetAllMasurementUnit();
 
                 cmpUnit.DataSource = units;
-                cmpUnit.DisplayMember = "Name";
-                cmpUnit.ValueMember = "MasurementUnitId";
+                cmpUnit.DisplayMember = nameof(MasurementUnitListDto.UnitName);
+                cmpUnit.ValueMember = nameof(MasurementUnitListDto.MasurementUnitId);
             }
         }
 
@@ -71,31 +72,37 @@ namespace InventorySalesManagementSystem.Products
             FillUnitsComboBox();
         }
 
-        private void SetupUpdate(ProductUpdateDto dto)
+        private void SetupUpdate(ProductUpdateDto dto,ProductReadDto productReadDto)
         {
             State = Enums.FormStateEnum.Update;
 
             _productUpdate = dto;
 
-
             lbTitle.Text = "تعديل صنف";
-            txtQuantity.Text = "لا يمكن تعديله";
-            txtProductTypeName.Text = "لا يمكن تعديله";
 
 
-            chkAvilable.Visible = false;
+            chkAvilable.Enabled = false;
             cmpUnit.Enabled = false;
             txtQuantity.Enabled = false;
             txtProductTypeName.Enabled = false;
+
+
             lkSelectProductType.Enabled = false;
             lkAddUnit.Enabled = false;
 
-            LoadUpdateData();
+            LoadUpdateData(productReadDto);
         }
 
-        private void LoadUpdateData()
+        private void LoadUpdateData(ProductReadDto productReadDto)
         {
             lbId.Text = _productUpdate.ProductId.ToString();
+
+            txtQuantity.Text = productReadDto.QuantityInStorage.ToString();
+            txtProductTypeName.Text = productReadDto.ProductTypeName;
+            chkAvilable.Checked = productReadDto.IsAvailable;
+
+            cmpUnit.Items.Add(productReadDto.MesurementUnitName);
+            cmpUnit.SelectedItem = productReadDto.MesurementUnitName;
 
             txtProductName.Text = _productUpdate.ProductName.ToString();
             txtBuyingPrice.Text = _productUpdate.BuyingPrice.ToString();
@@ -117,8 +124,10 @@ namespace InventorySalesManagementSystem.Products
 
                 var dto = service.GetProductForUpdate(ProductId);
 
+                var productRead = service.GetProductById(ProductId); // To Get The Un Editable Data
+
                 frmAddUpdateProduct frm = new frmAddUpdateProduct(serviceProvider);
-                frm.SetupUpdate(dto);
+                frm.SetupUpdate(dto,productRead);
                 return frm;
             }
         }
@@ -166,16 +175,19 @@ namespace InventorySalesManagementSystem.Products
                 errors.Add($"{propertyName} تنسيقه غير صحيح");
             }
 
-            if(Convert.ToDecimal(BuyingPrice)>Convert.ToDecimal(SellingPrice))
-            {
-                string arabicbuyingprice = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product),nameof(Product.BuyingPrice));
-                string arabicSellingprice = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.SellingPrice));
-                throw new OperationFailedException($"{arabicSellingprice} لا يمكن أن يكون أقل من {arabicbuyingprice}");
-            }
-
             if (errors.Any())
             {
                 throw new ValidationException(errors);
+            }
+        }
+
+        private void ValidatePricesLogic()
+        {
+            if (Convert.ToDecimal(txtBuyingPrice.Text) > Convert.ToDecimal(txtSellingPrice.Text))
+            {
+                string arabicbuyingprice = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.BuyingPrice));
+                string arabicSellingprice = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.SellingPrice));
+                throw new OperationFailedException($"{arabicSellingprice} لا يمكن أن يكون أقل من {arabicbuyingprice}");
             }
         }
 
@@ -184,6 +196,8 @@ namespace InventorySalesManagementSystem.Products
             //Validate Values Format
             ValidationCore(txtBuyingPrice.Text, txtSellingPrice.Text, txtQuantity.Text, false);
 
+            //Validate Logic (cannot do it before the text values check)
+            ValidatePricesLogic();
 
             FillProductUpdate();
 
@@ -214,6 +228,10 @@ namespace InventorySalesManagementSystem.Products
 
             //Validate Values Format
             ValidationCore(txtBuyingPrice.Text, txtSellingPrice.Text, txtQuantity.Text, true);
+
+            //Validate Logic (cannot do it before the text values check)
+            ValidatePricesLogic();
+
 
             FillProductAdd();
 
@@ -252,6 +270,11 @@ namespace InventorySalesManagementSystem.Products
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
             {
                 MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody,ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             catch (Exception ex)

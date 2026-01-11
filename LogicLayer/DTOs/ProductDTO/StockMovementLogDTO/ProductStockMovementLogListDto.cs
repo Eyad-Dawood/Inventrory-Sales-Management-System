@@ -17,6 +17,7 @@ namespace LogicLayer.DTOs.ProductDTO.StockMovementLogDTO
         public decimal QuantityChange { get { return NewQuantity - OldQuantity; } } 
         public decimal OldQuantity { get; set; }
         public decimal NewQuantity { get; set; }
+        public string? Notes { get; set; }
         public StockMovementReason Reason { get; set; }
         public string CreatedbyUserName { get; set; }
         public DateTime LogDate { get; set; }

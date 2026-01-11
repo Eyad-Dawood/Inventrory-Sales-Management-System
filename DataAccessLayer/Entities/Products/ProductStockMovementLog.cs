@@ -31,9 +31,9 @@ namespace DataAccessLayer.Entities.Products
         public int ProductId { get; set; }
         public Product Product { get; set; }
 
+        [MaxLength(500)]
+        public string? Notes { get; set; }
 
-        [NotMapped]
-        public decimal QuantityChange { get { return NewQuantity - OldQuantity; } } // + / -
 
         [Column(TypeName = "decimal(10,4)")]
         public decimal OldQuantity { get; set; }

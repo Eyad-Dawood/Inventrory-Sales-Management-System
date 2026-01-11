@@ -14,6 +14,13 @@ namespace LogicLayer.DTOs.ProductDTO
         public decimal SellingPrice { get; set; }
         public decimal QuantityInStorage { get; set; }
         public bool IsAvilable { get; set; }
+        public decimal Profit
+        {
+            get
+            {
+                return SellingPrice - BuyingPrice;
+            }
+        }
         public string ProductTypeName { get; set; }
         public string ProductName { get; set; }
         public string MesurementUnitName { get; set; }

@@ -35,12 +35,12 @@ namespace DataAccessLayer.Repos
         public List<Customer> GetAllWithPerson(int PageNumber, int RowsPerPage)
         {
             return _context.Customers
+                .AsNoTracking()
                 .Include(c => c.Person)
                 .ThenInclude(p=>p.Town)
                 .OrderBy(c => c.CustomerId)
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
-                .AsNoTracking()
                 .ToList();
         }
 
@@ -60,10 +60,7 @@ namespace DataAccessLayer.Repos
                     .ThenInclude(p => p.Town)
                 .Where(c =>
                     EF.Functions.Like(
-                        (c.Person.FirstName ?? "") + " " +
-                        (c.Person.SecondName ?? "") + " " +
-                        (c.Person.ThirdName ?? "") + " " +
-                        (c.Person.FourthName ?? ""),
+                        c.Person.FullName,
                         $"{name}%"))
                 .OrderBy(c => c.CustomerId)
                 .Skip((pageNumber - 1) * rowsPerPage)
@@ -82,6 +79,7 @@ namespace DataAccessLayer.Repos
             TownName = TownName.Trim();
 
             return _context.Customers
+                .AsNoTracking()
                 .Include(c => c.Person)
                 .ThenInclude(p => p.Town)
                 .Where(c => EF.Functions.Like(
@@ -90,7 +88,6 @@ namespace DataAccessLayer.Repos
                 .OrderBy(c => c.CustomerId)
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
-                .AsNoTracking()
                 .ToList();
         }
 
@@ -105,10 +102,7 @@ namespace DataAccessLayer.Repos
                 .AsNoTracking()
                 .Where(c =>
                     EF.Functions.Like(
-                        (c.Person.FirstName ?? "") + " " +
-                        (c.Person.SecondName ?? "") + " " +
-                        (c.Person.ThirdName ?? "") + " " +
-                        (c.Person.FourthName ?? ""),
+                        c.Person.FullName,
                         $"{fullName}%"))
                 .Count();
 

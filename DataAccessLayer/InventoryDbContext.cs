@@ -80,6 +80,28 @@ namespace DataAccessLayer
                 .IsUnique();
 
 
+            //Person
+            modelBuilder.Entity<Person>()
+                .Property(p => p.FullName)
+                .HasComputedColumnSql($"CONCAT_WS(' ', [{nameof(Person.FirstName)}], [{nameof(Person.SecondName)}], [{nameof(Person.ThirdName)}], [{nameof(Person.FourthName)}])"
+                ,stored:true);
+
+            //For Faster Search
+            modelBuilder.Entity<Person>()
+               .HasIndex(p => p.FullName);
+
+
+            //ProductType
+            modelBuilder.Entity<ProductType>()
+               .HasIndex(u => u.ProductTypeName)
+               .IsUnique();
+
+            //Product
+
+            //For Faster Search
+            modelBuilder.Entity<Product>()
+               .HasIndex(p => p.ProductName);
+
             foreach (var foreignKey in modelBuilder.Model
                        .GetEntityTypes()
                        .SelectMany(e => e.GetForeignKeys()))
