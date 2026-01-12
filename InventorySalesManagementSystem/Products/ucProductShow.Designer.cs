@@ -56,7 +56,7 @@
             lbAvilable.BorderStyle = BorderStyle.FixedSingle;
             lbAvilable.Font = new Font("Calibri", 10F, FontStyle.Bold);
             lbAvilable.ForeColor = Color.Red;
-            lbAvilable.Location = new Point(490, 6);
+            lbAvilable.Location = new Point(589, 6);
             lbAvilable.Name = "lbAvilable";
             lbAvilable.RightToLeft = RightToLeft.Yes;
             lbAvilable.Size = new Size(66, 21);
@@ -68,7 +68,7 @@
             // 
             lbID.Font = new Font("Calibri", 15F, FontStyle.Bold);
             lbID.ForeColor = Color.Red;
-            lbID.Location = new Point(562, 6);
+            lbID.Location = new Point(661, 6);
             lbID.Name = "lbID";
             lbID.RightToLeft = RightToLeft.Yes;
             lbID.Size = new Size(95, 25);
@@ -80,7 +80,7 @@
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
-            label9.Location = new Point(672, 6);
+            label9.Location = new Point(771, 6);
             label9.Name = "label9";
             label9.RightToLeft = RightToLeft.Yes;
             label9.Size = new Size(71, 21);
@@ -91,7 +91,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(672, 36);
+            label1.Location = new Point(771, 36);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.RightToLeft = RightToLeft.Yes;
@@ -160,11 +160,11 @@
             // lbUnit
             // 
             lbUnit.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbUnit.Location = new Point(255, 68);
+            lbUnit.Location = new Point(242, 68);
             lbUnit.Margin = new Padding(4, 0, 4, 0);
             lbUnit.Name = "lbUnit";
             lbUnit.RightToLeft = RightToLeft.Yes;
-            lbUnit.Size = new Size(365, 28);
+            lbUnit.Size = new Size(481, 28);
             lbUnit.TabIndex = 59;
             lbUnit.Text = "----";
             // 
@@ -172,7 +172,7 @@
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label8.Location = new Point(615, 66);
+            label8.Location = new Point(714, 66);
             label8.Margin = new Padding(4, 0, 4, 0);
             label8.Name = "label8";
             label8.RightToLeft = RightToLeft.Yes;
@@ -206,11 +206,11 @@
             // lbTotalSales
             // 
             lbTotalSales.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbTotalSales.Location = new Point(255, 97);
+            lbTotalSales.Location = new Point(242, 97);
             lbTotalSales.Margin = new Padding(4, 0, 4, 0);
             lbTotalSales.Name = "lbTotalSales";
             lbTotalSales.RightToLeft = RightToLeft.Yes;
-            lbTotalSales.Size = new Size(370, 28);
+            lbTotalSales.Size = new Size(486, 28);
             lbTotalSales.TabIndex = 63;
             lbTotalSales.Text = "----";
             // 
@@ -218,7 +218,7 @@
             // 
             label11.AutoSize = true;
             label11.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label11.Location = new Point(623, 95);
+            label11.Location = new Point(722, 95);
             label11.Margin = new Padding(4, 0, 4, 0);
             label11.Name = "label11";
             label11.RightToLeft = RightToLeft.Yes;
@@ -232,7 +232,7 @@
             panel1.Enabled = false;
             panel1.Location = new Point(242, 38);
             panel1.Name = "panel1";
-            panel1.Size = new Size(426, 25);
+            panel1.Size = new Size(537, 25);
             panel1.TabIndex = 64;
             // 
             // rtbName
@@ -244,7 +244,7 @@
             rtbName.Name = "rtbName";
             rtbName.ReadOnly = true;
             rtbName.RightToLeft = RightToLeft.Yes;
-            rtbName.Size = new Size(426, 25);
+            rtbName.Size = new Size(537, 25);
             rtbName.TabIndex = 65;
             rtbName.Text = "----";
             // 
@@ -293,7 +293,7 @@
             Controls.Add(label1);
             Enabled = false;
             Name = "ucProductShow";
-            Size = new Size(748, 127);
+            Size = new Size(845, 127);
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             ResumeLayout(false);

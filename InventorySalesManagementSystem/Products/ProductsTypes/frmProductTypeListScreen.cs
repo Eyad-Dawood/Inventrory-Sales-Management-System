@@ -44,7 +44,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
       
 
         private readonly IServiceProvider _serviceProvider;
-        private const int RowsPerPage = 30;
+        private const int RowsPerPage = 10;
 
         public frmProductTypeListScreen(IServiceProvider serviceProvider, bool selectMode)
         {
@@ -168,13 +168,13 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.FilterValues[0])
+                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
                     : GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.FilterValues[0])
+                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
                     : GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<ProductTypeListDto>(data, pageToRequest, totalPages);

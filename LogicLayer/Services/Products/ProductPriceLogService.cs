@@ -1,7 +1,10 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Abstractions.Products;
 using DataAccessLayer.Entities.Products;
+using DataAccessLayer.Repos;
+using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
+using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
 using LogicLayer.Validation;
 using Microsoft.Extensions.Logging;
 using System;
@@ -22,6 +25,21 @@ namespace LogicLayer.Services.Products
         {
             _ProductPriceLogrepository = productPriceLogrepository;
             _unitOfWork = unitOfWork;
+        }
+
+        public ProductPriceLogListDto MapProductPriceLog_ListDto(ProductPriceLog productPriceLog)
+        {
+            return new ProductPriceLogListDto()
+            {
+                ProductId = productPriceLog.ProductId,
+                OldBuyingPrice = productPriceLog.OldBuyingPrice,
+                NewBuyingPrice = productPriceLog.NewBuyingPrice,
+                LogDate = productPriceLog.LogDate,
+                CreatedByUserName = productPriceLog.User.Username,
+                OldSellingPrice = productPriceLog.OldSellingPrice,
+                NewSellingPrice = productPriceLog.NewSellingPrice,
+                ProductFullName = $@"{productPriceLog.Product.ProductType.ProductTypeName} [{productPriceLog.Product.ProductName}]"
+            };
         }
 
         public ProductPriceLog MapProductPriceLog_AddDto(ProductPriceLogAddDto DTO)
@@ -57,16 +75,42 @@ namespace LogicLayer.Services.Products
 
             return _ProductPriceLogrepository
                 .GetAllWithDetails(PageNumber, RowsPerPage)
-                .Select(l => new ProductPriceLogListDto()
-                {
-                    OldBuyingPrice = l.OldBuyingPrice,
-                    NewBuyingPrice = l.NewBuyingPrice,
-                    LogDate = l.LogDate,
-                    CreatedByUserName = l.User.Username,
-                    OldSellingPrice= l.OldSellingPrice,
-                    NewSellingPrice = l.NewSellingPrice,
-                    ProductFullName = $@"{l.Product.ProductType.ProductTypeName} [{l.Product.ProductName}]"
-                }).ToList();
+                .Select(l => MapProductPriceLog_ListDto(l)).ToList();
         }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageNumber(int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _ProductPriceLogrepository.GetTotalPages(RowsPerPage);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public List<ProductPriceLogListDto> GetAllByProductNameAndDateTime(int PageNumber, int RowsPerPage, string prouctFullName, DateTime? date)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return _ProductPriceLogrepository.
+                            GetAllByProductFullNameAndDate(PageNumber, RowsPerPage, prouctFullName, date)
+                            .Select(p => MapProductPriceLog_ListDto(p))
+                            .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public int GetTotalPageByProductNameAndDate(int RowsPerPage, string prouctFullName, DateTime? date)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return _ProductPriceLogrepository.GetTotalPagesByFullNameAndDate(RowsPerPage, prouctFullName, date);
+        }
+
     }
 }

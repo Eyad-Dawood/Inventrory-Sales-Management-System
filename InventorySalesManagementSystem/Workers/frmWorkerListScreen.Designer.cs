@@ -79,7 +79,7 @@
             // btnAdd
             // 
             btnAdd.Anchor = AnchorStyles.Right;
-            btnAdd.BackgroundImage = Properties.Resources.add__1_;
+            btnAdd.BackgroundImage = Properties.Resources.addIcon;
             btnAdd.BackgroundImageLayout = ImageLayout.Stretch;
             btnAdd.Location = new Point(1162, 1);
             btnAdd.Name = "btnAdd";
@@ -109,7 +109,7 @@
             // 
             updateMenustripItem.Alignment = ToolStripItemAlignment.Right;
             updateMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            updateMenustripItem.Image = Properties.Resources.edit__1_;
+            updateMenustripItem.Image = Properties.Resources.EditIcon;
             updateMenustripItem.Name = "updateMenustripItem";
             updateMenustripItem.RightToLeft = RightToLeft.Yes;
             updateMenustripItem.ShortcutKeyDisplayString = "";
@@ -122,7 +122,7 @@
             // deleteMenustripItem
             // 
             deleteMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            deleteMenustripItem.Image = Properties.Resources.bin__1_;
+            deleteMenustripItem.Image = Properties.Resources.DeleteIcon;
             deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             deleteMenustripItem.Name = "deleteMenustripItem";
             deleteMenustripItem.RightToLeft = RightToLeft.Yes;
@@ -133,7 +133,7 @@
             // ShowMenustripItem
             // 
             ShowMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            ShowMenustripItem.Image = Properties.Resources.driver_license__1_;
+            ShowMenustripItem.Image = Properties.Resources.ShowDetailsIcon;
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
@@ -150,7 +150,7 @@
             // 
             changeActivationStateMenuStripItem.Alignment = ToolStripItemAlignment.Right;
             changeActivationStateMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            changeActivationStateMenuStripItem.Image = Properties.Resources.power_button__1_;
+            changeActivationStateMenuStripItem.Image = Properties.Resources.ActiovationButton;
             changeActivationStateMenuStripItem.Name = "changeActivationStateMenuStripItem";
             changeActivationStateMenuStripItem.RightToLeft = RightToLeft.Yes;
             changeActivationStateMenuStripItem.ShortcutKeyDisplayString = "";

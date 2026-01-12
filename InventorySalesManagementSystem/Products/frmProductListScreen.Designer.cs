@@ -39,9 +39,9 @@
             deleteMenustripItem = new ToolStripMenuItem();
             ShowMenustripItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
-            changeIsAvilableStateMenuStripItem = new ToolStripMenuItem();
-            WithdrawMenustripItem = new ToolStripMenuItem();
             AddQuantityMenustripItem = new ToolStripMenuItem();
+            WithdrawMenustripItem = new ToolStripMenuItem();
+            changeIsAvilableStateMenuStripItem = new ToolStripMenuItem();
             panel4.SuspendLayout();
             panel2.SuspendLayout();
             cms.SuspendLayout();
@@ -69,7 +69,7 @@
             // btnAdd
             // 
             btnAdd.Anchor = AnchorStyles.Right;
-            btnAdd.BackgroundImage = Properties.Resources.add__1_;
+            btnAdd.BackgroundImage = Properties.Resources.addIcon;
             btnAdd.BackgroundImageLayout = ImageLayout.Stretch;
             btnAdd.Location = new Point(1162, 0);
             btnAdd.Name = "btnAdd";
@@ -106,17 +106,17 @@
             cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem, toolStripSeparator1, AddQuantityMenustripItem, WithdrawMenustripItem, changeIsAvilableStateMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(189, 212);
+            cms.Size = new Size(188, 190);
             // 
             // updateMenustripItem
             // 
             updateMenustripItem.Alignment = ToolStripItemAlignment.Right;
             updateMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            updateMenustripItem.Image = Properties.Resources.edit__1_;
+            updateMenustripItem.Image = Properties.Resources.EditIcon;
             updateMenustripItem.Name = "updateMenustripItem";
             updateMenustripItem.RightToLeft = RightToLeft.Yes;
             updateMenustripItem.ShortcutKeyDisplayString = "";
-            updateMenustripItem.Size = new Size(188, 30);
+            updateMenustripItem.Size = new Size(187, 30);
             updateMenustripItem.Tag = "";
             updateMenustripItem.Text = "تعديل البيانات";
             updateMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
@@ -125,71 +125,71 @@
             // deleteMenustripItem
             // 
             deleteMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            deleteMenustripItem.Image = Properties.Resources.bin__1_;
+            deleteMenustripItem.Image = Properties.Resources.DeleteIcon;
             deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             deleteMenustripItem.Name = "deleteMenustripItem";
             deleteMenustripItem.RightToLeft = RightToLeft.Yes;
-            deleteMenustripItem.Size = new Size(188, 30);
+            deleteMenustripItem.Size = new Size(187, 30);
             deleteMenustripItem.Text = "حذف البيانات";
             deleteMenustripItem.Click += deleteMenustripItem_Click;
             // 
             // ShowMenustripItem
             // 
             ShowMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            ShowMenustripItem.Image = Properties.Resources.driver_license__1_;
+            ShowMenustripItem.Image = Properties.Resources.ShowDetailsIcon;
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
-            ShowMenustripItem.Size = new Size(188, 30);
+            ShowMenustripItem.Size = new Size(187, 30);
             ShowMenustripItem.Text = "عرض البيانات";
             ShowMenustripItem.Click += ShowMenustripItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(185, 6);
-            // 
-            // changeIsAvilableStateMenuStripItem
-            // 
-            changeIsAvilableStateMenuStripItem.Alignment = ToolStripItemAlignment.Right;
-            changeIsAvilableStateMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            changeIsAvilableStateMenuStripItem.Image = Properties.Resources.power_button__1_;
-            changeIsAvilableStateMenuStripItem.Name = "changeIsAvilableStateMenuStripItem";
-            changeIsAvilableStateMenuStripItem.RightToLeft = RightToLeft.Yes;
-            changeIsAvilableStateMenuStripItem.ShortcutKeyDisplayString = "";
-            changeIsAvilableStateMenuStripItem.Size = new Size(188, 30);
-            changeIsAvilableStateMenuStripItem.Tag = "";
-            changeIsAvilableStateMenuStripItem.Text = "تغيير حالة المنتج";
-            changeIsAvilableStateMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
-            changeIsAvilableStateMenuStripItem.Click += changeIsAvilableStateMenuStripItem_Click;
-            // 
-            // WithdrawMenustripItem
-            // 
-            WithdrawMenustripItem.Alignment = ToolStripItemAlignment.Right;
-            WithdrawMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            WithdrawMenustripItem.Image = Properties.Resources.power_button__1_;
-            WithdrawMenustripItem.Name = "WithdrawMenustripItem";
-            WithdrawMenustripItem.RightToLeft = RightToLeft.Yes;
-            WithdrawMenustripItem.ShortcutKeyDisplayString = "";
-            WithdrawMenustripItem.Size = new Size(188, 30);
-            WithdrawMenustripItem.Tag = "";
-            WithdrawMenustripItem.Text = "سحب كمية";
-            WithdrawMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
-            WithdrawMenustripItem.Click += WithdrawMenustripItem_Click;
+            toolStripSeparator1.Size = new Size(184, 6);
             // 
             // AddQuantityMenustripItem
             // 
             AddQuantityMenustripItem.Alignment = ToolStripItemAlignment.Right;
             AddQuantityMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            AddQuantityMenustripItem.Image = Properties.Resources.power_button__1_;
+            AddQuantityMenustripItem.Image = Properties.Resources.depositIcon;
             AddQuantityMenustripItem.Name = "AddQuantityMenustripItem";
             AddQuantityMenustripItem.RightToLeft = RightToLeft.Yes;
             AddQuantityMenustripItem.ShortcutKeyDisplayString = "";
-            AddQuantityMenustripItem.Size = new Size(188, 30);
+            AddQuantityMenustripItem.Size = new Size(187, 30);
             AddQuantityMenustripItem.Tag = "";
             AddQuantityMenustripItem.Text = "إضافة كمية";
             AddQuantityMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
             AddQuantityMenustripItem.Click += AddQuantityMenustripItem_Click;
+            // 
+            // WithdrawMenustripItem
+            // 
+            WithdrawMenustripItem.Alignment = ToolStripItemAlignment.Right;
+            WithdrawMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            WithdrawMenustripItem.Image = Properties.Resources.WithDrawIcon;
+            WithdrawMenustripItem.Name = "WithdrawMenustripItem";
+            WithdrawMenustripItem.RightToLeft = RightToLeft.Yes;
+            WithdrawMenustripItem.ShortcutKeyDisplayString = "";
+            WithdrawMenustripItem.Size = new Size(187, 30);
+            WithdrawMenustripItem.Tag = "";
+            WithdrawMenustripItem.Text = "سحب كمية";
+            WithdrawMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
+            WithdrawMenustripItem.Click += WithdrawMenustripItem_Click;
+            // 
+            // changeIsAvilableStateMenuStripItem
+            // 
+            changeIsAvilableStateMenuStripItem.Alignment = ToolStripItemAlignment.Right;
+            changeIsAvilableStateMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            changeIsAvilableStateMenuStripItem.Image = Properties.Resources.ActiovationButton;
+            changeIsAvilableStateMenuStripItem.Name = "changeIsAvilableStateMenuStripItem";
+            changeIsAvilableStateMenuStripItem.RightToLeft = RightToLeft.Yes;
+            changeIsAvilableStateMenuStripItem.ShortcutKeyDisplayString = "";
+            changeIsAvilableStateMenuStripItem.Size = new Size(187, 30);
+            changeIsAvilableStateMenuStripItem.Tag = "";
+            changeIsAvilableStateMenuStripItem.Text = "تغيير حالة المنتج";
+            changeIsAvilableStateMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
+            changeIsAvilableStateMenuStripItem.Click += changeIsAvilableStateMenuStripItem_Click;
             // 
             // frmProductListScreen
             // 

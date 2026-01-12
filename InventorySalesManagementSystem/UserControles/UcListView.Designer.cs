@@ -42,6 +42,8 @@
             btnCancelFilter = new Button();
             btnFilter = new Button();
             pnSearchBoxes = new Panel();
+            chkUseDateFilter = new CheckBox();
+            dtpLogDate = new DateTimePicker();
             txtSearchValue2 = new TextBox();
             label1 = new Label();
             cmpSearchBy = new ComboBox();
@@ -134,7 +136,7 @@
             // btnNext
             // 
             btnNext.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnNext.BackgroundImage = Properties.Resources.right_arrow__1_;
+            btnNext.BackgroundImage = Properties.Resources.RightArrow;
             btnNext.BackgroundImageLayout = ImageLayout.Stretch;
             btnNext.Location = new Point(289, 3);
             btnNext.Name = "btnNext";
@@ -146,7 +148,7 @@
             // btnPrevious
             // 
             btnPrevious.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnPrevious.BackgroundImage = Properties.Resources.right_arrow__1_1;
+            btnPrevious.BackgroundImage = Properties.Resources.LeftArrow;
             btnPrevious.BackgroundImageLayout = ImageLayout.Stretch;
             btnPrevious.Location = new Point(253, 3);
             btnPrevious.Name = "btnPrevious";
@@ -202,7 +204,7 @@
             // btnCancelFilter
             // 
             btnCancelFilter.Anchor = AnchorStyles.Right;
-            btnCancelFilter.BackgroundImage = Properties.Resources.cancel__1_;
+            btnCancelFilter.BackgroundImage = Properties.Resources.CancelIcon;
             btnCancelFilter.BackgroundImageLayout = ImageLayout.Stretch;
             btnCancelFilter.Location = new Point(415, 2);
             btnCancelFilter.Name = "btnCancelFilter";
@@ -214,7 +216,7 @@
             // btnFilter
             // 
             btnFilter.Anchor = AnchorStyles.Right;
-            btnFilter.BackgroundImage = Properties.Resources.search__1_;
+            btnFilter.BackgroundImage = Properties.Resources.SearchIcon;
             btnFilter.BackgroundImageLayout = ImageLayout.Stretch;
             btnFilter.Location = new Point(451, 3);
             btnFilter.Name = "btnFilter";
@@ -225,6 +227,8 @@
             // 
             // pnSearchBoxes
             // 
+            pnSearchBoxes.Controls.Add(chkUseDateFilter);
+            pnSearchBoxes.Controls.Add(dtpLogDate);
             pnSearchBoxes.Controls.Add(txtSearchValue2);
             pnSearchBoxes.Controls.Add(label1);
             pnSearchBoxes.Controls.Add(cmpSearchBy);
@@ -234,6 +238,34 @@
             pnSearchBoxes.Name = "pnSearchBoxes";
             pnSearchBoxes.Size = new Size(980, 35);
             pnSearchBoxes.TabIndex = 8;
+            // 
+            // chkUseDateFilter
+            // 
+            chkUseDateFilter.Anchor = AnchorStyles.Right;
+            chkUseDateFilter.AutoSize = true;
+            chkUseDateFilter.Checked = true;
+            chkUseDateFilter.CheckState = CheckState.Checked;
+            chkUseDateFilter.Enabled = false;
+            chkUseDateFilter.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
+            chkUseDateFilter.Location = new Point(246, 10);
+            chkUseDateFilter.Name = "chkUseDateFilter";
+            chkUseDateFilter.Size = new Size(15, 14);
+            chkUseDateFilter.TabIndex = 10;
+            chkUseDateFilter.UseVisualStyleBackColor = true;
+            chkUseDateFilter.Visible = false;
+            // 
+            // dtpLogDate
+            // 
+            dtpLogDate.Anchor = AnchorStyles.Right;
+            dtpLogDate.Enabled = false;
+            dtpLogDate.Format = DateTimePickerFormat.Short;
+            dtpLogDate.Location = new Point(267, 6);
+            dtpLogDate.Name = "dtpLogDate";
+            dtpLogDate.RightToLeft = RightToLeft.Yes;
+            dtpLogDate.Size = new Size(214, 23);
+            dtpLogDate.TabIndex = 9;
+            dtpLogDate.Value = new DateTime(2000, 1, 1, 0, 0, 0, 0);
+            dtpLogDate.Visible = false;
             // 
             // txtSearchValue2
             // 
@@ -288,6 +320,7 @@
             Controls.Add(pnBottomBar);
             Name = "UcListView";
             Size = new Size(980, 470);
+            Load += UcListView_Load;
             ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
             pnBottomBar.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
@@ -318,5 +351,7 @@
         private Button btnCancelFilter;
         private Button btnFilter;
         private TextBox txtSearchValue2;
+        private DateTimePicker dtpLogDate;
+        private CheckBox chkUseDateFilter;
     }
 }

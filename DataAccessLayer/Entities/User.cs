@@ -35,6 +35,7 @@ namespace DataAccessLayer.Entities
         public int UserId { get; set; }
 
         [MaxLength(50)]
+        [Display(Name = "إسم المستخدم")]
         public string Username { get; set; }
         [MaxLength(255)]
         public string Password { get; set; }

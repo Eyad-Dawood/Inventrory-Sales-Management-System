@@ -3,7 +3,9 @@ using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
 using InventorySalesManagementSystem.Customers;
 using InventorySalesManagementSystem.Products;
+using InventorySalesManagementSystem.Products.PricesLog;
 using InventorySalesManagementSystem.Products.ProductsTypes;
+using InventorySalesManagementSystem.Products.StockMovementLog;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.Services;
@@ -50,12 +52,39 @@ namespace InventorySalesManagementSystem
             }
         }
 
-       
+
 
         private void button3_Click_1(object sender, EventArgs e)
         {
             var frm = new frmProductListScreen(_serviceProvider);
             frm.ShowDialog();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var frm = new FrmStockMovementLogListScreen(_serviceProvider);
+                frm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var frm = new frmPriceLogListScreen(_serviceProvider);
+                frm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

@@ -78,9 +78,9 @@ namespace InventorySalesManagementSystem.Products
 
 
 
-            lbSellingPrice.Text = $"{dto.SellingPrice.ToString("N2")} {Properties.Resources.CurrencyName}";
-            lbBuyingPrice.Text = $"{dto.BuyingPrice.ToString("N2")} {Properties.Resources.CurrencyName}";
-            lbProfit.Text = $"{dto.Profit.ToString("N2")} {Properties.Resources.CurrencyName}";
+            lbSellingPrice.Text = $"{dto.SellingPrice.ToString("N2")}";
+            lbBuyingPrice.Text = $"{dto.BuyingPrice.ToString("N2")}";
+            lbProfit.Text = $"{dto.Profit.ToString("N2")}";
 
 
             if (dto.IsAvailable)

@@ -23,9 +23,9 @@ namespace LogicLayer.DTOs.ProductDTO.PriceLogDTO
 
         public DateTime LogDate { get; set; }
 
-        
+        [Display(Name = "إسم المنتج الكامل")]
         public string ProductFullName { get; set; }
-
+        public int ProductId { get; set; }
 
         public string CreatedByUserName { get; set; }
     }

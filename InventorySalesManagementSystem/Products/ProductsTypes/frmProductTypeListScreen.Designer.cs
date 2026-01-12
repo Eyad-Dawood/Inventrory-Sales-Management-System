@@ -80,7 +80,7 @@
             // btnSelect
             // 
             btnSelect.Anchor = AnchorStyles.Right;
-            btnSelect.BackgroundImage = Properties.Resources.check__3___1_;
+            btnSelect.BackgroundImage = Properties.Resources.CheckIcon;
             btnSelect.BackgroundImageLayout = ImageLayout.Stretch;
             btnSelect.Enabled = false;
             btnSelect.Location = new Point(518, 0);
@@ -94,7 +94,7 @@
             // btnAdd
             // 
             btnAdd.Anchor = AnchorStyles.Right;
-            btnAdd.BackgroundImage = Properties.Resources.add__1_;
+            btnAdd.BackgroundImage = Properties.Resources.addIcon;
             btnAdd.BackgroundImageLayout = ImageLayout.Stretch;
             btnAdd.Location = new Point(564, 0);
             btnAdd.Name = "btnAdd";
@@ -115,7 +115,7 @@
             // 
             updateMenustripItem.Alignment = ToolStripItemAlignment.Right;
             updateMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            updateMenustripItem.Image = Properties.Resources.edit__1_;
+            updateMenustripItem.Image = Properties.Resources.EditIcon;
             updateMenustripItem.Name = "updateMenustripItem";
             updateMenustripItem.RightToLeft = RightToLeft.Yes;
             updateMenustripItem.ShortcutKeyDisplayString = "";
@@ -128,7 +128,7 @@
             // deleteMenustripItem
             // 
             deleteMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            deleteMenustripItem.Image = Properties.Resources.bin__1_;
+            deleteMenustripItem.Image = Properties.Resources.DeleteIcon;
             deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             deleteMenustripItem.Name = "deleteMenustripItem";
             deleteMenustripItem.RightToLeft = RightToLeft.Yes;

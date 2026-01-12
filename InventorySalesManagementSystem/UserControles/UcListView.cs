@@ -66,6 +66,22 @@ namespace InventorySalesManagementSystem.UserControles
             }
         }
 
+        private bool _allowDatePic = false;
+        [Browsable(true)]
+        [DefaultValue(false)]
+        public bool AllowDatePic
+        {
+            get
+            {
+                return _allowDatePic;
+            }
+            set
+            {
+                _allowDatePic = value;
+                ChangeDatePicFilterUi(_allowDatePic);
+            }
+        }
+
         #endregion
 
 
@@ -163,7 +179,7 @@ namespace InventorySalesManagementSystem.UserControles
         }
         private void CancelFilter()
         {
-            if (_IsFilterItemsConfigured&&IsDataFiltered)
+            if (_IsFilterItemsConfigured && IsDataFiltered)
             {
                 SetFilterState(false);
                 OnFilterCanceled?.Invoke();
@@ -209,10 +225,35 @@ namespace InventorySalesManagementSystem.UserControles
             txtSearchValue2.Enabled = Allow;
             txtSearchValue2.Visible = Allow;
 
-            if(Allow)
+            dtpLogDate.Enabled = !Allow;
+            dtpLogDate.Visible = !Allow;
+
+            chkUseDateFilter.Enabled = !Allow;
+            chkUseDateFilter.Visible = !Allow;
+
+            if (Allow)
                 pnUpperButtons.Width -= txtSearchValue2.Width + 10;
             else
                 pnUpperButtons.Width += txtSearchValue2.Width + 10;
+
+        }
+
+        private void ChangeDatePicFilterUi(bool Allow)
+        {
+            dtpLogDate.Enabled = Allow;
+            dtpLogDate.Visible = Allow;
+
+            chkUseDateFilter.Enabled = Allow;
+            chkUseDateFilter.Visible = Allow;
+
+            txtSearchValue2.Enabled = !Allow;
+            txtSearchValue2.Visible = !Allow;
+
+            if (Allow)
+                pnUpperButtons.Width -= dtpLogDate.Width + chkUseDateFilter.Width + 10;
+            else
+                pnUpperButtons.Width += dtpLogDate.Width + chkUseDateFilter.Width + 10;
+
         }
 
         private void ChangePagginUI(bool value)
@@ -253,19 +294,32 @@ namespace InventorySalesManagementSystem.UserControles
         {
             get
             {
+                if (!_IsFilterItemsConfigured ||
+                    cmpSearchBy.Items.Count == 0 ||
+                    cmpSearchBy.SelectedValue == null)
+                    return false;
+
                 bool hasTxt1 = !string.IsNullOrWhiteSpace(txtSearchValue1.Text);
                 bool hasTxt2 = !string.IsNullOrWhiteSpace(txtSearchValue2.Text);
 
-                bool hasValidData = _allowSecondSearchBox
-                    ? (hasTxt1 || hasTxt2)
-                    : hasTxt1;
+                if (_allowSecondSearchBox)
+                {
+                    return hasTxt1 || hasTxt2;
+                }
 
-                return _IsFilterItemsConfigured
-                    && cmpSearchBy.Items.Count > 0
-                    && cmpSearchBy.SelectedValue != null
-                    && hasValidData;
+                if (_allowDatePic)
+                {
+                    if (chkUseDateFilter.Checked)
+                        return true;
+
+                    return hasTxt1;
+                }
+
+                return hasTxt1;
             }
         }
+
+
 
 
 
@@ -285,11 +339,9 @@ namespace InventorySalesManagementSystem.UserControles
                     return new Filter
                     {
                         ColumnName = cmpSearchBy.SelectedValue.ToString(),
-                        FilterValues = new string[]
-                        {
-                            txtSearchValue1.Text.Trim(),
-                            _allowSecondSearchBox?txtSearchValue2.Text.Trim():string.Empty
-                        }
+                        Text1Value = txtSearchValue1.Text.Trim(),
+                        Text2Value = _allowSecondSearchBox ? txtSearchValue2.Text.Trim() : string.Empty,
+                        dateTime = chkUseDateFilter.Checked ? dtpLogDate.Value : null
                     };
                 }
                 else
@@ -311,7 +363,9 @@ namespace InventorySalesManagementSystem.UserControles
         public class Filter
         {
             public string ColumnName { get; set; }
-            public string[] FilterValues { get; set; }
+            public string Text1Value { get; set; }
+            public string Text2Value { get; set; }
+            public DateTime? dateTime { get; set; }
         }
 
 
@@ -421,5 +475,12 @@ namespace InventorySalesManagementSystem.UserControles
             }
         }
 
+        private void UcListView_Load(object sender, EventArgs e)
+        {
+            dtpLogDate.Value = DateTime.Now;
+            dtpLogDate.MaxDate = DateTime.Now;
+        }
+
+        
     }
 }

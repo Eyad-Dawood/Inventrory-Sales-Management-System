@@ -28,5 +28,79 @@ namespace DataAccessLayer.Repos
                 .AsNoTracking()
                 .ToList();
         }
+
+        public int GetTotalPagesByFullNameAndDate(
+          int rowsPerPage,
+          string? productFullName,
+          DateTime? date)
+        {
+            var query = _context.ProductPricesLog
+                .AsNoTracking()
+                .AsQueryable();
+
+            // ===== Filter by Date =====
+            if (date.HasValue)
+            {
+                var fromDate = date.Value.Date;
+                var toDate = fromDate.AddDays(1);
+
+                query = query.Where(p =>
+                    p.LogDate >= fromDate &&
+                    p.LogDate < toDate);
+            }
+
+            // ===== Filter by Product Name / Type =====
+            if (!string.IsNullOrWhiteSpace(productFullName))
+            {
+                query = query.Where(p =>
+                    p.Product.ProductName.Contains(productFullName) ||
+                    p.Product.ProductType.ProductTypeName.Contains(productFullName));
+            }
+
+            int totalRecords = query.Count();
+
+            return (int)Math.Ceiling(totalRecords / (double)rowsPerPage);
+        }
+
+
+
+        public List<ProductPriceLog> GetAllByProductFullNameAndDate(
+            int pageNumber,
+            int rowsPerPage,
+            string? productFullName,
+            DateTime? date)
+        {
+            var query = _context.ProductPricesLog
+                .Include(p => p.User)
+                .Include(p => p.Product)
+                    .ThenInclude(p2 => p2.ProductType)
+                .AsNoTracking()
+                .AsQueryable();
+
+            // ===== Filter by Date (Day only) =====
+            if (date.HasValue)
+            {
+                var fromDate = date.Value.Date;
+                var toDate = fromDate.AddDays(1);
+
+                query = query.Where(p =>
+                    p.LogDate >= fromDate &&
+                    p.LogDate < toDate);
+            }
+
+            // ===== Filter by Product Name or Type =====
+            if (!string.IsNullOrWhiteSpace(productFullName))
+            {
+                query = query.Where(p =>
+                    p.Product.ProductName.Contains(productFullName) ||
+                    p.Product.ProductType.ProductTypeName.Contains(productFullName));
+            }
+
+            return query
+                .OrderByDescending(p => p.LogDate)
+                .Skip((pageNumber - 1) * rowsPerPage)
+                .Take(rowsPerPage)
+                .ToList();
+        }
     }
 }

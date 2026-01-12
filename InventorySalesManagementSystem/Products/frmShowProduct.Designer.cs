@@ -34,16 +34,16 @@
             // ucProductShow1
             // 
             ucProductShow1.Enabled = false;
-            ucProductShow1.Location = new Point(4, 8);
+            ucProductShow1.Location = new Point(9, 10);
             ucProductShow1.Name = "ucProductShow1";
-            ucProductShow1.Size = new Size(748, 127);
+            ucProductShow1.Size = new Size(844, 127);
             ucProductShow1.TabIndex = 0;
             // 
             // frmShowProduct
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(757, 143);
+            ClientSize = new Size(859, 143);
             Controls.Add(ucProductShow1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;

@@ -199,13 +199,13 @@ namespace InventorySalesManagementSystem.Workers
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.FilterValues[0])
+                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
                     : GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.FilterValues[0])
+                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
                     : GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<WorkerListDto>(data, pageToRequest, totalPages);

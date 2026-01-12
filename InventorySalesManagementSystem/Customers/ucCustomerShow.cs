@@ -32,7 +32,7 @@ namespace InventorySalesManagementSystem.Customers
             lbPhone.Text = UiFormat.FormatNullableValue(dto.PhoneNumber);
             lbTown.Text = dto.TownName;
 
-            lbBalance.Text = $"{dto.Balance.ToString("N2")} {Properties.Resources.CurrencyName}";
+            lbBalance.Text = $"{dto.Balance.ToString("N2")}";
             lbBalance.ForeColor = dto.Balance >= 0 ? Color.DarkGreen : Color.DarkRed;
 
             if (dto.IsActive)

@@ -39,11 +39,8 @@
             ShowMenustripItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             changeActivationStateMenuStripItem = new ToolStripMenuItem();
-            WithDrawMenuStripItem = new ToolStripMenuItem();
             panel2 = new Panel();
             lbTitle = new Label();
-            toolStripSeparator2 = new ToolStripSeparator();
-            toolStripMenuItem1 = new ToolStripMenuItem();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             cms.SuspendLayout();
@@ -81,7 +78,7 @@
             // btnAdd
             // 
             btnAdd.Anchor = AnchorStyles.Right;
-            btnAdd.BackgroundImage = Properties.Resources.add__1_;
+            btnAdd.BackgroundImage = Properties.Resources.addIcon;
             btnAdd.BackgroundImageLayout = ImageLayout.Stretch;
             btnAdd.Location = new Point(1162, 0);
             btnAdd.Name = "btnAdd";
@@ -93,16 +90,16 @@
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
-            cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem, toolStripSeparator1, changeActivationStateMenuStripItem, toolStripSeparator2, toolStripMenuItem1, WithDrawMenuStripItem });
+            cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem, toolStripSeparator1, changeActivationStateMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(195, 218);
+            cms.Size = new Size(195, 152);
             // 
             // updateMenustripItem
             // 
             updateMenustripItem.Alignment = ToolStripItemAlignment.Right;
             updateMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            updateMenustripItem.Image = Properties.Resources.edit__1_;
+            updateMenustripItem.Image = Properties.Resources.EditIcon;
             updateMenustripItem.Name = "updateMenustripItem";
             updateMenustripItem.RightToLeft = RightToLeft.Yes;
             updateMenustripItem.ShortcutKeyDisplayString = "";
@@ -115,7 +112,7 @@
             // deleteMenustripItem
             // 
             deleteMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            deleteMenustripItem.Image = Properties.Resources.bin__1_;
+            deleteMenustripItem.Image = Properties.Resources.DeleteIcon;
             deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             deleteMenustripItem.Name = "deleteMenustripItem";
             deleteMenustripItem.RightToLeft = RightToLeft.Yes;
@@ -126,7 +123,7 @@
             // ShowMenustripItem
             // 
             ShowMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            ShowMenustripItem.Image = Properties.Resources.driver_license__1_;
+            ShowMenustripItem.Image = Properties.Resources.ShowDetailsIcon;
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
@@ -143,7 +140,7 @@
             // 
             changeActivationStateMenuStripItem.Alignment = ToolStripItemAlignment.Right;
             changeActivationStateMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            changeActivationStateMenuStripItem.Image = Properties.Resources.power_button__1_;
+            changeActivationStateMenuStripItem.Image = Properties.Resources.ActiovationButton;
             changeActivationStateMenuStripItem.Name = "changeActivationStateMenuStripItem";
             changeActivationStateMenuStripItem.RightToLeft = RightToLeft.Yes;
             changeActivationStateMenuStripItem.ShortcutKeyDisplayString = "";
@@ -152,19 +149,6 @@
             changeActivationStateMenuStripItem.Text = "تغيير حالة النشاط";
             changeActivationStateMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
             changeActivationStateMenuStripItem.Click += changeActivationStateMenuStripItem_Click;
-            // 
-            // WithDrawMenuStripItem
-            // 
-            WithDrawMenuStripItem.Alignment = ToolStripItemAlignment.Right;
-            WithDrawMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            WithDrawMenuStripItem.Image = Properties.Resources.power_button__1_;
-            WithDrawMenuStripItem.Name = "WithDrawMenuStripItem";
-            WithDrawMenuStripItem.RightToLeft = RightToLeft.Yes;
-            WithDrawMenuStripItem.ShortcutKeyDisplayString = "";
-            WithDrawMenuStripItem.Size = new Size(194, 30);
-            WithDrawMenuStripItem.Tag = "";
-            WithDrawMenuStripItem.Text = "سحب كمية";
-            WithDrawMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
             // 
             // panel2
             // 
@@ -187,24 +171,6 @@
             lbTitle.TabIndex = 19;
             lbTitle.Text = "شاشة العملاء";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(191, 6);
-            // 
-            // toolStripMenuItem1
-            // 
-            toolStripMenuItem1.Alignment = ToolStripItemAlignment.Right;
-            toolStripMenuItem1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            toolStripMenuItem1.Image = Properties.Resources.power_button__1_;
-            toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.RightToLeft = RightToLeft.Yes;
-            toolStripMenuItem1.ShortcutKeyDisplayString = "";
-            toolStripMenuItem1.Size = new Size(194, 30);
-            toolStripMenuItem1.Tag = "";
-            toolStripMenuItem1.Text = "إضافة كمية";
-            toolStripMenuItem1.TextDirection = ToolStripTextDirection.Horizontal;
             // 
             // frmCustomerListScreen
             // 
@@ -238,8 +204,5 @@
         private Label lbTitle;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem changeActivationStateMenuStripItem;
-        private ToolStripMenuItem WithDrawMenuStripItem;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem toolStripMenuItem1;
     }
 }

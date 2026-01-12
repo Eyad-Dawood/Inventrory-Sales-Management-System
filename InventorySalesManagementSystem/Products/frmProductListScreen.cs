@@ -25,7 +25,7 @@ namespace InventorySalesManagementSystem.Products
     public partial class frmProductListScreen : Form
     {
         private readonly IServiceProvider _serviceProvider;
-        private const int RowsPerPage = 50;
+        private const int RowsPerPage = 40;
         private const string FilterName = "FullName";
 
         public frmProductListScreen(IServiceProvider serviceProvider)
@@ -249,13 +249,13 @@ namespace InventorySalesManagementSystem.Products
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.FilterValues[0], filter.FilterValues[1])
+                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value, filter.Text2Value)
                     : GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.FilterValues[0], filter.FilterValues[1])
+                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value, filter.Text2Value)
                     : GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<ProductListDto>(data, pageToRequest, totalPages);
