@@ -6,6 +6,7 @@ using InventorySalesManagementSystem.Products.Extra;
 using InventorySalesManagementSystem.UserControles;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.ProductDTO;
+using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Services.Products;
 using LogicLayer.Validation.Exceptions;
@@ -489,6 +490,13 @@ namespace InventorySalesManagementSystem.Products
 
             using (var scope = _serviceProvider.CreateScope())
             {
+                var UserSession = _serviceProvider.GetRequiredService<UserSession>();
+
+                int userid = UserSession.CurrentUser != null ?
+                    UserSession.CurrentUser.UserId
+                    :
+                    -1;
+
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
                 try
                 {
@@ -497,7 +505,7 @@ namespace InventorySalesManagementSystem.Products
 
                         if(frm.ShowDialog() == DialogResult.OK)
                         {
-                            service.AddQuantity(id,frm.Quantity,1,frm.Reason, frm.Notes);
+                            service.AddQuantity(id,frm.Quantity, userid , frm.Reason, frm.Notes);
                             MessageBox.Show($"تم إضافة كمية \n مقدارها : {frm.Quantity} [{selectedProduct.MesurementUnitName}] \n  للمنتج : ({$"{selectedProduct.ProductTypeName} [{selectedProduct.ProductName}]"})");
                         }
                     }
@@ -536,6 +544,13 @@ namespace InventorySalesManagementSystem.Products
 
             using (var scope = _serviceProvider.CreateScope())
             {
+                var UserSession = _serviceProvider.GetRequiredService<UserSession>();
+
+                int userid = UserSession.CurrentUser != null ?
+                    UserSession.CurrentUser.UserId
+                    :
+                    -1;
+
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
                 try
                 {
@@ -544,7 +559,7 @@ namespace InventorySalesManagementSystem.Products
 
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
-                            service.RemoveQuantity(id, frm.Quantity, 1, frm.Reason,frm.Notes);
+                            service.RemoveQuantity(id, frm.Quantity, userid, frm.Reason,frm.Notes);
                             MessageBox.Show($"تم سحب كمية \n مقدارها : {frm.Quantity} [{selectedProduct.MesurementUnitName}] \n  من المنتج : ({$"{selectedProduct.ProductTypeName} [{selectedProduct.ProductName}]"})");
                         }
                     }

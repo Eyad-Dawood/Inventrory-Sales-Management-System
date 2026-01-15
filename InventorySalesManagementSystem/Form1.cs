@@ -8,6 +8,7 @@ using InventorySalesManagementSystem.Products.ProductsTypes;
 using InventorySalesManagementSystem.Products.StockMovementLog;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.CustomerDTO;
+using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -84,6 +85,16 @@ namespace InventorySalesManagementSystem
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var Session = scope.ServiceProvider.GetRequiredService<UserSession>();
+
+                MessageBox.Show(Session.CurrentUser.UserName, Session.CurrentUser.UserId.ToString());
             }
         }
     }

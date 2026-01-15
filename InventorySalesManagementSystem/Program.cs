@@ -3,6 +3,7 @@ using DataAccessLayer.Abstractions;
 using DataAccessLayer.Abstractions.Products;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
+using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Services.Products;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +61,7 @@ namespace InventorySalesManagementSystem
             //App Setting Config
             var configuration = new ConfigurationBuilder()
                     .SetBasePath(AppContext.BaseDirectory)
-                    .AddJsonFile("appsettings.json", optional: false)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .Build();
 
             //Conneciton String
@@ -95,6 +96,9 @@ namespace InventorySalesManagementSystem
             //Generic Repos
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+            //Global
+            services.AddSingleton<LogicLayer.Global.Users.UserSession>();
+
             //Services
             services.AddScoped<ProductPriceLogService>();
             services.AddScoped<ProductService>();
@@ -108,11 +112,18 @@ namespace InventorySalesManagementSystem
             services.AddScoped<WorkerService>();
 
             var serviceProvider = services.BuildServiceProvider();
-
+            
             try
             {
                 ApplicationConfiguration.Initialize();
-                Application.Run(new Form1(serviceProvider));
+
+                var loginForm = new frmLogin(serviceProvider);
+
+                if(loginForm.ShowDialog()!= DialogResult.OK)
+                    return;
+                else
+                    Application.Run(new Form1(serviceProvider));
+
             }
             catch (Exception ex)
             {

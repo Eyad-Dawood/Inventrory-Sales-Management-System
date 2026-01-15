@@ -163,7 +163,6 @@ namespace InventorySalesManagementSystem.Workers
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-
                     var WorkerService = scope.ServiceProvider.GetRequiredService<WorkerService>();
 
                     if (State == Enums.FormStateEnum.AddNew)

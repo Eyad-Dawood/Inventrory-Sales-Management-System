@@ -9,6 +9,7 @@ using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.MasurementUnitDTO;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductTypeDTO;
+using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Services.Products;
 using LogicLayer.Utilities;
@@ -29,8 +30,6 @@ namespace InventorySalesManagementSystem.Products
 {
     public partial class frmAddUpdateProduct : Form
     {
-        const int CurrentUserId = 1;
-
         int ProductTypeId = -1;
 
         private Enums.FormStateEnum State { set; get; }
@@ -191,7 +190,7 @@ namespace InventorySalesManagementSystem.Products
             }
         }
 
-        private void UpdateProduct(ProductService ProductService)
+        private void UpdateProduct(ProductService ProductService,int userId)
         {
             //Validate Values Format
             ValidationCore(txtBuyingPrice.Text, txtSellingPrice.Text, txtQuantity.Text, false);
@@ -202,13 +201,15 @@ namespace InventorySalesManagementSystem.Products
             FillProductUpdate();
 
 
-            ProductService.UpdateProduct(_productUpdate, CurrentUserId);
+            
+           
+            ProductService.UpdateProduct(_productUpdate, userId);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تم التحديث بنجاح");
             this.Close();
         }
-        private void AddProduct(ProductService ProductService)
+        private void AddProduct(ProductService ProductService,int userId)
         {
             //Validate Cmp Units
             if (cmpUnit.SelectedValue == null)
@@ -235,7 +236,7 @@ namespace InventorySalesManagementSystem.Products
 
             FillProductAdd();
 
-            ProductService.AddProduct(_productAdd, CurrentUserId);
+            ProductService.AddProduct(_productAdd, userId);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تمت الإضافة بنجاح");
@@ -250,15 +251,24 @@ namespace InventorySalesManagementSystem.Products
                 using (var scope = _serviceProvider.CreateScope())
                 {
 
+                    var UserSession = _serviceProvider.GetRequiredService<UserSession>();
+
+                    int userid = UserSession.CurrentUser != null ?
+                        UserSession.CurrentUser.UserId
+                        :
+                        -1;
+
                     var ProductService = scope.ServiceProvider.GetRequiredService<ProductService>();
 
                     if (State == Enums.FormStateEnum.AddNew)
                     {
-                        AddProduct(ProductService);
+                        AddProduct(ProductService, userid);
                     }
                     else if (State == Enums.FormStateEnum.Update)
                     {
-                        UpdateProduct(ProductService);
+                        
+
+                        UpdateProduct(ProductService, userid);
                     }
                 }
             }
