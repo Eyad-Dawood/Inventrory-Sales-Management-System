@@ -9,9 +9,9 @@ namespace DataAccessLayer.Abstractions
 {
     public interface IProductTypeRepository : IRepository<ProductType>
     {
-        public List<ProductType> GetAllByProductTypeName(int PageNumber,int RowsPerPage,string ProductTypeName);
+        public Task<List<ProductType>> GetAllByProductTypeNameAsync(int PageNumber,int RowsPerPage,string ProductTypeName);
 
-        public int GetTotalPagesByProductTypeName(string Name, int RowsPerPage);
+        public Task<int> GetTotalPagesByProductTypeNameAsync(string Name, int RowsPerPage);
 
     }
 }

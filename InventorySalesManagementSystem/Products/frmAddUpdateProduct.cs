@@ -45,12 +45,12 @@ namespace InventorySalesManagementSystem.Products
             _serviceProvider = serviceProvider;
         }
 
-        private void FillUnitsComboBox()
+        private async Task FillUnitsComboBox()
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
-                var units = service.GetAllMasurementUnit();
+                var units = await service.GetAllMasurementUnitAsync();
 
                 cmpUnit.DataSource = units;
                 cmpUnit.DisplayMember = nameof(MasurementUnitListDto.UnitName);
@@ -58,7 +58,7 @@ namespace InventorySalesManagementSystem.Products
             }
         }
 
-        private void SetupAdd()
+        private async Task SetupAdd()
         {
             State = Enums.FormStateEnum.AddNew;
 
@@ -68,7 +68,7 @@ namespace InventorySalesManagementSystem.Products
             _productAdd = new ProductAddDto();
 
 
-            FillUnitsComboBox();
+           await FillUnitsComboBox();
         }
 
         private void SetupUpdate(ProductUpdateDto dto,ProductReadDto productReadDto)
@@ -109,24 +109,24 @@ namespace InventorySalesManagementSystem.Products
             chkAvilable.Checked = _productUpdate.IsAvilable;
         }
 
-        public static frmAddUpdateProduct CreateForAdd(IServiceProvider serviceProvider)
+        public static async Task<frmAddUpdateProduct> CreateForAdd(IServiceProvider serviceProvider)
         {
             var form = new frmAddUpdateProduct(serviceProvider);
-            form.SetupAdd();
+            await form.SetupAdd();
             return form;
         }
-        public static frmAddUpdateProduct CreateForUpdate(IServiceProvider serviceProvider, int ProductId)
+        public static async Task<frmAddUpdateProduct> CreateForUpdate(IServiceProvider serviceProvider, int ProductId)
         {
             using (var scope = serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
 
-                var dto = service.GetProductForUpdate(ProductId);
+                var dto = await service.GetProductForUpdateAsync(ProductId);
 
-                var productRead = service.GetProductById(ProductId); // To Get The Un Editable Data
+                var productRead = await service.GetProductByIdAsync(ProductId); // To Get The Un Editable Data
 
                 frmAddUpdateProduct frm = new frmAddUpdateProduct(serviceProvider);
-                frm.SetupUpdate(dto,productRead);
+                 frm.SetupUpdate(dto,productRead);
                 return frm;
             }
         }
@@ -190,7 +190,7 @@ namespace InventorySalesManagementSystem.Products
             }
         }
 
-        private void UpdateProduct(ProductService ProductService,int userId)
+        private async Task UpdateProduct(ProductService ProductService,int userId)
         {
             //Validate Values Format
             ValidationCore(txtBuyingPrice.Text, txtSellingPrice.Text, txtQuantity.Text, false);
@@ -203,13 +203,13 @@ namespace InventorySalesManagementSystem.Products
 
             
            
-            ProductService.UpdateProduct(_productUpdate, userId);
+           await ProductService.UpdateProductAsync(_productUpdate, userId);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تم التحديث بنجاح");
             this.Close();
         }
-        private void AddProduct(ProductService ProductService,int userId)
+        private async Task AddProduct(ProductService ProductService,int userId)
         {
             //Validate Cmp Units
             if (cmpUnit.SelectedValue == null)
@@ -236,7 +236,7 @@ namespace InventorySalesManagementSystem.Products
 
             FillProductAdd();
 
-            ProductService.AddProduct(_productAdd, userId);
+           await ProductService.AddProductAsync(_productAdd, userId);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تمت الإضافة بنجاح");
@@ -244,7 +244,7 @@ namespace InventorySalesManagementSystem.Products
         }
 
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
@@ -262,13 +262,13 @@ namespace InventorySalesManagementSystem.Products
 
                     if (State == Enums.FormStateEnum.AddNew)
                     {
-                        AddProduct(ProductService, userid);
+                        await AddProduct(ProductService, userid);
                     }
                     else if (State == Enums.FormStateEnum.Update)
                     {
                         
 
-                        UpdateProduct(ProductService, userid);
+                       await UpdateProduct(ProductService, userid);
                     }
                 }
             }
@@ -321,13 +321,13 @@ namespace InventorySalesManagementSystem.Products
             }
         }
 
-        private void lkAddUnit_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private async void lkAddUnit_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             var frm = frmAddUpdateMasurementUnit.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
             //Reload Units
-            FillUnitsComboBox();
+           await FillUnitsComboBox();
         }
     }
 }

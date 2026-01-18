@@ -17,9 +17,9 @@ namespace DataAccessLayer.Repos
             _context = context;
         }
 
-        public void Add(T entity)
+        public async Task AddAsync(T entity)
         {
-            _context.Set<T>().Add(entity);
+            await _context.Set<T>().AddAsync(entity);
         }
 
         public void Update(T entity)
@@ -27,47 +27,43 @@ namespace DataAccessLayer.Repos
             _context.Set<T>().Update(entity);
         }
 
-        public void Delete(int id)
-        {
-            var entity = _context.Set<T>().Find(id);
-
-            if (entity != null)
-            {
-                _context.Set<T>().Remove(entity);
-            }
-        }
         public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
         }
 
-        public int GetTotalPages(int RowsPerPage)
+        public async Task<int> GetTotalPagesAsync(int RowsPerPage)
         {
-            var totalCount = _context.Set<T>().Count();
+            var totalCount = await _context
+                                    .Set<T>()
+                                    .AsNoTracking()
+                                    .CountAsync();
 
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
 
-        public List<T> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
-            return _context
+            return await _context
                 .Set<T>()
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<T>GetAll(int PageNumber,int RowsPerPage)
+        public async Task<List<T>> GetAllAsync(int PageNumber,int RowsPerPage)
         {
-            return _context
+            return 
+                await 
+                _context
                 .Set<T>()
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
-        public T GetById(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
-            return _context.Set<T>().Find(id);
+            return await _context.Set<T>().FindAsync(id);
         }
     }
 

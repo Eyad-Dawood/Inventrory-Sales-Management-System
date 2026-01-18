@@ -29,7 +29,7 @@ namespace LogicLayer.Services
             _logger = logger;
         }
 
-
+        #region Map
         private Customer MapCustomer_AddDto(CustomerAddDto DTO)
         {
             return new Customer()
@@ -75,6 +75,7 @@ namespace LogicLayer.Services
                 IsActive = customer.IsActive
             };
         }
+        #endregion
 
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
@@ -82,37 +83,39 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddCustomer(CustomerAddDto DTO)
+        public async Task AddCustomerAsync(CustomerAddDto DTO)
         {            
             Customer Customer = MapCustomer_AddDto(DTO);
+
+            //Map Nulls
+            PersonService.MappNullStrings(Customer.Person);
+
 
             ValidationHelper.ValidateEntity(Customer);
 
             //Alwase Active
             Customer.IsActive = true;
 
-            //Map Nulls
-            PersonService.MappNullStrings(Customer.Person);
 
-            using (var transaction = _unitOfWork.BeginTransaction())
+            using (var transaction = await _unitOfWork.BeginTransactionAsync())
             {
 
                 try
                 {
-                    _personRepo.Add(Customer.Person);
-                    _unitOfWork.Save();
+                    await _personRepo.AddAsync(Customer.Person);
+                    await _unitOfWork.SaveAsync();
 
                     Customer.PersonId = Customer.Person.PersonId;
 
 
-                    _customerRepo.Add(Customer);
-                    _unitOfWork.Save();
+                    await _customerRepo.AddAsync(Customer);
+                    await _unitOfWork.SaveAsync();
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
 
                     _logger.LogError(ex,
                         "Failed to add customer {FirstName} {LastName}",
@@ -134,9 +137,9 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails
         /// </exception>
-        public void UpdateCustomer(CustomerUpdateDto DTO)
+        public async Task UpdateCustomerAsync(CustomerUpdateDto DTO)
         {
-            var customer = _customerRepo.GetWithPersonById(DTO.CustomerId);
+            var customer = await _customerRepo.GetWithPersonByIdAsync(DTO.CustomerId);
 
             if (customer == null || customer.Person == null)
             {
@@ -155,7 +158,7 @@ namespace LogicLayer.Services
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -174,32 +177,32 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void DeleteCustomer(int customerId)
+        public async Task DeleteCustomerAsync(int customerId)
         {
-            Customer customer = _customerRepo.GetWithPersonById(customerId);
+            Customer? customer = await _customerRepo.GetWithPersonByIdAsync(customerId);
 
             if (customer == null)
             {
                 throw new NotFoundException(typeof(Customer));
             }
 
-            using (var transaction = _unitOfWork.BeginTransaction())
+            using (var transaction = await _unitOfWork.BeginTransactionAsync())
             {
                 try
                 {
                     _customerRepo.Delete(customer);
 
                     _personRepo.Delete(customer.Person);
-                    
 
 
-                    _unitOfWork.Save();
 
-                    transaction.Commit();
+                    await _unitOfWork.SaveAsync();
+
+                    await transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
 
                     _logger.LogError(ex,
                     "Failed to Delete Customer {CustomerId} With Person {PersonId}",
@@ -214,9 +217,9 @@ namespace LogicLayer.Services
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public CustomerReadDto GetCustomerById(int customerId)
+        public async Task<CustomerReadDto> GetCustomerByIdAsync(int customerId)
         {
-            Customer customer = _customerRepo.GetWithDetailsById(customerId);
+            Customer? customer = await _customerRepo.GetWithDetailsByIdAsync(customerId);
 
             if (customer == null)
             {
@@ -228,9 +231,9 @@ namespace LogicLayer.Services
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public CustomerUpdateDto GetCustomerForUpdate(int customerId)
+        public async Task<CustomerUpdateDto> GetCustomerForUpdateAsync(int customerId)
         {
-            Customer customer = _customerRepo.GetWithPersonById(customerId);
+            Customer? customer = await _customerRepo.GetWithPersonByIdAsync(customerId);
             if (customer == null)
             {
                 throw new NotFoundException(typeof(Customer));
@@ -241,12 +244,13 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<CustomerListDto> GetAllCustomers(int PageNumber,int RowsPerPage)
+        public async Task<List<CustomerListDto>> GetAllCustomersAsync(int PageNumber,int RowsPerPage)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
-            return _customerRepo.
-                GetAllWithPerson(PageNumber,RowsPerPage)
+            return
+                (await _customerRepo.
+                GetAllWithPersonAsync(PageNumber,RowsPerPage))
                 .Select(c=> MapCustomer_ListDto(c))
                 .ToList();
         }
@@ -254,23 +258,23 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageNumber(int RowsPerPage)
+        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _customerRepo.GetTotalPages(RowsPerPage);
+            return await _customerRepo.GetTotalPagesAsync(RowsPerPage);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<CustomerListDto> GetAllByFullName(int PageNumber,int RowsPerPage,string Name)
+        public async Task<List<CustomerListDto>> GetAllByFullNameAsync(int PageNumber,int RowsPerPage,string Name)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _customerRepo.
-                            GetAllByFullName(PageNumber, RowsPerPage,Name)
+            return (await _customerRepo.
+                            GetAllByFullNameAsync(PageNumber, RowsPerPage,Name))
                             .Select(c => MapCustomer_ListDto(c))
                             .ToList();
         }
@@ -278,13 +282,14 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<CustomerListDto> GetAllByTownName(int PageNumber, int RowsPerPage, string TownName)
+        public async Task<List<CustomerListDto>> GetAllByTownNameAsync(int PageNumber, int RowsPerPage, string TownName)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _customerRepo.
-                            GetAllByTownName(PageNumber, RowsPerPage, TownName)
+            return 
+                (await _customerRepo.
+                            GetAllByTownNameAsync(PageNumber, RowsPerPage, TownName))
                             .Select(c => MapCustomer_ListDto(c))
                             .ToList();
         }
@@ -292,21 +297,21 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageByFullName(string Name,int RowsPerPage)
+        public async Task<int> GetTotalPageByFullNameAsync(string Name,int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _customerRepo.GetTotalPagesByFullName(Name,RowsPerPage);
+            return await _customerRepo.GetTotalPagesByFullNameAsync(Name,RowsPerPage);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageByTownName(string TownName,int RowsPerPage)
+        public async Task<int> GetTotalPageByTownNameAsync(string TownName,int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _customerRepo.GetTotalPagesByTownName(TownName,RowsPerPage);
+            return await _customerRepo.GetTotalPagesByTownNameAsync(TownName,RowsPerPage);
         }
 
         /// <exception cref="NotFoundException">
@@ -315,9 +320,9 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void ChangeActivationState(int CustomerId, bool State)
+        public async Task ChangeActivationStateAsync(int CustomerId, bool State)
         {
-            Customer customer = _customerRepo.GetById(CustomerId);
+            Customer? customer = await _customerRepo.GetByIdAsync(CustomerId);
 
             if (customer == null)
             {
@@ -328,7 +333,7 @@ namespace LogicLayer.Services
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
                 _logger.LogInformation("تم تغيير حالة العميل {CutomerId} إلى {State}", CustomerId, State);
             }
             catch (Exception ex)

@@ -12,10 +12,27 @@ namespace InventorySalesManagementSystem.Customers
 {
     public partial class frmShowCustomer : Form
     {
-        public frmShowCustomer(IServiceProvider serviceProvider,int CustomerId)
+        private readonly IServiceProvider _serviceProvider;
+        private readonly int _customerId;
+
+        public frmShowCustomer(IServiceProvider serviceProvider, int customerId)
         {
             InitializeComponent();
-            ucCustomerShow1.ShowData(serviceProvider, CustomerId);
+            _serviceProvider = serviceProvider;
+            _customerId = customerId;
+        }
+
+        private async void frmShowCustomer_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                await ucCustomerShow1.ShowData(_serviceProvider, _customerId);
+            }
+            catch
+            {
+                MessageBox.Show("حدث خطأ أثناء تحميل بيانات العميل");
+            }
         }
     }
+
 }

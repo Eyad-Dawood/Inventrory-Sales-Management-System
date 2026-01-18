@@ -8,14 +8,13 @@ namespace DataAccessLayer.Abstractions
 {
     public interface IRepository<T> where T : class
     {
-        void Add(T entity);
+        Task AddAsync(T entity);
         void Update(T entity);
-        void Delete(int id);
         void Delete(T entity);
-        T GetById(int id);
-        List<T> GetAll();
-        List<T> GetAll(int PagerSize ,int RowsPerPage);
-        int GetTotalPages(int RowsPerPage);
+        Task<T?> GetByIdAsync(int id);
+        Task<List<T>> GetAllAsync();
+        Task<List<T>> GetAllAsync(int PagerSize ,int RowsPerPage);
+        Task<int> GetTotalPagesAsync(int RowsPerPage);
 
     }
 }

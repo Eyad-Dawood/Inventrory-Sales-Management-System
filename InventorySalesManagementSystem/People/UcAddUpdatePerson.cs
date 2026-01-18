@@ -40,7 +40,7 @@ namespace InventorySalesManagementSystem.People
         }
 
 
-        public void Start(IServiceProvider serviceProvider)
+        public async Task Start(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
 
@@ -48,10 +48,10 @@ namespace InventorySalesManagementSystem.People
             _personAdd = new PersonAddDto();
             this.pnAllControles.Enabled = true;
 
-            EnsureTownsLoaded();
+           await EnsureTownsLoaded();
             LoadAddNewScreen();
         }
-        public void Start(IServiceProvider serviceProvider, PersonUpdateDto Dto)
+        public async Task Start(IServiceProvider serviceProvider, PersonUpdateDto Dto)
         {
             if (Dto != null)
             {
@@ -62,7 +62,7 @@ namespace InventorySalesManagementSystem.People
                 _personUpdate = Dto;
                 this.pnAllControles.Enabled = true;
 
-                EnsureTownsLoaded();
+               await EnsureTownsLoaded();
                 LoadUpdateScreen();
             }
         }
@@ -90,21 +90,21 @@ namespace InventorySalesManagementSystem.People
             return _personUpdate;
         }
 
-        private void EnsureTownsLoaded()
+        private async Task EnsureTownsLoaded()
         {
             if (_towns != null && _towns.Count > 0)
                 return;
 
-            LoadTowns();
+           await LoadTowns();
         }
-        private void LoadTowns()
+        private async Task LoadTowns()
         {
 
             using (var scope = _serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<TownService>();
 
-                _towns = service.GetAllTowns();
+                _towns = await service.GetAllTownsAsync();
             }
 
             cmpTown.DisplayMember = nameof(TownListDto.TownName);
@@ -129,7 +129,6 @@ namespace InventorySalesManagementSystem.People
 
         private void LoadAddNewScreen()
         {
-
             LoadDefualtValues();
         }
         private void LoadUpdateScreen()
@@ -185,7 +184,7 @@ namespace InventorySalesManagementSystem.People
         }
 
 
-        private void lkAddTown_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private async void lkAddTown_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
             {
@@ -198,7 +197,7 @@ namespace InventorySalesManagementSystem.People
                        ex,
                        "Unexpected error while opening Add Town form");
             }
-            LoadTowns();
+           await LoadTowns();
         }
     }
 }

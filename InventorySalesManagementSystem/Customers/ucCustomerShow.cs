@@ -47,7 +47,7 @@ namespace InventorySalesManagementSystem.Customers
             }
 
         }
-        public void ShowData(IServiceProvider serviceProvider, int customerId)
+        public async Task ShowData(IServiceProvider serviceProvider, int customerId)
         {
             _serviceProvider = serviceProvider;
 
@@ -56,7 +56,7 @@ namespace InventorySalesManagementSystem.Customers
                 var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
                 try
                 {
-                    var customer = service.GetCustomerById(customerId);
+                    var customer = await service.GetCustomerByIdAsync(customerId);
                     this.Enabled = true;
                     FillCustomerData(customer);
 

@@ -1,18 +1,10 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Entities;
-using DataAccessLayer.Validation;
-using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Utilities;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogicLayer.Services
 {
@@ -30,6 +22,7 @@ namespace LogicLayer.Services
             _logger = logger;
         }
 
+        #region
         private Worker MapWorker_AddDto(WorkerAddDto DTO)
         {
             return new Worker()
@@ -81,6 +74,7 @@ namespace LogicLayer.Services
                 PersonUpdateDto = PersonService.MapPerosn_UpdateDto(worker.Person)
             };
         }
+        #endregion
 
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
@@ -88,7 +82,7 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddWorker(WorkerAddDto DTO)
+        public async Task AddWorkerAsync(WorkerAddDto DTO)
         {
             Worker worker = MapWorker_AddDto(DTO);
 
@@ -100,25 +94,25 @@ namespace LogicLayer.Services
             //Mapp Null
             PersonService.MappNullStrings(worker.Person);
 
-            using (var transaction = _unitOfWork.BeginTransaction())
+            using (var transaction = await _unitOfWork.BeginTransactionAsync())
             {
 
                 try
                 {
-                    _personRepo.Add(worker.Person);
-                    _unitOfWork.Save();
+                    await _personRepo.AddAsync(worker.Person);
+                    await _unitOfWork.SaveAsync();
 
                     worker.PersonId = worker.Person.PersonId;
 
 
-                    _workerRepo.Add(worker);
-                    _unitOfWork.Save();
+                    await _workerRepo.AddAsync(worker);
+                    await _unitOfWork.SaveAsync();
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
 
                     _logger.LogError(ex,
                         "Failed to add worker {FirstName} {LastName}",
@@ -141,9 +135,9 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails
         /// </exception>
-        public void UpdateWorker(WorkerUpdateDto DTO)
+        public async Task UpdateWorkerAsync(WorkerUpdateDto DTO)
         {
-            var worker = _workerRepo.GetWithPersonById(DTO.WorkerId);
+            var worker = await _workerRepo.GetWithPersonByIdAsync(DTO.WorkerId);
 
             if (worker == null || worker.Person == null)
             {
@@ -163,7 +157,7 @@ namespace LogicLayer.Services
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -183,16 +177,16 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void DeleteWorker(int workerId)
+        public async Task DeleteWorkerAsync(int workerId)
         {
-            Worker worker = _workerRepo.GetWithPersonById(workerId);
+            Worker? worker = await _workerRepo.GetWithPersonByIdAsync(workerId);
 
             if (worker == null)
             {
                 throw new NotFoundException(typeof(Worker));
             }
 
-            using (var transaction = _unitOfWork.BeginTransaction())
+            using (var transaction = await _unitOfWork.BeginTransactionAsync())
             {
                 try
                 {
@@ -200,13 +194,13 @@ namespace LogicLayer.Services
 
                     _personRepo.Delete(worker.Person);
 
-                    _unitOfWork.Save();
+                    await _unitOfWork.SaveAsync();
 
-                    transaction.Commit();
+                    await transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    await transaction.RollbackAsync();
 
                     _logger.LogError(ex,
                     "Failed to Delete Worker {WorkerId} With Person {PersonId}",
@@ -222,9 +216,9 @@ namespace LogicLayer.Services
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public WorkerReadDto GetWorkerById(int workerId)
+        public async Task<WorkerReadDto> GetWorkerByIdAsync(int workerId)
         {
-            Worker worker = _workerRepo.GetWithDetailsById(workerId);
+            Worker? worker = await _workerRepo.GetWithDetailsByIdAsync(workerId);
             if (worker == null)
             {
                 throw new NotFoundException(typeof(Worker));
@@ -236,13 +230,14 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<WorkerListDto> GetAllWorkers(int PageNumber, int RowsPerPage)
+        public async Task<List<WorkerListDto>> GetAllWorkersAsync(int PageNumber, int RowsPerPage)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _workerRepo
-                .GetAllWithPerson(PageNumber, RowsPerPage)
+            return
+                (await _workerRepo
+                .GetAllWithPersonAsync(PageNumber, RowsPerPage))
                 .Select(w => MapWorker_ListDto(w)
                 ).ToList();
         }
@@ -250,9 +245,9 @@ namespace LogicLayer.Services
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public WorkerUpdateDto GetWorkerForUpdate(int WorkerId)
+        public async Task<WorkerUpdateDto> GetWorkerForUpdateAsync(int WorkerId)
         {
-            Worker worker = _workerRepo.GetWithPersonById(WorkerId);
+            Worker? worker = await _workerRepo.GetWithPersonByIdAsync(WorkerId);
             if (worker == null)
             {
                 throw new NotFoundException(typeof(Worker));
@@ -264,23 +259,23 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageNumber(int RowsPerPage)
+        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _workerRepo.GetTotalPages(RowsPerPage);
+            return await _workerRepo.GetTotalPagesAsync(RowsPerPage);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<WorkerListDto> GetAllByFullName(int PageNumber, int RowsPerPage, string Name)
+        public async Task<List<WorkerListDto>> GetAllByFullNameAsync(int PageNumber, int RowsPerPage, string Name)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _workerRepo.
-                            GetAllByFullName(PageNumber, RowsPerPage, Name)
+            return (await _workerRepo.
+                            GetAllByFullNameAsync(PageNumber, RowsPerPage, Name))
                             .Select(w => MapWorker_ListDto(w))
                             .ToList();
         }
@@ -288,13 +283,13 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<WorkerListDto> GetAllByTownName(int PageNumber, int RowsPerPage, string TownName)
+        public async Task<List<WorkerListDto>> GetAllByTownNameAsync(int PageNumber, int RowsPerPage, string TownName)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _workerRepo.
-                            GetAllByTownName(PageNumber, RowsPerPage, TownName)
+            return (await _workerRepo.
+                            GetAllByTownNameAsync(PageNumber, RowsPerPage, TownName))
                             .Select(w => MapWorker_ListDto(w))
                             .ToList();
         }
@@ -302,22 +297,22 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageByFullName(string Name, int RowsPerPage)
+        public async Task<int> GetTotalPageByFullNameAsync(string Name, int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _workerRepo.GetTotalPagesByFullName(Name, RowsPerPage);
+            return await _workerRepo.GetTotalPagesByFullNameAsync(Name, RowsPerPage);
         }
 
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageByTownName(string TownName, int RowsPerPage)
+        public async Task<int> GetTotalPageByTownNameAsync(string TownName, int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _workerRepo.GetTotalPagesByTownName(TownName, RowsPerPage);
+            return await _workerRepo.GetTotalPagesByTownNameAsync(TownName, RowsPerPage);
         }
 
         /// <exception cref="NotFoundException">
@@ -326,9 +321,9 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void ChangeActivationState(int WorkerId,bool State)
+        public async Task ChangeActivationStateAsync(int WorkerId,bool State)
         {
-            Worker worker = _workerRepo.GetById(WorkerId);
+            Worker? worker = await _workerRepo.GetByIdAsync(WorkerId);
 
             if (worker == null)
             {
@@ -339,7 +334,7 @@ namespace LogicLayer.Services
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
                 _logger.LogInformation("تم تغيير حالة العامل {WorkerId} إلى {State}", WorkerId, State);
             }
             catch (Exception ex)

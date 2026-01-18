@@ -138,12 +138,12 @@ namespace InventorySalesManagementSystem.Customers
         #endregion
 
         #region DataGetter
-        private List<CustomerListDto> GetData(CustomerService service,
+        private async Task<List<CustomerListDto>> GetData(CustomerService service,
                                               int PageNumber)
         {
-            return service.GetAllCustomers(PageNumber, RowsPerPage);
+            return await service.GetAllCustomersAsync(PageNumber, RowsPerPage);
         }
-        private List<CustomerListDto> GetFilteredData(
+        private async Task<List<CustomerListDto>> GetFilteredData(
             CustomerService service,
             string columnName,
             int PageNumber,
@@ -152,16 +152,16 @@ namespace InventorySalesManagementSystem.Customers
             return columnName switch
             {
                 nameof(Customer.Person.FullName)
-                    => service.GetAllByFullName(PageNumber, RowsPerPage, value),
+                    => await service.GetAllByFullNameAsync(PageNumber, RowsPerPage, value),
 
                 nameof(Customer.Person.Town.TownName)
-                    => service.GetAllByTownName(PageNumber, RowsPerPage, value),
+                    => await service.GetAllByTownNameAsync(PageNumber, RowsPerPage, value),
 
                 _ => new List<CustomerListDto>()
             };
         }
 
-        private int GetTotalFilteredPages(
+        private async Task<int> GetTotalFilteredPages(
             CustomerService service,
             string columnName,
             string value)
@@ -169,29 +169,29 @@ namespace InventorySalesManagementSystem.Customers
             return columnName switch
             {
                 nameof(Customer.Person.FullName)
-                    => service.GetTotalPageByFullName(value, RowsPerPage),
+                    => await service.GetTotalPageByFullNameAsync(value, RowsPerPage),
 
                 nameof(Customer.Person.Town.TownName)
-                    => service.GetTotalPageByTownName(value, RowsPerPage),
+                    =>  await service.GetTotalPageByTownNameAsync(value, RowsPerPage),
 
                 _ => 0
             };
         }
 
-        private int GetTotalPages(CustomerService service)
+        private async Task<int> GetTotalPages(CustomerService service)
         {
-            return service.GetTotalPageNumber(RowsPerPage);
+            return await service.GetTotalPageNumberAsync(RowsPerPage);
         }
         #endregion
 
 
-        private void DisplayPage(int PageNumber)
+        private async Task DisplayPage(int PageNumber)
         {
             //Call filterMethod With Null Fitler
-            DisplayFilteredPage(PageNumber, null);
+           await DisplayFilteredPage(PageNumber, null);
         }
 
-        private void DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
+        private async Task DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -200,37 +200,37 @@ namespace InventorySalesManagementSystem.Customers
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
-                    : GetTotalPages(service);
+                    ? await GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
+                    : await GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
-                    : GetData(service, pageToRequest);
+                    ? await GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
+                    : await GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<CustomerListDto>(data, pageToRequest, totalPages);
             }
         }
 
-        private void OnFilterClicked(UcListView.Filter filter)
+        private async Task OnFilterClicked(UcListView.Filter filter)
         {
-            DisplayFilteredPage(1, filter);
+           await DisplayFilteredPage(1, filter);
         }
-        private void OnFilterCanceled()
+        private async Task OnFilterCanceled()
         {
-            DisplayPage(1);
+           await DisplayPage(1);
         }
-        private void OnPageChanged(int PageNumber, UcListView.Filter filter)
+        private async Task OnPageChanged(int PageNumber, UcListView.Filter filter)
         {
-            DisplayFilteredPage(PageNumber, filter);
+           await DisplayFilteredPage(PageNumber, filter);
         }
-        private void OnOperationFinished(int PageNumber, UcListView.Filter filter)
+        private async Task OnOperationFinished(int PageNumber, UcListView.Filter filter)
         {
-            DisplayFilteredPage(PageNumber, filter);
+           await DisplayFilteredPage(PageNumber, filter);
         }
 
-        private void frmCustomerListScreen_Load(object sender, EventArgs e)
+        private async void frmCustomerListScreen_Load(object sender, EventArgs e)
         {
             ucListView1.OnFilterClicked = OnFilterClicked;
             ucListView1.OnFilterCanceled = OnFilterCanceled;
@@ -240,15 +240,15 @@ namespace InventorySalesManagementSystem.Customers
 
             ucListView1.ConfigureGrid = ConfigureGrid;
 
-            DisplayPage(1);
+           await DisplayPage(1);
             ConfigureFilter();
         }
 
 
 
-        private void btnAdd_Click(object sender, EventArgs e)
+        private async void btnAdd_Click(object sender, EventArgs e)
         {
-            var frm = frmAddUpdateCustomer.CreateForAdd(_serviceProvider);
+            var frm = await frmAddUpdateCustomer.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();
@@ -273,7 +273,7 @@ namespace InventorySalesManagementSystem.Customers
             return -1;
         }
 
-        private void updateMenustripItem_Click(object sender, EventArgs e)
+        private async void updateMenustripItem_Click(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
@@ -285,7 +285,7 @@ namespace InventorySalesManagementSystem.Customers
 
             try
             {
-                var frm = frmAddUpdateCustomer.CreateForUpdate(_serviceProvider, id);
+                var frm = await frmAddUpdateCustomer.CreateForUpdate(_serviceProvider, id);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -300,7 +300,7 @@ namespace InventorySalesManagementSystem.Customers
             ucListView1.RefreshAfterOperation();
         }
 
-        private void deleteMenustripItem_Click(object sender, EventArgs e)
+        private async void deleteMenustripItem_Click(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
@@ -332,7 +332,7 @@ namespace InventorySalesManagementSystem.Customers
 
                 try
                 {
-                    service.DeleteCustomer(id);
+                   await service.DeleteCustomerAsync(id);
                 }
                 catch (NotFoundException ex)
                 {
@@ -379,7 +379,7 @@ namespace InventorySalesManagementSystem.Customers
             }
         }
 
-        private void changeActivationStateMenuStripItem_Click(object sender, EventArgs e)
+        private async void changeActivationStateMenuStripItem_Click(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
@@ -407,11 +407,11 @@ namespace InventorySalesManagementSystem.Customers
                 var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
                 try
                 {
-                    service.ChangeActivationState(id, !selectedCustomer.IsActive);
+                   await service.ChangeActivationStateAsync(id, !selectedCustomer.IsActive);
                 }
                 catch (NotFoundException ex)
                 {
-                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Worker)));
+                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Customer)));
                     return;
                 }
                 catch (OperationFailedException ex)

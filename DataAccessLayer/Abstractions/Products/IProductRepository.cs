@@ -10,14 +10,14 @@ namespace DataAccessLayer.Abstractions.Products
 {
     public interface IProductRepository : IRepository<Product>
     {
-        public Product GetWithProductType_And_UnitById(int id);
+        public Task<Product?> GetWithProductType_And_UnitByIdAsync(int id);
 
-        public List<Product> GetAllWithProductType_And_Unit(int PageNumber, int RowsPerPage);
+        public Task<List<Product>> GetAllWithProductType_And_UnitAsync(int PageNumber, int RowsPerPage);
 
-        public List<Product> GetAllByFullName(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName);
-        public List<Product> GetAllByProductTypeName(int PageNumber, int RowsPerPage, string ProductTypeName);
-        public int GetTotalPagesByFullName(string ProductTypeName,string ProductName, int RowsPerPage);
-        public int GetTotalPagesByProductTypeName(string ProductTypeName, int RowsPerPage);
+        public Task<List<Product>> GetAllByFullNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName);
+        public Task<List<Product>> GetAllByProductTypeNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName);
+        public Task<int> GetTotalPagesByFullNameAsync(string ProductTypeName,string ProductName, int RowsPerPage);
+        public Task<int> GetTotalPagesByProductTypeNameAsync(string ProductTypeName, int RowsPerPage);
 
     }
 }

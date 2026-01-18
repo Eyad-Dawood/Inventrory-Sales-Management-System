@@ -9,12 +9,12 @@ namespace DataAccessLayer.Abstractions
 {
     public interface ICustomerRepository : IRepository<Customer>
     {
-        public Customer GetWithPersonById(int CustomerId);
-        public Customer GetWithDetailsById(int CustomerId);
-        public List<Customer> GetAllWithPerson(int PageNumber,int RowsPerPage);
-        public List<Customer> GetAllByFullName(int PageNumber, int RowsPerPage,string FullName);
-        public List<Customer> GetAllByTownName(int PageNumber, int RowsPerPage,string townName);
-        public int GetTotalPagesByFullName(string Name,int RowsPerPage);
-        public int GetTotalPagesByTownName(string TownName,int RowsPerPage);
+        public Task<Customer?> GetWithPersonByIdAsync(int CustomerId);
+        public Task<Customer?> GetWithDetailsByIdAsync(int CustomerId);
+        public Task<List<Customer>> GetAllWithPersonAsync(int PageNumber,int RowsPerPage);
+        public Task<List<Customer>> GetAllByFullNameAsync(int PageNumber, int RowsPerPage,string FullName);
+        public Task<List<Customer>> GetAllByTownNameAsync(int PageNumber, int RowsPerPage,string townName);
+        public Task<int> GetTotalPagesByFullNameAsync(string Name,int RowsPerPage);
+        public Task<int> GetTotalPagesByTownNameAsync(string TownName,int RowsPerPage);
     }
 }

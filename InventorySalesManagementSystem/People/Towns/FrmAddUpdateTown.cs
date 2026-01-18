@@ -75,7 +75,7 @@ namespace InventorySalesManagementSystem.People.Towns
             return form;
         }
 
-        public static FrmAddUpdateTown CreateForUpdate(IServiceProvider serviceProvider, int townId)
+        public static async Task<FrmAddUpdateTown> CreateForUpdate(IServiceProvider serviceProvider, int townId)
         {
             TownUpdateDto dto;
 
@@ -83,7 +83,7 @@ namespace InventorySalesManagementSystem.People.Towns
             {
                 var service = scope.ServiceProvider.GetRequiredService<TownService>();
 
-                dto = service.GetTownForUpdate(townId);
+                dto = await service.GetTownForUpdateAsync(townId);
             }
 
             var form = new FrmAddUpdateTown(serviceProvider);
@@ -107,7 +107,7 @@ namespace InventorySalesManagementSystem.People.Towns
         }
 
 
-        private void UpdateTown()
+        private async Task UpdateTown()
         {
             SaveUpdates();
 
@@ -118,7 +118,7 @@ namespace InventorySalesManagementSystem.People.Towns
                     var service = scope.ServiceProvider.GetRequiredService<TownService>();
 
 
-                    service.UpdateTown(_townUpdate);
+                   await service.UpdateTownAsync(_townUpdate);
                 }
             }
             catch (NotFoundException ex)
@@ -148,7 +148,7 @@ namespace InventorySalesManagementSystem.People.Towns
             MessageBox.Show("تم التحديث بنجاح");
             this.Close();
         }
-        private void AddNew()
+        private async Task AddNew()
         {
             SaveAddNew();
 
@@ -159,7 +159,7 @@ namespace InventorySalesManagementSystem.People.Towns
                     var service = scope.ServiceProvider.GetRequiredService<TownService>();
 
 
-                    service.AddTown(_townAdd);
+                  await  service.AddTownAsync(_townAdd);
                 }
             }
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
@@ -183,15 +183,15 @@ namespace InventorySalesManagementSystem.People.Towns
 
 
         }
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             if (State == Enums.FormStateEnum.AddNew)
             {
-                AddNew();
+               await AddNew();
             }
             else if (State == Enums.FormStateEnum.Update)
             {
-                UpdateTown();
+               await UpdateTown();
             }
         }
     }

@@ -30,8 +30,8 @@
         {
             btnCancel = new Button();
             btnSave = new Button();
-            txtTownName = new TextBox();
-            lb_TownId = new Label();
+            txtUnitName = new TextBox();
+            lb_Unit = new Label();
             label9 = new Label();
             label1 = new Label();
             SuspendLayout();
@@ -60,24 +60,24 @@
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
-            // txtTownName
+            // txtUnitName
             // 
-            txtTownName.Location = new Point(20, 61);
-            txtTownName.Name = "txtTownName";
-            txtTownName.RightToLeft = RightToLeft.Yes;
-            txtTownName.Size = new Size(206, 23);
-            txtTownName.TabIndex = 33;
+            txtUnitName.Location = new Point(20, 61);
+            txtUnitName.Name = "txtUnitName";
+            txtUnitName.RightToLeft = RightToLeft.Yes;
+            txtUnitName.Size = new Size(206, 23);
+            txtUnitName.TabIndex = 33;
             // 
-            // lb_TownId
+            // lb_Unit
             // 
-            lb_TownId.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            lb_TownId.ForeColor = Color.Red;
-            lb_TownId.Location = new Point(166, 10);
-            lb_TownId.Name = "lb_TownId";
-            lb_TownId.RightToLeft = RightToLeft.Yes;
-            lb_TownId.Size = new Size(60, 25);
-            lb_TownId.TabIndex = 38;
-            lb_TownId.Text = "---";
+            lb_Unit.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            lb_Unit.ForeColor = Color.Red;
+            lb_Unit.Location = new Point(166, 10);
+            lb_Unit.Name = "lb_Unit";
+            lb_Unit.RightToLeft = RightToLeft.Yes;
+            lb_Unit.Size = new Size(60, 25);
+            lb_Unit.TabIndex = 38;
+            lb_Unit.Text = "---";
             // 
             // label9
             // 
@@ -112,8 +112,8 @@
             ClientSize = new Size(339, 149);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
-            Controls.Add(txtTownName);
-            Controls.Add(lb_TownId);
+            Controls.Add(txtUnitName);
+            Controls.Add(lb_Unit);
             Controls.Add(label9);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
@@ -128,8 +128,8 @@
 
         private Button btnCancel;
         private Button btnSave;
-        private TextBox txtTownName;
-        private Label lb_TownId;
+        private TextBox txtUnitName;
+        private Label lb_Unit;
         private Label label9;
         private Label label1;
     }

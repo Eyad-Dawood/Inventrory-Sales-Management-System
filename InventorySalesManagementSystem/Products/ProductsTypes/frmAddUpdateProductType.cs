@@ -66,7 +66,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             form.SetupAdd();
             return form;
         }
-        public static frmAddUpdateProductType CreateForUpdate(IServiceProvider serviceProvider, int ProductTypeId)
+        public static async Task<frmAddUpdateProductType> CreateForUpdate(IServiceProvider serviceProvider, int ProductTypeId)
         {
             ProductTypeUpdateDto dto;
 
@@ -74,7 +74,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
-                dto = service.GetProductTypeForUpdate(ProductTypeId);
+                dto = await service.GetProductTypeForUpdateAsync(ProductTypeId);
             }
 
             var form = new frmAddUpdateProductType(serviceProvider);
@@ -99,7 +99,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             this.Close();
         }
 
-        private void UpdateProductType()
+        private async Task UpdateProductType()
         {
             SaveUpdates();
 
@@ -110,7 +110,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                     var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
 
-                    service.UpdateProductType(_ProductTypeUpdate);
+                   await service.UpdateProductTypeAsync(_ProductTypeUpdate);
                 }
             }
             catch (NotFoundException ex)
@@ -141,7 +141,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             this.Close();
         }
 
-        private void AddNew()
+        private async Task AddNew()
         {
             SaveAddNew();
 
@@ -152,7 +152,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                     var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
 
-                    service.AddProductType(_ProductTypeAdd);
+                   await service.AddProductTypeAsync(_ProductTypeAdd);
                 }
             }
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
@@ -177,15 +177,15 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             if (State == Enums.FormStateEnum.AddNew)
             {
-                AddNew();
+               await AddNew();
             }
             else if (State == Enums.FormStateEnum.Update)
             {
-                UpdateProductType();
+               await UpdateProductType();
             }
         }
     }

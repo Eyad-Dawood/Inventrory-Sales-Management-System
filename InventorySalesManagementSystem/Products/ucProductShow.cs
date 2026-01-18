@@ -96,7 +96,7 @@ namespace InventorySalesManagementSystem.Products
 
         }
 
-        public void ShowData(IServiceProvider serviceProvider, int ProductId)
+        public async Task ShowData(IServiceProvider serviceProvider, int ProductId)
         {
             _serviceProvider = serviceProvider;
 
@@ -105,7 +105,7 @@ namespace InventorySalesManagementSystem.Products
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
                 try
                 {
-                    var Product = service.GetProductById(ProductId);
+                    var Product = await service.GetProductByIdAsync(ProductId);
                     this.Enabled = true;
                     FillProductData(Product);
 

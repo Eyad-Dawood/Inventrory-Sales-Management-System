@@ -27,6 +27,7 @@ namespace LogicLayer.Services.Products
             _unitOfWork = unitOfWork;
         }
 
+        #region Map
         public ProductPriceLogListDto MapProductPriceLog_ListDto(ProductPriceLog productPriceLog)
         {
             return new ProductPriceLogListDto()
@@ -54,12 +55,13 @@ namespace LogicLayer.Services.Products
                 ProductId = DTO.ProductId
             };
         }
+        #endregion
 
-        public void AddProductPriceLog(ProductPriceLogAddDto DTO)
+        public async Task AddProductPriceLogAsync(ProductPriceLogAddDto DTO)
         {
             ProductPriceLog productPriceLog = MapProductPriceLog_AddDto(DTO);
 
-            _ProductPriceLogrepository.Add(productPriceLog);
+            await _ProductPriceLogrepository.AddAsync(productPriceLog);
 
             //Do Not Save and leave it to the main caller
             //_unitOfWork.Save();
@@ -69,35 +71,36 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductPriceLogListDto> GetAllPriceLogs(int PageNumber , int RowsPerPage)
+        public async Task<List<ProductPriceLogListDto>> GetAllPriceLogsAsync(int PageNumber, int RowsPerPage)
         {
-            Validation.ValidationHelper.ValidatePageginArguments(PageNumber,RowsPerPage);
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
-            return _ProductPriceLogrepository
-                .GetAllWithDetails(PageNumber, RowsPerPage)
-                .Select(l => MapProductPriceLog_ListDto(l)).ToList();
+            return (await _ProductPriceLogrepository
+                .GetAllWithDetailsAsync(PageNumber, RowsPerPage))
+                .Select(l => MapProductPriceLog_ListDto(l))
+                .ToList();
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageNumber(int RowsPerPage)
+        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _ProductPriceLogrepository.GetTotalPages(RowsPerPage);
+            return (await _ProductPriceLogrepository.GetTotalPagesAsync(RowsPerPage));
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductPriceLogListDto> GetAllByProductNameAndDateTime(int PageNumber, int RowsPerPage, string prouctFullName, DateTime? date)
+        public async Task<List<ProductPriceLogListDto>> GetAllByProductNameAndDateTimeAsync(int PageNumber, int RowsPerPage, string prouctFullName, DateTime? date)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _ProductPriceLogrepository.
-                            GetAllByProductFullNameAndDate(PageNumber, RowsPerPage, prouctFullName, date)
+            return (await _ProductPriceLogrepository.
+                            GetAllByProductFullNameAndDateAsync(PageNumber, RowsPerPage, prouctFullName, date))
                             .Select(p => MapProductPriceLog_ListDto(p))
                             .ToList();
         }
@@ -105,11 +108,11 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageByProductNameAndDate(int RowsPerPage, string prouctFullName, DateTime? date)
+        public async Task<int> GetTotalPageByProductNameAndDateAsync(int RowsPerPage, string prouctFullName, DateTime? date)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _ProductPriceLogrepository.GetTotalPagesByFullNameAndDate(RowsPerPage, prouctFullName, date);
+            return (await _ProductPriceLogrepository.GetTotalPagesByFullNameAndDateAsync(RowsPerPage, prouctFullName, date));
         }
 
     }

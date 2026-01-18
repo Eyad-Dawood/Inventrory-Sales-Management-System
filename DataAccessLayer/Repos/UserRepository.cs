@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace DataAccessLayer.Repos
         {
         }
 
-        public User GetByUserName(string UserName)
+        public async Task<User?> GetByUserNameAsync(string UserName)
         {
-            return _context.Users
+            return 
+                await 
+                _context.Users
                 .Where(u=>u.Username == UserName)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
     }
 }

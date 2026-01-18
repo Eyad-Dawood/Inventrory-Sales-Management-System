@@ -17,19 +17,23 @@ namespace DataAccessLayer.Repos
 
         }
 
-        public Product GetWithProductType_And_UnitById(int ProductId)
+        public async Task<Product?> GetWithProductType_And_UnitByIdAsync(int ProductId)
         {
-            return _context
+            return
+                await 
+                _context
                 .Products
                 .Where(p => p.ProductId == ProductId)
                 .Include(p=>p.ProductType)
                 .Include(p=>p.MasurementUnit)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
 
-        public List<Product> GetAllWithProductType_And_Unit(int PageNumber, int RowsPerPage)
+        public async Task<List<Product>> GetAllWithProductType_And_UnitAsync(int PageNumber, int RowsPerPage)
         {
-            return _context
+            return
+                await
+                _context
                 .Products
                 .Include(p => p.ProductType)
                 .Include(p => p.MasurementUnit)
@@ -37,10 +41,10 @@ namespace DataAccessLayer.Repos
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<Product> GetAllByProductTypeName(int PageNumber, int RowsPerPage, string ProductTypeName)
+        public async Task<List<Product>> GetAllByProductTypeNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName)
         {
             if (string.IsNullOrWhiteSpace(ProductTypeName))
             {
@@ -49,7 +53,8 @@ namespace DataAccessLayer.Repos
 
             ProductTypeName = ProductTypeName.Trim();
 
-            return _context.Products
+            return await
+                _context.Products
                 .AsNoTracking()
                 .Include(p=>p.ProductType)
                 .Include(p=>p.MasurementUnit)
@@ -59,10 +64,10 @@ namespace DataAccessLayer.Repos
                 .OrderBy(c => c.ProductId)
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<Product> GetAllByFullName(
+        public async Task<List<Product>> GetAllByFullNameAsync(
         int pageNumber,
         int rowsPerPage,
         string ProductTypeName,
@@ -75,7 +80,9 @@ namespace DataAccessLayer.Repos
             ProductName = ProductName.Trim();
             ProductTypeName = ProductTypeName.Trim();
 
-            return _context.Products
+            return
+                await
+                _context.Products
                 .AsNoTracking()
                 .Include(p => p.ProductType)
                  .Include(p=>p.MasurementUnit)
@@ -86,10 +93,10 @@ namespace DataAccessLayer.Repos
                 .OrderBy(c => c.ProductId)
                 .Skip((pageNumber - 1) * rowsPerPage)
                 .Take(rowsPerPage)
-                .ToList();
+                .ToListAsync();
         }
 
-        public int GetTotalPagesByFullName(string ProductTypeName,string ProductName, int rowsPerPage)
+        public async Task<int> GetTotalPagesByFullNameAsync(string ProductTypeName,string ProductName, int rowsPerPage)
         {
             //Both Should Be Null TO Go Back
             if (string.IsNullOrWhiteSpace(ProductTypeName) && string.IsNullOrWhiteSpace(ProductName))
@@ -99,30 +106,33 @@ namespace DataAccessLayer.Repos
             ProductName = ProductName.Trim();
             ProductTypeName = ProductTypeName.Trim();
 
-            int totalCount = _context.Products
+            int totalCount = await
+                _context.Products
                 .AsNoTracking()
                 .Where(p => p.ProductType.ProductTypeName.
                 StartsWith(ProductTypeName)
                 &&
                  p.ProductName.StartsWith(ProductName))
-                .Count();
+                .CountAsync();
 
             return (int)Math.Ceiling(totalCount / (double)rowsPerPage);
         }
 
 
-        public int GetTotalPagesByProductTypeName(string ProductTypeName, int RowsPerPage)
+        public async Task<int> GetTotalPagesByProductTypeNameAsync(string ProductTypeName, int RowsPerPage)
         {
             if (string.IsNullOrWhiteSpace(ProductTypeName))
                 return 0;
 
             ProductTypeName = ProductTypeName.Trim();
 
-            int totalCount = _context.Products
+            int totalCount =
+                await
+                _context.Products
                 .AsNoTracking()
                 .Where(p =>
                     EF.Functions.Like(p.ProductType.ProductTypeName, $"{ProductTypeName}%"))
-                .Count();
+                .CountAsync();
 
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }

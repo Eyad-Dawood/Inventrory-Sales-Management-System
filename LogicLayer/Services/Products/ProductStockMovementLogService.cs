@@ -26,6 +26,7 @@ namespace LogicLayer.Services.Products
             _unitOfWork = unitOfWork;
         }
 
+        #region Map
         private void MapNullValues(ProductStockMovementLogAddDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Notes))
@@ -58,14 +59,15 @@ namespace LogicLayer.Services.Products
                 Notes = productStockMovment.Notes,
             };
         }
+        #endregion
 
-        public void AddProductStockMovementLog(ProductStockMovementLogAddDto DTO)
+        public async Task AddProductStockMovementLogAsync(ProductStockMovementLogAddDto DTO)
         {
-            ProductStockMovementLog productStockMovementLog = MapProductStockMovementLog_AddDto(DTO);
-
             MapNullValues(DTO);
 
-            _ProductStockMovementLogrepository.Add(productStockMovementLog);
+            ProductStockMovementLog productStockMovementLog = MapProductStockMovementLog_AddDto(DTO);
+
+            await _ProductStockMovementLogrepository.AddAsync(productStockMovementLog);
             //Do Not Save and leave it to the main caller
             //_unitOfWork.Save();
             //Cannot Handle Any Exceptions Here By Using Try Catch , Because Want THe Caller (Product Service) To Know If There Is An Exception and Handle It There Not Here
@@ -74,12 +76,12 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductStockMovementLogListDto> GetAllProductMovments(int PageNumber, int RowsPerPage)
+        public async Task <List<ProductStockMovementLogListDto>> GetAllProductMovmentsAsync(int PageNumber, int RowsPerPage)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
-            return _ProductStockMovementLogrepository
-                .GetAllWithDetails(PageNumber, RowsPerPage)
+            return (await _ProductStockMovementLogrepository
+                .GetAllWithDetailsAsync(PageNumber, RowsPerPage))
                 .Select(p => MapProductStockMovementLog_ListDto(p)
                 ).ToList();
         }
@@ -88,13 +90,13 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductStockMovementLogListDto> GetAllByProductNameAndDateTime(int PageNumber, int RowsPerPage, string prouctFullName, DateTime? date)
+        public async Task<List<ProductStockMovementLogListDto>> GetAllByProductNameAndDateTimeAsync(int PageNumber, int RowsPerPage, string prouctFullName, DateTime? date)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _ProductStockMovementLogrepository.
-                            GetAllByProductFullNameAndDate(PageNumber, RowsPerPage, prouctFullName,date)
+            return (await _ProductStockMovementLogrepository.
+                            GetAllByProductFullNameAndDateAsync(PageNumber, RowsPerPage, prouctFullName,date))
                             .Select(p => MapProductStockMovementLog_ListDto(p))
                             .ToList();
         }
@@ -102,21 +104,21 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageNumber(int RowsPerPage)
+        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _ProductStockMovementLogrepository.GetTotalPages(RowsPerPage);
+            return await _ProductStockMovementLogrepository.GetTotalPagesAsync(RowsPerPage);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageByProductNameAndDate(int RowsPerPage, string prouctFullName, DateTime? date)
+        public async Task<int> GetTotalPageByProductNameAndDateAsync(int RowsPerPage, string prouctFullName, DateTime? date)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _ProductStockMovementLogrepository.GetTotalPagesByFullNameAndDate(RowsPerPage, prouctFullName,date);
+            return await _ProductStockMovementLogrepository.GetTotalPagesByFullNameAndDateAsync(RowsPerPage, prouctFullName,date);
         }
 
     }

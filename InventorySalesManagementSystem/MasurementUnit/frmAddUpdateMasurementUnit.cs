@@ -1,7 +1,5 @@
 ﻿using InventorySalesManagementSystem.General;
-using InventorySalesManagementSystem.People.Towns;
 using LogicLayer.DTOs.MasurementUnitDTO;
-using LogicLayer.DTOs.TownDTO;
 using LogicLayer.Services;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,8 +40,8 @@ namespace InventorySalesManagementSystem.MasurementUnits
             _UnitAdd = new MasurementUnitAddDto();
 
             // UI defaults
-            lb_TownId.Text = "---";
-            txtTownName.Text = string.Empty;
+            lb_Unit.Text = "---";
+            txtUnitName.Text = string.Empty;
         }
         private void SetupUpdate(MasurementUnitUpdateDto dto)
         {
@@ -56,8 +54,8 @@ namespace InventorySalesManagementSystem.MasurementUnits
         }
         private void LoadUpdateData(MasurementUnitUpdateDto dto)
         {
-            this.lb_TownId.Text = dto.MasurementUnitId.ToString();
-            this.txtTownName.Text = dto.MasurementUnitName;
+            this.lb_Unit.Text = dto.MasurementUnitId.ToString();
+            this.txtUnitName.Text = dto.Name;
         }
 
         public static frmAddUpdateMasurementUnit CreateForAdd(IServiceProvider serviceProvider)
@@ -67,7 +65,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
             return form;
         }
 
-        public static frmAddUpdateMasurementUnit CreateForUpdate(IServiceProvider serviceProvider, int townId)
+        public static async Task<frmAddUpdateMasurementUnit> CreateForUpdate(IServiceProvider serviceProvider, int UnitId)
         {
             MasurementUnitUpdateDto dto;
 
@@ -75,7 +73,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
             {
                 var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 
-                dto = service.GetUnitForUpdate(townId);
+                dto = await service.GetUnitForUpdateAsync(UnitId);
             }
 
             var form = new frmAddUpdateMasurementUnit(serviceProvider);
@@ -86,11 +84,11 @@ namespace InventorySalesManagementSystem.MasurementUnits
 
         private void SaveUpdates()
         {
-            _UnitUpdate.MasurementUnitName = this.txtTownName.Text.Trim();
+            _UnitUpdate.Name = this.txtUnitName.Text.Trim();
         }
         private void SaveAddNew()
         {
-            _UnitAdd.Name = this.txtTownName.Text.Trim();
+            _UnitAdd.Name = this.txtUnitName.Text.Trim();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -98,7 +96,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
             this.Close();
         }
 
-        private void UpdateMasurementUnit()
+        private async Task UpdateMasurementUnit()
         {
             SaveUpdates();
 
@@ -109,7 +107,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
                     var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 
 
-                    service.UpdateMasurementUnit(_UnitUpdate);
+                   await service.UpdateMasurementUnitAsync(_UnitUpdate);
                 }
             }
             catch (NotFoundException ex)
@@ -131,7 +129,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
             {
                 Serilog.Log.Error(
                           ex,
-                          "Unexpected error while Updating Town");
+                          "Unexpected error while Updating Unit");
                 MessageBox.Show("حدث خطأ غير متوقع أثناء التحديث", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -141,7 +139,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
         }
 
 
-        private void AddNew()
+        private async Task AddNew()
         {
             SaveAddNew();
 
@@ -152,7 +150,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
                     var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 
 
-                    service.AddMasuremetUnit(_UnitAdd);
+                   await service.AddMasuremetUnitAsync(_UnitAdd);
                 }
             }
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
@@ -177,15 +175,15 @@ namespace InventorySalesManagementSystem.MasurementUnits
 
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             if (State == Enums.FormStateEnum.AddNew)
             {
-                AddNew();
+               await AddNew();
             }
             else if (State == Enums.FormStateEnum.Update)
             {
-                UpdateMasurementUnit();
+               await UpdateMasurementUnit();
             }
         }
     }

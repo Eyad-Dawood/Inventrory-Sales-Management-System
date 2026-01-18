@@ -281,11 +281,11 @@ namespace InventorySalesManagementSystem.UserControles
 
         public Action<DataGridView> ConfigureGrid;
 
-        public Action<int, Filter> OnNextPage;
-        public Action<int, Filter> OnPreviousPage;
-        public Action<Filter> OnFilterClicked;
-        public Action OnFilterCanceled;
-        public Action<int, Filter> OnRefreshAfterOperation;
+        public Func<int, Filter, Task> OnNextPage;
+        public Func<int, Filter, Task> OnPreviousPage;
+        public Func<Filter, Task> OnFilterClicked;
+        public Func<Task> OnFilterCanceled;
+        public Func<int, Filter, Task> OnRefreshAfterOperation;
 
         private bool _IsFilterItemsConfigured = false;
         public bool IsDataFiltered = false;

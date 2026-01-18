@@ -5,6 +5,7 @@ using LogicLayer.DTOs.ProductTypeDTO;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace LogicLayer.Services.Products
 {
@@ -20,6 +21,8 @@ namespace LogicLayer.Services.Products
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
+
+        #region 
         private ProductType MapProductType_AddDto(ProductTypeAddDto DTO)
         {
             return new ProductType()
@@ -58,21 +61,23 @@ namespace LogicLayer.Services.Products
                 Name = productType.ProductTypeName
             };
         }
+        #endregion
+
 
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddProductType(ProductTypeAddDto DTO)
+        public async Task AddProductTypeAsync(ProductTypeAddDto DTO)
         {
             ProductType ProductType = MapProductType_AddDto(DTO);
 
             ValidationHelper.ValidateEntity(ProductType);
 
-            _productTypeRepo.Add(ProductType);
+            await _productTypeRepo.AddAsync(ProductType);
 
             try
             {
-                _unitOfWork.Save();
+               await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -84,39 +89,6 @@ namespace LogicLayer.Services.Products
             }
         }
 
-
-        /// <exception cref="NotFoundException">
-        /// Thrown when the provided entity is null.
-        /// </exception>
-        /// <exception cref="OperationFailedException">
-        /// Thrown when the Operation fails.
-        /// </exception>
-        public void DeleteProductTypeById(int ProductTypeId)
-        {
-            ProductType ProductType = _productTypeRepo.GetById(ProductTypeId);
-
-            if (ProductType == null)
-            {
-                throw new NotFoundException(typeof(ProductType));
-            }
-
-            _productTypeRepo.Delete(ProductType);
-
-            try
-            {
-                _unitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,
-                    "Failed to Delete productType {Id}",
-                    ProductTypeId);
-
-                throw new OperationFailedException(ex);
-            }
-        }
-
-
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
@@ -126,9 +98,9 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails
         /// </exception>
-        public void UpdateProductType(ProductTypeUpdateDto DTO)
+        public async Task UpdateProductTypeAsync(ProductTypeUpdateDto DTO)
         {
-            ProductType productType = _productTypeRepo.GetById(DTO.ProductTypeId);
+            ProductType? productType = await _productTypeRepo.GetByIdAsync(DTO.ProductTypeId);
 
             if (productType == null)
             {
@@ -141,7 +113,7 @@ namespace LogicLayer.Services.Products
 
             try
             {
-                _unitOfWork.Save();
+               await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -156,11 +128,11 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductTypeListDto> GetAllProductTypes(int PageNumber,int RowsPerPage)
+        public async Task<List<ProductTypeListDto>> GetAllProductTypesAsync(int PageNumber,int RowsPerPage)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
-            return _productTypeRepo.GetAll(PageNumber,RowsPerPage)
+            return (await _productTypeRepo.GetAllAsync(PageNumber, RowsPerPage))
                 .Select(t => new ProductTypeListDto()
                 {
                     Name = t.ProductTypeName,
@@ -171,9 +143,9 @@ namespace LogicLayer.Services.Products
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public ProductTypeUpdateDto GetProductTypeForUpdate(int ProductTypeId)
+        public async Task<ProductTypeUpdateDto> GetProductTypeForUpdateAsync(int ProductTypeId)
         {
-            ProductType ProductType = _productTypeRepo.GetById(ProductTypeId);
+            ProductType? ProductType = await _productTypeRepo.GetByIdAsync(ProductTypeId);
 
             if (ProductType == null)
             {
@@ -186,13 +158,13 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductTypeListDto> GetAllByProductTypeName(int PageNumber, int RowsPerPage, string TypeName)
+        public async Task<List<ProductTypeListDto>> GetAllByProductTypeNameAsync(int PageNumber, int RowsPerPage, string TypeName)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _productTypeRepo.
-                            GetAllByProductTypeName(PageNumber, RowsPerPage, TypeName)
+            return (await _productTypeRepo.
+                            GetAllByProductTypeNameAsync(PageNumber, RowsPerPage, TypeName))
                             .Select(p => MapProductType_ListDto(p))
                             .ToList();
         }
@@ -200,22 +172,22 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPagesByProductTypeName(string Name, int RowsPerPage)
+        public async Task<int> GetTotalPagesByProductTypeNameAsync(string Name, int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _productTypeRepo.GetTotalPagesByProductTypeName(Name, RowsPerPage);
+            return ( await _productTypeRepo.GetTotalPagesByProductTypeNameAsync(Name, RowsPerPage));
         }
 
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageNumber(int RowsPerPage)
+        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _productTypeRepo.GetTotalPages(RowsPerPage);
+            return ( await _productTypeRepo.GetTotalPagesAsync(RowsPerPage));
         }
 
         /// <exception cref="NotFoundException">
@@ -224,20 +196,20 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void DeleteById(int ProductTypeId)
+        public async Task DeleteByIdAsync(int ProductTypeId)
         {
-            ProductType productType = _productTypeRepo.GetById(ProductTypeId);
+            ProductType? productType = await _productTypeRepo.GetByIdAsync(ProductTypeId);
 
             if (productType == null)
             {
                 throw new NotFoundException(typeof(ProductType));
             }
 
-            _productTypeRepo.Delete(ProductTypeId);
+            _productTypeRepo.Delete(productType);
 
             try
             {
-                _unitOfWork.Save();
+               await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -252,9 +224,9 @@ namespace LogicLayer.Services.Products
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public ProductTypeReadDto GetProductTypeById(int ProductTypeId)
+        public async Task<ProductTypeReadDto> GetProductTypeByIdAsync(int ProductTypeId)
         {
-            ProductType ProductType = _productTypeRepo.GetById(ProductTypeId);
+            ProductType? ProductType = await _productTypeRepo.GetByIdAsync(ProductTypeId);
 
             if (ProductType == null)
             {

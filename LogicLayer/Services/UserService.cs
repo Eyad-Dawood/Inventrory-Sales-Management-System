@@ -24,6 +24,7 @@ namespace LogicLayer.Services
             _unitOfWork = unitOfWork;
         }
 
+        #region Map
         private UserReadDto MapUser_ReadDto(User user)
         {
             return new UserReadDto()
@@ -34,16 +35,17 @@ namespace LogicLayer.Services
                 UserName = user.Username
             };
         }
-
+        #endregion
 
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
         /// <exception cref="WrongPasswordException">
         /// Thrown when the provided Password is Wrong.
-        public UserReadDto ValidateUserCredentials(string UserName, string Password)
+        public async Task<UserReadDto> ValidateUserCredentialsAsync(string UserName, string Password)
         {
-            User user = _userRepository.GetByUserName(UserName);
+            User? user = await _userRepository.GetByUserNameAsync(UserName);
+
             if (user == null)
             {
                 throw new NotFoundException(typeof(User));

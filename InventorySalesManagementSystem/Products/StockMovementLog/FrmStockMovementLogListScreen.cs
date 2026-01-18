@@ -202,12 +202,12 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
         #endregion
 
         #region DataGetter
-        private List<ProductStockMovementLogListDto> GetData(ProductStockMovementLogService service,
+        private async Task<List<ProductStockMovementLogListDto>> GetData(ProductStockMovementLogService service,
                                               int PageNumber)
         {
-            return service.GetAllProductMovments(PageNumber, RowsPerPage);
+            return await service.GetAllProductMovmentsAsync(PageNumber, RowsPerPage);
         }
-        private List<ProductStockMovementLogListDto> GetFilteredData(
+        private async Task<List<ProductStockMovementLogListDto>> GetFilteredData(
             ProductStockMovementLogService service,
             string columnName,
             int PageNumber,
@@ -217,14 +217,14 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
             return columnName switch
             {
                 nameof(ProductStockMovementLogListDto.ProductFullName)
-                    => service.GetAllByProductNameAndDateTime(PageNumber, RowsPerPage, value, date),
+                    => await service.GetAllByProductNameAndDateTimeAsync(PageNumber, RowsPerPage, value, date),
 
 
                 _ => new List<ProductStockMovementLogListDto>()
             };
         }
 
-        private int GetTotalFilteredPages(
+        private async Task<int> GetTotalFilteredPages(
             ProductStockMovementLogService service,
             string columnName,
             string value,
@@ -233,28 +233,28 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
             return columnName switch
             {
                 nameof(ProductStockMovementLogListDto.ProductFullName)
-                    => service.GetTotalPageByProductNameAndDate(RowsPerPage, value, date),
+                    => await service.GetTotalPageByProductNameAndDateAsync(RowsPerPage, value, date),
 
 
                 _ => 0
             };
         }
 
-        private int GetTotalPages(ProductStockMovementLogService service)
+        private async Task<int> GetTotalPages(ProductStockMovementLogService service)
         {
-            return service.GetTotalPageNumber(RowsPerPage);
+            return await service.GetTotalPageNumberAsync(RowsPerPage);
         }
         #endregion
 
 
 
-        private void DisplayPage(int PageNumber)
+        private async Task DisplayPage(int PageNumber)
         {
             //Call filterMethod With Null Fitler
-            DisplayFilteredPage(PageNumber, null);
+           await DisplayFilteredPage(PageNumber, null);
         }
 
-        private void DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
+        private async Task DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -263,37 +263,37 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value, filter.dateTime)
-                    : GetTotalPages(service);
+                    ? await GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value, filter.dateTime)
+                    : await GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value, filter.dateTime)
-                    : GetData(service, pageToRequest);
+                    ? await GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value, filter.dateTime)
+                    : await GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<ProductStockMovementLogListDto>(data, pageToRequest, totalPages);
             }
         }
 
-        private void OnFilterClicked(UcListView.Filter filter)
+        private async Task OnFilterClicked(UcListView.Filter filter)
         {
-            DisplayFilteredPage(1, filter);
+           await DisplayFilteredPage(1, filter);
         }
-        private void OnFilterCanceled()
+        private async Task OnFilterCanceled()
         {
-            DisplayPage(1);
+           await DisplayPage(1);
         }
-        private void OnPageChanged(int PageNumber, UcListView.Filter filter)
+        private async Task OnPageChanged(int PageNumber, UcListView.Filter filter)
         {
-            DisplayFilteredPage(PageNumber, filter);
+           await DisplayFilteredPage(PageNumber, filter);
         }
-        private void OnOperationFinished(int PageNumber, UcListView.Filter filter)
+        private async Task OnOperationFinished(int PageNumber, UcListView.Filter filter)
         {
-            DisplayFilteredPage(PageNumber, filter);
+           await DisplayFilteredPage(PageNumber, filter);
         }
 
-        private void FrmStockMovementLogListScreen_Load(object sender, EventArgs e)
+        private async void FrmStockMovementLogListScreen_Load(object sender, EventArgs e)
         {
             ucListView1.OnFilterClicked = OnFilterClicked;
             ucListView1.OnFilterCanceled = OnFilterCanceled;
@@ -303,7 +303,7 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
 
             ucListView1.ConfigureGrid = ConfigureGrid;
 
-            DisplayPage(1);
+           await DisplayPage(1);
             ConfigureFilter();
         }
 

@@ -48,6 +48,7 @@
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
             Name = "frmShowCustomer";
+            Load += frmShowCustomer_Load;
             ResumeLayout(false);
         }
 

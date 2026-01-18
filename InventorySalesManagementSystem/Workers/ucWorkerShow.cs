@@ -51,7 +51,7 @@ namespace InventorySalesManagementSystem.Workers
 
         }
 
-        public void ShowData(IServiceProvider serviceProvider, int workerId)
+        public async Task ShowData(IServiceProvider serviceProvider, int workerId)
         {
             _serviceProvider = serviceProvider;
 
@@ -60,7 +60,7 @@ namespace InventorySalesManagementSystem.Workers
                 var service = scope.ServiceProvider.GetRequiredService<WorkerService>();
                 try
                 {
-                    var worker = service.GetWorkerById(workerId);
+                    var worker = await service.GetWorkerByIdAsync(workerId);
                     this.Enabled = true;
                     FillWorkerData(worker);
 

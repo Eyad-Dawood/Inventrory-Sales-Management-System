@@ -6,7 +6,6 @@ using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Repos;
 using DataAccessLayer.Validation;
 using LogicLayer.DTOs.ProductDTO;
-using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
 using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
 using LogicLayer.DTOs.ProductTypeDTO;
@@ -39,6 +38,7 @@ namespace LogicLayer.Services.Products
             _logger = logger;
         }
 
+        #region Map
         private Product MapProduct_AddDto(ProductAddDto DTO)
         {
             return new Product()
@@ -138,6 +138,8 @@ namespace LogicLayer.Services.Products
                 Notes = Notes
             };
         }
+        #endregion
+
 
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
@@ -145,21 +147,21 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddProduct(ProductAddDto DTO,int UserId)
+        public async Task AddProductAsync(ProductAddDto DTO,int UserId)
         {
             Product Product = MapProduct_AddDto(DTO);
 
             ValidationHelper.ValidateEntity(Product);
 
-            using (var Transaction = _unitOfWork.BeginTransaction())
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
             {
 
                 try
                 {
-                    _productRepo.Add(Product);
+                    await _productRepo.AddAsync(Product);
 
                     //To Get Id 
-                    _unitOfWork.Save();
+                    await _unitOfWork.SaveAsync();
 
 
                     //Log
@@ -168,13 +170,13 @@ namespace LogicLayer.Services.Products
                                 UserId,
                                 StockMovementReason.InitialStock,
                                 0,
-                                null);
+                                "كمية افتتاحية عند إضافة المنتج لأول مرة");
 
-                    _stockMovementService.AddProductStockMovementLog(logDto);
+                   await _stockMovementService.AddProductStockMovementLogAsync(logDto);
 
 
-                    _unitOfWork.Save();
-                    Transaction.Commit();
+                    await _unitOfWork.SaveAsync();
+                   await Transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
@@ -190,7 +192,7 @@ namespace LogicLayer.Services.Products
                        UserId,
                        StockMovementReason.InitialStock);
 
-                    Transaction.Rollback();
+                    await Transaction.RollbackAsync();
                     throw new OperationFailedException(ex);
                 }
             }
@@ -207,9 +209,9 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails
         /// </exception>
-        public void UpdateProduct(ProductUpdateDto dto, int userId)
+        public async Task UpdateProductAsync(ProductUpdateDto dto, int userId)
         {
-            var product = _productRepo.GetById(dto.ProductId);
+            var product = await _productRepo.GetByIdAsync(dto.ProductId);
 
             if (product == null)
                 throw new NotFoundException(typeof(Product));
@@ -221,7 +223,7 @@ namespace LogicLayer.Services.Products
             ValidationHelper.ValidateEntity(product);
 
 
-            using (var Transaction = _unitOfWork.BeginTransaction())
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
             {
                 try
                 {
@@ -236,13 +238,12 @@ namespace LogicLayer.Services.Products
                         oldSellingPrice,
                         userId);
 
-                        _pricelogService.AddProductPriceLog(logDto);
+                       await _pricelogService.AddProductPriceLogAsync(logDto);
                     }
 
-                    _unitOfWork.Save();
+                    await _unitOfWork.SaveAsync();
 
-                    Transaction.Commit();
-
+                    await Transaction.CommitAsync();
                 }
                 catch (Exception ex)
                 {
@@ -251,7 +252,7 @@ namespace LogicLayer.Services.Products
                         dto.ProductId,
                         userId);
 
-                    Transaction.Rollback();
+                    await Transaction.RollbackAsync();
 
                     throw new OperationFailedException(ex);
                 }
@@ -264,9 +265,9 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void DeleteProductById(int ProductId)
+        public async Task DeleteProductByIdAsync(int ProductId)
         {
-            Product Product = _productRepo.GetById(ProductId);
+            var Product = await _productRepo.GetByIdAsync(ProductId);
 
             if (Product == null)
             {
@@ -277,7 +278,7 @@ namespace LogicLayer.Services.Products
             try
             {
                 _productRepo.Delete(Product);
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
             catch(Exception ex)
             {
@@ -294,9 +295,9 @@ namespace LogicLayer.Services.Products
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public ProductReadDto GetProductById(int ProductId) 
+        public async Task<ProductReadDto> GetProductByIdAsync(int ProductId) 
         {
-            Product product = _productRepo.GetWithProductType_And_UnitById(ProductId);
+            Product? product = await _productRepo.GetWithProductType_And_UnitByIdAsync(ProductId);
             if (product == null)
             {
                 throw new NotFoundException(typeof(Product));
@@ -309,13 +310,15 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductListDto> GetAllProducts(int PageNumber, int RowsPerPage) 
+        public async Task<List<ProductListDto>> GetAllProductsAsync(int PageNumber, int RowsPerPage) 
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _productRepo
-                .GetAllWithProductType_And_Unit(PageNumber, RowsPerPage)
+            return
+                (await 
+                _productRepo
+                .GetAllWithProductType_And_UnitAsync(PageNumber, RowsPerPage))
                 .Select(p => MapProduct_ListDto(p)).ToList();
         }
 
@@ -328,7 +331,7 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        private void EditQuantity(int productId,decimal quantity,int userId,StockMovementReason reason,bool isAddition,string Notes)
+        private async Task EditQuantityAsync(int productId,decimal quantity,int userId,StockMovementReason reason,bool isAddition,string Notes)
         {
             if (quantity <= 0)
             {
@@ -345,7 +348,7 @@ namespace LogicLayer.Services.Products
                 throw new ValidationException(errors);
             }
 
-            var product = _productRepo.GetById(productId);
+            var product = await _productRepo.GetByIdAsync(productId);
 
             if (product == null)
                  throw new NotFoundException(typeof(Product));
@@ -367,7 +370,7 @@ namespace LogicLayer.Services.Products
 
             ValidationHelper.ValidateEntity(product);
 
-            using (var Transaction = _unitOfWork.BeginTransaction())
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
             {
 
                 try
@@ -379,10 +382,10 @@ namespace LogicLayer.Services.Products
                         oldQuantity,
                         Notes);
 
-                    _stockMovementService.AddProductStockMovementLog(logDto);
+                    await _stockMovementService.AddProductStockMovementLogAsync(logDto);
 
-                    _unitOfWork.Save();
-                    Transaction.Commit();
+                    await _unitOfWork.SaveAsync();
+                    await Transaction.CommitAsync();
 
                 }
                 catch (Exception ex)
@@ -396,7 +399,7 @@ namespace LogicLayer.Services.Products
                         reason);
 
 
-                    Transaction.Rollback();
+                   await Transaction.RollbackAsync();
 
                     throw new OperationFailedException(ex);
                 }
@@ -412,7 +415,7 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddQuantity(int productId, decimal quantity, int userId, StockMovementReason reason, string Notes)
+        public async Task AddQuantityAsync(int productId, decimal quantity, int userId, StockMovementReason reason, string Notes)
         {
             //Check For Increasing Reasons Only
             if (reason != StockMovementReason.Purchase && reason != StockMovementReason.Adjustment)
@@ -420,7 +423,7 @@ namespace LogicLayer.Services.Products
                 throw new OperationFailedException($"هذا السبب [{reason.GetDisplayName()}] لا يمكن أن يزيد من الكمية");
             }
 
-            EditQuantity(productId, quantity,userId,reason,true, Notes);
+            await EditQuantityAsync(productId, quantity,userId,reason,true, Notes);
         }
 
         
@@ -433,7 +436,7 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void RemoveQuantity(int productId, decimal quantity, int userId, StockMovementReason reason, string Notes)
+        public async Task RemoveQuantityAsync(int productId, decimal quantity, int userId, StockMovementReason reason, string Notes)
         {
             //Check For Decreasing Reasons Only
             if(reason!=StockMovementReason.Adjustment
@@ -443,16 +446,16 @@ namespace LogicLayer.Services.Products
                 throw new OperationFailedException($"هذا السبب {reason.GetDisplayName()} لا يمكن أن يقلل من الكمية");
             }
 
-            EditQuantity(productId, quantity, userId, reason, false, Notes);
+            await EditQuantityAsync(productId, quantity, userId, reason, false, Notes);
         }
 
 
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public ProductUpdateDto GetProductForUpdate(int ProductId)
+        public async Task<ProductUpdateDto> GetProductForUpdateAsync(int ProductId)
         {
-            Product product = _productRepo.GetById(ProductId);
+            Product? product = await _productRepo.GetByIdAsync(ProductId);
             if (product == null)
             {
                 throw new NotFoundException(typeof(Product));
@@ -464,13 +467,14 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductListDto> GetAllByProductTypeName(int PageNumber, int RowsPerPage, string ProductTypeName)
+        public async Task<List<ProductListDto>> GetAllByProductTypeNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _productRepo.
-                            GetAllByProductTypeName(PageNumber, RowsPerPage, ProductTypeName)
+            return 
+                (await _productRepo.
+                            GetAllByProductTypeNameAsync(PageNumber, RowsPerPage, ProductTypeName))
                             .Select(c => MapProduct_ListDto(c))
                             .ToList();
         }
@@ -478,13 +482,14 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<ProductListDto> GetAllByFullName(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName)
+        public  async Task<List<ProductListDto>> GetAllByFullNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
-            return _productRepo.
-                            GetAllByFullName(PageNumber, RowsPerPage, ProductTypeName, ProductName)
+            return 
+                (await _productRepo.
+                            GetAllByFullNameAsync(PageNumber, RowsPerPage, ProductTypeName, ProductName))
                             .Select(c => MapProduct_ListDto(c))
                             .ToList();
         }
@@ -493,31 +498,31 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageByFullName(string ProductTypeName,string ProductName, int RowsPerPage)
+        public async Task<int> GetTotalPageByFullNameAsync(string ProductTypeName,string ProductName, int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _productRepo.GetTotalPagesByFullName(ProductTypeName, ProductName, RowsPerPage);
+            return await _productRepo.GetTotalPagesByFullNameAsync(ProductTypeName, ProductName, RowsPerPage);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageByProductTypeName(string TownName, int RowsPerPage)
+        public async Task<int> GetTotalPageByProductTypeNameAsync(string TownName, int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _productRepo.GetTotalPagesByProductTypeName(TownName, RowsPerPage);
+            return await _productRepo.GetTotalPagesByProductTypeNameAsync(TownName, RowsPerPage);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public int GetTotalPageNumber(int RowsPerPage)
+        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return _productRepo.GetTotalPages(RowsPerPage);
+            return await _productRepo.GetTotalPagesAsync(RowsPerPage);
         }
 
         /// <exception cref="NotFoundException">
@@ -526,9 +531,9 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void ChangeAvaliableState(int ProductId, bool State)
+        public async Task ChangeAvaliableStateAsync(int ProductId, bool State)
         {
-            Product product = _productRepo.GetById(ProductId);
+            Product? product = await _productRepo.GetByIdAsync(ProductId);
 
             if (product == null)
             {
@@ -539,7 +544,7 @@ namespace LogicLayer.Services.Products
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
                 _logger.LogInformation("تم تغيير حالة المنتج {ProductId} إلى {State}", ProductId, State);
             }
             catch (Exception ex)

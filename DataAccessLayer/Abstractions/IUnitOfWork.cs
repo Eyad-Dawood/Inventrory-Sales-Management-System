@@ -9,7 +9,7 @@ namespace DataAccessLayer.Abstractions
 {
     public interface IUnitOfWork
     {
-        void Save();
-        IDbContextTransaction BeginTransaction();
+        Task SaveAsync();
+        Task<IDbContextTransaction> BeginTransactionAsync();
     }
 }

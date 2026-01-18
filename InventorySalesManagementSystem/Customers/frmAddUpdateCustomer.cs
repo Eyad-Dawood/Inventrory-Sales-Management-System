@@ -37,7 +37,7 @@ namespace InventorySalesManagementSystem.Customers
         }
 
 
-        private void SetupAdd()
+        private async Task SetupAdd()
         {
             State = Enums.FormStateEnum.AddNew;
 
@@ -46,9 +46,9 @@ namespace InventorySalesManagementSystem.Customers
             _customerAdd = new CustomerAddDto();
 
             lb_CustomerId.Text = "---";
-            uc_AddUpdatePerson1.Start(_serviceProvider);
+           await uc_AddUpdatePerson1.Start(_serviceProvider);
         }
-        private void SetupUpdate(CustomerUpdateDto dto)
+        private async Task SetupUpdate(CustomerUpdateDto dto)
         {
             State = Enums.FormStateEnum.Update;
 
@@ -56,31 +56,31 @@ namespace InventorySalesManagementSystem.Customers
 
             _customerUpdate = dto;
 
-            LoadUpdateData();
+           await LoadUpdateData();
         }
 
-        private void LoadUpdateData()
+        private async Task LoadUpdateData()
         {
             lb_CustomerId.Text = _customerUpdate.CustomerId.ToString();
-            uc_AddUpdatePerson1.Start(_serviceProvider, _customerUpdate.PersonUpdateDto);
+           await uc_AddUpdatePerson1.Start(_serviceProvider, _customerUpdate.PersonUpdateDto);
         }
 
-        public static frmAddUpdateCustomer CreateForAdd(IServiceProvider serviceProvider)
+        public static async Task<frmAddUpdateCustomer> CreateForAdd(IServiceProvider serviceProvider)
         {
             var form = new frmAddUpdateCustomer(serviceProvider);
-            form.SetupAdd();
+            await form.SetupAdd();
             return form;
         }
-        public static frmAddUpdateCustomer CreateForUpdate(IServiceProvider serviceProvider,int CustomerId)
+        public static async Task<frmAddUpdateCustomer> CreateForUpdate(IServiceProvider serviceProvider,int CustomerId)
         {
             using (var scope = serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
 
-                var dto = service.GetCustomerForUpdate(CustomerId);
+                var dto = await service.GetCustomerForUpdateAsync(CustomerId);
 
                 frmAddUpdateCustomer frm = new frmAddUpdateCustomer(serviceProvider);
-                frm.SetupUpdate(dto);
+               await frm.SetupUpdate(dto);
                 return frm;
             }
         }
@@ -100,27 +100,27 @@ namespace InventorySalesManagementSystem.Customers
         }
 
 
-        private void UpdateCustomer(CustomerService CustomerService)
+        private async Task UpdateCustomer(CustomerService CustomerService)
         {
             FillCustomerUpdate();
 
             //Validate Values Format
             LogicLayer.Validation.Custom_Validation.PersonFormatValidation.ValidateValues(_customerUpdate.PersonUpdateDto);
 
-            CustomerService.UpdateCustomer(_customerUpdate);
+           await CustomerService.UpdateCustomerAsync(_customerUpdate);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تم التحديث بنجاح");
             this.Close();
         }
-        private void AddCustomer(CustomerService CustomerService)
+        private async Task AddCustomer(CustomerService CustomerService)
         {
             FillCustomerAdd();
 
             //Validate Values Format
             LogicLayer.Validation.Custom_Validation.PersonFormatValidation.ValidateValues(_customerAdd.PersonAddDto);
 
-            CustomerService.AddCustomer(_customerAdd);
+            await CustomerService.AddCustomerAsync(_customerAdd);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تمت الإضافة بنجاح");
@@ -128,7 +128,7 @@ namespace InventorySalesManagementSystem.Customers
         }
 
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
@@ -139,11 +139,11 @@ namespace InventorySalesManagementSystem.Customers
 
                     if (State == Enums.FormStateEnum.AddNew)
                     {
-                        AddCustomer(CustomerService);
+                       await AddCustomer(CustomerService);
                     }
                     else if (State == Enums.FormStateEnum.Update)
                     {
-                        UpdateCustomer(CustomerService);
+                       await UpdateCustomer(CustomerService);
                     }
                 }
             }

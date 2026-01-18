@@ -16,9 +16,11 @@ namespace DataAccessLayer.Repos
         {
         }
 
-        public List<ProductStockMovementLog> GetAllWithDetails(int PageNumber, int RowsPerPage)
+        public async Task<List<ProductStockMovementLog>> GetAllWithDetailsAsync(int PageNumber, int RowsPerPage)
         {
-            return _context
+            return 
+                await 
+                _context
                 .productStockMovmentsLog
                 .Include(p => p.User)
                 .Include(p => p.Product)
@@ -27,10 +29,10 @@ namespace DataAccessLayer.Repos
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
 
-        public int GetTotalPagesByFullNameAndDate(
+        public async Task<int> GetTotalPagesByFullNameAndDateAsync(
             int rowsPerPage,
             string? productFullName,
             DateTime? date)
@@ -58,14 +60,14 @@ namespace DataAccessLayer.Repos
                     p.Product.ProductType.ProductTypeName.Contains(productFullName));
             }
 
-            int totalRecords = query.Count();
+            int totalRecords = await query.CountAsync();
 
             return (int)Math.Ceiling(totalRecords / (double)rowsPerPage);
         }
 
 
 
-        public List<ProductStockMovementLog> GetAllByProductFullNameAndDate(
+        public async Task<List<ProductStockMovementLog>> GetAllByProductFullNameAndDateAsync(
             int pageNumber,
             int rowsPerPage,
             string? productFullName,
@@ -97,11 +99,12 @@ namespace DataAccessLayer.Repos
                     p.Product.ProductType.ProductTypeName.Contains(productFullName));
             }
 
-            return query
+            return 
+                await query
                 .OrderByDescending(p => p.LogDate)
                 .Skip((pageNumber - 1) * rowsPerPage)
                 .Take(rowsPerPage)
-                .ToList();
+                .ToListAsync();
         }
 
     }

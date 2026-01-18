@@ -1,15 +1,9 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Entities;
 using LogicLayer.DTOs.MasurementUnitDTO;
-using LogicLayer.DTOs.TownDTO;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogicLayer.Services
 {
@@ -26,9 +20,10 @@ namespace LogicLayer.Services
             _logger = logger;
         }
 
+        #region Map
         private void ApplyMasurementUnitUpdate(MasurementUnit Unit, MasurementUnitUpdateDto DTO)
         {
-            Unit.UnitName = DTO.MasurementUnitName;
+            Unit.UnitName = DTO.Name;
         }
 
         private MasurementUnit MapMasurementUnit_AddDto(MasurementUnitAddDto DTO)
@@ -50,9 +45,11 @@ namespace LogicLayer.Services
             return new MasurementUnitUpdateDto()
             {
                 MasurementUnitId = masurementUnit.MasurementUnitId,
-                MasurementUnitName = masurementUnit.UnitName
+                Name = masurementUnit.UnitName
             };
         }
+
+        #endregion
 
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
@@ -60,17 +57,17 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddMasuremetUnit(MasurementUnitAddDto DTO)
+        public async Task AddMasuremetUnitAsync(MasurementUnitAddDto DTO)
         {
             MasurementUnit masurementUnit = MapMasurementUnit_AddDto(DTO);
 
             ValidationHelper.ValidateEntity(masurementUnit);
 
-            _MasurementUnitRepo.Add(masurementUnit);
+            await _MasurementUnitRepo.AddAsync(masurementUnit);
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -87,9 +84,9 @@ namespace LogicLayer.Services
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public MasurementUnitReadDto GetMasurementUnitById(int MasurementUnitid) 
+        public async Task<MasurementUnitReadDto> GetMasurementUnitByIdAsync(int MasurementUnitid) 
         {
-            MasurementUnit masurementUnit = _MasurementUnitRepo.GetById(MasurementUnitid);
+            MasurementUnit? masurementUnit = await _MasurementUnitRepo.GetByIdAsync(MasurementUnitid);
 
             if (masurementUnit == null)
             {
@@ -104,9 +101,9 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void DeleteMasuremetUnitById(int MasurementUnitid)
+        public async Task DeleteMasuremetUnitByIdAsync(int MasurementUnitid)
         {
-            MasurementUnit masurementUnit = _MasurementUnitRepo.GetById(MasurementUnitid);
+            MasurementUnit? masurementUnit = await _MasurementUnitRepo.GetByIdAsync(MasurementUnitid);
 
             if (masurementUnit == null)
             {
@@ -117,7 +114,7 @@ namespace LogicLayer.Services
 
             try
             {
-                _unitOfWork.Save();
+               await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -133,11 +130,12 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<MasurementUnitListDto>GetAllMasurementUnit(int PageNumber,int RowsPerPage)
+        public async Task<List<MasurementUnitListDto>>GetAllMasurementUnitAsync(int PageNumber,int RowsPerPage)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
-            return _MasurementUnitRepo.GetAll(PageNumber,RowsPerPage)
+            return 
+                (await _MasurementUnitRepo.GetAllAsync(PageNumber,RowsPerPage))
                 .Select(m => new MasurementUnitListDto()
                 {
                     MasurementUnitId = m.MasurementUnitId,
@@ -145,10 +143,11 @@ namespace LogicLayer.Services
                 }).ToList();
         }
 
-        public List<MasurementUnitListDto> GetAllMasurementUnit()
+        public async Task<List<MasurementUnitListDto>> GetAllMasurementUnitAsync()
         {
 
-            return _MasurementUnitRepo.GetAll()
+            return 
+                (await _MasurementUnitRepo.GetAllAsync())
                 .Select(m => new MasurementUnitListDto()
                 {
                     MasurementUnitId = m.MasurementUnitId,
@@ -159,9 +158,9 @@ namespace LogicLayer.Services
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public MasurementUnitUpdateDto GetUnitForUpdate(int UnitId)
+        public async Task<MasurementUnitUpdateDto> GetUnitForUpdateAsync(int UnitId)
         {
-            MasurementUnit Unit = _MasurementUnitRepo.GetById(UnitId);
+            MasurementUnit? Unit = await _MasurementUnitRepo.GetByIdAsync(UnitId);
 
             if (Unit == null)
             {
@@ -180,9 +179,9 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails
         /// </exception>
-        public void UpdateMasurementUnit(MasurementUnitUpdateDto DTO)
+        public async Task UpdateMasurementUnitAsync(MasurementUnitUpdateDto DTO)
         {
-            MasurementUnit masurement = _MasurementUnitRepo.GetById(DTO.MasurementUnitId);
+            MasurementUnit? masurement = await _MasurementUnitRepo.GetByIdAsync(DTO.MasurementUnitId);
             if (masurement == null)
             {
                 throw new NotFoundException(typeof(MasurementUnit));
@@ -194,7 +193,7 @@ namespace LogicLayer.Services
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {

@@ -35,7 +35,7 @@ namespace InventorySalesManagementSystem.Workers
 
 
 
-        private void SetupAdd()
+        private async Task SetupAdd()
         {
             State = Enums.FormStateEnum.AddNew;
 
@@ -44,10 +44,10 @@ namespace InventorySalesManagementSystem.Workers
             _workerAdd = new WorkerAddDto();
 
             lbId.Text = "---";
-            uc_AddUpdatePerson1.Start(_serviceProvider);
+           await uc_AddUpdatePerson1.Start(_serviceProvider);
         }
 
-        private void SetupUpdate(WorkerUpdateDto dto)
+        private async Task SetupUpdate(WorkerUpdateDto dto)
         {
             State = Enums.FormStateEnum.Update;
 
@@ -55,12 +55,12 @@ namespace InventorySalesManagementSystem.Workers
 
             _workerUpdate = dto;
 
-            LoadUpdateData();
+           await LoadUpdateData();
         }
-        private void LoadUpdateData()
+        private async Task LoadUpdateData()
         {
             lbId.Text = _workerUpdate.WorkerId.ToString();
-            uc_AddUpdatePerson1.Start(_serviceProvider, _workerUpdate.PersonUpdateDto);
+           await uc_AddUpdatePerson1.Start(_serviceProvider, _workerUpdate.PersonUpdateDto);
 
             if (_workerUpdate.Craft.HasFlag(DataAccessLayer.Entities.WorkersCraftsEnum.Painter))
                 chkPainter.Checked = true;
@@ -69,22 +69,22 @@ namespace InventorySalesManagementSystem.Workers
         }
 
 
-        public static frmAddUpdateWorker CreateForAdd(IServiceProvider serviceProvider)
+        public static async Task<frmAddUpdateWorker> CreateForAdd(IServiceProvider serviceProvider)
         {
             var form = new frmAddUpdateWorker(serviceProvider);
-            form.SetupAdd();
+           await form.SetupAdd();
             return form;
         }
-        public static frmAddUpdateWorker CreateForUpdate(IServiceProvider serviceProvider, int WorkerId)
+        public static async Task<frmAddUpdateWorker> CreateForUpdate(IServiceProvider serviceProvider, int WorkerId)
         {
             using (var scope = serviceProvider.CreateScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<WorkerService>();
 
-                var dto = service.GetWorkerForUpdate(WorkerId);
+                var dto = await service.GetWorkerForUpdateAsync(WorkerId);
 
                 frmAddUpdateWorker frm = new frmAddUpdateWorker(serviceProvider);
-                frm.SetupUpdate(dto);
+               await frm.SetupUpdate(dto);
                 return frm;
             }
         }
@@ -114,7 +114,7 @@ namespace InventorySalesManagementSystem.Workers
 
             return crafts;
         }
-        private void UpdateWorker(WorkerService WorkerService)
+        private async Task UpdateWorker(WorkerService WorkerService)
         {
             FillWorkerUpdate();
 
@@ -122,13 +122,13 @@ namespace InventorySalesManagementSystem.Workers
             LogicLayer.Validation.Custom_Validation.PersonFormatValidation.ValidateValues(_workerUpdate.PersonUpdateDto);
 
 
-            WorkerService.UpdateWorker(_workerUpdate);
+           await WorkerService.UpdateWorkerAsync(_workerUpdate);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تم التحديث بنجاح");
             this.Close();
         }
-        private void AddWorker(WorkerService WorkerService)
+        private async Task AddWorker(WorkerService WorkerService)
         {
             FillWorkerAdd();
 
@@ -136,7 +136,7 @@ namespace InventorySalesManagementSystem.Workers
             LogicLayer.Validation.Custom_Validation.PersonFormatValidation.ValidateValues(_workerAdd.PersonAddDto);
 
 
-            WorkerService.AddWorker(_workerAdd);
+           await WorkerService.AddWorkerAsync(_workerAdd);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تمت الإضافة بنجاح");
@@ -151,7 +151,7 @@ namespace InventorySalesManagementSystem.Workers
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             if(!(chkCarpenter.Checked||chkPainter.Checked))
             {
@@ -167,11 +167,11 @@ namespace InventorySalesManagementSystem.Workers
 
                     if (State == Enums.FormStateEnum.AddNew)
                     {
-                        AddWorker(WorkerService);
+                       await AddWorker(WorkerService);
                     }
                     else if (State == Enums.FormStateEnum.Update)
                     {
-                        UpdateWorker(WorkerService);
+                        await UpdateWorker(WorkerService);
                     }
                 }
             }

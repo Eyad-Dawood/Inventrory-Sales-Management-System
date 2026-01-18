@@ -113,12 +113,12 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
         #endregion
 
         #region DataGetter
-        private List<ProductTypeListDto> GetData(ProductTypeService service,
+        private async Task<List<ProductTypeListDto>> GetData(ProductTypeService service,
                                               int PageNumber)
         {
-            return service.GetAllProductTypes(PageNumber, RowsPerPage);
+            return await service.GetAllProductTypesAsync(PageNumber, RowsPerPage);
         }
-        private List<ProductTypeListDto> GetFilteredData(
+        private async Task<List<ProductTypeListDto>> GetFilteredData(
             ProductTypeService service,
             string columnName,
             int PageNumber,
@@ -127,13 +127,13 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             return columnName switch
             {
                 nameof(ProductType.ProductTypeName)
-                    => service.GetAllByProductTypeName(PageNumber, RowsPerPage, value),
+                    => await service.GetAllByProductTypeNameAsync(PageNumber, RowsPerPage, value),
 
                 _ => new List<ProductTypeListDto>()
             };
         }
 
-        private int GetTotalFilteredPages(
+        private async Task<int> GetTotalFilteredPages(
             ProductTypeService service,
             string columnName,
             string value)
@@ -141,25 +141,25 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             return columnName switch
             {
                 nameof(ProductType.ProductTypeName)
-                    => service.GetTotalPagesByProductTypeName(value, RowsPerPage),
+                    => await service.GetTotalPagesByProductTypeNameAsync(value, RowsPerPage),
 
                 _ => 0
             };
         }
 
-        private int GetTotalPages(ProductTypeService service)
+        private async Task<int> GetTotalPages(ProductTypeService service)
         {
-            return service.GetTotalPageNumber(RowsPerPage);
+            return await service.GetTotalPageNumberAsync(RowsPerPage);
         }
         #endregion
 
-        private void DisplayPage(int PageNumber)
+        private async Task DisplayPage(int PageNumber)
         {
             //Call filterMethod With Null Fitler
-            DisplayFilteredPage(PageNumber, null);
+           await DisplayFilteredPage(PageNumber, null);
         }
 
-        private void DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
+        private async Task DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -168,42 +168,42 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
-                    : GetTotalPages(service);
+                    ? await GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
+                    : await GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
-                    : GetData(service, pageToRequest);
+                    ? await GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
+                    : await GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<ProductTypeListDto>(data, pageToRequest, totalPages);
             }
         }
 
-        private void OnFilterClicked(UcListView.Filter filter)
+        private async Task OnFilterClicked(UcListView.Filter filter)
         {
-            DisplayFilteredPage(1, filter);
+           await DisplayFilteredPage(1, filter);
         }
 
 
-        private void OnFilterCanceled()
+        private async Task OnFilterCanceled()
         {
-            DisplayPage(1);
+           await DisplayPage(1);
         }
 
 
-        private void OnPageChanged(int PageNumber, UcListView.Filter filter)
+        private async Task OnPageChanged(int PageNumber, UcListView.Filter filter)
         {
-            DisplayFilteredPage(PageNumber, filter);
+           await DisplayFilteredPage(PageNumber, filter);
         }
 
-        private void OnOperationFinished(int PageNumber, UcListView.Filter filter)
+        private async Task OnOperationFinished(int PageNumber, UcListView.Filter filter)
         {
-            DisplayFilteredPage(PageNumber, filter);
+           await DisplayFilteredPage(PageNumber, filter);
         }
 
-        private void frmProductTypeListScreen_Load(object sender, EventArgs e)
+        private async void frmProductTypeListScreen_Load(object sender, EventArgs e)
         {
             ucListView1.OnFilterClicked = OnFilterClicked;
             ucListView1.OnFilterCanceled = OnFilterCanceled;
@@ -213,7 +213,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
             ucListView1.ConfigureGrid = ConfigureGrid;
 
-            DisplayPage(1);
+           await DisplayPage(1);
             ConfigureFilter();
 
             ucListView1.Focus();
@@ -244,7 +244,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             return -1;
         }
 
-        private void updateMenustripItem_Click(object sender, EventArgs e)
+        private async void updateMenustripItem_Click(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
@@ -256,7 +256,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
             try
             {
-                var frm = frmAddUpdateProductType.CreateForUpdate(_serviceProvider, id);
+                var frm = await frmAddUpdateProductType.CreateForUpdate(_serviceProvider, id);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -272,7 +272,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
         }
 
-        private void deleteMenustripItem_Click(object sender, EventArgs e)
+        private async void deleteMenustripItem_Click(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
@@ -304,7 +304,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
                 try
                 {
-                    service.DeleteById(id);
+                   await service.DeleteByIdAsync(id);
                 }
                 catch (NotFoundException ex)
                 {

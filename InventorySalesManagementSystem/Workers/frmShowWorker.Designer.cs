@@ -39,7 +39,7 @@
             ucWorkerShow1.Size = new Size(748, 116);
             ucWorkerShow1.TabIndex = 0;
             // 
-            // frmShowWorke
+            // frmShowWorker
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -47,7 +47,8 @@
             Controls.Add(ucWorkerShow1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
-            Name = "frmShowWorke";
+            Name = "frmShowWorker";
+            Load += frmShowWorker_Load;
             ResumeLayout(false);
         }
 

@@ -2,7 +2,7 @@
 using DataAccessLayer.Abstractions;
 using Microsoft.EntityFrameworkCore.Storage;
 
-public class UnitOfWork : IUnitOfWork
+public class UnitOfWork : IUnitOfWork , IDisposable
 {
     private readonly InventoryDbContext _dbContext;
 
@@ -11,8 +11,10 @@ public class UnitOfWork : IUnitOfWork
         _dbContext = dbContext;
     }
 
-    public void Save() => _dbContext.SaveChanges();
+    public async Task SaveAsync() => await _dbContext.SaveChangesAsync();
 
-    public IDbContextTransaction BeginTransaction()
-        => _dbContext.Database.BeginTransaction();
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+        => await _dbContext.Database.BeginTransactionAsync();
+
+    public void Dispose () => _dbContext.Dispose();
 }

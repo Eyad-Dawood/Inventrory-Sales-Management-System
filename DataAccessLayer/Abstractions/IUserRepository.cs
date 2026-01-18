@@ -10,6 +10,6 @@ namespace DataAccessLayer.Abstractions
 {
     public interface IUserRepository : IRepository<User>
     {
-       public User GetByUserName(string userName);
+       public Task<User?> GetByUserNameAsync(string userName);
     }
 }

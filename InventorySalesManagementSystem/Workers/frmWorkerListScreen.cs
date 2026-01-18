@@ -137,12 +137,12 @@ namespace InventorySalesManagementSystem.Workers
         #endregion
 
         #region DataGetter
-        private List<WorkerListDto> GetData(WorkerService service,
+        private async Task<List<WorkerListDto>> GetData(WorkerService service,
                                               int PageNumber)
         {
-            return service.GetAllWorkers(PageNumber, RowsPerPage);
+            return await service.GetAllWorkersAsync(PageNumber, RowsPerPage);
         }
-        private List<WorkerListDto> GetFilteredData(
+        private async Task<List<WorkerListDto>> GetFilteredData(
             WorkerService service,
             string columnName,
             int PageNumber,
@@ -151,16 +151,16 @@ namespace InventorySalesManagementSystem.Workers
             return columnName switch
             {
                 nameof(Worker.Person.FullName)
-                    => service.GetAllByFullName(PageNumber, RowsPerPage, value),
+                    =>await service.GetAllByFullNameAsync(PageNumber, RowsPerPage, value),
 
                 nameof(Worker.Person.Town.TownName)
-                    => service.GetAllByTownName(PageNumber, RowsPerPage, value),
+                    =>await service.GetAllByTownNameAsync(PageNumber, RowsPerPage, value),
 
                 _ => new List<WorkerListDto>()
             };
         }
 
-        private int GetTotalFilteredPages(
+        private async Task<int> GetTotalFilteredPages(
             WorkerService service,
             string columnName,
             string value)
@@ -168,29 +168,29 @@ namespace InventorySalesManagementSystem.Workers
             return columnName switch
             {
                 nameof(Worker.Person.FullName)
-                    => service.GetTotalPageByFullName(value, RowsPerPage),
+                    =>await service.GetTotalPageByFullNameAsync(value, RowsPerPage),
 
                 nameof(Worker.Person.Town.TownName)
-                    => service.GetTotalPageByTownName(value, RowsPerPage),
+                    =>await service.GetTotalPageByTownNameAsync(value, RowsPerPage),
 
                 _ => 0
             };
         }
 
-        private int GetTotalPages(WorkerService service)
+        private async Task<int> GetTotalPages(WorkerService service)
         {
-            return service.GetTotalPageNumber(RowsPerPage);
+            return await service.GetTotalPageNumberAsync(RowsPerPage);
         }
         #endregion
 
 
-        private void DisplayPage(int PageNumber)
+        private async Task DisplayPage(int PageNumber)
         {
             //Call filterMethod With Null Fitler
-            DisplayFilteredPage(PageNumber, null);
+           await DisplayFilteredPage(PageNumber, null);
         }
 
-        private void DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
+        private async Task DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -199,37 +199,37 @@ namespace InventorySalesManagementSystem.Workers
                 bool isFiltered = ucListView1.IsDataFiltered && filter != null;
 
                 int totalPages = isFiltered
-                    ? GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
-                    : GetTotalPages(service);
+                    ?await GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
+                    :await GetTotalPages(service);
 
                 int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
 
                 var data = isFiltered
-                    ? GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
-                    : GetData(service, pageToRequest);
+                    ?await GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
+                    :await GetData(service, pageToRequest);
 
                 ucListView1.DisplayData<WorkerListDto>(data, pageToRequest, totalPages);
             }
         }
 
-        private void OnFilterClicked(UcListView.Filter filter)
+        private async Task OnFilterClicked(UcListView.Filter filter)
         {
-            DisplayFilteredPage(1, filter);
+           await DisplayFilteredPage(1, filter);
         }
-        private void OnFilterCanceled()
+        private async Task OnFilterCanceled()
         {
-            DisplayPage(1);
+            await DisplayPage(1);
         }
-        private void OnPageChanged(int PageNumber, UcListView.Filter filter)
+        private async Task OnPageChanged(int PageNumber, UcListView.Filter filter)
         {
-            DisplayFilteredPage(PageNumber, filter);
+            await DisplayFilteredPage(PageNumber, filter);
         }
-        private void OnOperationFinished(int PageNumber, UcListView.Filter filter)
+        private async Task OnOperationFinished(int PageNumber, UcListView.Filter filter)
         {
-            DisplayFilteredPage(PageNumber, filter);
+           await DisplayFilteredPage(PageNumber, filter);
         }
 
-        private void frmWorkerListScreen_Load(object sender, EventArgs e)
+        private async void frmWorkerListScreen_Load(object sender, EventArgs e)
         {
             ucListView1.OnFilterClicked = OnFilterClicked;
             ucListView1.OnFilterCanceled = OnFilterCanceled;
@@ -239,13 +239,13 @@ namespace InventorySalesManagementSystem.Workers
 
             ucListView1.ConfigureGrid = ConfigureGrid;
 
-            DisplayPage(1);
+           await DisplayPage(1);
             ConfigureFilter();
         }
 
-        private void btnAdd_Click(object sender, EventArgs e)
+        private async void btnAdd_Click(object sender, EventArgs e)
         {
-            var frm = frmAddUpdateWorker.CreateForAdd(_serviceProvider);
+            var frm = await frmAddUpdateWorker.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();
@@ -269,7 +269,7 @@ namespace InventorySalesManagementSystem.Workers
             return -1;
         }
 
-        private void updateMenustripItem_Click(object sender, EventArgs e)
+        private async void updateMenustripItem_Click(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
@@ -281,7 +281,7 @@ namespace InventorySalesManagementSystem.Workers
 
             try
             {
-                var frm = frmAddUpdateWorker.CreateForUpdate(_serviceProvider, id);
+                var frm = await frmAddUpdateWorker.CreateForUpdate(_serviceProvider, id);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -321,7 +321,7 @@ namespace InventorySalesManagementSystem.Workers
             }
         }
 
-        private void deleteMenustripItem_Click_1(object sender, EventArgs e)
+        private async void deleteMenustripItem_Click_1(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
@@ -353,7 +353,7 @@ namespace InventorySalesManagementSystem.Workers
 
                 try
                 {
-                    service.DeleteWorker(id);
+                   await service.DeleteWorkerAsync(id);
                 }
                 catch (NotFoundException ex)
                 {
@@ -375,7 +375,7 @@ namespace InventorySalesManagementSystem.Workers
             }
         }
 
-        private void changeActivationStateMenuStripItem_Click(object sender, EventArgs e)
+        private async void changeActivationStateMenuStripItem_Click(object sender, EventArgs e)
         {
             int id = GetSelectedId();
 
@@ -402,7 +402,7 @@ namespace InventorySalesManagementSystem.Workers
                 var service = scope.ServiceProvider.GetRequiredService<WorkerService>();
                 try
                 {
-                    service.ChangeActivationState(id, !selectedWorker.IsActive);
+                   await service.ChangeActivationStateAsync(id, !selectedWorker.IsActive);
                 }
                 catch (NotFoundException ex)
                 {

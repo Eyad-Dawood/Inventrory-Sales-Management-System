@@ -12,12 +12,20 @@ namespace InventorySalesManagementSystem.Workers
 {
     public partial class frmShowWorker : Form
     {
-       
-        public frmShowWorker(IServiceProvider serviceProvider,int WorkerId)
+        private readonly IServiceProvider _serviceProvider;
+        private readonly int _workerId;
+
+        public frmShowWorker(IServiceProvider serviceProvider, int workerId)
         {
             InitializeComponent();
+            _serviceProvider = serviceProvider;
+            _workerId = workerId;
+        }
 
-            ucWorkerShow1.ShowData(serviceProvider, WorkerId);
+        private async void frmShowWorker_Load(object sender, EventArgs e)
+        {
+                await ucWorkerShow1.ShowData(_serviceProvider, _workerId);
         }
     }
+
 }

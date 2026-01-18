@@ -27,6 +27,7 @@ namespace LogicLayer.Services
             _logger = logger;
         }
 
+        #region Map
         private Town MapTown_AddDto(TownAddDto DTO)
         {
             return new Town()
@@ -46,6 +47,7 @@ namespace LogicLayer.Services
                 TownName = town.TownName
             };
         }
+        #endregion
 
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
@@ -53,17 +55,17 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void AddTown(TownAddDto DTO)
+        public async Task AddTownAsync(TownAddDto DTO)
         {
             Town town = MapTown_AddDto(DTO);
 
             ValidationHelper.ValidateEntity(town);
 
-            _Townrepo.Add(town);
+           await _Townrepo.AddAsync(town);
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -84,9 +86,9 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails
         /// </exception>
-        public void UpdateTown(TownUpdateDto DTO)
+        public async Task UpdateTownAsync(TownUpdateDto DTO)
         {
-            Town town = _Townrepo.GetById(DTO.TownId);
+            Town? town = await _Townrepo.GetByIdAsync(DTO.TownId);
             if (town == null)
             {
                 throw new NotFoundException(typeof(Town));
@@ -98,7 +100,7 @@ namespace LogicLayer.Services
 
             try
             {
-                _unitOfWork.Save();
+               await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -113,11 +115,11 @@ namespace LogicLayer.Services
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public List<TownListDto> GetAllTowns(int PageNumber,int RowsPerPage)
+        public async Task<List<TownListDto>> GetAllTownsAsync(int PageNumber,int RowsPerPage)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
-            return _Townrepo.GetAll(PageNumber,RowsPerPage)
+            return ( await _Townrepo.GetAllAsync(PageNumber,RowsPerPage))
                 .Select(t=>new TownListDto()
                 {
                     TownID = t.TownID,
@@ -125,9 +127,9 @@ namespace LogicLayer.Services
                 }).ToList();
         }
 
-        public List<TownListDto> GetAllTowns()
+        public async Task<List<TownListDto>> GetAllTownsAsync()
         {
-            return _Townrepo.GetAll()
+            return (await _Townrepo.GetAllAsync())
                 .Select(t => new TownListDto()
                 {
                     TownID = t.TownID,
@@ -142,9 +144,9 @@ namespace LogicLayer.Services
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public void DeleteTownById(int TownId)
+        public async Task DeleteTownByIdAsync(int TownId)
         {
-            Town town = _Townrepo.GetById(TownId);
+            Town? town = await _Townrepo.GetByIdAsync(TownId);
 
             if (town == null)
             {
@@ -155,7 +157,7 @@ namespace LogicLayer.Services
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
             catch (Exception ex)
             {
@@ -170,9 +172,9 @@ namespace LogicLayer.Services
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public TownUpdateDto GetTownForUpdate(int TownId)
+        public async Task<TownUpdateDto> GetTownForUpdateAsync(int TownId)
         {
-            Town Town = _Townrepo.GetById(TownId);
+            Town? Town = await _Townrepo.GetByIdAsync(TownId);
 
             if (Town == null)
             {

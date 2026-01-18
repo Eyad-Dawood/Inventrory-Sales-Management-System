@@ -15,34 +15,40 @@ namespace DataAccessLayer.Repos
         {
         }
 
-        public Worker GetWithDetailsById(int WorkerId)
+        public async Task<Worker?> GetWithDetailsByIdAsync(int WorkerId)
         {
-            return _context.Workers
+            return
+                await 
+                _context.Workers
                  .AsNoTracking()
                  .Where(w => w.WorkerId == WorkerId)
                  .Include(w => w.Person)
                  .ThenInclude(p=>p.Town)
-                 .FirstOrDefault();
+                 .FirstOrDefaultAsync();
         }
-        public Worker GetWithPersonById(int WorkerId)
+        public async Task<Worker?> GetWithPersonByIdAsync(int WorkerId)
         {
-            return _context.Workers
+            return
+                await
+                _context.Workers
                 .Where(w => w.WorkerId == WorkerId)
                 .Include(w => w.Person)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
-        public List<Worker> GetAllWithPerson(int PageNumber, int RowsPerPage)
+        public async Task<List<Worker>> GetAllWithPersonAsync(int PageNumber, int RowsPerPage)
         {
-            return _context.Workers
+            return
+                await
+                _context.Workers
                 .AsNoTracking()
                 .Include(w => w.Person)
                 .ThenInclude(p => p.Town)
                 .OrderBy(w => w.WorkerId)
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
-                .ToList();
+                .ToListAsync();
         }
-        public List<Worker> GetAllByFullName(
+        public async Task<List<Worker>> GetAllByFullNameAsync(
                 int pageNumber,
                 int rowsPerPage,
                 string name)
@@ -52,7 +58,9 @@ namespace DataAccessLayer.Repos
 
             name = name.Trim();
 
-            return _context.Workers
+            return
+                await
+                _context.Workers
                 .AsNoTracking()
                 .Include(c => c.Person)
                     .ThenInclude(p => p.Town)
@@ -63,10 +71,10 @@ namespace DataAccessLayer.Repos
                 .OrderBy(c => c.WorkerId)
                 .Skip((pageNumber - 1) * rowsPerPage)
                 .Take(rowsPerPage)
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<Worker> GetAllByTownName(int PageNumber, int RowsPerPage, string TownName)
+        public async Task<List<Worker>> GetAllByTownNameAsync(int PageNumber, int RowsPerPage, string TownName)
         {
             if (string.IsNullOrWhiteSpace(TownName))
             {
@@ -75,7 +83,9 @@ namespace DataAccessLayer.Repos
 
             TownName = TownName.Trim();
 
-            return _context.Workers
+            return
+                await
+                _context.Workers
                 .AsNoTracking()
                 .Include(c => c.Person)
                 .ThenInclude(p => p.Town)
@@ -85,39 +95,43 @@ namespace DataAccessLayer.Repos
                 .OrderBy(c => c.WorkerId)
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
-                .ToList();
+                .ToListAsync();
         }
 
-        public int GetTotalPagesByFullName(string fullName, int rowsPerPage)
+        public async Task<int> GetTotalPagesByFullNameAsync(string fullName, int rowsPerPage)
         {
             if (string.IsNullOrWhiteSpace(fullName))
                 return 0;
 
             fullName = fullName.Trim();
 
-            int totalCount = _context.Workers
+            int totalCount =
+                await
+                _context.Workers
                 .AsNoTracking()
                 .Where(c =>
                     EF.Functions.Like(
                         c.Person.FullName,
                         $"{fullName}%"))
-                .Count();
+                .CountAsync();
 
             return (int)Math.Ceiling(totalCount / (double)rowsPerPage);
         }
 
-        public int GetTotalPagesByTownName(string townName, int RowsPerPage)
+        public async Task<int> GetTotalPagesByTownNameAsync(string townName, int RowsPerPage)
         {
             if (string.IsNullOrWhiteSpace(townName))
                 return 0;
 
             townName = townName.Trim();
 
-            int totalCount = _context.Workers
+            int totalCount =
+                await
+                _context.Workers
                 .AsNoTracking()
                 .Where(c =>
                     EF.Functions.Like(c.Person.Town.TownName, $"{townName}%"))
-                .Count();
+                .CountAsync();
 
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }

@@ -12,10 +12,19 @@ namespace InventorySalesManagementSystem.Products
 {
     public partial class frmShowProduct : Form
     {
-        public frmShowProduct(IServiceProvider serviceProvider, int ProductId)
+        private readonly IServiceProvider _serviceProvider;
+        private readonly int _productId;
+
+        public frmShowProduct(IServiceProvider serviceProvider, int productId)
         {
             InitializeComponent();
-            ucProductShow1.ShowData(serviceProvider, ProductId);
+            _serviceProvider = serviceProvider;
+            _productId = productId;
+        }
+
+        private async void frmShowProduct_Load(object sender, EventArgs e)
+        {
+             await ucProductShow1.ShowData(_serviceProvider, _productId);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace InventorySalesManagementSystem
             _serviceProvider = serviceProvider;
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        private async void btnLogin_Click(object sender, EventArgs e)
         {
             if(string.IsNullOrWhiteSpace(txtPassword.Text)
                 ||string.IsNullOrWhiteSpace(txtUserName.Text))
@@ -43,7 +43,7 @@ namespace InventorySalesManagementSystem
                 {
                     var service = scope.ServiceProvider.GetRequiredService<UserService>();
 
-                    loginUser = service.ValidateUserCredentials(txtUserName.Text,txtPassword.Text);
+                    loginUser = await service.ValidateUserCredentialsAsync(txtUserName.Text,txtPassword.Text);
 
                     //Save the current user 
                     var UserSession = scope.ServiceProvider.GetRequiredService<UserSession>();

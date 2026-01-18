@@ -9,13 +9,13 @@ namespace DataAccessLayer.Abstractions.Products
 {
     public interface IProductPriceLogRepository : IRepository<ProductPriceLog>
     {
-        public List<ProductPriceLog> GetAllWithDetails(int PageNumber,int RowsPerPage);
+        public Task<List<ProductPriceLog>> GetAllWithDetailsAsync(int PageNumber,int RowsPerPage);
 
-        public List<ProductPriceLog> GetAllByProductFullNameAndDate(int pageNumber,
+        public Task<List<ProductPriceLog>> GetAllByProductFullNameAndDateAsync(int pageNumber,
             int rowsPerPage,
             string? productFullName,
             DateTime? date);
-        public int GetTotalPagesByFullNameAndDate(
+        public Task<int> GetTotalPagesByFullNameAndDateAsync(
             int rowsPerPage,
             string? productFullName,
             DateTime? date);
