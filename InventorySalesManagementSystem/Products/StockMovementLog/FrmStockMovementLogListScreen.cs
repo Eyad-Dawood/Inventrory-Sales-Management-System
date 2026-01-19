@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Products;
+using InventorySalesManagementSystem.General.General_Forms;
 using InventorySalesManagementSystem.UserControles;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
@@ -16,13 +17,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace InventorySalesManagementSystem.Products.StockMovementLog
 {
-    public partial class FrmStockMovementLogListScreen : Form
+    public partial class FrmStockMovementLogListScreen : frmBaseListScreen
     {
         private readonly IServiceProvider _serviceProvider;
-        private const int RowsPerPage = 30;
+        protected override ContextMenuStrip GridContextMenu => cms;
 
 
         public FrmStockMovementLogListScreen(IServiceProvider serviceProvider)
@@ -31,23 +33,31 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
             _serviceProvider = serviceProvider;
         }
 
-        #region Config
-        private void ConfigureContextMenuStrip(DataGridView dgv)
+
+        protected override void OnLoad(EventArgs e)
         {
-            dgv.ContextMenuStrip = this.cms;
+            base.OnLoad(e);
+            SelectButton = false;
+            AddButton = false;
+            ucListView1.AllowDatePic = true;
+            lbTitle.Text = "سجلات حركة المخزون";
         }
-        private void ConfigureGrid(DataGridView dgv)
+
+
+        #region Configure
+        protected override List<UcListView.FilterItems> ConfigureFilter()
         {
-            dgv.AutoGenerateColumns = false;
-            dgv.Columns.Clear();
+            return new List<UcListView.FilterItems>()
+                {
+                    new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(ProductStockMovementLogListDto), nameof(ProductStockMovementLogListDto.ProductFullName)),
+                                                 Value = nameof(ProductStockMovementLogListDto.ProductFullName)},
+                };
+        }
+        protected override void ConfigureGrid(DataGridView dgv)
+        {
+            base.ConfigureGrid(dgv);
 
-            dgv.AllowUserToAddRows = false;
-            dgv.AllowUserToDeleteRows = false;
-            dgv.ReadOnly = true;
-            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgv.MultiSelect = false;
-
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
             // ===== ProductId =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -158,13 +168,6 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
                 FillWeight = 15
             });
 
-            // ===== Header Style =====
-            dgv.ColumnHeadersDefaultCellStyle.Font =
-                new Font(dgv.Font, FontStyle.Bold);
-
-            dgv.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
             dgv.CellFormatting += (s, e) =>
             {
                 if (dgv.Columns[e.ColumnIndex].Name ==
@@ -185,131 +188,63 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
                 }
             };
 
-            ConfigureContextMenuStrip(dgv);
-        }
-
-        private void ConfigureFilter()
-        {
-            var items = new List<UcListView.FilterItems>()
-                {
-                    new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(ProductStockMovementLogListDto), nameof(ProductStockMovementLogListDto.ProductFullName)),
-                                                 Value = nameof(ProductStockMovementLogListDto.ProductFullName)},
-                };
-
-            ucListView1.ConfigureFilter(items);
         }
         #endregion
 
-        #region DataGetter
-        private async Task<List<ProductStockMovementLogListDto>> GetData(ProductStockMovementLogService service,
-                                              int PageNumber)
+        #region Hooks
+        protected async override Task<int> GetTotalPagesAsync()
         {
-            return await service.GetAllProductMovmentsAsync(PageNumber, RowsPerPage);
-        }
-        private async Task<List<ProductStockMovementLogListDto>> GetFilteredData(
-            ProductStockMovementLogService service,
-            string columnName,
-            int PageNumber,
-            string value,
-            DateTime? date)
-        {
-            return columnName switch
-            {
-                nameof(ProductStockMovementLogListDto.ProductFullName)
-                    => await service.GetAllByProductNameAndDateTimeAsync(PageNumber, RowsPerPage, value, date),
-
-
-                _ => new List<ProductStockMovementLogListDto>()
-            };
-        }
-
-        private async Task<int> GetTotalFilteredPages(
-            ProductStockMovementLogService service,
-            string columnName,
-            string value,
-            DateTime? date)
-        {
-            return columnName switch
-            {
-                nameof(ProductStockMovementLogListDto.ProductFullName)
-                    => await service.GetTotalPageByProductNameAndDateAsync(RowsPerPage, value, date),
-
-
-                _ => 0
-            };
-        }
-
-        private async Task<int> GetTotalPages(ProductStockMovementLogService service)
-        {
-            return await service.GetTotalPageNumberAsync(RowsPerPage);
-        }
-        #endregion
-
-
-
-        private async Task DisplayPage(int PageNumber)
-        {
-            //Call filterMethod With Null Fitler
-           await DisplayFilteredPage(PageNumber, null);
-        }
-
-        private async Task DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
-        {
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductStockMovementLogService>();
-
-                bool isFiltered = ucListView1.IsDataFiltered && filter != null;
-
-                int totalPages = isFiltered
-                    ? await GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value, filter.dateTime)
-                    : await GetTotalPages(service);
-
-                int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
-
-                var data = isFiltered
-                    ? await GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value, filter.dateTime)
-                    : await GetData(service, pageToRequest);
-
-                ucListView1.DisplayData<ProductStockMovementLogListDto>(data, pageToRequest, totalPages);
+                return await service.GetTotalPageNumberAsync(RowsPerPage);
             }
         }
 
-        private async Task OnFilterClicked(UcListView.Filter filter)
+        protected async override Task<int> GetTotalFilteredPagesAsync(UcListView.Filter filter)
         {
-           await DisplayFilteredPage(1, filter);
-        }
-        private async Task OnFilterCanceled()
-        {
-           await DisplayPage(1);
-        }
-        private async Task OnPageChanged(int PageNumber, UcListView.Filter filter)
-        {
-           await DisplayFilteredPage(PageNumber, filter);
-        }
-        private async Task OnOperationFinished(int PageNumber, UcListView.Filter filter)
-        {
-           await DisplayFilteredPage(PageNumber, filter);
-        }
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductStockMovementLogService>();
 
-        private async void FrmStockMovementLogListScreen_Load(object sender, EventArgs e)
-        {
-            ucListView1.OnFilterClicked = OnFilterClicked;
-            ucListView1.OnFilterCanceled = OnFilterCanceled;
-            ucListView1.OnNextPage = OnPageChanged;
-            ucListView1.OnPreviousPage = OnPageChanged;
-            ucListView1.OnRefreshAfterOperation = OnOperationFinished;
+                return filter.ColumnName switch
+                {
+                    nameof(ProductStockMovementLogListDto.ProductFullName)
+                    => await service.GetTotalPageByProductNameAndDateAsync(RowsPerPage, filter.Text1Value,filter.dateTime),
 
-            ucListView1.ConfigureGrid = ConfigureGrid;
 
-           await DisplayPage(1);
-            ConfigureFilter();
+                    _ => 0
+                };
+            }
         }
 
-        
+        protected async override Task<IEnumerable<object>> GetDataAsync(int page)
+        {
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductStockMovementLogService>();
+                return await service.GetAllProductMovmentsAsync(page, RowsPerPage);
+            }
+        }
+
+        protected async override Task<IEnumerable<object>> GetFilteredDataAsync(int page, UcListView.Filter filter)
+        {
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductStockMovementLogService>();
+                return filter.ColumnName switch
+                {
+                    nameof(ProductStockMovementLogListDto.ProductFullName)
+                    => await service.GetAllByProductNameAndDateTimeAsync(page, RowsPerPage, filter.Text1Value,filter.dateTime),
 
 
+                    _ => new List<ProductStockMovementLogListDto>()
+                };
+            }
+        }
+        #endregion
+
+        #region Menu Strip
         private void ShowMenustripItem_Click(object sender, EventArgs e)
         {
             var selecteditem =
@@ -322,8 +257,11 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
                 return;
             }
 
-            string message = $"الإسم الكامل : {selecteditem.ProductFullName} \n\n الملاحظات : {selecteditem.Notes}";
+            string message = $"الإسم الكامل : {selecteditem.ProductFullName}" +
+                $"\n\n السبب : {(selecteditem.Reason)}"  +
+                $"\n\n الملاحظات : {selecteditem.Notes} ";
             MessageBox.Show(message);
         }
+        #endregion
     }
 }

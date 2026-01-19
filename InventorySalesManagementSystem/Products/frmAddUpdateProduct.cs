@@ -305,7 +305,7 @@ namespace InventorySalesManagementSystem.Products
 
         private void lkSelectProductType_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            using (var frm = new frmProductTypeListScreen(_serviceProvider, selectMode: true))
+            using (var frm = new frmProductTypeListScreen(_serviceProvider))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {

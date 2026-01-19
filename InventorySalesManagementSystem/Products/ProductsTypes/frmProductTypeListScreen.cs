@@ -1,9 +1,12 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Products;
 using InventorySalesManagementSystem.Customers;
+using InventorySalesManagementSystem.General.General_Forms;
 using InventorySalesManagementSystem.UserControles;
+using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.ProductTypeDTO;
+using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Services;
 using LogicLayer.Services.Products;
 using LogicLayer.Validation.Exceptions;
@@ -14,62 +17,48 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace InventorySalesManagementSystem.Products.ProductsTypes
 {
-    public partial class frmProductTypeListScreen : Form
+    public partial class frmProductTypeListScreen : frmBaseListScreen
     {
         public ProductTypeListDto SelectedProductType { get; private set; }
-        private bool _selectMode = false;
 
-        [Browsable(false)]
-        [DefaultValue(false)]
-        public bool SelectMode 
-        {
-            get 
-            {
-            return _selectMode;
-            }
-                set
-            {
-                btnSelect.Visible = value;
-                btnSelect.Enabled = value;
-
-            _selectMode = value;
-            }
-        }
-      
 
         private readonly IServiceProvider _serviceProvider;
-        private const int RowsPerPage = 10;
+        protected override ContextMenuStrip GridContextMenu => cms;
 
-        public frmProductTypeListScreen(IServiceProvider serviceProvider, bool selectMode)
+        public frmProductTypeListScreen(IServiceProvider serviceProvider)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
-            SelectMode = selectMode;
         }
 
-        #region Config
-        private void ConfigureContextMenuStrip(DataGridView dgv)
+
+        protected override void OnLoad(EventArgs e)
         {
-            dgv.ContextMenuStrip = this.cms;
+            base.OnLoad(e);
+            SelectButton = true;
+            lbTitle.Text = "شاشة الموديلات";
         }
-        private void ConfigureGrid(DataGridView dgv)
+
+        #region Configure
+        protected override List<UcListView.FilterItems> ConfigureFilter()
         {
-            dgv.AutoGenerateColumns = false;
-            dgv.Columns.Clear();
+            return new List<UcListView.FilterItems>()
+                {
+                    new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(ProductType), nameof(ProductType.ProductTypeName)),
+                                                 Value = nameof(ProductType.ProductTypeName)}                
+            };
+        }
+        protected override void ConfigureGrid(DataGridView dgv)
+        {
+            base.ConfigureGrid(dgv);
 
-            dgv.AllowUserToAddRows = false;
-            dgv.AllowUserToDeleteRows = false;
-            dgv.ReadOnly = true;
-            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgv.MultiSelect = false;
-
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
             // ===== ProductTypeId =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -89,166 +78,89 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                 HeaderText = LogicLayer.Utilities.NamesManager
                 .GetArabicPropertyName(typeof(ProductType), nameof(ProductType.ProductTypeName)),
             });
-
-            // ===== Header Style =====
-            dgv.ColumnHeadersDefaultCellStyle.Font =
-                new Font(dgv.Font, FontStyle.Bold);
-
-            dgv.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-
-
-            ConfigureContextMenuStrip(dgv);
-        }
-        private void ConfigureFilter()
-        {
-            var items = new List<UcListView.FilterItems>()
-                {
-                    new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(ProductType), nameof(ProductType.ProductTypeName)),
-                                                 Value = nameof(ProductType.ProductTypeName)}                };
-
-            ucListView1.ConfigureFilter(items);
         }
         #endregion
 
-        #region DataGetter
-        private async Task<List<ProductTypeListDto>> GetData(ProductTypeService service,
-                                              int PageNumber)
-        {
-            return await service.GetAllProductTypesAsync(PageNumber, RowsPerPage);
-        }
-        private async Task<List<ProductTypeListDto>> GetFilteredData(
-            ProductTypeService service,
-            string columnName,
-            int PageNumber,
-            string value)
-        {
-            return columnName switch
-            {
-                nameof(ProductType.ProductTypeName)
-                    => await service.GetAllByProductTypeNameAsync(PageNumber, RowsPerPage, value),
 
-                _ => new List<ProductTypeListDto>()
-            };
-        }
-
-        private async Task<int> GetTotalFilteredPages(
-            ProductTypeService service,
-            string columnName,
-            string value)
+        #region Hooks
+        protected async override Task<int> GetTotalPagesAsync()
         {
-            return columnName switch
-            {
-                nameof(ProductType.ProductTypeName)
-                    => await service.GetTotalPagesByProductTypeNameAsync(value, RowsPerPage),
-
-                _ => 0
-            };
-        }
-
-        private async Task<int> GetTotalPages(ProductTypeService service)
-        {
-            return await service.GetTotalPageNumberAsync(RowsPerPage);
-        }
-        #endregion
-
-        private async Task DisplayPage(int PageNumber)
-        {
-            //Call filterMethod With Null Fitler
-           await DisplayFilteredPage(PageNumber, null);
-        }
-
-        private async Task DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
-        {
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
-
-                bool isFiltered = ucListView1.IsDataFiltered && filter != null;
-
-                int totalPages = isFiltered
-                    ? await GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value)
-                    : await GetTotalPages(service);
-
-                int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
-
-                var data = isFiltered
-                    ? await GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value)
-                    : await GetData(service, pageToRequest);
-
-                ucListView1.DisplayData<ProductTypeListDto>(data, pageToRequest, totalPages);
+                return await service.GetTotalPageNumberAsync(RowsPerPage);
             }
         }
 
-        private async Task OnFilterClicked(UcListView.Filter filter)
+        protected async override Task<int> GetTotalFilteredPagesAsync(UcListView.Filter filter)
         {
-           await DisplayFilteredPage(1, filter);
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
+
+                return filter.ColumnName switch
+                {
+                    nameof(ProductType.ProductTypeName)
+                     => await service.GetTotalPagesByProductTypeNameAsync(filter.Text1Value, RowsPerPage),
+
+                    _ => 0
+                };
+            }
         }
 
-
-        private async Task OnFilterCanceled()
+        protected async override Task<IEnumerable<object>> GetDataAsync(int page)
         {
-           await DisplayPage(1);
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
+                return await service.GetAllProductTypesAsync(page, RowsPerPage);
+            }
         }
 
-
-        private async Task OnPageChanged(int PageNumber, UcListView.Filter filter)
+        protected async override Task<IEnumerable<object>> GetFilteredDataAsync(int page, UcListView.Filter filter)
         {
-           await DisplayFilteredPage(PageNumber, filter);
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
+                return filter.ColumnName switch
+                {
+                    nameof(ProductType.ProductTypeName)
+                    => await service.GetAllByProductTypeNameAsync(page, RowsPerPage, filter.Text1Value),
+
+                    _ => new List<ProductTypeListDto>()
+                };
+            }
         }
+        #endregion
 
-        private async Task OnOperationFinished(int PageNumber, UcListView.Filter filter)
+        #region Buttons Event
+        protected override async Task HandleAddButtonClicked()
         {
-           await DisplayFilteredPage(PageNumber, filter);
-        }
-
-        private async void frmProductTypeListScreen_Load(object sender, EventArgs e)
-        {
-            ucListView1.OnFilterClicked = OnFilterClicked;
-            ucListView1.OnFilterCanceled = OnFilterCanceled;
-            ucListView1.OnNextPage = OnPageChanged;
-            ucListView1.OnPreviousPage = OnPageChanged;
-            ucListView1.OnRefreshAfterOperation = OnOperationFinished;
-
-            ucListView1.ConfigureGrid = ConfigureGrid;
-
-           await DisplayPage(1);
-            ConfigureFilter();
-
-            ucListView1.Focus();
-        }
-
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
+            //No Async Methods Here
             var frm = frmAddUpdateProductType.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();
         }
 
-        /// <summary>
-        /// Get Selected Id From Data Grid View 
-        /// </summary>
-        /// <returns>-1 if null</returns>
-        private int GetSelectedId()
+        protected async override Task HandleSelectButtonClicked()
         {
-            var selecteditem =
-             ucListView1.GetSelectedItem<ProductTypeListDto>();
+            //No Async Here
+            SelectedProductType = ucListView1.GetSelectedItem<ProductTypeListDto>();
 
-            if (selecteditem != null)
+            if (SelectedProductType != null)
             {
-                return selecteditem.ProductTypeId;
+                this.DialogResult = DialogResult.OK;
             }
-
-            return -1;
         }
+        #endregion
 
+        #region Menu Strip
         private async void updateMenustripItem_Click(object sender, EventArgs e)
         {
-            int id = GetSelectedId();
+            var item = ucListView1.GetSelectedItem<ProductTypeListDto>();
 
-            if (id <= 0)
+            if (item == null)
             {
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(ProductType)));
                 return;
@@ -256,7 +168,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
             try
             {
-                var frm = await frmAddUpdateProductType.CreateForUpdate(_serviceProvider, id);
+                var frm = await frmAddUpdateProductType.CreateForUpdate(_serviceProvider, item.ProductTypeId);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -271,22 +183,20 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             ucListView1.RefreshAfterOperation();
 
         }
-
         private async void deleteMenustripItem_Click(object sender, EventArgs e)
         {
-            int id = GetSelectedId();
+            var item = ucListView1.GetSelectedItem<ProductTypeListDto>();
 
-            if (id <= 0)
+            if (item == null)
             {
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(ProductType)));
                 return;
             }
 
-            var selectedProdcutType = ucListView1.GetSelectedItem<ProductTypeListDto>();
-            string name = selectedProdcutType?.Name ?? id.ToString();
+            string name = item?.Name ?? "";
 
             string message = $"هل أنت متأكد من حذف الموديل؟\n\n" +
-                             $"المعرف: {selectedProdcutType.ProductTypeId}\n" +
+                             $"المعرف: {item?.ProductTypeId}\n" +
                              $"الاسم: >> {name} <<\n\n" +
                              $"تحذير: لا يمكن التراجع عن هذه العملية!";
 
@@ -304,7 +214,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
                 try
                 {
-                   await service.DeleteByIdAsync(id);
+                   await service.DeleteByIdAsync(item.ProductTypeId);
                 }
                 catch (NotFoundException ex)
                 {
@@ -326,15 +236,6 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             }
 
         }
-
-        private void btnSelect_Click(object sender, EventArgs e)
-        {
-            SelectedProductType = ucListView1.GetSelectedItem<ProductTypeListDto>();
-
-            if (SelectMode && SelectedProductType!=null)
-            {
-                this.DialogResult = DialogResult.OK;
-            }
-        }
+        #endregion
     }
 }

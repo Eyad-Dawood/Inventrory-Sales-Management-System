@@ -29,11 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            ucListView1 = new InventorySalesManagementSystem.UserControles.UcListView();
-            panel4 = new Panel();
-            btnAdd = new Button();
-            panel2 = new Panel();
-            lbTitle = new Label();
             cms = new ContextMenuStrip(components);
             updateMenustripItem = new ToolStripMenuItem();
             deleteMenustripItem = new ToolStripMenuItem();
@@ -42,63 +37,8 @@
             AddQuantityMenustripItem = new ToolStripMenuItem();
             WithdrawMenustripItem = new ToolStripMenuItem();
             changeIsAvilableStateMenuStripItem = new ToolStripMenuItem();
-            panel4.SuspendLayout();
-            panel2.SuspendLayout();
             cms.SuspendLayout();
             SuspendLayout();
-            // 
-            // ucListView1
-            // 
-            ucListView1.AllowSecondSearchBox = true;
-            ucListView1.BackColor = SystemColors.Control;
-            ucListView1.Dock = DockStyle.Fill;
-            ucListView1.Location = new Point(0, 129);
-            ucListView1.Name = "ucListView1";
-            ucListView1.Size = new Size(1214, 532);
-            ucListView1.TabIndex = 22;
-            // 
-            // panel4
-            // 
-            panel4.Controls.Add(btnAdd);
-            panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 88);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(1214, 41);
-            panel4.TabIndex = 23;
-            // 
-            // btnAdd
-            // 
-            btnAdd.Anchor = AnchorStyles.Right;
-            btnAdd.BackgroundImage = Properties.Resources.addIcon;
-            btnAdd.BackgroundImageLayout = ImageLayout.Stretch;
-            btnAdd.Location = new Point(1162, 0);
-            btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(40, 40);
-            btnAdd.TabIndex = 2;
-            btnAdd.UseVisualStyleBackColor = true;
-            btnAdd.Click += btnAdd_Click;
-            // 
-            // panel2
-            // 
-            panel2.Controls.Add(lbTitle);
-            panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(0, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(1214, 88);
-            panel2.TabIndex = 24;
-            // 
-            // lbTitle
-            // 
-            lbTitle.Dock = DockStyle.Fill;
-            lbTitle.Font = new Font("Calibri", 60F, FontStyle.Bold);
-            lbTitle.Location = new Point(0, 0);
-            lbTitle.Margin = new Padding(4, 0, 4, 0);
-            lbTitle.Name = "lbTitle";
-            lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(1214, 88);
-            lbTitle.TabIndex = 19;
-            lbTitle.Text = "شاشة المنتجات";
-            lbTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // cms
             // 
@@ -196,25 +136,13 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1214, 661);
-            Controls.Add(ucListView1);
-            Controls.Add(panel4);
-            Controls.Add(panel2);
             MinimumSize = new Size(900, 700);
             Name = "frmProductListScreen";
-            Load += frmProductListScreen_Load;
-            panel4.ResumeLayout(false);
-            panel2.ResumeLayout(false);
             cms.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
-
-        private UserControles.UcListView ucListView1;
-        private Panel panel4;
-        private Button btnAdd;
-        private Panel panel2;
-        private Label lbTitle;
         private ContextMenuStrip cms;
         private ToolStripMenuItem updateMenustripItem;
         private ToolStripMenuItem deleteMenustripItem;

@@ -330,7 +330,7 @@ namespace InventorySalesManagementSystem.UserControles
         private IReadOnlyList<object> _data;
 
 
-        private Filter GetFilter
+        private Filter? GetFilter
         {
             get
             {

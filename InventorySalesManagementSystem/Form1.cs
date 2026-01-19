@@ -2,6 +2,7 @@
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
 using InventorySalesManagementSystem.Customers;
+using InventorySalesManagementSystem.General.General_Forms;
 using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.Products.PricesLog;
 using InventorySalesManagementSystem.Products.ProductsTypes;
@@ -44,7 +45,7 @@ namespace InventorySalesManagementSystem
 
         private void button2_Click(object sender, EventArgs e)
         {
-            using (var frm = new frmProductTypeListScreen(_serviceProvider, selectMode: true))
+            using (var frm = new frmProductTypeListScreen(_serviceProvider))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
@@ -96,6 +97,13 @@ namespace InventorySalesManagementSystem
 
                 MessageBox.Show(Session.CurrentUser.UserName, Session.CurrentUser.UserId.ToString());
             }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            var frm = new Test(_serviceProvider)
+                ;
+            frm.ShowDialog();
         }
     }
 }

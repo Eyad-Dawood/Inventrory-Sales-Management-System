@@ -1,8 +1,12 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Products;
+using InventorySalesManagementSystem.General.General_Forms;
 using InventorySalesManagementSystem.UserControles;
+using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
 using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
+using LogicLayer.DTOs.WorkerDTO;
+using LogicLayer.Services;
 using LogicLayer.Services.Products;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -10,17 +14,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace InventorySalesManagementSystem.Products.PricesLog
 {
-    public partial class frmPriceLogListScreen : Form
+    public partial class frmPriceLogListScreen : frmBaseListScreen
     {
         private readonly IServiceProvider _serviceProvider;
-        private const int RowsPerPage = 30;
+        protected override ContextMenuStrip GridContextMenu => cms;
 
         public frmPriceLogListScreen(IServiceProvider serviceProvider)
         {
@@ -28,23 +32,30 @@ namespace InventorySalesManagementSystem.Products.PricesLog
             _serviceProvider = serviceProvider;
         }
 
-        #region Config
-        private void ConfigureContextMenuStrip(DataGridView dgv)
+        protected override void OnLoad(EventArgs e)
         {
-            dgv.ContextMenuStrip = this.cms;
+            base.OnLoad(e);
+            SelectButton = false;
+            AddButton = false;
+            ucListView1.AllowDatePic = true;
+            lbTitle.Text = "سجلات الأسعار";
         }
-        private void ConfigureGrid(DataGridView dgv)
+
+
+        #region Configure
+        protected override List<UcListView.FilterItems> ConfigureFilter()
         {
-            dgv.AutoGenerateColumns = false;
-            dgv.Columns.Clear();
+            return new List<UcListView.FilterItems>()
+                {
+                    new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(ProductPriceLogListDto), nameof(ProductPriceLogListDto.ProductFullName)),
+                                                 Value = nameof(ProductPriceLogListDto.ProductFullName)},
+                };
+        }
+        protected override void ConfigureGrid(DataGridView dgv)
+        {
+            base.ConfigureGrid(dgv);
 
-            dgv.AllowUserToAddRows = false;
-            dgv.AllowUserToDeleteRows = false;
-            dgv.ReadOnly = true;
-            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgv.MultiSelect = false;
-
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
             // ===== ProductId =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -155,135 +166,63 @@ namespace InventorySalesManagementSystem.Products.PricesLog
                     Alignment = DataGridViewContentAlignment.MiddleCenter
                 }
             });
-
-
-            // ===== Header Style =====
-            dgv.ColumnHeadersDefaultCellStyle.Font =
-                new Font(dgv.Font, FontStyle.Bold);
-
-            dgv.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-            ConfigureContextMenuStrip(dgv);
-        }
-        private void ConfigureFilter()
-        {
-            var items = new List<UcListView.FilterItems>()
-                {
-                    new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(ProductPriceLogListDto), nameof(ProductPriceLogListDto.ProductFullName)),
-                                                 Value = nameof(ProductPriceLogListDto.ProductFullName)},
-                };
-
-            ucListView1.ConfigureFilter(items);
         }
         #endregion
 
-        #region DataGetter
-        private async Task<List<ProductPriceLogListDto>> GetData(ProductPriceLogService service,
-                                              int PageNumber)
+        #region Hooks
+        protected async override Task<int> GetTotalPagesAsync()
         {
-            return await service.GetAllPriceLogsAsync(PageNumber, RowsPerPage);
-        }
-        private async Task<List<ProductPriceLogListDto>> GetFilteredData(
-            ProductPriceLogService service,
-            string columnName,
-            int PageNumber,
-            string value,
-            DateTime? date)
-        {
-            return columnName switch
-            {
-                nameof(ProductPriceLogListDto.ProductFullName)
-                    => await service.GetAllByProductNameAndDateTimeAsync(PageNumber, RowsPerPage, value, date),
-
-
-                _ => new List<ProductPriceLogListDto>()
-            };
-        }
-
-        private async Task<int> GetTotalFilteredPages(
-            ProductPriceLogService service,
-            string columnName,
-            string value,
-            DateTime? date)
-        {
-            return columnName switch
-            {
-                nameof(ProductPriceLogListDto.ProductFullName)
-                    => await service.GetTotalPageByProductNameAndDateAsync(RowsPerPage, value, date),
-
-
-                _ => 0
-            };
-        }
-
-        private async Task<int> GetTotalPages(ProductPriceLogService service)
-        {
-            return await service.GetTotalPageNumberAsync(RowsPerPage);
-        }
-        #endregion
-        private async Task DisplayPage(int PageNumber)
-        {
-            //Call filterMethod With Null Fitler
-           await DisplayFilteredPage(PageNumber, null);
-        }
-
-        private async Task DisplayFilteredPage(int PageNumber, UcListView.Filter filter)
-        {
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductPriceLogService>();
-
-                bool isFiltered = ucListView1.IsDataFiltered && filter != null;
-
-                int totalPages = isFiltered
-                    ? await GetTotalFilteredPages(service, filter.ColumnName, filter.Text1Value, filter.dateTime)
-                    : await GetTotalPages(service);
-
-                int pageToRequest = Math.Max(1, Math.Min(PageNumber, totalPages));
-
-                var data = isFiltered
-                    ? await GetFilteredData(service, filter.ColumnName, pageToRequest, filter.Text1Value, filter.dateTime)
-                    : await GetData(service, pageToRequest);
-
-                ucListView1.DisplayData<ProductPriceLogListDto>(data, pageToRequest, totalPages);
+                return await service.GetTotalPageNumberAsync(RowsPerPage);
             }
         }
 
+        protected async override Task<int> GetTotalFilteredPagesAsync(UcListView.Filter filter)
+        {
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductPriceLogService>();
 
-        private async Task OnFilterClicked(UcListView.Filter filter)
-        {
-           await DisplayFilteredPage(1, filter);
-        }
-        private async Task OnFilterCanceled()
-        {
-           await DisplayPage(1);
-        }
-        private async Task OnPageChanged(int PageNumber, UcListView.Filter filter)
-        {
-           await DisplayFilteredPage(PageNumber, filter);
-        }
-        private async Task OnOperationFinished(int PageNumber, UcListView.Filter filter)
-        {
-           await DisplayFilteredPage(PageNumber, filter);
-        }
+                return filter.ColumnName switch
+                {
+                    nameof(ProductPriceLogListDto.ProductFullName)
+                   => await service.GetTotalPageByProductNameAndDateAsync(RowsPerPage, filter.Text1Value,filter.dateTime),
 
-        private async void frmPriceLogListScreen_Load(object sender, EventArgs e)
-        {
-            ucListView1.OnFilterClicked = OnFilterClicked;
-            ucListView1.OnFilterCanceled = OnFilterCanceled;
-            ucListView1.OnNextPage = OnPageChanged;
-            ucListView1.OnPreviousPage = OnPageChanged;
-            ucListView1.OnRefreshAfterOperation = OnOperationFinished;
 
-            ucListView1.ConfigureGrid = ConfigureGrid;
-
-            await DisplayPage(1);
-            ConfigureFilter();
+                    _ => 0
+                };
+            }
         }
 
+        protected async override Task<IEnumerable<object>> GetDataAsync(int page)
+        {
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductPriceLogService>();
+                return await service.GetAllPriceLogsAsync(page,RowsPerPage);
+            }
+        }
 
+        protected async override Task<IEnumerable<object>> GetFilteredDataAsync(int page, UcListView.Filter filter)
+        {
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<ProductPriceLogService>();
+                return filter.ColumnName switch
+                {
+                    nameof(ProductPriceLogListDto.ProductFullName)
+                    => await service.GetAllByProductNameAndDateTimeAsync(page, RowsPerPage, filter.Text1Value,filter.dateTime),
+
+
+                    _ => new List<ProductPriceLogListDto>()
+                };
+            }
+        }
+        #endregion
+
+        #region Menu Strip
         private void ShowMenustripItem_Click(object sender, EventArgs e)
         {
             var selecteditem =
@@ -299,5 +238,6 @@ namespace InventorySalesManagementSystem.Products.PricesLog
             string message = $"الإسم الكامل : {selecteditem.ProductFullName}";
             MessageBox.Show(message);
         }
+        #endregion
     }
 }
