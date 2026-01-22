@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260121153855_AddedUserToBatch")]
+    partial class AddedUserToBatch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,6 +51,38 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("PersonId");
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.BoughtProduct", b =>
+                {
+                    b.Property<int>("BoughtProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BoughtProductId"));
+
+                    b.Property<decimal>("BuyingPricePerUnit")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(10,4)");
+
+                    b.Property<decimal>("SellingPricePerUnit")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("TakeBatchId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BoughtProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("TakeBatchId");
+
+                    b.ToTable("BoughtProducts");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Invoice", b =>
@@ -164,38 +199,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Refunds");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.SoldProduct", b =>
-                {
-                    b.Property<int>("SoldProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SoldProductId"));
-
-                    b.Property<decimal>("BuyingPricePerUnit")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(10,4)");
-
-                    b.Property<decimal>("SellingPricePerUnit")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("TakeBatchId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SoldProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("TakeBatchId");
-
-                    b.ToTable("SoldProducts");
-                });
-
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.TakeBatch", b =>
                 {
                     b.Property<int>("TakeBatchId")
@@ -212,9 +215,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("nvarchar(350)");
 
                     b.Property<DateTime>("TakeDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSDATETIME()");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("TakeName")
                         .HasMaxLength(200)
@@ -579,6 +580,25 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Person");
                 });
 
+            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.BoughtProduct", b =>
+                {
+                    b.HasOne("DataAccessLayer.Entities.Products.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccessLayer.Entities.Invoices.TakeBatch", "TakeBatch")
+                        .WithMany()
+                        .HasForeignKey("TakeBatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("TakeBatch");
+                });
+
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Invoice", b =>
                 {
                     b.HasOne("DataAccessLayer.Entities.User", "CloseUser")
@@ -637,25 +657,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.SoldProduct", b =>
-                {
-                    b.HasOne("DataAccessLayer.Entities.Products.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataAccessLayer.Entities.Invoices.TakeBatch", "TakeBatch")
-                        .WithMany()
-                        .HasForeignKey("TakeBatchId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("TakeBatch");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.TakeBatch", b =>

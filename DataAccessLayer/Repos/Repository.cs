@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace DataAccessLayer.Repos
 {
@@ -64,6 +65,11 @@ namespace DataAccessLayer.Repos
         public async Task<T?> GetByIdAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
+        }
+
+        public async Task AddRangeAsync(List<T>Data)
+        {
+            await _context.Set<T>().AddRangeAsync(Data);
         }
     }
 

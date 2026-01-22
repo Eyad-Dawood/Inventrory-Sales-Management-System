@@ -1,0 +1,142 @@
+﻿using DataAccessLayer.Entities.Invoices;
+using DataAccessLayer.Validation;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataAccessLayer.Entities.Payments
+{
+    public enum PaymentReason
+    {
+        [Display(Name ="فاتورة")]
+        Invoice = 1,
+
+        [Display(Name = "إيداع")]
+        Investment = 2,
+
+        [Display(Name ="مرتجع")]
+        Refund = 3
+    }
+    public class Payment
+    {
+        [Key]
+        [Display(Name = "معرف العملية")]
+        public int PaymentId { get; set; }
+
+
+
+        [Column(TypeName = "decimal(10,2)")]
+        [Display(Name = "المبلغ")]
+        public decimal Amount { get; set; }
+
+
+        [Display(Name = "التاريخ")]
+        public DateTime Date {  get; set; }
+
+        [Display(Name = "الملاحظات")]
+        [MaxLength(350)]
+        public string? Notes { get; set; }
+
+        [Display(Name = "السبب")]
+        public PaymentReason PaymentReason { get; set; }
+
+
+        public int UserId { get; set; }
+        [Display(Name = "بيانات المستخدم")]
+        public User User { get; set; }
+
+
+        public int? InvoiceId { get; set; }
+        [Display(Name = "بيانات الفاتورة")]
+        public Invoice? Invoice { get; set; }
+
+
+        public int CustomerId { get; set; }
+        [Display(Name = "بيانات العميل")]
+        public Customer Customer { get; set; }
+
+        public bool Validate(List<ValidationError> errors)
+        {
+            // Amount
+            if (Amount <= 0)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(Amount),
+                        Code = ValidationErrorCode.ValueOutOfRange
+                    });
+            }
+
+            // Date
+            if (Date == default)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(Date),
+                        Code = ValidationErrorCode.RequiredFieldMissing
+                    });
+            }
+
+            // User
+            if (UserId <= 0)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(User),
+                        Code = ValidationErrorCode.RequiredFieldMissing
+                    });
+            }
+
+            // Customer
+            if (CustomerId <= 0)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(Customer),
+                        Code = ValidationErrorCode.RequiredFieldMissing
+                    });
+            }
+
+            // Notes length
+            if (!string.IsNullOrWhiteSpace(Notes) && Notes.Length > 350)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(Notes),
+                        Code = ValidationErrorCode.ValueOutOfRange
+                    });
+            }
+
+            // Invoice logic based on PaymentReason
+            if (PaymentReason == PaymentReason.Invoice || PaymentReason == PaymentReason.Refund)
+            {
+                if (!InvoiceId.HasValue || InvoiceId <= 0)
+                {
+                    errors.Add(
+                        new ValidationError
+                        {
+                            ObjectType = typeof(Payment),
+                            PropertyName = nameof(Invoice),
+                            Code = ValidationErrorCode.RequiredFieldMissing
+                        });
+                }
+            }
+
+            return errors.Count == 0;
+        }
+    }
+}

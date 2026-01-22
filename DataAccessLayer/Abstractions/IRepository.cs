@@ -15,6 +15,6 @@ namespace DataAccessLayer.Abstractions
         Task<List<T>> GetAllAsync();
         Task<List<T>> GetAllAsync(int PagerSize ,int RowsPerPage);
         Task<int> GetTotalPagesAsync(int RowsPerPage);
-
+        Task AddRangeAsync(List<T> Data);
     }
 }

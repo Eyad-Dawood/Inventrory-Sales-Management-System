@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Repos
+namespace DataAccessLayer.Repos.Products
 {
     public class ProductTypeRepository : Repository<ProductType>,IProductTypeRepository
     {

@@ -25,7 +25,7 @@ namespace DataAccessLayer.Entities
         [ForeignKey(nameof(Person))]
         public int PersonId { get; set; }
         [Display(Name = "معلومات الشخص")]
-        public Person Person { get; set; }
+        public Person Person { get; set; } 
 
         [Display(Name ="النشاط")]
         public bool IsActive { get; set; }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccessLayer.Entities;
+﻿using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.Invoices;
+using DataAccessLayer.Entities.Payments;
 using DataAccessLayer.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +18,13 @@ namespace DataAccessLayer
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductPriceLog> ProductPricesLog { get; set; }
-        public DbSet<ProductStockMovementLog> productStockMovmentsLog { get; set; }
+        public DbSet<ProductStockMovementLog> ProductStockMovmentsLog { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<TakeBatch> TakeBatches { get; set; }
+        public DbSet<SoldProduct> SoldProducts { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Refund> Refunds { get; set; }
+
 
         public InventoryDbContext(
          DbContextOptions<InventoryDbContext> options)
@@ -101,6 +104,62 @@ namespace DataAccessLayer
             //For Faster Search
             modelBuilder.Entity<Product>()
                .HasIndex(p => p.ProductName);
+
+
+            //Invoices
+
+            //For Faster Search
+            modelBuilder.Entity<Invoice>()
+                .HasIndex(i => i.CustomerId);
+
+                //Defualt
+                modelBuilder.Entity<Invoice>()
+                .Property(i => i.OpenDate)
+                .HasDefaultValueSql("SYSDATETIME()")
+                .ValueGeneratedOnAdd();
+
+                
+            //Batches
+
+            //For Faster Search
+            modelBuilder.Entity<TakeBatch>()
+                .HasIndex(t => t.InvoiceId);
+
+            modelBuilder.Entity<TakeBatch>()
+            .Property(p => p.TakeDate)
+            .HasDefaultValueSql("SYSDATETIME()")
+            .ValueGeneratedOnAdd();
+
+            //Sold Product
+
+            //For Faster Search
+            modelBuilder.Entity<SoldProduct>()
+                .HasIndex(b => b.TakeBatchId);
+
+            modelBuilder.Entity<SoldProduct>()
+                .HasIndex(b => b.ProductId);
+
+            //Payments
+
+            //For Faster Search
+            modelBuilder.Entity<Payment>()
+                .HasIndex(p => p.InvoiceId);
+            modelBuilder.Entity<Payment>()
+                .HasIndex(p => p.CustomerId);
+            modelBuilder.Entity<Payment>()
+                .HasIndex(p => p.PaymentReason);
+
+            //Refunds
+
+            //For Faster Search
+            modelBuilder.Entity<Refund>()
+                .HasIndex(r => r.InvoiceId);
+            modelBuilder.Entity<Refund>()
+                .HasIndex(r => r.ProductId);
+
+
+
+
 
             foreach (var foreignKey in modelBuilder.Model
                        .GetEntityTypes()

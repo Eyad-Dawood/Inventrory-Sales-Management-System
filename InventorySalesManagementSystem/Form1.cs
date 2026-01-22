@@ -99,11 +99,6 @@ namespace InventorySalesManagementSystem
             }
         }
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-            var frm = new Test(_serviceProvider)
-                ;
-            frm.ShowDialog();
-        }
+       
     }
 }

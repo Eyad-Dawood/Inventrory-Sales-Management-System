@@ -19,5 +19,6 @@ namespace DataAccessLayer.Abstractions.Products
         public Task<int> GetTotalPagesByFullNameAsync(string ProductTypeName,string ProductName, int RowsPerPage);
         public Task<int> GetTotalPagesByProductTypeNameAsync(string ProductTypeName, int RowsPerPage);
 
+        public Task<List<Product>> GetProductsByIdsAsync(List<int> Ids);
     }
 }

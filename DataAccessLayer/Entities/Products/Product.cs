@@ -42,17 +42,12 @@ namespace DataAccessLayer.Entities.Products
 
         [ForeignKey(nameof(ProductType))]
         public int ProductTypeId { get; set; }
-
-
-     
-
         public ProductType ProductType { get; set; }
+
 
 
         [ForeignKey(nameof(MasurementUnit))]
         public int MasurementUnitId { get; set; }
-
-
         public MasurementUnit MasurementUnit { get; set; }
 
 

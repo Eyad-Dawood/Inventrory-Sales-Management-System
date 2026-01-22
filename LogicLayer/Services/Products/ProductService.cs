@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Azure.Core.HttpHeader;
 
 namespace LogicLayer.Services.Products
 {
@@ -322,6 +323,9 @@ namespace LogicLayer.Services.Products
                 .Select(p => MapProduct_ListDto(p)).ToList();
         }
 
+
+
+
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
@@ -331,8 +335,34 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        private async Task EditQuantityAsync(int productId,decimal quantity,int userId,StockMovementReason reason,bool isAddition,string Notes)
+        public async Task UpdateProductsQuantityAsync(List<(int ProductId,decimal Quantity)> items, int userId, StockMovementReason reason, bool isAddition)
         {
+            var ids = items.Select(x => x.ProductId).ToList();
+            var products = await _productRepo.GetProductsByIdsAsync(ids);
+
+                foreach (var item in items)
+                {
+                    var product = products.FirstOrDefault(p => p.ProductId == item.ProductId);
+
+                    if (product == null)
+                        throw new NotFoundException(typeof(Product));
+
+                    await EditQuantityAsync(product, item.Quantity, userId, reason, isAddition, string.Empty);
+                }
+        }
+        
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        private async Task EditQuantityAsync(Product product,decimal quantity,int userId,StockMovementReason reason,bool isAddition,string Notes)
+        {
+            //Only Checks For quantity , decreas/increase it , validate , but no Save In DB
             if (quantity <= 0)
             {
                 List<string> errors = new List<string>()
@@ -347,8 +377,6 @@ namespace LogicLayer.Services.Products
 
                 throw new ValidationException(errors);
             }
-
-            var product = await _productRepo.GetByIdAsync(productId);
 
             if (product == null)
                  throw new NotFoundException(typeof(Product));
@@ -368,42 +396,18 @@ namespace LogicLayer.Services.Products
                 product.QuantityInStorage = oldQuantity - quantity;
             }
 
-            ValidationHelper.ValidateEntity(product);
-
-            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
-            {
-
-                try
-                {
-                    var logDto = MapProduct_StockMovementLogDto(
+            //Log But Dont Save
+            var logDto = MapProduct_StockMovementLogDto(
                         product,
                         userId,
                         reason,
                         oldQuantity,
                         Notes);
 
-                    await _stockMovementService.AddProductStockMovementLogAsync(logDto);
-
-                    await _unitOfWork.SaveAsync();
-                    await Transaction.CommitAsync();
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex,
-                        "Failed to change product {ProductId} quantity from {OldQuantity} by {QuantityChange} by user {UserId} for reason {Reason}",
-                        productId,
-                        oldQuantity,
-                        quantity,
-                        userId,
-                        reason);
+            await _stockMovementService.AddProductStockMovementLogAsync(logDto);
 
 
-                   await Transaction.RollbackAsync();
-
-                    throw new OperationFailedException(ex);
-                }
-            }
+            ValidationHelper.ValidateEntity(product);
         }
 
         /// <exception cref="NotFoundException">
@@ -423,10 +427,15 @@ namespace LogicLayer.Services.Products
                 throw new OperationFailedException($"هذا السبب [{reason.GetDisplayName()}] لا يمكن أن يزيد من الكمية");
             }
 
-            await EditQuantityAsync(productId, quantity,userId,reason,true, Notes);
+            //Tracking
+            var product = await _productRepo.GetByIdAsync(productId);
+
+            await EditQuantityAsync(product, quantity,userId,reason, isAddition : true, Notes);
+
+            //Save 
+            await _unitOfWork.SaveAsync();
         }
 
-        
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
@@ -446,8 +455,17 @@ namespace LogicLayer.Services.Products
                 throw new OperationFailedException($"هذا السبب {reason.GetDisplayName()} لا يمكن أن يقلل من الكمية");
             }
 
-            await EditQuantityAsync(productId, quantity, userId, reason, false, Notes);
+            //Tracking
+            var product = await _productRepo.GetByIdAsync(productId);
+
+            await EditQuantityAsync(product, quantity, userId, reason, isAddition : false, Notes);
+
+            //Save 
+            await _unitOfWork.SaveAsync();
         }
+
+
+         
 
 
         /// <exception cref="NotFoundException">
@@ -492,6 +510,15 @@ namespace LogicLayer.Services.Products
                             GetAllByFullNameAsync(PageNumber, RowsPerPage, ProductTypeName, ProductName))
                             .Select(c => MapProduct_ListDto(c))
                             .ToList();
+        }
+
+        public async Task<List<ProductListDto>> GetProductsByIdsAsync(List<int>Ids)
+        {
+            return
+                 (await _productRepo.
+                             GetProductsByIdsAsync(Ids))
+                             .Select(c => MapProduct_ListDto(c))
+                             .ToList();
         }
 
 

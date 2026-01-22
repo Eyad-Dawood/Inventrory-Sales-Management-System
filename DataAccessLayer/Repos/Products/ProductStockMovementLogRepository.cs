@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Abstractions.Products;
+using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,24 +8,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Repos
+namespace DataAccessLayer.Repos.Products
 {
-    public class ProductPriceLogRepository : Repository<ProductPriceLog>,IProductPriceLogRepository
+    public class ProductStockMovementLogRepository : Repository<ProductStockMovementLog>, IProductStockMovementLogRepository
     {
-        public ProductPriceLogRepository(InventoryDbContext context) : base(context)
+        public ProductStockMovementLogRepository(InventoryDbContext context) : base(context)
         {
         }
 
-        public async Task<List<ProductPriceLog>> GetAllWithDetailsAsync(int PageNumber, int RowsPerPage)
+        public async Task<List<ProductStockMovementLog>> GetAllWithDetailsAsync(int PageNumber, int RowsPerPage)
         {
             return 
                 await 
-                 _context
-                .ProductPricesLog
-                .Include(p=>p.Product)
+                _context
+                .ProductStockMovmentsLog
+                .Include(p => p.User)
+                .Include(p => p.Product)
                 .ThenInclude(p2 => p2.ProductType)
-                .Include(p=>p.User)
-                .OrderByDescending(p=>p.LogDate)
+                .OrderByDescending(p => p.LogDate)
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
                 .AsNoTracking()
@@ -32,11 +33,11 @@ namespace DataAccessLayer.Repos
         }
 
         public async Task<int> GetTotalPagesByFullNameAndDateAsync(
-          int rowsPerPage,
-          string? productFullName,
-          DateTime? date)
+            int rowsPerPage,
+            string? productFullName,
+            DateTime? date)
         {
-            var query = _context.ProductPricesLog
+            var query = _context.ProductStockMovmentsLog
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -66,13 +67,13 @@ namespace DataAccessLayer.Repos
 
 
 
-        public async Task<List<ProductPriceLog>> GetAllByProductFullNameAndDateAsync(
+        public async Task<List<ProductStockMovementLog>> GetAllByProductFullNameAndDateAsync(
             int pageNumber,
             int rowsPerPage,
             string? productFullName,
             DateTime? date)
         {
-            var query = _context.ProductPricesLog
+            var query = _context.ProductStockMovmentsLog
                 .Include(p => p.User)
                 .Include(p => p.Product)
                     .ThenInclude(p2 => p2.ProductType)
@@ -105,5 +106,6 @@ namespace DataAccessLayer.Repos
                 .Take(rowsPerPage)
                 .ToListAsync();
         }
+
     }
 }

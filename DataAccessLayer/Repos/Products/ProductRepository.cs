@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataAccessLayer.Entities.Products;
 
-namespace DataAccessLayer.Repos
+namespace DataAccessLayer.Repos.Products
 {
     public class ProductRepository : Repository<Product>,IProductRepository
     {
@@ -137,5 +137,12 @@ namespace DataAccessLayer.Repos
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
 
+        public async Task<List<Product>> GetProductsByIdsAsync(List<int> Ids)
+        {
+            return await _context.Products
+                .AsNoTracking()
+                .Where(p => Ids.Contains(p.ProductId))
+                .ToListAsync();
+        }
     }
 }
