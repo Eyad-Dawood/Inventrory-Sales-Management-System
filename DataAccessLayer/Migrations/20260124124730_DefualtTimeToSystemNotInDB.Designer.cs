@@ -4,6 +4,7 @@ using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    partial class InventoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260124124730_DefualtTimeToSystemNotInDB")]
+    partial class DefualtTimeToSystemNotInDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +50,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Invoice", b =>
@@ -114,7 +117,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("WorkerId");
 
-                    b.ToTable("Invoices", (string)null);
+                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Refund", b =>
@@ -159,7 +162,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Refunds", (string)null);
+                    b.ToTable("Refunds");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.SoldProduct", b =>
@@ -191,7 +194,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("TakeBatchId");
 
-                    b.ToTable("SoldProducts", (string)null);
+                    b.ToTable("SoldProducts");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.TakeBatch", b =>
@@ -225,7 +228,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TakeBatches", (string)null);
+                    b.ToTable("TakeBatches");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.MasurementUnit", b =>
@@ -246,7 +249,7 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("UnitName")
                         .IsUnique();
 
-                    b.ToTable("MasurementUnits", (string)null);
+                    b.ToTable("MasurementUnits");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Payments.Payment", b =>
@@ -289,7 +292,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Person", b =>
@@ -341,7 +344,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("TownID");
 
-                    b.ToTable("People", (string)null);
+                    b.ToTable("People");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Products.Product", b =>
@@ -383,7 +386,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ProductTypeId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Products.ProductPriceLog", b =>
@@ -421,7 +424,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductPricesLog", (string)null);
+                    b.ToTable("ProductPricesLog");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Products.ProductStockMovementLog", b =>
@@ -460,7 +463,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductStockMovmentsLog", (string)null);
+                    b.ToTable("ProductStockMovmentsLog");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Products.ProductType", b =>
@@ -481,7 +484,7 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("ProductTypeName")
                         .IsUnique();
 
-                    b.ToTable("ProductTypes", (string)null);
+                    b.ToTable("ProductTypes");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Town", b =>
@@ -502,7 +505,7 @@ namespace DataAccessLayer.Migrations
                     b.HasIndex("TownName")
                         .IsUnique();
 
-                    b.ToTable("Towns", (string)null);
+                    b.ToTable("Towns");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.User", b =>
@@ -531,7 +534,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Worker", b =>
@@ -557,7 +560,7 @@ namespace DataAccessLayer.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("Workers", (string)null);
+                    b.ToTable("Workers");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Customer", b =>

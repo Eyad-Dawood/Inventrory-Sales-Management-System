@@ -15,6 +15,6 @@ namespace LogicLayer.DTOs.InvoiceDTO.TakeBatches
 
         public int InvoiceId { get; set; }
 
-        List<SoldProductAddDto> SoldProductAddDtos { get; set; }
+        public List<SoldProductAddDto> SoldProductAddDtos { get; set; }
     }
 }

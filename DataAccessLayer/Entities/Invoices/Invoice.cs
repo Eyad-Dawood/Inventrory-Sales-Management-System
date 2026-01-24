@@ -27,7 +27,7 @@ namespace DataAccessLayer.Entities.Invoices
         [Display(Name = "مغلق")]
         Closed = 2
     }
-
+    [Display(Name = "الفاتورة")]
     public class Invoice : IValidatable
     {
         [Key]
@@ -102,6 +102,8 @@ namespace DataAccessLayer.Entities.Invoices
         [Display(Name = "بيانات المستخدم مغلق الفاتورة")]
         public User? CloseUser { get; set; }
 
+
+        public ICollection<TakeBatch> takeBatches { get; set; } = new List<TakeBatch>();
 
         public bool Validate(List<ValidationError> errors)
         {

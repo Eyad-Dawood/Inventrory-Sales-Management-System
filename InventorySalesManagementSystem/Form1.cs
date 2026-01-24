@@ -1,5 +1,7 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.Invoices;
+using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Repos;
 using InventorySalesManagementSystem.Customers;
 using InventorySalesManagementSystem.General.General_Forms;
@@ -9,13 +11,17 @@ using InventorySalesManagementSystem.Products.ProductsTypes;
 using InventorySalesManagementSystem.Products.StockMovementLog;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.CustomerDTO;
+using LogicLayer.DTOs.InvoiceDTO;
+using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
 using LogicLayer.Global.Users;
 using LogicLayer.Services;
+using LogicLayer.Services.Invoices;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace InventorySalesManagementSystem
 {
@@ -99,6 +105,150 @@ namespace InventorySalesManagementSystem
             }
         }
 
-       
+        private async void button8_Click(object sender, EventArgs e)
+        {
+            var SoldProducts = new List<LogicLayer.DTOs.InvoiceDTO.SoldProducts.SoldProductAddDto>()
+            {
+                new LogicLayer.DTOs.InvoiceDTO.SoldProducts.SoldProductAddDto()
+                {
+                    ProductId = 23,
+                    Quantity = 1,
+                    TakeBatchId = 2
+                },
+                new LogicLayer.DTOs.InvoiceDTO.SoldProducts.SoldProductAddDto()
+                {
+                    ProductId = 24,
+                    Quantity = 1,
+                    TakeBatchId = 2
+                },
+                new LogicLayer.DTOs.InvoiceDTO.SoldProducts.SoldProductAddDto()
+                {
+                    ProductId = 23,
+                    Quantity = 1,
+                    TakeBatchId = 2
+                },
+            };
+
+            var TakeBatch = new TakeBatchAddDto()
+            {
+                InvoiceId = 1,
+                TakeName = "Test Batch 21235",
+                Notes = "Test Notes 3sdds1",
+                SoldProductAddDtos = SoldProducts
+            };
+
+            var Inovice = new InvoiceAddDto()
+            {
+                CustomerId = 11,
+                InvoiceType = InvoiceType.Sale,
+                WorkerId = 25
+            };
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                try
+                {
+                    var InvoiceService = scope.ServiceProvider.GetRequiredService<InvoiceService>();
+
+                    await InvoiceService.AddInvoiceAsync(Inovice, TakeBatch, 1);
+                    MessageBox.Show("Take Batch Added Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                }
+                catch (NotFoundException ex)
+                {
+                    MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                catch (LogicLayer.Validation.Exceptions.ValidationException ex)
+                {
+                    MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                catch (OperationFailedException ex)
+                {
+                    MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Error(
+                          ex,
+                         "Unexpected error while Saving Product");
+
+                    MessageBox.Show(ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+        }
+
+        private async void button9_Click(object sender, EventArgs e)
+        {
+
+            var SoldProducts = new List<LogicLayer.DTOs.InvoiceDTO.SoldProducts.SoldProductAddDto>()
+            {
+                new LogicLayer.DTOs.InvoiceDTO.SoldProducts.SoldProductAddDto()
+                {
+                    ProductId = 23,
+                    Quantity = .2M,
+                    TakeBatchId = 2
+                },
+                new LogicLayer.DTOs.InvoiceDTO.SoldProducts.SoldProductAddDto()
+                {
+                    ProductId = 24,
+                    Quantity = .2M,
+                    TakeBatchId = 2
+                },
+                new LogicLayer.DTOs.InvoiceDTO.SoldProducts.SoldProductAddDto()
+                {
+                    ProductId = 23,
+                    Quantity = .23M,
+                    TakeBatchId = 2
+                },
+            };
+
+            var TakeBatch = new TakeBatchAddDto()
+            {
+                InvoiceId = 1,
+                TakeName = "New Batch",
+                Notes = "Any thing",
+                SoldProductAddDtos = SoldProducts
+            };
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                try
+                {
+                    var InvoiceService = scope.ServiceProvider.GetRequiredService<InvoiceService>();
+
+                    await InvoiceService.AddBatchToInvoice(1, TakeBatch , 1);
+                    MessageBox.Show("Take Batch Added Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                }
+                catch (NotFoundException ex)
+                {
+                    MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                catch (LogicLayer.Validation.Exceptions.ValidationException ex)
+                {
+                    MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                catch (OperationFailedException ex)
+                {
+                    MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Error(
+                          ex,
+                         "Unexpected error while Saving Product");
+
+                    MessageBox.Show(ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+        }
     }
 }

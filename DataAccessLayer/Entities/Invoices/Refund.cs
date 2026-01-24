@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities.Invoices
 {
+    [Display(Name = "المرتجع")]
     public class Refund
     {
         [Key]

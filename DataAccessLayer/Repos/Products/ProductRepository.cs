@@ -140,7 +140,6 @@ namespace DataAccessLayer.Repos.Products
         public async Task<List<Product>> GetProductsByIdsAsync(List<int> Ids)
         {
             return await _context.Products
-                .AsNoTracking()
                 .Where(p => Ids.Contains(p.ProductId))
                 .ToListAsync();
         }

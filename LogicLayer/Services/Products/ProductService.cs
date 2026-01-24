@@ -512,12 +512,11 @@ namespace LogicLayer.Services.Products
                             .ToList();
         }
 
-        public async Task<List<ProductListDto>> GetProductsByIdsAsync(List<int>Ids)
+        public async Task<List<Product>> GetProductsByIdsAsync(List<int>Ids)
         {
             return
                  (await _productRepo.
                              GetProductsByIdsAsync(Ids))
-                             .Select(c => MapProduct_ListDto(c))
                              .ToList();
         }
 

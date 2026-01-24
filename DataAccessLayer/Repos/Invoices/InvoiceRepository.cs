@@ -139,7 +139,14 @@ namespace DataAccessLayer.Repos.Invoices
         public async Task<Invoice?> GetWithDetailsByIdAsync(int invoiceId)
         {
             return
-                await InvoiceWithDetails()
+                await _context
+                .Invoices
+                .Include(i => i.Customer)
+                    .ThenInclude(c => c.Person)
+                .Include(i => i.Worker)
+                    .ThenInclude(w => w.Person)
+                .Include(i => i.OpenUser)
+                .Include(i => i.CloseUser)
                 .Where(i => i.InvoiceId == invoiceId)
                 .FirstOrDefaultAsync();
         }

@@ -42,7 +42,8 @@ namespace LogicLayer.Services.Products
                 OldQuantity = dto.OldQuantity,
                 NewQuantity = dto.NewQuantity,
                 Reason = dto.Reason,
-                Notes = dto.Notes
+                Notes = dto.Notes,
+                LogDate = DateTime.Now,
             };
         }
         private ProductStockMovementLogListDto MapProductStockMovementLog_ListDto(ProductStockMovementLog productStockMovment)

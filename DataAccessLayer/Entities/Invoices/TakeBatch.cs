@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities.Invoices
 {
+    [Display(Name = "عملية الشراء")]
     public class TakeBatch : IValidatable
     {
         [Key]
@@ -29,10 +30,6 @@ namespace DataAccessLayer.Entities.Invoices
         public string? Notes { get; set; }
 
 
-        [NotMapped]
-        public decimal TotalSellingPrice { get; set;}
-
-
         [ForeignKey(nameof(Invoice))]
         public int InvoiceId { get; set; }
         [Display(Name = "بيانات الفاتورة")]
@@ -44,6 +41,7 @@ namespace DataAccessLayer.Entities.Invoices
         public int UserId { get; set; }
         public User User { get; set; }
 
+        public IEnumerable<SoldProduct> SoldProducts { get; set; } = new List<SoldProduct>();
 
         public bool Validate(List<ValidationError> errors)
         {

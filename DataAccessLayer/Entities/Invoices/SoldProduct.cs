@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities.Invoices
 {
+    [Display(Name = "المنتج المباع")]
     public class SoldProduct : IValidatable
     {
         [Display(Name = "معرف العملية")]
@@ -43,7 +44,6 @@ namespace DataAccessLayer.Entities.Invoices
         public int TakeBatchId { get; set; }
         [Display(Name = "بيانات عملية الشراء")]
         public TakeBatch TakeBatch { get; set; } 
-
 
 
         public bool Validate(List<ValidationError> errors)
@@ -95,22 +95,8 @@ namespace DataAccessLayer.Entities.Invoices
                         Code = ValidationErrorCode.RequiredFieldMissing
                     });
             }
-
-            // TakeBatch
-            if (TakeBatchId <= 0)
-            {
-                errors.Add(
-                    new ValidationError
-                    {
-                        ObjectType = typeof(SoldProduct),
-                        PropertyName = nameof(TakeBatch),
-                        Code = ValidationErrorCode.RequiredFieldMissing
-                    });
-            }
-
+            
             return errors.Count == 0;
         }
-
-
     }
 }

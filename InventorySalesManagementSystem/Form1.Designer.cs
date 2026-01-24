@@ -35,6 +35,8 @@
             button5 = new Button();
             button6 = new Button();
             button7 = new Button();
+            button8 = new Button();
+            button9 = new Button();
             SuspendLayout();
             // 
             // button1
@@ -114,11 +116,35 @@
             button7.UseVisualStyleBackColor = true;
             button7.Click += button7_Click;
             // 
+            // button8
+            // 
+            button8.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button8.Location = new Point(998, 266);
+            button8.Name = "button8";
+            button8.Size = new Size(172, 102);
+            button8.TabIndex = 10;
+            button8.Text = "Print User Crids";
+            button8.UseVisualStyleBackColor = true;
+            button8.Click += button8_Click;
+            // 
+            // button9
+            // 
+            button9.Font = new Font("Segoe UI", 21.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            button9.Location = new Point(998, 374);
+            button9.Name = "button9";
+            button9.Size = new Size(172, 102);
+            button9.TabIndex = 11;
+            button9.Text = "e";
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1182, 735);
+            Controls.Add(button9);
+            Controls.Add(button8);
             Controls.Add(button7);
             Controls.Add(button6);
             Controls.Add(button5);
@@ -139,5 +165,7 @@
         private Button button5;
         private Button button6;
         private Button button7;
+        private Button button8;
+        private Button button9;
     }
 }

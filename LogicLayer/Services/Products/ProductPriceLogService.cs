@@ -52,7 +52,8 @@ namespace LogicLayer.Services.Products
                 OldSellingPrice = DTO.OldSellingPrice,
                 NewSellingPrice = DTO.NewSellingPrice,
                 CreatedByUserId = DTO.CreatedByUserId,
-                ProductId = DTO.ProductId
+                ProductId = DTO.ProductId,
+                LogDate = DateTime.Now
             };
         }
         #endregion

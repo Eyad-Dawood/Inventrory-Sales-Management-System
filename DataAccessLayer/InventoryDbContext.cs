@@ -53,20 +53,6 @@ namespace DataAccessLayer
                 .ValueGeneratedOnAdd();
 
 
-            //Product Price Log 
-            modelBuilder.Entity<ProductPriceLog>()
-            .Property(p => p.LogDate)
-            .HasDefaultValueSql("SYSDATETIME()")
-            .ValueGeneratedOnAdd();
-
-
-            //Product Stock Movement Log
-            modelBuilder.Entity<ProductStockMovementLog>()
-            .Property(p => p.LogDate)
-            .HasDefaultValueSql("SYSDATETIME()")
-            .ValueGeneratedOnAdd();
-
-
             //Town
             modelBuilder.Entity<Town>()
                 .HasIndex(u => u.TownName)
@@ -111,13 +97,6 @@ namespace DataAccessLayer
             //For Faster Search
             modelBuilder.Entity<Invoice>()
                 .HasIndex(i => i.CustomerId);
-
-                //Defualt
-                modelBuilder.Entity<Invoice>()
-                .Property(i => i.OpenDate)
-                .HasDefaultValueSql("SYSDATETIME()")
-                .ValueGeneratedOnAdd();
-
                 
             //Batches
 
@@ -125,10 +104,7 @@ namespace DataAccessLayer
             modelBuilder.Entity<TakeBatch>()
                 .HasIndex(t => t.InvoiceId);
 
-            modelBuilder.Entity<TakeBatch>()
-            .Property(p => p.TakeDate)
-            .HasDefaultValueSql("SYSDATETIME()")
-            .ValueGeneratedOnAdd();
+
 
             //Sold Product
 

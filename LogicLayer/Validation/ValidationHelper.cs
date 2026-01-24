@@ -12,13 +12,14 @@ namespace LogicLayer.Validation
     public static class ValidationHelper
     {
 
-      
+
         /// <exception cref="ArgumentNullException">
         /// Thrown when the provided entity is null.
         /// </exception>
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
         /// </exception>
+        /// 
         public static void ValidateEntity<T>(T entity)
             where T : IValidatable
         {
@@ -35,7 +36,8 @@ namespace LogicLayer.Validation
             }
         }
 
-       
+
+
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>

@@ -1,11 +1,15 @@
 using DataAccessLayer;
 using DataAccessLayer.Abstractions;
+using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Abstractions.Products;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
+using DataAccessLayer.Repos.Invoices;
 using DataAccessLayer.Repos.Products;
 using LogicLayer.Global.Users;
 using LogicLayer.Services;
+using LogicLayer.Services.Invoices;
+using LogicLayer.Services.Invoices.Helper_Service;
 using LogicLayer.Services.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -93,6 +97,9 @@ namespace InventorySalesManagementSystem
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IWorkerRepository, WorkerRepository>();
             services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
+            services.AddScoped<ISoldProductRepository, SoldProductRepository>();
+            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            services.AddScoped<ITakeBatchRepository, TakeBatchRepository>();
 
             //Generic Repos
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -111,6 +118,13 @@ namespace InventorySalesManagementSystem
             services.AddScoped<TownService>();
             services.AddScoped<UserService>();
             services.AddScoped<WorkerService>();
+            services.AddScoped<SoldProductService>();
+            services.AddScoped<TakeBatchService>();
+            services.AddScoped<InvoiceService>();
+
+            //Service Helpers
+            services.AddScoped<InvoiceServiceHelper>();
+
 
             var serviceProvider = services.BuildServiceProvider();
             

@@ -3,16 +3,18 @@ using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Repos;
+using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.InvoiceDTO;
+using LogicLayer.DTOs.InvoiceDTO.General;
+using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
 using LogicLayer.Validation;
+using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LogicLayer.Validation.Exceptions;
-using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
 
 namespace LogicLayer.Services.Invoices
 {
@@ -20,15 +22,17 @@ namespace LogicLayer.Services.Invoices
     {
         private readonly IInvoiceRepository _invoiceRepo;
         private readonly CustomerService _customerService;
+        private readonly TakeBatchService _takeBatchService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<InvoiceService> _logger;
 
-        public InvoiceService(IInvoiceRepository invoiceRepo, IUnitOfWork unitOfWork, ILogger<InvoiceService> logger,CustomerService customerService)
+        public InvoiceService(IInvoiceRepository invoiceRepo, IUnitOfWork unitOfWork, ILogger<InvoiceService> logger,CustomerService customerService,TakeBatchService takeBatchService)
         {
             _invoiceRepo = invoiceRepo;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _customerService = customerService;
+            _takeBatchService = takeBatchService;
         }
 
         #region Map
@@ -64,14 +68,40 @@ namespace LogicLayer.Services.Invoices
                 InvoiceType = DTO.InvoiceType,
                 CustomerId = DTO.CustomerId,
                 WorkerId = DTO.WorkerId,
-                OpenUserId = UserId
+                OpenUserId = UserId,
+                OpenDate = DateTime.Now,
+            };
+        }
+
+        public InvoiceReadDto MapInvoice_ReadDto(Invoice Invoice)
+        {
+            return new InvoiceReadDto()
+            {
+                InvoiceId = Invoice.InvoiceId,
+                OpenDate = Invoice.OpenDate,
+                CloseDate = Invoice.CloseDate,
+                InvoiceType = Invoice.InvoiceType,
+                InvoiceState = Invoice.InvoiceState,
+                ClosedByUserName = Invoice.CloseUser?.Username,
+                CustomerName = Invoice.Customer.Person.FullName,
+                OpenedByUserName = Invoice.OpenUser.Username,
+                InvoiceFinance = new InvoiceFinance()
+                {
+                    TotalBuyingPrice = Invoice.TotalBuyingPrice,
+                    TotalPaid = Invoice.TotalPaid,
+                    TotalRefundBuyingPrice = Invoice.TotalRefundBuyingPrice,
+                    TotalRefundSellingPrice = Invoice.TotalRefundSellingPrice,
+                    TotalSellingPrice = Invoice.TotalSellingPrice,
+                    Additional = Invoice.Additional,
+                    AdditionalNotes = Invoice.AdditionNotes
+                }
             };
         }
 
         #endregion
 
         #region Validate Logic
-        
+
         private async Task ValidateMainLogic(Invoice Invoice)
         {
             var customer = await _customerService.GetCustomerByIdAsync(Invoice.CustomerId);
@@ -90,6 +120,13 @@ namespace LogicLayer.Services.Invoices
         #endregion
 
 
+        private void CalculateInvoiceFinance(Invoice Invoice,TakeBatch Batch)
+        {
+            Invoice.TotalSellingPrice += Batch.SoldProducts.Sum(sp => sp.SellingPricePerUnit * sp.Quantity);
+            Invoice.TotalBuyingPrice += Batch.SoldProducts.Sum(sp => sp.BuyingPricePerUnit * sp.Quantity);
+        }
+
+
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
         /// </exception>
@@ -106,23 +143,95 @@ namespace LogicLayer.Services.Invoices
 
             await ValidateMainLogic(Invoice);
 
+            //return the created TakeBatch Aggregate
+            //Linked with the SoldProducts
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId);
 
-            try
+            //Link The TakeBatch With The Invoice
+            Invoice.takeBatches.Add(TakeBatch);
+
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
             {
-                await _invoiceRepo.AddAsync(Invoice);
-                await _unitOfWork.SaveAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,
-                        "Failed to add Invoice To Customer {CustomerId}",
+                try
+                {
+                    await _invoiceRepo.AddAsync(Invoice);
+
+                    CalculateInvoiceFinance(Invoice,TakeBatch);
+
+                    await _unitOfWork.SaveAsync();
+
+                    await Transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                            "Failed to add Invoice To Customer {CustomerId}",
+                            InvoiceDTO.CustomerId);
+
+                    _logger.LogError(ex,
+                        "Failed To Add Take Batches To Customer {CustomertId}",
                         InvoiceDTO.CustomerId);
 
-                _logger.LogError(ex,
-                    "Failed To Add Take Bathch To Customer {CustomertId}",
-                    InvoiceDTO.CustomerId);
-                throw new OperationFailedException(ex);
+                    await Transaction.RollbackAsync();
+
+                    throw;
+                }
+
             }
         }
+
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public async Task AddBatchToInvoice(int InvoiceId,TakeBatchAddDto BatchDTO,int UserId)
+        {
+            var Invoice = await _invoiceRepo.GetWithDetailsByIdAsync(InvoiceId);
+            
+            if(Invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId);
+
+            using(var Transaction = await _unitOfWork.BeginTransactionAsync())
+            {
+                try
+                {
+                    Invoice.takeBatches.Add(TakeBatch);
+
+                    CalculateInvoiceFinance(Invoice, TakeBatch);
+
+                    await _unitOfWork.SaveAsync();
+
+                    await Transaction.CommitAsync();
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex,
+                            "Failed to add Take Batches To Invoice {InvoiceId}",
+                            InvoiceId);
+                    await Transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
+
+
+        public async Task<InvoiceReadDto> GetInvoiceByIdAsync(int InvoiceId)
+        {
+            Invoice? Invoice = await _invoiceRepo.GetWithDetailsByIdAsync(InvoiceId);
+
+            if (Invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+            return MapInvoice_ReadDto(Invoice);
+        }
+
     }
 }
