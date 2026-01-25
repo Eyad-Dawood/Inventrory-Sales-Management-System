@@ -80,18 +80,7 @@ namespace DataAccessLayer.Entities.Invoices
                         Code = ValidationErrorCode.ValueOutOfRange
                     });
             }
-
-            // Validate Invoice
-            if (InvoiceId <= 0)
-            {
-                errors.Add(
-                    new ValidationError
-                    {
-                        ObjectType = typeof(TakeBatch),
-                        PropertyName = nameof(Invoice),
-                        Code = ValidationErrorCode.RequiredFieldMissing
-                    });
-            }
+           
 
             return errors.Count == 0;
         }

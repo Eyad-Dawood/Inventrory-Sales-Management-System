@@ -106,7 +106,6 @@ namespace InventorySalesManagementSystem.General.General_Forms
             InitializeEvents();
             InitializeUI();
             _ = InitializeAsync();
-
         }
 
         private void InitializeEvents()

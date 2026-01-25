@@ -319,7 +319,7 @@ namespace InventorySalesManagementSystem.UserControles
             }
         }
 
-
+        public DataGridView DataGridViewControl => dgvData;
 
 
 

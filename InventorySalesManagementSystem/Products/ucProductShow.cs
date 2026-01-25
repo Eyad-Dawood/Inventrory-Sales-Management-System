@@ -31,7 +31,7 @@ namespace InventorySalesManagementSystem.Products
         {
             lbID.Text = dto.ProductId.ToString();
 
-
+            #region ProductNameFormat
             //Prodcut Name
             rtbName.BackColor = this.BackColor;
             rtbName.Clear();
@@ -41,35 +41,30 @@ namespace InventorySalesManagementSystem.Products
 
             rtbName.SelectionColor = Color.DarkRed;
             rtbName.AppendText($"[{dto.ProductName}]");
+            #endregion
 
-
+            #region QuantityFormat
             // Quantity
             rtbQuantity.BackColor = this.BackColor;
             rtbQuantity.ReadOnly = true;
             rtbQuantity.BorderStyle = BorderStyle.None;
             rtbQuantity.Clear();
 
-            
-            //Separate 
+            // Format quantity safely (no precision issues)
+            string quantityStr = dto.QuantityInStorage.ToString("0.0000",
+                System.Globalization.CultureInfo.InvariantCulture);
 
+            // Split integer & fraction parts
+            string[] parts = quantityStr.Split('.');
 
-            // decimal quantity = dto.QuantityInStorage;
-            int integerPart = (int)Math.Truncate(dto.QuantityInStorage); // الجزء الصحيح
-            decimal fractionPart = dto.QuantityInStorage - integerPart;   // الجزء العشري
-
-           
-            //Quantity
-
-            // int -> Black
+            // Integer part -> Black
             rtbQuantity.SelectionColor = Color.Black;
-            rtbQuantity.AppendText(integerPart.ToString());
+            rtbQuantity.AppendText(parts[0]);
 
-            // Fraction -> DarkRed
+            // Fraction part -> DarkRed
             rtbQuantity.SelectionColor = Color.DarkRed;
-
-            //Format Fraction
-            string fractionStr = fractionPart.ToString(".0000");
-            rtbQuantity.AppendText($"{fractionStr}");
+            rtbQuantity.AppendText("." + parts[1]);
+            #endregion
 
 
 

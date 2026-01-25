@@ -251,7 +251,7 @@ namespace InventorySalesManagementSystem.Products
                 using (var scope = _serviceProvider.CreateScope())
                 {
 
-                    var UserSession = _serviceProvider.GetRequiredService<UserSession>();
+                    var UserSession = scope.ServiceProvider.GetRequiredService<UserSession>();
 
                     int userid = UserSession.CurrentUser != null ?
                         UserSession.CurrentUser.UserId

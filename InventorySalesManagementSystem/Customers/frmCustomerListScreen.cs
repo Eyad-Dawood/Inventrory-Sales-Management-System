@@ -3,6 +3,7 @@ using InventorySalesManagementSystem.General.General_Forms;
 using InventorySalesManagementSystem.UserControles;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.CustomerDTO;
+using LogicLayer.DTOs.ProductTypeDTO;
 using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Services;
 using LogicLayer.Validation.Exceptions;
@@ -23,19 +24,19 @@ namespace InventorySalesManagementSystem.Customers
     {
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
+        public CustomerListDto SelectedCustomer { get; private set; }
 
 
-
-        public frmCustomerListScreen(IServiceProvider serviceProvider)
+        public frmCustomerListScreen(IServiceProvider serviceProvider,bool selectButton)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
+            SelectButton = selectButton;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            SelectButton = false;
             lbTitle.Text = "شاشة العملاء";
         }
 
@@ -187,6 +188,16 @@ namespace InventorySalesManagementSystem.Customers
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();
+        }
+        protected async override Task HandleSelectButtonClicked()
+        {
+            //No Async Here
+            SelectedCustomer = ucListView1.GetSelectedItem<CustomerListDto>();
+
+            if (SelectedCustomer != null)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
         }
         #endregion
 

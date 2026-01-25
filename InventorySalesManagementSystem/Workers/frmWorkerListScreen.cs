@@ -4,6 +4,7 @@ using InventorySalesManagementSystem.General.General_Forms;
 using InventorySalesManagementSystem.UserControles;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.CustomerDTO;
+using LogicLayer.DTOs.ProductTypeDTO;
 using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Services;
 using LogicLayer.Validation.Exceptions;
@@ -26,18 +27,20 @@ namespace InventorySalesManagementSystem.Workers
 
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
+        public WorkerListDto SelectedWorker { get; private set; }
 
-        public frmWorkerListScreen(IServiceProvider serviceProvider)
+
+        public frmWorkerListScreen(IServiceProvider serviceProvider,bool selectButton)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
+            SelectButton = selectButton;
         }
 
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            SelectButton = false;
             lbTitle.Text = "شاشة العمال";
         }
 
@@ -184,6 +187,17 @@ namespace InventorySalesManagementSystem.Workers
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();
+        }
+
+        protected async override Task HandleSelectButtonClicked()
+        {
+            //No Async Here
+            SelectedWorker = ucListView1.GetSelectedItem<WorkerListDto>();
+
+            if (SelectedWorker != null)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
         }
         #endregion
 

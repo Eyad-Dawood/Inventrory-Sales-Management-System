@@ -145,7 +145,8 @@ namespace LogicLayer.Services.Invoices
 
             //return the created TakeBatch Aggregate
             //Linked with the SoldProducts
-            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId);
+            //Should Send The Invoice Type cuz its not yet in DB so it cant find it
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId , InvoiceDTO.InvoiceType);
 
             //Link The TakeBatch With The Invoice
             Invoice.takeBatches.Add(TakeBatch);

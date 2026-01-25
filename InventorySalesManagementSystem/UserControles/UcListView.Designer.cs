@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             dgvData = new DataGridView();
             pnBottomBar = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
@@ -65,14 +65,14 @@
             dgvData.AllowUserToResizeRows = false;
             dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvData.CausesValidation = false;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvData.ColumnHeadersHeight = 25;
             dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvData.Dock = DockStyle.Fill;
@@ -92,7 +92,7 @@
             dgvData.ShowEditingIcon = false;
             dgvData.ShowRowErrors = false;
             dgvData.Size = new Size(980, 401);
-            dgvData.TabIndex = 0;
+            dgvData.TabIndex = 1;
             dgvData.CellMouseDown += dgvData_CellMouseDoun;
             // 
             // pnBottomBar
@@ -107,10 +107,9 @@
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.ColumnCount = 3;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanel1.Controls.Add(flowLayoutPanel1, 2, 0);
             tableLayoutPanel1.Controls.Add(lbPageNumber, 1, 0);
             tableLayoutPanel1.Controls.Add(lbrowsCount, 0, 0);
@@ -141,7 +140,7 @@
             btnNext.Location = new Point(289, 3);
             btnNext.Name = "btnNext";
             btnNext.Size = new Size(30, 27);
-            btnNext.TabIndex = 3;
+            btnNext.TabIndex = 4;
             btnNext.UseVisualStyleBackColor = true;
             btnNext.Click += btnNext_Click;
             // 
@@ -154,7 +153,7 @@
             btnPrevious.Name = "btnPrevious";
             btnPrevious.Padding = new Padding(0, 0, 0, 5);
             btnPrevious.Size = new Size(30, 27);
-            btnPrevious.TabIndex = 4;
+            btnPrevious.TabIndex = 5;
             btnPrevious.UseVisualStyleBackColor = true;
             btnPrevious.Click += btnPrevious_Click;
             // 
@@ -162,9 +161,9 @@
             // 
             lbPageNumber.Dock = DockStyle.Fill;
             lbPageNumber.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbPageNumber.Location = new Point(330, 0);
+            lbPageNumber.Location = new Point(329, 0);
             lbPageNumber.Name = "lbPageNumber";
-            lbPageNumber.Size = new Size(319, 34);
+            lbPageNumber.Size = new Size(320, 34);
             lbPageNumber.TabIndex = 6;
             lbPageNumber.Text = "1/??";
             lbPageNumber.TextAlign = ContentAlignment.MiddleCenter;
@@ -209,7 +208,7 @@
             btnCancelFilter.Location = new Point(415, 2);
             btnCancelFilter.Name = "btnCancelFilter";
             btnCancelFilter.Size = new Size(30, 30);
-            btnCancelFilter.TabIndex = 5;
+            btnCancelFilter.TabIndex = 6;
             btnCancelFilter.UseVisualStyleBackColor = true;
             btnCancelFilter.Click += btnCancelFilter_Click;
             // 
@@ -221,7 +220,7 @@
             btnFilter.Location = new Point(451, 3);
             btnFilter.Name = "btnFilter";
             btnFilter.Size = new Size(30, 30);
-            btnFilter.TabIndex = 2;
+            btnFilter.TabIndex = 3;
             btnFilter.UseVisualStyleBackColor = true;
             btnFilter.Click += btnFilter_Click;
             // 
@@ -300,7 +299,7 @@
             cmpSearchBy.Location = new Point(707, 3);
             cmpSearchBy.Name = "cmpSearchBy";
             cmpSearchBy.Size = new Size(189, 28);
-            cmpSearchBy.TabIndex = 0;
+            cmpSearchBy.TabIndex = 1;
             // 
             // txtSearchValue1
             // 
@@ -309,7 +308,7 @@
             txtSearchValue1.Name = "txtSearchValue1";
             txtSearchValue1.RightToLeft = RightToLeft.Yes;
             txtSearchValue1.Size = new Size(214, 23);
-            txtSearchValue1.TabIndex = 1;
+            txtSearchValue1.TabIndex = 2;
             // 
             // UcListView
             // 

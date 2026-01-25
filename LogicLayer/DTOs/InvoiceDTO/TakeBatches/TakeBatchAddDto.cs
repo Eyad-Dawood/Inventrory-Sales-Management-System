@@ -9,7 +9,7 @@ namespace LogicLayer.DTOs.InvoiceDTO.TakeBatches
 {
     public class TakeBatchAddDto
     {
-        public string? TakeName { get; set; }
+        public string? TakeName { get ; set ; }
 
         public string? Notes { get; set; }
 

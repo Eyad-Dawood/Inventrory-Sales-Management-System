@@ -5,6 +5,7 @@ using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Repos;
 using InventorySalesManagementSystem.Customers;
 using InventorySalesManagementSystem.General.General_Forms;
+using InventorySalesManagementSystem.Invoices;
 using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.Products.PricesLog;
 using InventorySalesManagementSystem.Products.ProductsTypes;
@@ -39,13 +40,13 @@ namespace InventorySalesManagementSystem
         private void button1_Click(object sender, EventArgs e)
         {
 
-            var frm = new frmCustomerListScreen(_serviceProvider);
+            var frm = new frmCustomerListScreen(_serviceProvider, selectButton: false);
             frm.ShowDialog();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var frm = new frmWorkerListScreen(_serviceProvider);
+            var frm = new frmWorkerListScreen(_serviceProvider, selectButton: false);
             frm.ShowDialog();
         }
 
@@ -220,7 +221,7 @@ namespace InventorySalesManagementSystem
                 {
                     var InvoiceService = scope.ServiceProvider.GetRequiredService<InvoiceService>();
 
-                    await InvoiceService.AddBatchToInvoice(1, TakeBatch , 1);
+                    await InvoiceService.AddBatchToInvoice(1, TakeBatch, 1);
                     MessageBox.Show("Take Batch Added Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 }
@@ -249,6 +250,12 @@ namespace InventorySalesManagementSystem
                     return;
                 }
             }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            var frm = new frmAddInvoice(_serviceProvider);
+            frm.ShowDialog();
         }
     }
 }

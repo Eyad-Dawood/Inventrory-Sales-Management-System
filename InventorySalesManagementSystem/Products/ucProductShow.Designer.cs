@@ -232,7 +232,7 @@
             panel1.Enabled = false;
             panel1.Location = new Point(242, 38);
             panel1.Name = "panel1";
-            panel1.Size = new Size(537, 25);
+            panel1.Size = new Size(537, 28);
             panel1.TabIndex = 64;
             // 
             // rtbName
@@ -244,7 +244,7 @@
             rtbName.Name = "rtbName";
             rtbName.ReadOnly = true;
             rtbName.RightToLeft = RightToLeft.Yes;
-            rtbName.Size = new Size(537, 25);
+            rtbName.Size = new Size(537, 28);
             rtbName.TabIndex = 65;
             rtbName.Text = "----";
             // 

@@ -56,24 +56,45 @@ namespace LogicLayer.Services.Invoices
         }
         #endregion
 
-        public async Task<TakeBatch> CreateTakeBatchAggregateAsync(TakeBatchAddDto dto, int userId)
+        private async Task<TakeBatch> CreateTakeBatchAggregateInternalAsync(
+    TakeBatchAddDto dto,
+    int userId,
+    InvoiceType invoiceType)
         {
             var takeBatch = MapTakeBatch_AddDto(dto, userId);
 
             MapAddDefaltAndNullValues(takeBatch);
             ValidationHelper.ValidateEntity(takeBatch);
-                
-           var invoiceType = await _InoviceServicehelper.GetInvoiceTypeByIdAsync(dto.InvoiceId);
 
-           var soldProducts = await _SoldProductService
-               .PrepareSoldProductsAsync(dto.SoldProductAddDtos, userId, invoiceType);
+            var soldProducts = await _SoldProductService
+                .PrepareSoldProductsAsync(dto.SoldProductAddDtos, userId, invoiceType);
 
-           //Link Sold Products to Take Batch So EF can add them together
-           soldProducts.ForEach(sp => sp.TakeBatch = takeBatch);
-           takeBatch.SoldProducts = soldProducts;
+            //Link Sold Products to Take Batch So EF can add them together
+            soldProducts.ForEach(sp => sp.TakeBatch = takeBatch);
+            takeBatch.SoldProducts = soldProducts;
 
             return takeBatch;
         }
+
+
+        public async Task<TakeBatch> CreateTakeBatchAggregateAsync(
+    TakeBatchAddDto dto,
+    int userId,
+    InvoiceType invoiceType)
+        {
+            return await CreateTakeBatchAggregateInternalAsync(dto, userId, invoiceType);
+        }
+
+        public async Task<TakeBatch> CreateTakeBatchAggregateAsync(
+    TakeBatchAddDto dto,
+    int userId)
+        {
+            var invoiceType =
+                await _InoviceServicehelper.GetInvoiceTypeByIdAsync(dto.InvoiceId);
+
+            return await CreateTakeBatchAggregateInternalAsync(dto, userId, invoiceType);
+        }
+
 
 
         /// <exception cref="ValidationException">
