@@ -254,8 +254,15 @@ namespace InventorySalesManagementSystem
 
         private void button10_Click(object sender, EventArgs e)
         {
-            var frm = new frmAddInvoice(_serviceProvider);
-            frm.ShowDialog();
+            try
+            {
+                var frm = new frmInvoiceListScreen(_serviceProvider,selectButton:false);
+                frm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

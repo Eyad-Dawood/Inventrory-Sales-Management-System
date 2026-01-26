@@ -199,7 +199,7 @@ namespace InventorySalesManagementSystem.Products
                 return filter.ColumnName switch
                 {
                     FilterName
-                      => await service.GetTotalPageByFullNameAsync(filter.Text1Value, filter.Text2Value, RowsPerPage),
+                      => await service.GetTotalPageByFullNameAsync(filter.Text1Value, filter.Text2Value, RowsPerPage,ActivationState:null),
 
                     _ => 0
                 };
@@ -223,7 +223,7 @@ namespace InventorySalesManagementSystem.Products
                 return filter.ColumnName switch
                 {
                     FilterName
-                    => await service.GetAllByFullNameAsync(page, RowsPerPage, filter.Text1Value, filter.Text2Value),
+                    => await service.GetAllByFullNameAsync(page, RowsPerPage, filter.Text1Value, filter.Text2Value,ActivationState:null),
 
                     _ => new List<ProductListDto>()
                 };

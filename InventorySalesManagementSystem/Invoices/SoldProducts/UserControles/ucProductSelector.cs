@@ -165,7 +165,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
-                return await service.GetTotalPageNumberAsync(RowsPerPage);
+                return await service.GetTotalPagesByActivationState(ActivationState:true,RowsPerPage);
             }
         }
 
@@ -180,7 +180,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
 
-                return await service.GetTotalPageByFullNameAsync(txtSearchValue1.Text.Trim(), txtSearchValue2.Text.Trim(), RowsPerPage);
+                return await service.GetTotalPageByFullNameAsync(txtSearchValue1.Text.Trim(), txtSearchValue2.Text.Trim(), RowsPerPage , ActivationState:true);
 
             }
         }
@@ -190,7 +190,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
-                return await service.GetAllProductsAsync(page, RowsPerPage);
+                return await service.GetAllByActivationStateAsync(page,RowsPerPage,ActivationState:true);
             }
         }
 
@@ -207,7 +207,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
 
-                return await service.GetAllByFullNameAsync(page, RowsPerPage, txtSearchValue1.Text.Trim(), txtSearchValue2.Text.Trim());
+                return await service.GetAllByFullNameAsync(page, RowsPerPage, txtSearchValue1.Text.Trim(), txtSearchValue2.Text.Trim(),ActivationState:true);
             }
         }
 

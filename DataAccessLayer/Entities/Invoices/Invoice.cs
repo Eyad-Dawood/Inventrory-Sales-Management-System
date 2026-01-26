@@ -43,23 +43,23 @@ namespace DataAccessLayer.Entities.Invoices
 
         #region Calculated After Every Operation
         [Column(TypeName = "decimal(10,2)")]
-        [Display(Name = "إجمالي سعر البيع")]
+        [Display(Name = "البيع")]
         public decimal TotalSellingPrice {  get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        [Display(Name = "إجمالي سعر الشراء")]
+        [Display(Name = "الشراء")]
         public decimal TotalBuyingPrice { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        [Display(Name = "إجمالي سعر شراء المرتجعات")]
+        [Display(Name = "بيع(م)")]
         public decimal TotalRefundSellingPrice { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        [Display(Name = "إجمالي سعر بيع المرتجعات")]
+        [Display(Name = "شراء(م)")]
         public decimal TotalRefundBuyingPrice { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
-        [Display(Name = "المبلغ المدفوع")]
+        [Display(Name = "المدفوع")]
         public decimal TotalPaid { get; set; }
         #endregion
 
@@ -67,7 +67,7 @@ namespace DataAccessLayer.Entities.Invoices
         /// Positive = additional charges, Negative = discount
         /// </summary>
         [Column(TypeName = "decimal(10,2)")]
-        [Display(Name = "مستحقات إضافية")]
+        [Display(Name = "إضافي")]
         public decimal Additional { get; set; }
 
 
@@ -75,8 +75,10 @@ namespace DataAccessLayer.Entities.Invoices
         [Display(Name = "ملاحظات الأموال الإضافية")]
         public string? AdditionNotes { get; set; }
 
-
+        [Display(Name = "النوع")]
         public InvoiceType InvoiceType { get; set; }
+
+        [Display(Name =  "الحالة")]
         public InvoiceState InvoiceState { get; set; }
 
 

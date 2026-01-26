@@ -14,11 +14,12 @@ namespace DataAccessLayer.Abstractions.Products
 
         public Task<List<Product>> GetAllWithProductType_And_UnitAsync(int PageNumber, int RowsPerPage);
 
-        public Task<List<Product>> GetAllByFullNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName);
-        public Task<List<Product>> GetAllByProductTypeNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName);
-        public Task<int> GetTotalPagesByFullNameAsync(string ProductTypeName,string ProductName, int RowsPerPage);
-        public Task<int> GetTotalPagesByProductTypeNameAsync(string ProductTypeName, int RowsPerPage);
-
+        public Task<List<Product>> GetAllByFullNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName, bool? ActivationState);
+        public Task<List<Product>> GetAllByProductTypeNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName,bool? ActivationState);
+        public Task<List<Product>> GetAllByActivationStateAsync(int PageNumber, int RowsPerPage,bool? ActivationState);
+        public Task<int> GetTotalPagesByFullNameAsync(string ProductTypeName,string ProductName, int RowsPerPage, bool? ActivationState);
+        public Task<int> GetTotalPagesByProductTypeNameAsync(string ProductTypeName, int RowsPerPage, bool? ActivationState);
+        public Task<int> GetTotalPagesByActivationState(bool? ActivationState, int RowsPerPage);
         public Task<List<Product>> GetProductsByIdsAsync(List<int> Ids);
     }
 }

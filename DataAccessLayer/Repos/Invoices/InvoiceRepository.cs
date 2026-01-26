@@ -27,8 +27,8 @@ namespace DataAccessLayer.Repos.Invoices
 
         private IQueryable<Invoice> ApplyFilter(
             IQueryable<Invoice> query,
-            InvoiceType[] invoiceTypes,
-            InvoiceState[] invoiceStates)
+            List<InvoiceType> invoiceTypes,
+            List<InvoiceState> invoiceStates)
         {
             var inlineQuery = query;
 
@@ -48,7 +48,7 @@ namespace DataAccessLayer.Repos.Invoices
         }
 
 
-        public async Task<List<Invoice>> GetAllWithDetailsAsync(int PageNumber, int RowsPerPage, DataAccessLayer.Entities.Invoices.InvoiceType[] InvoiceType, DataAccessLayer.Entities.Invoices.InvoiceState[] InvoiceState)
+        public async Task<List<Invoice>> GetAllWithDetailsAsync(int PageNumber, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
         {
             IQueryable<Invoice> query = InvoiceWithDetails();
 
@@ -62,7 +62,7 @@ namespace DataAccessLayer.Repos.Invoices
                 .ToListAsync();
         }
 
-        public async Task<List<Invoice>> GetAllWithDetailsByCustomerIdAsync(int PageNumber, int RowsPerPage, int CustomerId, DataAccessLayer.Entities.Invoices.InvoiceType[] InvoiceType, DataAccessLayer.Entities.Invoices.InvoiceState[] InvoiceState)
+        public async Task<List<Invoice>> GetAllWithDetailsByCustomerIdAsync(int PageNumber, int RowsPerPage, int CustomerId, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
         {
             IQueryable<Invoice> query = _context
                 .Invoices
@@ -84,7 +84,7 @@ namespace DataAccessLayer.Repos.Invoices
 
         }
 
-        public async Task<List<Invoice>> GetAllWithDetailsByWorkerIdAsync(int PageNumber, int RowsPerPage, int WorkerId, DataAccessLayer.Entities.Invoices.InvoiceType[] InvoiceType, DataAccessLayer.Entities.Invoices.InvoiceState[] InvoiceState)
+        public async Task<List<Invoice>> GetAllWithDetailsByWorkerIdAsync(int PageNumber, int RowsPerPage, int WorkerId, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
         {
             IQueryable<Invoice> query = _context
                 .Invoices
@@ -106,7 +106,7 @@ namespace DataAccessLayer.Repos.Invoices
                 .ToListAsync();
         }
 
-        public async Task<int> GetTotalPagesByCustomerIdAsync(int CustomerId, int RowsPerPage, DataAccessLayer.Entities.Invoices.InvoiceType[] InvoiceType, DataAccessLayer.Entities.Invoices.InvoiceState[] InvoiceState)
+        public async Task<int> GetTotalPagesByCustomerIdAsync(int CustomerId, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
         {
             IQueryable<Invoice> query = _context.Invoices
                                        .AsNoTracking()
@@ -121,7 +121,7 @@ namespace DataAccessLayer.Repos.Invoices
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
 
-        public async Task<int> GetTotalPagesByWorkerIdAsync(int WorkerId, int RowsPerPage, DataAccessLayer.Entities.Invoices.InvoiceType[] InvoiceType, DataAccessLayer.Entities.Invoices.InvoiceState[] InvoiceState)
+        public async Task<int> GetTotalPagesByWorkerIdAsync(int WorkerId, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
         {
             IQueryable<Invoice> query = _context.Invoices
                                        .AsNoTracking()
@@ -149,6 +149,70 @@ namespace DataAccessLayer.Repos.Invoices
                 .Include(i => i.CloseUser)
                 .Where(i => i.InvoiceId == invoiceId)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Invoice>> GetAllWithDetailsByCustomerNameAsync(int PageNumber, int RowsPerPage, string CustomerName, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
+        {
+            IQueryable<Invoice> query = InvoiceWithDetails();
+
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
+
+            return
+                await query
+                .Where(i => i.Customer.Person.FullName.StartsWith(CustomerName))
+                .OrderByDescending(i => i.OpenDate) //Latest
+                .Skip((PageNumber - 1) * RowsPerPage)
+                .Take(RowsPerPage)
+                .ToListAsync();
+        }
+
+        public async Task<List<Invoice>> GetAllWithDetailsByWorkerNameAsync(int PageNumber, int RowsPerPage, string WorkerName, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
+        {
+            IQueryable<Invoice> query = InvoiceWithDetails();
+
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
+
+            return
+                await query
+                   .Where(i =>
+                   i.Worker != null &&
+                   i.Worker.Person.FullName.StartsWith(WorkerName)).OrderByDescending(i => i.OpenDate) //Latest
+                .Skip((PageNumber - 1) * RowsPerPage)
+                .Take(RowsPerPage)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetTotalPageByWorkerNameAsync(string WorkerName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
+        {
+            IQueryable<Invoice> query = _context.Invoices
+                           .AsNoTracking()
+                .Where(i =>
+                    i.Worker != null &&
+                    i.Worker.Person.FullName.StartsWith(WorkerName));
+
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
+
+            int totalCount =
+                await query
+                .CountAsync();
+
+            return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
+
+        }
+
+        public async Task<int> GetTotalPageByCustomerNameAsync(string CustomerName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
+        {
+            IQueryable<Invoice> query = _context.Invoices
+                           .AsNoTracking()
+                .Where(i => i.Customer.Person.FullName.StartsWith(CustomerName));
+
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
+
+            int totalCount =
+                await query
+                .CountAsync();
+
+            return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
     }
 }

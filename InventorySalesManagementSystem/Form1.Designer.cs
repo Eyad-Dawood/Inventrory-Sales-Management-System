@@ -146,7 +146,7 @@
             button10.Name = "button10";
             button10.Size = new Size(172, 102);
             button10.TabIndex = 12;
-            button10.Text = "Add New Invoice";
+            button10.Text = "InvoiceScreen";
             button10.UseVisualStyleBackColor = true;
             button10.Click += button10_Click;
             // 

@@ -7,6 +7,8 @@ using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.General;
 using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
+using LogicLayer.DTOs.WorkerDTO;
+using LogicLayer.Utilities;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
@@ -85,19 +87,35 @@ namespace LogicLayer.Services.Invoices
                 ClosedByUserName = Invoice.CloseUser?.Username,
                 CustomerName = Invoice.Customer.Person.FullName,
                 OpenedByUserName = Invoice.OpenUser.Username,
-                InvoiceFinance = new InvoiceFinance()
-                {
-                    TotalBuyingPrice = Invoice.TotalBuyingPrice,
-                    TotalPaid = Invoice.TotalPaid,
-                    TotalRefundBuyingPrice = Invoice.TotalRefundBuyingPrice,
-                    TotalRefundSellingPrice = Invoice.TotalRefundSellingPrice,
-                    TotalSellingPrice = Invoice.TotalSellingPrice,
-                    Additional = Invoice.Additional,
-                    AdditionalNotes = Invoice.AdditionNotes
-                }
+                Additional = Invoice.Additional,
+                AdditionalNotes = Invoice.AdditionNotes,
+                TotalBuyingPrice = Invoice.TotalBuyingPrice,
+                TotalPaid = Invoice.TotalPaid,
+                TotalRefundBuyingPrice = Invoice.TotalRefundBuyingPrice,
+                TotalRefundSellingPrice = Invoice.TotalRefundSellingPrice,
+                TotalSellingPrice = Invoice.TotalSellingPrice,
             };
         }
 
+        public InvoiceListDto MapInvoice_ListDto(Invoice invoice)
+        {
+            return new InvoiceListDto()
+            {
+                InvoiceId = invoice.InvoiceId,
+                OpenDate = invoice.OpenDate,
+                CloseDate = invoice.CloseDate,
+                InvoiceType = invoice.InvoiceType.GetDisplayName(),
+                InvoiceState = invoice.InvoiceState.GetDisplayName(),
+                CustomerName = invoice.Customer.Person.FullName,
+                WorkerName = invoice.Worker != null ? invoice.Worker.Person.FullName : string.Empty,
+                TotalSellingPrice = invoice.TotalSellingPrice,
+                TotalPaid = invoice.TotalPaid,
+                Additional = invoice.Additional,
+                TotalBuyingPrice = invoice.TotalBuyingPrice,
+                TotalRefundBuyingPrice = invoice.TotalRefundBuyingPrice,
+                TotalRefundSellingPrice = invoice.TotalRefundSellingPrice,
+            };
+        }
         #endregion
 
         #region Validate Logic
@@ -221,8 +239,6 @@ namespace LogicLayer.Services.Invoices
             }
         }
 
-
-
         public async Task<InvoiceReadDto> GetInvoiceByIdAsync(int InvoiceId)
         {
             Invoice? Invoice = await _invoiceRepo.GetWithDetailsByIdAsync(InvoiceId);
@@ -232,6 +248,82 @@ namespace LogicLayer.Services.Invoices
                 throw new NotFoundException(typeof(Invoice));
             }
             return MapInvoice_ReadDto(Invoice);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _invoiceRepo.GetTotalPagesAsync(RowsPerPage);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPageByWorkerNameAsync(string Name, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _invoiceRepo.GetTotalPageByWorkerNameAsync(Name,RowsPerPage, invoiceTypes,invoiceStates);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPageByCustomerNameAsync(string Name, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _invoiceRepo.GetTotalPageByCustomerNameAsync(Name, RowsPerPage, invoiceTypes, invoiceStates);
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<InvoiceListDto>> GetAllInvoicesAsync(int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _invoiceRepo
+                .GetAllWithDetailsAsync(PageNumber, RowsPerPage,invoiceTypes,invoiceStates))
+                .Select(i => MapInvoice_ListDto(i)
+                ).ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<InvoiceListDto>> GetAllByWorkerNameAsync(string Name,int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _invoiceRepo
+                .GetAllWithDetailsByWorkerNameAsync(PageNumber, RowsPerPage,Name, invoiceTypes, invoiceStates))
+                .Select(i => MapInvoice_ListDto(i)
+                ).ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<InvoiceListDto>> GetAllByCustomerNameAsync(string Name,int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _invoiceRepo
+                .GetAllWithDetailsByCustomerNameAsync(PageNumber, RowsPerPage,Name,invoiceTypes, invoiceStates))
+                .Select(i => MapInvoice_ListDto(i)
+                ).ToList();
         }
 
     }

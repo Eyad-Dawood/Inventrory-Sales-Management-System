@@ -82,6 +82,25 @@ namespace InventorySalesManagementSystem.UserControles
             }
         }
 
+
+        private bool _allowCancelButton = true;
+        [Browsable(true)]
+        [DefaultValue(true)]
+        public bool AllowCancelButton
+        {
+            get
+            {
+                return _allowCancelButton;
+            }
+            set
+            {
+                _allowCancelButton = value;
+                btnCancelFilter.Enabled = _allowCancelButton;
+                btnCancelFilter.Visible = _allowCancelButton;
+            }
+        }
+        
+
         #endregion
 
 
@@ -277,7 +296,9 @@ namespace InventorySalesManagementSystem.UserControles
             lbrowsCount.Text = _data.Count.ToString();
         }
 
-
+        [Browsable(true)]
+        [DefaultValue(false)]
+        public bool AllowEmptyFilter { get; set; } = false;
 
         public Action<DataGridView> ConfigureGrid;
 
@@ -299,8 +320,8 @@ namespace InventorySalesManagementSystem.UserControles
                     cmpSearchBy.SelectedValue == null)
                     return false;
 
-                bool hasTxt1 = !string.IsNullOrWhiteSpace(txtSearchValue1.Text);
-                bool hasTxt2 = !string.IsNullOrWhiteSpace(txtSearchValue2.Text);
+                bool hasTxt1 = !string.IsNullOrWhiteSpace(txtSearchValue1.Text) || AllowEmptyFilter;//Dont Care about txt1 if AllowEmptyFilter is true
+                bool hasTxt2 = !string.IsNullOrWhiteSpace(txtSearchValue2.Text) || AllowEmptyFilter;//Dont Care about txt2 if AllowEmptyFilter is true
 
                 if (_allowSecondSearchBox)
                 {

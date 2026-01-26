@@ -485,14 +485,14 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public async Task<List<ProductListDto>> GetAllByProductTypeNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName)
+        public async Task<List<ProductListDto>> GetAllByProductTypeNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName, bool? ActivationState)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
             return 
                 (await _productRepo.
-                            GetAllByProductTypeNameAsync(PageNumber, RowsPerPage, ProductTypeName))
+                            GetAllByProductTypeNameAsync(PageNumber, RowsPerPage, ProductTypeName,ActivationState))
                             .Select(c => MapProduct_ListDto(c))
                             .ToList();
         }
@@ -500,14 +500,29 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public  async Task<List<ProductListDto>> GetAllByFullNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName)
+        public async Task<List<ProductListDto>> GetAllByActivationStateAsync(int PageNumber, int RowsPerPage, bool? ActivationState)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _productRepo.
+                            GetAllByActivationStateAsync(PageNumber, RowsPerPage, ActivationState))
+                            .Select(c => MapProduct_ListDto(c))
+                            .ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public  async Task<List<ProductListDto>> GetAllByFullNameAsync(int PageNumber, int RowsPerPage, string ProductTypeName, string ProductName, bool? ActivationState)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
             return 
                 (await _productRepo.
-                            GetAllByFullNameAsync(PageNumber, RowsPerPage, ProductTypeName, ProductName))
+                            GetAllByFullNameAsync(PageNumber, RowsPerPage, ProductTypeName, ProductName, ActivationState))
                             .Select(c => MapProduct_ListDto(c))
                             .ToList();
         }
@@ -524,21 +539,32 @@ namespace LogicLayer.Services.Products
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public async Task<int> GetTotalPageByFullNameAsync(string ProductTypeName,string ProductName, int RowsPerPage)
+        public async Task<int> GetTotalPageByFullNameAsync(string ProductTypeName,string ProductName, int RowsPerPage, bool? ActivationState)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return await _productRepo.GetTotalPagesByFullNameAsync(ProductTypeName, ProductName, RowsPerPage);
+            return await _productRepo.GetTotalPagesByFullNameAsync(ProductTypeName, ProductName, RowsPerPage, ActivationState);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public async Task<int> GetTotalPageByProductTypeNameAsync(string TownName, int RowsPerPage)
+        public async Task<int> GetTotalPagesByActivationState(bool? ActivationState, int RowsPerPage)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return await _productRepo.GetTotalPagesByProductTypeNameAsync(TownName, RowsPerPage);
+            return await _productRepo.GetTotalPagesByActivationState(ActivationState,RowsPerPage);
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPageByProductTypeNameAsync(string TownName, int RowsPerPage, bool? ActivationState)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _productRepo.GetTotalPagesByProductTypeNameAsync(TownName, RowsPerPage, ActivationState);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
