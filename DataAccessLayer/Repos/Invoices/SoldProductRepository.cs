@@ -32,6 +32,24 @@ namespace DataAccessLayer.Repos.Invoices
                 .ToListAsync();
         }
 
+        public async Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId)
+        {
+            return await
+                _context.
+                SoldProducts
+                .AsNoTracking()
+                .Include(b => b.Product)
+                .ThenInclude(p => p.ProductType)
+                .Include(b => b.Product)
+                .ThenInclude(p => p.MasurementUnit)
+                .Include(b => b.TakeBatch)
+                .Where(b => b.TakeBatch.InvoiceId == InvoiceId)
+                .OrderByDescending(b => b.TakeBatchId)
+                .Skip((PageNumber - 1) * RowsPerPage)
+                .Take(RowsPerPage)
+                .ToListAsync();
+        }
+
         public async Task<List<SoldProduct>> GetAllWithDetailsByProductIdAsync(int PageNumber, int RowsPerPage, int ProductId)
         {
             return await
@@ -68,6 +86,19 @@ namespace DataAccessLayer.Repos.Invoices
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
 
+        public async Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage)
+        {
+            int totalCount = await
+                           _context.
+                           SoldProducts
+                           .AsNoTracking()
+                           .Where(b => b.TakeBatch.InvoiceId == InvoiceId)
+                           .CountAsync();
+
+
+            return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
+        }
+
         public async Task<int> GetTotalPagesByProductIdAsync(int ProductId, int RowsPerPage)
         {
             int totalCount = await
@@ -80,5 +111,7 @@ namespace DataAccessLayer.Repos.Invoices
 
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
+
+        
     }
 }

@@ -82,8 +82,8 @@ namespace LogicLayer.Services.Invoices
                 InvoiceId = Invoice.InvoiceId,
                 OpenDate = Invoice.OpenDate,
                 CloseDate = Invoice.CloseDate,
-                InvoiceType = Invoice.InvoiceType,
-                InvoiceState = Invoice.InvoiceState,
+                InvoiceType = Invoice.InvoiceType.GetDisplayName(),
+                InvoiceState = Invoice.InvoiceState.GetDisplayName(),
                 ClosedByUserName = Invoice.CloseUser?.Username,
                 CustomerName = Invoice.Customer.Person.FullName,
                 OpenedByUserName = Invoice.OpenUser.Username,
@@ -94,6 +94,9 @@ namespace LogicLayer.Services.Invoices
                 TotalRefundBuyingPrice = Invoice.TotalRefundBuyingPrice,
                 TotalRefundSellingPrice = Invoice.TotalRefundSellingPrice,
                 TotalSellingPrice = Invoice.TotalSellingPrice,
+                WorkerName = Invoice.Worker != null ? Invoice.Worker.Person.FullName : string.Empty,
+                CustomerId = Invoice.CustomerId,
+                WorkerId = Invoice.WorkerId.HasValue ? Invoice.WorkerId.Value : null,
             };
         }
 
@@ -214,7 +217,7 @@ namespace LogicLayer.Services.Invoices
                 throw new NotFoundException(typeof(Invoice));
             }
 
-            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId);
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId,Invoice.InvoiceType);
 
             using(var Transaction = await _unitOfWork.BeginTransactionAsync())
             {

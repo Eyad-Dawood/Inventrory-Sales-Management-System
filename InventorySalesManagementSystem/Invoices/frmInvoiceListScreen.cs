@@ -1,12 +1,18 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Invoices;
+using DataAccessLayer.Entities.Products;
 using InventorySalesManagementSystem.General.General_Forms;
+using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.UserControles;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.InvoiceDTO;
+using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
+using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
+using LogicLayer.Validation.Exceptions;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -288,7 +294,7 @@ namespace InventorySalesManagementSystem.Invoices
             }
         }
 
-        
+
         protected async override Task<int> GetTotalFilteredPagesAsync(UcListView.Filter filter)
         {
             using (var scope = _serviceProvider.CreateAsyncScope())
@@ -296,14 +302,14 @@ namespace InventorySalesManagementSystem.Invoices
                 var service = scope.ServiceProvider.GetRequiredService<InvoiceService>();
 
                 List<InvoiceType> types = GetInvoiceTypes();
-                List < InvoiceState > states = GetInvoiceStates();
+                List<InvoiceState> states = GetInvoiceStates();
 
                 return filter.ColumnName switch
                 {
-                    nameof(Worker)+nameof(Worker.Person.FullName)
-                        => await service.GetTotalPageByWorkerNameAsync(filter.Text1Value, RowsPerPage, types,states),
+                    nameof(Worker) + nameof(Worker.Person.FullName)
+                        => await service.GetTotalPageByWorkerNameAsync(filter.Text1Value, RowsPerPage, types, states),
 
-                    nameof(Customer)+nameof(Customer.Person.FullName)
+                    nameof(Customer) + nameof(Customer.Person.FullName)
                         => await service.GetTotalPageByCustomerNameAsync(filter.Text1Value, RowsPerPage, types, states),
 
                     _ => 0
@@ -335,11 +341,11 @@ namespace InventorySalesManagementSystem.Invoices
 
                 return filter.ColumnName switch
                 {
-                    nameof(Worker)+nameof(Worker.Person.FullName)
-                        => await service.GetAllByWorkerNameAsync(filter.Text1Value, page, RowsPerPage,  types,states),
+                    nameof(Worker) + nameof(Worker.Person.FullName)
+                        => await service.GetAllByWorkerNameAsync(filter.Text1Value, page, RowsPerPage, types, states),
 
-                    nameof(Customer)+nameof(Customer.Person.FullName)
-                        => await service.GetAllByCustomerNameAsync(filter.Text1Value, page, RowsPerPage,types,states),
+                    nameof(Customer) + nameof(Customer.Person.FullName)
+                        => await service.GetAllByCustomerNameAsync(filter.Text1Value, page, RowsPerPage, types, states),
 
                     _ => new List<InvoiceListDto>()
                 };
@@ -357,5 +363,69 @@ namespace InventorySalesManagementSystem.Invoices
             ucListView1.RefreshAfterOperation();
         }
         #endregion
+
+
+        #region MeneuStrip
+
+        private void ShowMenustripItem_Click(object sender, EventArgs e)
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item == null)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
+                return;
+            }
+
+            try
+            {
+                var frm = new frmShowInvoice(_serviceProvider);
+                _ = frm.ShowInvoice(item.InvoiceId);
+                frm.ShowDialog();
+            }
+            catch (NotFoundException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ");
+            }
+            ucListView1.RefreshAfterOperation();
+        }
+
+        #endregion
+
+
+        private void AddNewBatchMenuStripItem_Click(object sender, EventArgs e)
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item == null)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
+                return;
+            }
+
+            try
+            {
+                var frm = new frmAddBatchToInvoice(_serviceProvider,item.InvoiceId);
+                frm.ShowDialog();
+            }
+            catch (NotFoundException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message);
+            }
+            catch (OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ");
+            }
+            ucListView1.RefreshAfterOperation();
+        }
     }
 }

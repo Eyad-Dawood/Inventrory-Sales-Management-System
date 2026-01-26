@@ -94,7 +94,7 @@
             // lbTitle
             // 
             lbTitle.Font = new Font("Calibri", 30F, FontStyle.Bold);
-            lbTitle.Location = new Point(503, 9);
+            lbTitle.Location = new Point(598, 9);
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
@@ -279,7 +279,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = btnCancel;
-            ClientSize = new Size(1443, 689);
+            ClientSize = new Size(1431, 689);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(lbTitle);

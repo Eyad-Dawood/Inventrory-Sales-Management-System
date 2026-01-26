@@ -336,6 +336,7 @@ namespace LogicLayer.Services
                 await _unitOfWork.SaveAsync();
                 _logger.LogInformation("تم تغيير حالة العميل {CutomerId} إلى {State}", CustomerId, State);
             }
+            
             catch (Exception ex)
             {
                 _logger.LogError(ex, "فشل تغيير حالة تنشيط العميل {CutomerId}", CustomerId);

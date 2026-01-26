@@ -13,8 +13,11 @@ namespace LogicLayer.DTOs.InvoiceDTO
     {
 
         public int InvoiceId { get; set; }
-        public string CustomerName { get; set; }
 
+        public int CustomerId { get; set; }
+        public int? WorkerId { get; set; }
+        public string CustomerName { get; set; }
+        public string WorkerName { get; set; }
 
         public decimal TotalBuyingPrice { get; set; }
         public decimal TotalSellingPrice { get; set; }
@@ -23,7 +26,6 @@ namespace LogicLayer.DTOs.InvoiceDTO
         public decimal TotalPaid { get; set; }
         public decimal Additional { get; set; }
         public string? AdditionalNotes { get; set; }
-
 
         // صافي البيع الحقيقي
         [Display(Name = "صافي البيع")]
@@ -36,9 +38,9 @@ namespace LogicLayer.DTOs.InvoiceDTO
             TotalBuyingPrice - TotalRefundBuyingPrice;
 
         // الربح المحاسبي
-        [Display(Name = "الربح المبدئي)]")]
+        [Display(Name = "الربح")]
         public decimal NetProfit =>
-            NetSale - NetBuying;
+            NetSale - NetBuying + Additional;
 
         // الباقي المستحق دفعه
         [Display(Name = "باقي للسداد")]
@@ -51,8 +53,8 @@ namespace LogicLayer.DTOs.InvoiceDTO
             NetSale + Additional;
 
 
-        public InvoiceType InvoiceType { get; set; }
-        public InvoiceState InvoiceState { get; set; }
+        public string InvoiceType { get; set; }
+        public string InvoiceState { get; set; }
 
         public DateTime OpenDate { get; set; }
         public DateTime? CloseDate { get; set; }

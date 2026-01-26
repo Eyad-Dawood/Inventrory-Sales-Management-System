@@ -30,11 +30,8 @@
         {
             components = new System.ComponentModel.Container();
             cms = new ContextMenuStrip(components);
-            updateMenustripItem = new ToolStripMenuItem();
-            deleteMenustripItem = new ToolStripMenuItem();
+            AddNewBatchMenustripItem = new ToolStripMenuItem();
             ShowMenustripItem = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
-            changeActivationStateMenuStripItem = new ToolStripMenuItem();
             gpCraft = new GroupBox();
             chkOpen = new CheckBox();
             chkClose = new CheckBox();
@@ -54,33 +51,21 @@
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
-            cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem, toolStripSeparator1, changeActivationStateMenuStripItem });
+            cms.Items.AddRange(new ToolStripItem[] { AddNewBatchMenustripItem, ShowMenustripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(195, 130);
+            cms.Size = new Size(199, 64);
             // 
-            // updateMenustripItem
+            // AddNewBatchMenustripItem
             // 
-            updateMenustripItem.Alignment = ToolStripItemAlignment.Right;
-            updateMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            updateMenustripItem.Image = Properties.Resources.EditIcon;
-            updateMenustripItem.Name = "updateMenustripItem";
-            updateMenustripItem.RightToLeft = RightToLeft.Yes;
-            updateMenustripItem.ShortcutKeyDisplayString = "";
-            updateMenustripItem.Size = new Size(194, 30);
-            updateMenustripItem.Tag = "";
-            updateMenustripItem.Text = "تعديل البيانات";
-            updateMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
-            // 
-            // deleteMenustripItem
-            // 
-            deleteMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            deleteMenustripItem.Image = Properties.Resources.DeleteIcon;
-            deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
-            deleteMenustripItem.Name = "deleteMenustripItem";
-            deleteMenustripItem.RightToLeft = RightToLeft.Yes;
-            deleteMenustripItem.Size = new Size(194, 30);
-            deleteMenustripItem.Text = "حذف البيانات";
+            AddNewBatchMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            AddNewBatchMenustripItem.Image = Properties.Resources.ShowDetailsIcon;
+            AddNewBatchMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
+            AddNewBatchMenustripItem.Name = "AddNewBatchMenustripItem";
+            AddNewBatchMenustripItem.RightToLeft = RightToLeft.Yes;
+            AddNewBatchMenustripItem.Size = new Size(198, 30);
+            AddNewBatchMenustripItem.Text = "إضافة عملية شراء";
+            AddNewBatchMenustripItem.Click += AddNewBatchMenuStripItem_Click;
             // 
             // ShowMenustripItem
             // 
@@ -89,26 +74,9 @@
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
-            ShowMenustripItem.Size = new Size(194, 30);
+            ShowMenustripItem.Size = new Size(198, 30);
             ShowMenustripItem.Text = "عرض البيانات";
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(191, 6);
-            // 
-            // changeActivationStateMenuStripItem
-            // 
-            changeActivationStateMenuStripItem.Alignment = ToolStripItemAlignment.Right;
-            changeActivationStateMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            changeActivationStateMenuStripItem.Image = Properties.Resources.ActiovationButton;
-            changeActivationStateMenuStripItem.Name = "changeActivationStateMenuStripItem";
-            changeActivationStateMenuStripItem.RightToLeft = RightToLeft.Yes;
-            changeActivationStateMenuStripItem.ShortcutKeyDisplayString = "";
-            changeActivationStateMenuStripItem.Size = new Size(194, 30);
-            changeActivationStateMenuStripItem.Tag = "";
-            changeActivationStateMenuStripItem.Text = "تغيير حالة النشاط";
-            changeActivationStateMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
+            ShowMenustripItem.Click += ShowMenustripItem_Click;
             // 
             // gpCraft
             // 
@@ -203,16 +171,13 @@
         #endregion
 
         private ContextMenuStrip cms;
-        private ToolStripMenuItem updateMenustripItem;
-        private ToolStripMenuItem deleteMenustripItem;
         private ToolStripMenuItem ShowMenustripItem;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem changeActivationStateMenuStripItem;
         private GroupBox gpCraft;
         private CheckBox chkOpen;
         private CheckBox chkClose;
         private GroupBox groupBox1;
         private CheckBox chkSell;
         private CheckBox chkEvaluation;
+        private ToolStripMenuItem AddNewBatchMenustripItem;
     }
 }

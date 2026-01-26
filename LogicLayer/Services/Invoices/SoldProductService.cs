@@ -2,6 +2,7 @@
 using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Products;
+using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.Services.Products;
 using LogicLayer.Validation;
@@ -23,7 +24,7 @@ namespace LogicLayer.Services.Invoices
         private readonly ILogger<SoldProductService> _logger;
         private readonly ProductService _productService;
 
-        public SoldProductService(ISoldProductRepository SoldProductRepo, IUnitOfWork unitOfWork, ILogger<SoldProductService> logger , ProductService productService)
+        public SoldProductService(ISoldProductRepository SoldProductRepo, IUnitOfWork unitOfWork, ILogger<SoldProductService> logger, ProductService productService)
         {
             _SoldProductRepo = SoldProductRepo;
             _unitOfWork = unitOfWork;
@@ -32,6 +33,18 @@ namespace LogicLayer.Services.Invoices
         }
 
         #region Map
+
+        private SoldProductMiniReadDto MapSoldProduct_MiniReadDto(SoldProduct soldProduct)
+        {
+            return new SoldProductMiniReadDto
+            {
+                TakeDate = soldProduct.TakeBatch.TakeDate,
+                BatchId = soldProduct.TakeBatchId,
+                ProductFullName = $"{soldProduct.Product.ProductType.ProductTypeName}[{soldProduct.Product.ProductName}]",
+                Quantity = soldProduct.Quantity,
+                UnitName = soldProduct.Product.MasurementUnit.UnitName
+            };
+        }
 
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
@@ -53,7 +66,7 @@ namespace LogicLayer.Services.Invoices
                 Product? product = products.FirstOrDefault(p => p.ProductId == item.ProductId);
 
                 if (product == null)
-                    throw new NotFoundException(typeof(Product),item.ProductId.ToString());
+                    throw new NotFoundException(typeof(Product), item.ProductId.ToString());
 
                 if (!product.IsAvailable)
                     throw new OperationFailedException("لا يمكن الشراء من متج موقوف/غير متاح");
@@ -108,6 +121,32 @@ namespace LogicLayer.Services.Invoices
             return soldProducts;
         }
         #endregion
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _SoldProductRepo.GetTotalPagesByInvoiceIdAsync(InvoiceId, RowsPerPage);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<SoldProductMiniReadDto>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId, int PageNumber, int RowsPerPage)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _SoldProductRepo
+                .GetAllWithDetailsByInvoiceIdAsync(PageNumber,RowsPerPage,InvoiceId))
+                .Select(i => MapSoldProduct_MiniReadDto(i)
+                ).ToList();
+        }
+
     }
 
 

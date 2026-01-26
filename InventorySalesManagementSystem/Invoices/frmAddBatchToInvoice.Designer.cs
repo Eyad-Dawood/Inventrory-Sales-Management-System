@@ -1,0 +1,121 @@
+﻿namespace InventorySalesManagementSystem.Invoices
+{
+    partial class frmAddBatchToInvoice
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            ucInvoiceDetails1 = new InventorySalesManagementSystem.Invoices.SoldProducts.UserControles.ucInvoiceDetails();
+            lbTitle = new Label();
+            ucAddTakeBatch1 = new InventorySalesManagementSystem.Invoices.SoldProducts.UserControles.ucAddTakeBatch();
+            btnCancel = new Button();
+            btnSave = new Button();
+            SuspendLayout();
+            // 
+            // ucInvoiceDetails1
+            // 
+            ucInvoiceDetails1.Anchor = AnchorStyles.Left;
+            ucInvoiceDetails1.Enabled = false;
+            ucInvoiceDetails1.Location = new Point(75, 61);
+            ucInvoiceDetails1.Name = "ucInvoiceDetails1";
+            ucInvoiceDetails1.Size = new Size(1528, 443);
+            ucInvoiceDetails1.TabIndex = 0;
+            // 
+            // lbTitle
+            // 
+            lbTitle.Anchor = AnchorStyles.Left;
+            lbTitle.Font = new Font("Calibri", 30F, FontStyle.Bold);
+            lbTitle.Location = new Point(544, 7);
+            lbTitle.Margin = new Padding(4, 0, 4, 0);
+            lbTitle.Name = "lbTitle";
+            lbTitle.RightToLeft = RightToLeft.Yes;
+            lbTitle.Size = new Size(590, 49);
+            lbTitle.TabIndex = 50;
+            lbTitle.Text = "إضافة عملية شراء";
+            lbTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // ucAddTakeBatch1
+            // 
+            ucAddTakeBatch1.Anchor = AnchorStyles.Left;
+            ucAddTakeBatch1.Enabled = false;
+            ucAddTakeBatch1.Location = new Point(138, 510);
+            ucAddTakeBatch1.Name = "ucAddTakeBatch1";
+            ucAddTakeBatch1.ShowInvoiceDetails = false;
+            ucAddTakeBatch1.Size = new Size(1402, 520);
+            ucAddTakeBatch1.TabIndex = 51;
+            // 
+            // btnCancel
+            // 
+            btnCancel.Anchor = AnchorStyles.Left;
+            btnCancel.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            btnCancel.ForeColor = Color.Red;
+            btnCancel.Location = new Point(1630, 1012);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(96, 30);
+            btnCancel.TabIndex = 59;
+            btnCancel.Text = "إلغاء";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
+            // 
+            // btnSave
+            // 
+            btnSave.Anchor = AnchorStyles.Left;
+            btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            btnSave.ForeColor = Color.FromArgb(0, 192, 0);
+            btnSave.Location = new Point(1630, 976);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(96, 30);
+            btnSave.TabIndex = 58;
+            btnSave.Text = "حفظ";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
+            // 
+            // frmAddBatchToInvoice
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1738, 1045);
+            Controls.Add(btnCancel);
+            Controls.Add(btnSave);
+            Controls.Add(lbTitle);
+            Controls.Add(ucInvoiceDetails1);
+            Controls.Add(ucAddTakeBatch1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            Name = "frmAddBatchToInvoice";
+            Load += frmAddBatchToInvoice_Load;
+            ResumeLayout(false);
+        }
+
+        #endregion
+
+        private SoldProducts.UserControles.ucInvoiceDetails ucInvoiceDetails1;
+        private Label lbTitle;
+        private SoldProducts.UserControles.ucAddTakeBatch ucAddTakeBatch1;
+        private Button btnCancel;
+        private Button btnSave;
+    }
+}
