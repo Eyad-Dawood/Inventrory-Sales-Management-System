@@ -97,6 +97,7 @@
             Controls.Add(txtUserName);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MaximizeBox = false;
             Name = "frmLogin";
             ResumeLayout(false);
             PerformLayout();

@@ -13,7 +13,7 @@ namespace LogicLayer.DTOs.ProductDTO
         public decimal BuyingPrice { get; set; }
         public decimal SellingPrice { get; set; }
         public decimal QuantityInStorage { get; set; }
-        public decimal TotalSlaes { get; set; }
+        public decimal TotalQuantitySold { get; set; }
         public decimal Profit { get
             {
                 return SellingPrice - BuyingPrice;

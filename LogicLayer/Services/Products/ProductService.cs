@@ -9,6 +9,7 @@ using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
 using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
 using LogicLayer.DTOs.ProductTypeDTO;
+using LogicLayer.Services.Invoices;
 using LogicLayer.Utilities;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
@@ -29,6 +30,7 @@ namespace LogicLayer.Services.Products
         private readonly ProductPriceLogService _pricelogService;
         private readonly ProductStockMovementLogService _stockMovementService;
         private readonly ILogger<ProductService> _logger;
+
 
         public ProductService(IProductRepository productRepo, IUnitOfWork unitOfWork, ProductPriceLogService PricelogService, ProductStockMovementLogService stockMovementService,ILogger<ProductService> logger)
         {
@@ -72,7 +74,6 @@ namespace LogicLayer.Services.Products
                 IsAvailable = product.IsAvailable,
                 ProductTypeName = product.ProductType.ProductTypeName,
                 QuantityInStorage = product.QuantityInStorage,
-                TotalSlaes = 0
             };
         }
 

@@ -42,6 +42,7 @@
             // flwpSoldProducts
             // 
             flwpSoldProducts.Anchor = AnchorStyles.Right;
+            flwpSoldProducts.AutoScroll = true;
             flwpSoldProducts.BorderStyle = BorderStyle.FixedSingle;
             flwpSoldProducts.Location = new Point(409, 3);
             flwpSoldProducts.Name = "flwpSoldProducts";

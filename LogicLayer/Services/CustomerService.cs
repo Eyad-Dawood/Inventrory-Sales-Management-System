@@ -343,5 +343,31 @@ namespace LogicLayer.Services
                 throw new OperationFailedException(ex);
             }
         }
+
+        private async Task ChangeCusotmerBalance(int CustomerId, decimal Amount , bool IsAddition)
+        {
+            //Tracking
+            Customer? customer = await _customerRepo.GetByIdAsync(CustomerId);
+            if (customer == null)
+            {
+                throw new NotFoundException(typeof(Customer));
+            }
+            if(IsAddition)
+            {
+                customer.Balance += Amount;
+            }
+            else
+            {
+                customer.Balance -= Amount;
+            }
+        }
+        public async Task DepositBalance(int CustomerId,decimal Amount)
+        {
+            await ChangeCusotmerBalance(CustomerId,Amount,IsAddition:true);
+        }
+        public async Task WithdrawBalance(int CustomerId, decimal Amount)
+        {
+            await ChangeCusotmerBalance(CustomerId, Amount, IsAddition: false);
+        }
     }
 }

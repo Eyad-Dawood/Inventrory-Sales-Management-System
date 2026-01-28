@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.DTOS;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Repos;
 using LogicLayer.DTOs.CustomerDTO;
@@ -38,6 +39,19 @@ namespace LogicLayer.Services.Invoices
         }
 
         #region Map
+        public InvoiceProductSummaryDto MapInvoiceProductSummary_Dto(InvoiceProductSummary Summary)
+        {
+            return new InvoiceProductSummaryDto()
+            {
+                ProductId = Summary.ProductId,
+                ProductFullName = Summary.ProductFullName,
+                TotalBuyingPrice = Summary.TotalBuyingPrice,
+                TotalQuantity = Summary.TotalQuantity,
+                TotalSellingPrice = Summary.TotalSellingPrice,
+                AvrageBuyingPrice = Summary.TotalQuantity != 0 ? Summary.TotalBuyingPrice / Summary.TotalQuantity : 0,
+                AvrageSellingPrice = Summary.TotalQuantity != 0 ? Summary.TotalSellingPrice / Summary.TotalQuantity : 0,
+            };
+        }
         public void MapAddDefaltAndNullValues(Invoice Invoice)
         {
             //OpenDate Is In The Sql Defulat Now()
@@ -72,6 +86,7 @@ namespace LogicLayer.Services.Invoices
                 WorkerId = DTO.WorkerId,
                 OpenUserId = UserId,
                 OpenDate = DateTime.Now,
+                InvoiceState = InvoiceState.Open,
             };
         }
 
@@ -117,6 +132,7 @@ namespace LogicLayer.Services.Invoices
                 TotalBuyingPrice = invoice.TotalBuyingPrice,
                 TotalRefundBuyingPrice = invoice.TotalRefundBuyingPrice,
                 TotalRefundSellingPrice = invoice.TotalRefundSellingPrice,
+                CustomerId = invoice.CustomerId,
             };
         }
         #endregion
@@ -135,6 +151,11 @@ namespace LogicLayer.Services.Invoices
             if(!customer.IsActive)
             {
                 throw new OperationFailedException($"لا يمكن فتح فاتورة للعميل {customer.FullName} لأنه غير نشط");
+            }
+
+            if(Invoice.InvoiceState == InvoiceState.Closed)
+            {
+                throw new OperationFailedException("لا يمكن التعديل على فاتورة مغلقة");
             }
         }
 
@@ -167,7 +188,7 @@ namespace LogicLayer.Services.Invoices
             //return the created TakeBatch Aggregate
             //Linked with the SoldProducts
             //Should Send The Invoice Type cuz its not yet in DB so it cant find it
-            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId , InvoiceDTO.InvoiceType);
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId , InvoiceDTO.InvoiceType, Invoice.CustomerId);
 
             //Link The TakeBatch With The Invoice
             Invoice.takeBatches.Add(TakeBatch);
@@ -217,7 +238,9 @@ namespace LogicLayer.Services.Invoices
                 throw new NotFoundException(typeof(Invoice));
             }
 
-            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId,Invoice.InvoiceType);
+            await ValidateMainLogic(Invoice);
+
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId,Invoice.InvoiceType,Invoice.CustomerId);
 
             using(var Transaction = await _unitOfWork.BeginTransactionAsync())
             {
@@ -329,5 +352,48 @@ namespace LogicLayer.Services.Invoices
                 ).ToList();
         }
 
+        public async Task CloseInvoiceAsync(int InvoiceId,int UserId)
+        {
+            Invoice? invoice;
+
+            try
+            {
+                 invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "فشل جلب الفاتورة {invoiceId} عن طريق المستخدم {userId}", InvoiceId, UserId);
+                throw new OperationFailedException(ex);
+            }
+
+            if (invoice == null)
+                throw new NotFoundException(typeof(Invoice));
+
+            if(invoice.InvoiceState == InvoiceState.Closed)
+                throw new OperationFailedException("الفاتورة مغلقة بالفعل");
+
+            invoice.InvoiceState = InvoiceState.Closed;
+            invoice.CloseDate = DateTime.Now;
+            invoice.CloseUserId = UserId;
+
+            try
+            {
+                await _unitOfWork.SaveAsync();
+                _logger.LogInformation("تم غلق الفاتورة : {invoiceId} عن طريق المستخدم : {userId}",InvoiceId,UserId);
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "فشل قفل الفاتورة {invoiceId} عن طريق المستخدم {userId}", InvoiceId,UserId);
+                throw new OperationFailedException(ex);
+            }
+        }
+
+        public async Task<List<InvoiceProductSummaryDto>> GetInvoiceProductSummaryAsync(int invoiceId)
+        {
+            return (await _invoiceRepo.GetInvoiceProductSummaryAsync(invoiceId))
+                .Select(c=>MapInvoiceProductSummary_Dto(c))
+                .ToList();
+        }
     }
 }

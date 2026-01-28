@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             dgvData = new DataGridView();
             pnBottomBar = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
@@ -65,14 +65,14 @@
             dgvData.AllowUserToResizeRows = false;
             dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvData.CausesValidation = false;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dgvData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dgvData.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dgvData.ColumnHeadersHeight = 25;
             dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvData.Dock = DockStyle.Fill;
@@ -88,12 +88,12 @@
             dgvData.RowTemplate.Height = 20;
             dgvData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvData.ShowCellErrors = false;
-            dgvData.ShowCellToolTips = false;
             dgvData.ShowEditingIcon = false;
             dgvData.ShowRowErrors = false;
             dgvData.Size = new Size(980, 401);
             dgvData.TabIndex = 1;
             dgvData.CellMouseDown += dgvData_CellMouseDoun;
+            dgvData.CellToolTipTextNeeded += dgvData_CellToolTipTextNeeded;
             // 
             // pnBottomBar
             // 

@@ -2,8 +2,10 @@
 using InventorySalesManagementSystem.Customers;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.InvoiceDTO;
+using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
 using LogicLayer.Global.Users;
+using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
 using LogicLayer.Services.Products;
 using LogicLayer.Validation.Exceptions;
@@ -27,13 +29,23 @@ namespace InventorySalesManagementSystem.Invoices
         private int _SelectedCustomerId = 0;
         private int? _SelectedWorkerId = null;
 
+        private bool _IsEvaluationToSaleMode = false;
+        private List<SoldProductWithProductListDto> _products = null;
+
         public frmAddInvoice(IServiceProvider serviceProvider)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
+            _IsEvaluationToSaleMode = false;
         }
-
-       
+        public frmAddInvoice(IServiceProvider serviceProvider, int CustomerId,List<SoldProductWithProductListDto> products)
+        {
+            InitializeComponent();
+            _serviceProvider = serviceProvider;
+            _IsEvaluationToSaleMode = true;
+            _products = products;
+            _SelectedCustomerId = CustomerId;
+        }
 
 
         private async Task AddInvoice(TakeBatchAddDto takeBatchAdd)
@@ -55,7 +67,7 @@ namespace InventorySalesManagementSystem.Invoices
                     await service.AddInvoiceAsync(new InvoiceAddDto()
                     {
                         CustomerId = _SelectedCustomerId,
-                        InvoiceType = rdSale.Checked? InvoiceType.Sale : InvoiceType.Evaluation,
+                        InvoiceType = rdSale.Checked ? InvoiceType.Sale : InvoiceType.Evaluation,
                         WorkerId = _SelectedWorkerId
                     }
                     ,
@@ -95,9 +107,35 @@ namespace InventorySalesManagementSystem.Invoices
 
 
 
-        private void frmAddInvoice_Load(object sender, EventArgs e)
+        private async void frmAddInvoice_Load(object sender, EventArgs e)
         {
-            ucAddTakeBatch1.Initialize(_serviceProvider);
+            if (_IsEvaluationToSaleMode && (_products == null || _products.Count == 0))
+            {
+                MessageBox.Show("بيانات فاتورة التسعير غير صحيحة", "خطأ");
+            }
+
+
+            if (_IsEvaluationToSaleMode)
+            {
+                ucAddTakeBatch1.Initialize(_serviceProvider, _products);
+
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var customerService = scope.ServiceProvider.GetRequiredService<CustomerService>();
+                    var customer = await customerService.GetCustomerByIdAsync(_SelectedCustomerId);
+                    if (customer == null)
+                    {
+                        MessageBox.Show("العميل المحدد غير موجود", "خطأ");
+                        this.Close();
+                        return;
+                    }
+                    SetEntityDisplay(rtbCustomer, customer.FullName, customer.CustomerId);
+                }
+            }
+            else
+            {
+                ucAddTakeBatch1.Initialize(_serviceProvider);
+            }
         }
 
 
@@ -107,7 +145,7 @@ namespace InventorySalesManagementSystem.Invoices
             this.Close();
         }
 
-        private async void btnSave_Click(object sender, EventArgs e)
+        private async Task SaveInvoiceAsync()
         {
             if (_SelectedCustomerId <= 0)
             {
@@ -126,8 +164,35 @@ namespace InventorySalesManagementSystem.Invoices
                 return;
             }
 
-            await AddInvoice(takeBatch);   
-                            
+            await AddInvoice(takeBatch);
+        }
+        private async void btnSave_Click(object sender, EventArgs e)
+        {
+            btnSave.Enabled = false;
+            Cursor = Cursors.WaitCursor;
+
+            try
+            {
+                await SaveInvoiceAsync();
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+                btnSave.Enabled = true;
+            }
+        }
+
+
+        private void SetEntityDisplay(RichTextBox rtb, string name, int id)
+        {
+            rtb.BackColor = this.BackColor;
+            rtb.Clear();
+
+            rtb.SelectionColor = Color.Black;
+            rtb.AppendText($"{name} ");
+
+            rtb.SelectionColor = Color.DarkRed;
+            rtb.AppendText($"({id})");
         }
 
         private void lkSelectCustomer_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -138,17 +203,7 @@ namespace InventorySalesManagementSystem.Invoices
             {
                 _SelectedCustomerId = frm.SelectedCustomer.CustomerId;
 
-                #region Customer
-                //Prodcut Name
-                rtbCustomer.BackColor = this.BackColor;
-                rtbCustomer.Clear();
-
-                rtbCustomer.SelectionColor = Color.Black;
-                rtbCustomer.AppendText($"{frm.SelectedCustomer.FullName} ");
-
-                rtbCustomer.SelectionColor = Color.DarkRed;
-                rtbCustomer.AppendText($"({frm.SelectedCustomer.CustomerId})");
-                #endregion
+                SetEntityDisplay(rtbCustomer, frm.SelectedCustomer.FullName, frm.SelectedCustomer.CustomerId);
             }
         }
 
@@ -160,17 +215,7 @@ namespace InventorySalesManagementSystem.Invoices
             {
                 _SelectedWorkerId = frm.SelectedWorker.WorkerId;
 
-                #region WorkerName
-                //Prodcut Name
-                rtbWorker.BackColor = this.BackColor;
-                rtbWorker.Clear();
-
-                rtbWorker.SelectionColor = Color.Black;
-                rtbWorker.AppendText($"{frm.SelectedWorker.FullName} ");
-
-                rtbWorker.SelectionColor = Color.DarkRed;
-                rtbWorker.AppendText($"({frm.SelectedWorker.WorkerId})");
-                #endregion
+                SetEntityDisplay(rtbWorker, frm.SelectedWorker.FullName, frm.SelectedWorker.WorkerId);
             }
         }
 
@@ -179,6 +224,11 @@ namespace InventorySalesManagementSystem.Invoices
             _SelectedWorkerId = null;
             rtbWorker.Clear();
             rtbWorker.Text = "----";
+        }
+
+        private void rdEvaluation_CheckedChanged(object sender, EventArgs e)
+        {
+                ucAddTakeBatch1.AllowBathcData = !rdEvaluation.Checked;
         }
     }
 }

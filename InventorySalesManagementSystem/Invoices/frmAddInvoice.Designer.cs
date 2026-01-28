@@ -78,6 +78,7 @@
             rdEvaluation.TabStop = true;
             rdEvaluation.Text = "تسعير";
             rdEvaluation.UseVisualStyleBackColor = true;
+            rdEvaluation.CheckedChanged += rdEvaluation_CheckedChanged;
             // 
             // rdSale
             // 

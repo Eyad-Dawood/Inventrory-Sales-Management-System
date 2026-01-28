@@ -72,6 +72,7 @@
             lkshowCustomer = new LinkLabel();
             panel3 = new Panel();
             ucListView1 = new InventorySalesManagementSystem.UserControles.UcListView();
+            lkInvoiceSummary = new LinkLabel();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
@@ -618,10 +619,22 @@
             ucListView1.Size = new Size(792, 420);
             ucListView1.TabIndex = 98;
             // 
+            // lkInvoiceSummary
+            // 
+            lkInvoiceSummary.AutoSize = true;
+            lkInvoiceSummary.Location = new Point(20, 29);
+            lkInvoiceSummary.Name = "lkInvoiceSummary";
+            lkInvoiceSummary.Size = new Size(48, 15);
+            lkInvoiceSummary.TabIndex = 99;
+            lkInvoiceSummary.TabStop = true;
+            lkInvoiceSummary.Text = "الملخص";
+            lkInvoiceSummary.LinkClicked += lkInvoiceSummary_LinkClicked;
+            // 
             // ucInvoiceDetails
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(lkInvoiceSummary);
             Controls.Add(ucListView1);
             Controls.Add(panel3);
             Controls.Add(panel2);
@@ -687,5 +700,6 @@
         private LinkLabel lkshowCustomer;
         private Panel panel3;
         private InventorySalesManagementSystem.UserControles.UcListView ucListView1;
+        private LinkLabel lkInvoiceSummary;
     }
 }

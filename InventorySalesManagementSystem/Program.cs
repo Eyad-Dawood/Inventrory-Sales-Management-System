@@ -21,6 +21,8 @@ using Serilog.Extensions.Logging;
 using Serilog.Filters;
 using Serilog.Sinks.File;
 using System.CodeDom;
+using System.Globalization;
+using System.Threading;
 
 namespace InventorySalesManagementSystem
 {
@@ -34,6 +36,9 @@ namespace InventorySalesManagementSystem
         {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
+
+            
+
 
             //Logger Creation
             Serilog.Log.Logger = new LoggerConfiguration()

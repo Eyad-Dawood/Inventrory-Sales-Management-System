@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Entities.Invoices;
+﻿using DataAccessLayer.Entities.DTOS;
+using DataAccessLayer.Entities.Invoices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,6 @@ namespace DataAccessLayer.Abstractions.Invoices
         public Task<int> GetTotalPageByWorkerNameAsync(string WorkerName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
         public Task<int> GetTotalPageByCustomerNameAsync(string CustomerName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
 
+        public Task<List<InvoiceProductSummary>> GetInvoiceProductSummaryAsync(int invoiceId);
     }
 }

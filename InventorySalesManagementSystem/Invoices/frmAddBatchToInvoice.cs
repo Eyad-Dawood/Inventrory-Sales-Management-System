@@ -20,12 +20,14 @@ namespace InventorySalesManagementSystem.Invoices
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly int _invoiceId;
+
         public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
             _invoiceId = invoiceId;
         }
+
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -54,11 +56,27 @@ namespace InventorySalesManagementSystem.Invoices
             }
             catch (NotFoundException ex)
             {
-                MessageBox.Show(ex.MainBody, ex.Message);
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (LogicLayer.Validation.Exceptions.ValidationException ex)
+            {
+                MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("حدث خطأ");
+                Serilog.Log.Error(
+                      ex,
+                     "Unexpected error while Saving Batch To Invoice");
+
+                MessageBox.Show(ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
         }
         private void btnSave_Click(object sender, EventArgs e)

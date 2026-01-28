@@ -13,16 +13,20 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 {
     public partial class ucSoldProductCard : UserControl
     {
+        private Color NotAvilabe = Color.DarkRed;
+        private Color ZeroColor = Color.DarkGray;
+
         private string _ProductTypeName { get; set; }
         private string _ProductName { get; set; }
         private decimal _QuantityInStorage { get; set; }
-        private int _ProductId { get; set; }
+        public int ProductId { get; private set; }
         private decimal _PricePerUnit { get; set; }
         public decimal TotalPrice { get
             {
                 return Math.Round(_PricePerUnit * (numericUpDown1.Value), 2);
             }
         }
+        private bool _IsAvailable { get; set; } = true;
         private string _UnitName { get; set; }
 
 
@@ -39,7 +43,63 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         {
             InitializeComponent();
         }
+        #region Ui
+        private void ApplyStateStyle()
+        {
+            if (!_IsAvailable)
+            {
+                ApplyUnavailableStyle();
+            }
+            else if (numericUpDown1.Value == 0)
+            {
+                ApplyZeroStyle();
+            }
+            else
+            {
+                ApplyNormalStyle();
+            }
+        }
 
+        private void ApplyUnavailableStyle()
+        {
+
+            SetTextColor(Color.Gray);
+            SetBackColor(NotAvilabe);
+
+            numericUpDown1.Enabled = false;
+            numericUpDown1.Value = 0;
+        }
+
+        private void ApplyZeroStyle()
+        {
+            SetTextColor(Color.Gray);
+            SetBackColor(ZeroColor);
+            numericUpDown1.Enabled = true;
+        }
+
+        private void ApplyNormalStyle()
+        {
+            SetTextColor(Color.Black);
+            SetBackColor(DefaultBackColor);
+            numericUpDown1.Enabled = true;
+        }
+
+        private void SetTextColor(Color color)
+        {
+            rtbName.ForeColor = color;
+            rtbQuantity.ForeColor = color;
+            rtbPricePerUnit.ForeColor = color;
+            rtbTotal.ForeColor = color;
+        }
+        private void SetBackColor(Color color)
+        {
+            rtbName.BackColor = color;
+            rtbQuantity.BackColor = color;
+            rtbPricePerUnit.BackColor = color;
+            rtbTotal.BackColor = color;
+        }
+
+        #endregion
         public void UpdateUI()
         {
             #region productNameFormat
@@ -97,36 +157,55 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             rtbPricePerUnit.AppendText($"[{_UnitName}]");
             #endregion
 
+            if(!_IsAvailable)
+                ApplyStateStyle();
+            
+
             rtbTotal.Text = Math.Round(_PricePerUnit*(numericUpDown1.Value), 2)
                 .ToString("N2");
-
-            OnQuantityChanged?.Invoke();
         }
 
-        public void LoadData(string productTypeName, string productName, int productId, decimal quantityInStorage , decimal pricePerUnit , string unitName)
+        private void FillData(string productTypeName, string productName, int productId, decimal quantityInStorage, decimal pricePerUnit, string unitName)
         {
             _ProductTypeName = productTypeName;
             _ProductName = productName;
             _QuantityInStorage = quantityInStorage;
-            _ProductId = productId;
+            ProductId = productId;
             _PricePerUnit = pricePerUnit;
             _UnitName = unitName;
-
-            //Update UI
-            UpdateUI();
-
 
             //Validation Conditions
             numericUpDown1.Maximum = quantityInStorage;
 
             this.Enabled = true;
+
+            //New Card Added
+            OnQuantityChanged?.Invoke();
+        }
+        public void LoadData(string productTypeName, string productName, int productId, decimal quantityInStorage , decimal pricePerUnit , string unitName)
+        {
+            FillData(productTypeName, productName, productId, quantityInStorage, pricePerUnit, unitName);
+
+            //Update UI
+            UpdateUI();
+        }
+        public void LoadData(string productTypeName, string productName, int productId, decimal quantityInStorage, decimal pricePerUnit, string unitName , decimal Quantity , bool IsAvilable)
+        {
+            FillData(productTypeName, productName, productId, quantityInStorage, pricePerUnit, unitName);
+
+            numericUpDown1.Value = Quantity;
+            _IsAvailable = IsAvilable;
+
+            //Update UI
+            UpdateUI();
+
         }
 
         public SoldProductAddDto GetSoldProductData()
         {
             return new SoldProductAddDto()
             {
-                ProductId = this._ProductId,
+                ProductId = this.ProductId,
                 Quantity = Math.Round(numericUpDown1.Value, 4),
                 TakeBatchId = -1 // to be set later
             };
@@ -135,7 +214,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         private void btnRemove_Click(object sender, EventArgs e)
         {
             OnRemoveButtonClicked?.Invoke(this);
-            OnQuantityChanged();
+            OnQuantityChanged?.Invoke();
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -144,6 +223,11 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
             rtbTotal.Text = Math.Round(total, 2)
                 .ToString("N2");
+
+            if (numericUpDown1.Value == 0 && _IsAvailable) //WHen its not avilable , it resets to zero , so add this condition so i can see the deffrance
+                ApplyStateStyle();
+            else if (_IsAvailable)
+                ApplyStateStyle();
 
             OnQuantityChanged?.Invoke();
         }

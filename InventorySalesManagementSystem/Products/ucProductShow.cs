@@ -3,6 +3,7 @@ using InventorySalesManagementSystem.General;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.Services;
+using LogicLayer.Services.Invoices;
 using LogicLayer.Services.Products;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
@@ -78,6 +79,8 @@ namespace InventorySalesManagementSystem.Products
             lbProfit.Text = $"{dto.Profit.ToString("N2")}";
 
 
+            lbTotalSales.Text = dto.TotalQuantitySold.ToString("N4");
+
             if (dto.IsAvailable)
             {
                 lbAvilable.Text = "متاح";
@@ -97,10 +100,12 @@ namespace InventorySalesManagementSystem.Products
 
             using (var scope = _serviceProvider.CreateScope())
             {
-                var service = scope.ServiceProvider.GetRequiredService<ProductService>();
+                var productservice = scope.ServiceProvider.GetRequiredService<ProductService>();
+                var soldProductservice = scope.ServiceProvider.GetRequiredService<SoldProductService>();
                 try
                 {
-                    var Product = await service.GetProductByIdAsync(ProductId);
+                    var Product = await productservice.GetProductByIdAsync(ProductId);
+                    Product.TotalQuantitySold = await soldProductservice.GetTotalQuantitySoldByProductIdAsync(ProductId);
                     this.Enabled = true;
                     FillProductData(Product);
 

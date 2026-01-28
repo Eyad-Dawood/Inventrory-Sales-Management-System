@@ -86,7 +86,6 @@
             numericUpDown1.Font = new Font("Segoe UI", 12F);
             numericUpDown1.Location = new Point(449, 3);
             numericUpDown1.Maximum = new decimal(new int[] { 9999999, 0, 0, 0 });
-            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 262144 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(90, 29);
             numericUpDown1.TabIndex = 68;

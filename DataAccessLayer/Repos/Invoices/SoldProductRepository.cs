@@ -112,6 +112,14 @@ namespace DataAccessLayer.Repos.Invoices
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
 
-        
+        public async Task<decimal> GetTotalQuantitySoldByProductIdAsync(int productId)
+        {
+            return await _context.SoldProducts
+                .AsNoTracking()
+                .Where(sp =>
+                    sp.ProductId == productId &&
+                    sp.TakeBatch.Invoice.InvoiceType == InvoiceType.Sale)
+                .SumAsync(sp => (decimal)sp.Quantity);
+        }
     }
 }

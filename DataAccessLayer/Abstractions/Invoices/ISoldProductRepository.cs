@@ -18,5 +18,6 @@ namespace DataAccessLayer.Abstractions.Invoices
         public Task<int> GetTotalPagesByBatchIdAsync(int BatchId, int RowsPerPage);
         public Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage);
 
+        public Task<decimal> GetTotalQuantitySoldByProductIdAsync(int ProductId);
     }
 }

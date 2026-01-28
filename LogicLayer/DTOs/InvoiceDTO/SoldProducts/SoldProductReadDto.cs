@@ -30,12 +30,17 @@ namespace LogicLayer.DTOs.InvoiceDTO.SoldProducts
     {
         public int BatchId { get; set; }
         public string ProductFullName { get; set; }
-
+        [Display(Name = "سعر الوحدة")]
+        public decimal SellingPricePerUnit { get; set; }
+        [Display(Name = "الإجمالي")]
+        public decimal TotalSellingPrice { get; set; }
         [Display(Name ="الكمية")]
         public decimal Quantity { get; set; }
         [Display(Name = "الوحدة")]
         public string UnitName { get; set; }
         [Display(Name = "التاريخ")]
         public DateTime TakeDate { get; set; }
+        [Display(Name = "المستلم")]
+        public string? Reciver { get; set; }
     }
 }

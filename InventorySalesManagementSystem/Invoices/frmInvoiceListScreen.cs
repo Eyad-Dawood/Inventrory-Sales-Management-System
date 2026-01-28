@@ -9,8 +9,11 @@ using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.WorkerDTO;
+using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
+using LogicLayer.Services.Products;
+using LogicLayer.Utilities;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,6 +99,12 @@ namespace InventorySalesManagementSystem.Invoices
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalBuyingPrice)),
                 FillWeight = 20
+                ,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
             // ===== TotalSellingPrice =====
@@ -104,7 +114,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.TotalSellingPrice),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalSellingPrice)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
 
@@ -115,7 +130,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.TotalRefundBuyingPrice),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalRefundBuyingPrice)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
             // ===== TotalRefundSellingPrice =====
@@ -125,7 +145,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.TotalRefundSellingPrice),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalRefundSellingPrice)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
 
@@ -136,7 +161,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.NetBuying),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.NetBuying)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
             // ===== NetSale =====
@@ -146,7 +176,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.NetSale),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.NetSale)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
 
@@ -158,7 +193,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.Additional),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.Additional)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
 
@@ -169,7 +209,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.NetProfit),
                 HeaderText = LogicLayer.Utilities.NamesManager
         .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.NetProfit)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
             // ===== AmountDue =====
@@ -179,7 +224,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.AmountDue),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.AmountDue)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
 
@@ -190,7 +240,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.TotalPaid),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalPaid)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
 
@@ -201,7 +256,12 @@ namespace InventorySalesManagementSystem.Invoices
                 DataPropertyName = nameof(InvoiceListDto.Remaining),
                 HeaderText = LogicLayer.Utilities.NamesManager
                     .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.Remaining)),
-                FillWeight = 20
+                FillWeight = 20,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
             });
 
 
@@ -237,7 +297,7 @@ namespace InventorySalesManagementSystem.Invoices
                     .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.OpenDate)),
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
-                    Format = "yyyy/MM/dd"
+                    Format = "yyyy/MM/dd",
                 },
                 FillWeight = 25
             });
@@ -409,7 +469,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             try
             {
-                var frm = new frmAddBatchToInvoice(_serviceProvider,item.InvoiceId);
+                var frm = new frmAddBatchToInvoice(_serviceProvider, item.InvoiceId);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -426,6 +486,119 @@ namespace InventorySalesManagementSystem.Invoices
                 MessageBox.Show("حدث خطأ");
             }
             ucListView1.RefreshAfterOperation();
+        }
+
+        private async void CloseInvoiceMenustripItem_Click(object sender, EventArgs e)
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item == null)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
+                return;
+            }
+
+            if (MessageBox.Show($"هل أنت متأكد من غلق الفاتورة رقم {item.InvoiceId}",
+                "تأكيد",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            {
+                return;
+            }
+
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<InvoiceService>();
+
+                var userSession = scope.ServiceProvider.GetRequiredService<UserSession>();
+                int userid = userSession.CurrentUser!.UserId;
+
+                try
+                {
+                    await service.CloseInvoiceAsync(item.InvoiceId, userid);
+                }
+                catch (NotFoundException ex)
+                {
+                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Product)));
+                    return;
+                }
+                catch (OperationFailedException ex)
+                {
+                    Serilog.Log.Error(ex.InnerException, "Unexcepected Error During Closing Invoice ");
+                    MessageBox.Show(ex.MainBody, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Error(ex, "Unexcepected Error During Closing Invoice  ");
+                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage());
+                }
+            }
+
+            ucListView1.RefreshAfterOperation();
+        }
+
+        private async void ConvertEvaluationToSaleInvoiceMenuStripItem_Click(object sender, EventArgs e)
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item == null)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
+                return;
+            }
+
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                List<SoldProductWithProductListDto> _products = new List<SoldProductWithProductListDto>();
+
+                try
+                {
+                    var service = scope.ServiceProvider.GetRequiredService<SoldProductService>();
+
+                    _products = await service.GetAllWithProductDetailsByInvoiceIdAsync(item.InvoiceId);
+
+
+                }
+                catch (OperationFailedException ex)
+                {
+                    Serilog.Log.Error(ex.InnerException, "Unexcepected Error During Finding Invoice Sold Products ");
+                    MessageBox.Show(ex.MainBody, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Error(ex, "Unexcepected Error During Finding Invoice Sold Products  ");
+                    MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage());
+                }
+
+                var frm = new frmAddInvoice(_serviceProvider,item.CustomerId,_products);
+                frm.ShowDialog();
+            }           
+
+            ucListView1.RefreshAfterOperation();
+        }
+
+        private void cms_Opening(object sender, CancelEventArgs e)
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item != null)
+            {
+               
+                CloseInvoiceMenustripItem.Enabled = item.InvoiceState == InvoiceState.Open.GetDisplayName();
+
+                ConvertEvaluationToSaleInvoiceMenuStripItem.Enabled =
+                    item.InvoiceType == InvoiceType.Evaluation.GetDisplayName() && item.InvoiceState == InvoiceState.Open.GetDisplayName();
+
+                AddNewBatchMenustripItem.Enabled =
+                    item.InvoiceState == InvoiceState.Open.GetDisplayName();
+            }
+            else
+            {
+                CloseInvoiceMenustripItem.Enabled = false;
+                ConvertEvaluationToSaleInvoiceMenuStripItem.Enabled = false;
+            }
         }
     }
 }

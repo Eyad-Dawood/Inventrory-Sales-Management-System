@@ -27,6 +27,8 @@ namespace LogicLayer.DTOs.InvoiceDTO
         public decimal Additional { get; set; }
 
 
+        public int CustomerId { get; set; }
+
         // صافي البيع الحقيقي
         [Display(Name = "صافي البيع")]
         public decimal NetSale =>

@@ -67,6 +67,30 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 DataGridViewContentAlignment.MiddleCenter;
 
 
+            // ===== Quantity =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductMiniReadDto.Quantity),
+                DataPropertyName = nameof(SoldProductMiniReadDto.Quantity),
+                HeaderText = LogicLayer.Utilities
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.Quantity)),
+                FillWeight = 10,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N4"
+                }
+            });
+
+            // ===== UnitName =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductMiniReadDto.UnitName),
+                DataPropertyName = nameof(SoldProductMiniReadDto.UnitName),
+                HeaderText = LogicLayer.Utilities
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.UnitName)),
+                FillWeight = 20
+            });
 
             // ===== ProductFullName =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -78,13 +102,28 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 FillWeight = 45
             });
 
-            // ===== Quantity =====
+            // ===== PricePerUnit =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductMiniReadDto.Quantity),
-                DataPropertyName = nameof(SoldProductMiniReadDto.Quantity),
+                Name = nameof(SoldProductMiniReadDto.SellingPricePerUnit),
+                DataPropertyName = nameof(SoldProductMiniReadDto.SellingPricePerUnit),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.Quantity)),
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.SellingPricePerUnit)),
+                FillWeight = 10,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N2"
+                }
+            });
+
+            // ===== Total =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductMiniReadDto.TotalSellingPrice),
+                DataPropertyName = nameof(SoldProductMiniReadDto.TotalSellingPrice),
+                HeaderText = LogicLayer.Utilities
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.TotalSellingPrice)),
                 FillWeight = 15,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -93,15 +132,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 }
             });
 
-            // ===== UnitName =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(SoldProductMiniReadDto.UnitName),
-                DataPropertyName = nameof(SoldProductMiniReadDto.UnitName),
-                HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.UnitName)),
-                FillWeight = 15
-            });
 
             // ===== TakeDate =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -110,13 +140,22 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 DataPropertyName = nameof(SoldProductMiniReadDto.TakeDate),
                 HeaderText = LogicLayer.Utilities
                 .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.TakeDate)),
-                FillWeight = 20,
+                FillWeight = 15,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
                     Format = "yyyy/MM/dd"
                 }
             });
 
+            // ===== UnitName =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductMiniReadDto.Reciver),
+                DataPropertyName = nameof(SoldProductMiniReadDto.Reciver),
+                HeaderText = LogicLayer.Utilities
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.Reciver)),
+                FillWeight = 20
+            });
 
         }
         #endregion
@@ -196,7 +235,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             row.DefaultCellStyle.BackColor = color;
         }
 
-        public async Task ShowInvoice(IServiceProvider serviceProvider,int invoiceId)
+        public async Task ShowInvoice(IServiceProvider serviceProvider, int invoiceId)
         {
             _serviceProvider = serviceProvider;
             InvoiceId = invoiceId;
@@ -209,7 +248,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             ucListView1.OnRefreshAfterOperation += HandleOperationFinished;
             ucListView1.DataGridViewControl.RowPrePaint += DataGridView_RowPrePaint;
             // Initial Display
-            _=DisplayPageAsync(1);
+            _ = DisplayPageAsync(1);
 
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -248,7 +287,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             lbNetSale.Text = InvoiceReadDto.NetSale.ToString("N2");
 
             lbCustomer.Text = InvoiceReadDto.CustomerName;
-            lbWorker.Text = InvoiceReadDto.WorkerId==null? "----" : InvoiceReadDto.WorkerName;
+            lbWorker.Text = InvoiceReadDto.WorkerId == null ? "----" : InvoiceReadDto.WorkerName;
             lbInvoicetype.Text = InvoiceReadDto.InvoiceType;
             lbInvoiceState.Text = InvoiceReadDto.InvoiceState;
 
@@ -280,13 +319,24 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         private void lkShowWorker_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (InvoiceReadDto.WorkerId==null||InvoiceReadDto.WorkerId <= 0)
+            if (InvoiceReadDto.WorkerId == null || InvoiceReadDto.WorkerId <= 0)
             {
                 MessageBox.Show("لا يوجد عامل مرتبط بهذه الفاتورة", "معلومات", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             var frm = new frmShowWorker(_serviceProvider, (int)InvoiceReadDto.WorkerId);
+            frm.ShowDialog();
+        }
+
+        private void lkInvoiceSummary_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if(InvoiceId <= 0)
+            {
+                MessageBox.Show("رقم الفاتورة غير صحيح", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var frm = new frmInvoiceProductSummary(_serviceProvider, InvoiceId);
             frm.ShowDialog();
         }
     }

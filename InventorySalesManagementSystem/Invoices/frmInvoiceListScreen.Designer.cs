@@ -30,8 +30,12 @@
         {
             components = new System.ComponentModel.Container();
             cms = new ContextMenuStrip(components);
-            AddNewBatchMenustripItem = new ToolStripMenuItem();
             ShowMenustripItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            AddNewBatchMenustripItem = new ToolStripMenuItem();
+            CloseInvoiceMenustripItem = new ToolStripMenuItem();
+            spEvalucation = new ToolStripSeparator();
+            ConvertEvaluationToSaleInvoiceMenuStripItem = new ToolStripMenuItem();
             gpCraft = new GroupBox();
             chkOpen = new CheckBox();
             chkClose = new CheckBox();
@@ -47,25 +51,24 @@
             // 
             ucListView1.AllowCancelButton = false;
             ucListView1.AllowEmptyFilter = true;
+            ucListView1.Size = new Size(1584, 526);
+            // 
+            // btnSelect
+            // 
+            btnSelect.Location = new Point(1504, 0);
+            // 
+            // lbTitle
+            // 
+            lbTitle.Size = new Size(1584, 95);
             // 
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
-            cms.Items.AddRange(new ToolStripItem[] { AddNewBatchMenustripItem, ShowMenustripItem });
+            cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, ConvertEvaluationToSaleInvoiceMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(199, 64);
-            // 
-            // AddNewBatchMenustripItem
-            // 
-            AddNewBatchMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            AddNewBatchMenustripItem.Image = Properties.Resources.ShowDetailsIcon;
-            AddNewBatchMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
-            AddNewBatchMenustripItem.Name = "AddNewBatchMenustripItem";
-            AddNewBatchMenustripItem.RightToLeft = RightToLeft.Yes;
-            AddNewBatchMenustripItem.Size = new Size(198, 30);
-            AddNewBatchMenustripItem.Text = "إضافة عملية شراء";
-            AddNewBatchMenustripItem.Click += AddNewBatchMenuStripItem_Click;
+            cms.Size = new Size(217, 136);
+            cms.Opening += cms_Opening;
             // 
             // ShowMenustripItem
             // 
@@ -74,9 +77,50 @@
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
-            ShowMenustripItem.Size = new Size(198, 30);
+            ShowMenustripItem.Size = new Size(216, 30);
             ShowMenustripItem.Text = "عرض البيانات";
             ShowMenustripItem.Click += ShowMenustripItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(213, 6);
+            // 
+            // AddNewBatchMenustripItem
+            // 
+            AddNewBatchMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            AddNewBatchMenustripItem.Image = Properties.Resources.addIcon;
+            AddNewBatchMenustripItem.Name = "AddNewBatchMenustripItem";
+            AddNewBatchMenustripItem.RightToLeft = RightToLeft.Yes;
+            AddNewBatchMenustripItem.Size = new Size(216, 30);
+            AddNewBatchMenustripItem.Text = "إضافة عملية شراء";
+            AddNewBatchMenustripItem.Click += AddNewBatchMenuStripItem_Click;
+            // 
+            // CloseInvoiceMenustripItem
+            // 
+            CloseInvoiceMenustripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            CloseInvoiceMenustripItem.Image = Properties.Resources.ActiovationButton;
+            CloseInvoiceMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
+            CloseInvoiceMenustripItem.Name = "CloseInvoiceMenustripItem";
+            CloseInvoiceMenustripItem.RightToLeft = RightToLeft.Yes;
+            CloseInvoiceMenustripItem.Size = new Size(216, 30);
+            CloseInvoiceMenustripItem.Text = "إغلاق الفاتورة";
+            CloseInvoiceMenustripItem.Click += CloseInvoiceMenustripItem_Click;
+            // 
+            // spEvalucation
+            // 
+            spEvalucation.Name = "spEvalucation";
+            spEvalucation.Size = new Size(213, 6);
+            // 
+            // ConvertEvaluationToSaleInvoiceMenuStripItem
+            // 
+            ConvertEvaluationToSaleInvoiceMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            ConvertEvaluationToSaleInvoiceMenuStripItem.Image = Properties.Resources.BuyingIcon;
+            ConvertEvaluationToSaleInvoiceMenuStripItem.Name = "ConvertEvaluationToSaleInvoiceMenuStripItem";
+            ConvertEvaluationToSaleInvoiceMenuStripItem.RightToLeft = RightToLeft.Yes;
+            ConvertEvaluationToSaleInvoiceMenuStripItem.Size = new Size(216, 30);
+            ConvertEvaluationToSaleInvoiceMenuStripItem.Text = "تحويل إلى فاتورة بيع";
+            ConvertEvaluationToSaleInvoiceMenuStripItem.Click += ConvertEvaluationToSaleInvoiceMenuStripItem_Click;
             // 
             // gpCraft
             // 
@@ -84,7 +128,7 @@
             gpCraft.Controls.Add(chkOpen);
             gpCraft.Controls.Add(chkClose);
             gpCraft.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            gpCraft.Location = new Point(538, 128);
+            gpCraft.Location = new Point(908, 128);
             gpCraft.Name = "gpCraft";
             gpCraft.RightToLeft = RightToLeft.Yes;
             gpCraft.Size = new Size(143, 40);
@@ -119,7 +163,7 @@
             groupBox1.Controls.Add(chkSell);
             groupBox1.Controls.Add(chkEvaluation);
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(404, 128);
+            groupBox1.Location = new Point(774, 128);
             groupBox1.Name = "groupBox1";
             groupBox1.RightToLeft = RightToLeft.Yes;
             groupBox1.Size = new Size(132, 40);
@@ -152,10 +196,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1214, 661);
+            ClientSize = new Size(1584, 661);
             Controls.Add(groupBox1);
             Controls.Add(gpCraft);
-            MinimumSize = new Size(900, 700);
+            MinimumSize = new Size(1278, 700);
             Name = "frmInvoiceListScreen";
             Controls.SetChildIndex(ucListView1, 0);
             Controls.SetChildIndex(gpCraft, 0);
@@ -179,5 +223,9 @@
         private CheckBox chkSell;
         private CheckBox chkEvaluation;
         private ToolStripMenuItem AddNewBatchMenustripItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem CloseInvoiceMenustripItem;
+        private ToolStripSeparator spEvalucation;
+        private ToolStripMenuItem ConvertEvaluationToSaleInvoiceMenuStripItem;
     }
 }

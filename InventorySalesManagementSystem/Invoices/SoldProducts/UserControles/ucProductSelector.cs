@@ -1,7 +1,10 @@
 ﻿using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Products;
 using InventorySalesManagementSystem.UserControles;
+using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
+using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.Services.Products;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +49,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         {
             return flwpSoldProducts.Controls
                 .OfType<ucSoldProductCard>()
-                .Any(c => c.GetSoldProductData().ProductId == productId);
+                .Any(c => c.ProductId == productId);
         }
 
         private void OnRemoveButtonClicked(ucSoldProductCard obj)
@@ -61,7 +64,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
             lbTotal.Text = $"{flwpSoldProducts.Controls.OfType<ucSoldProductCard>().Sum(c => c.TotalPrice):N2}";
         }
-        private void AddSoldProductCard(ProductListDto product)
+        private ucSoldProductCard AddCard()
         {
             ucSoldProductCard ucSoldProductCard = new ucSoldProductCard();
 
@@ -77,10 +80,21 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             //This Order , So Total is calculated after adding the control
             flwpSoldProducts.Controls.Add(ucSoldProductCard);
 
-
-            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPrice, product.MesurementUnitName);
-
+            return ucSoldProductCard;
         }
+        private void AddSoldProductCard(ProductListDto product)
+        {
+            ucSoldProductCard ucSoldProductCard = AddCard();
+            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPrice, product.MesurementUnitName);
+        }
+        private void AddSoldProductCard(SoldProductWithProductListDto product)
+        {
+            ucSoldProductCard ucSoldProductCard = AddCard();
+            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPricePerUnit, product.UnitName,product.Quantity,product.IsAvilable);
+        }
+
+
+
         public void Initialize(IServiceProvider serviceProvider)
         {
 
@@ -99,6 +113,15 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         }
 
+        public void Initialize(IServiceProvider serviceProvider,List<SoldProductWithProductListDto> products)
+        {
+            Initialize(serviceProvider);
+
+            foreach (var item in products)
+            {
+                AddSoldProductCard(item);
+            }
+        }
 
 
         #region Configure
@@ -301,6 +324,11 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 return;
             }
 
+            if(selectedProduct.QuantityInStorage <= 0)
+            {
+                MessageBox.Show("هذا المنتج منتهي من المخزون", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             AddSoldProductCard(selectedProduct);
             txtSearchValue1.Clear();

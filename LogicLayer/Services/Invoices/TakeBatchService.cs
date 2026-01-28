@@ -59,7 +59,8 @@ namespace LogicLayer.Services.Invoices
         private async Task<TakeBatch> CreateTakeBatchAggregateInternalAsync(
     TakeBatchAddDto dto,
     int userId,
-    InvoiceType invoiceType)
+    InvoiceType invoiceType
+            ,int CustomerId)
         {
             var takeBatch = MapTakeBatch_AddDto(dto, userId);
 
@@ -67,7 +68,8 @@ namespace LogicLayer.Services.Invoices
             ValidationHelper.ValidateEntity(takeBatch);
 
             var soldProducts = await _SoldProductService
-                .PrepareSoldProductsAsync(dto.SoldProductAddDtos, userId, invoiceType);
+                .PrepareSoldProductsAsync(dto.SoldProductAddDtos, userId, invoiceType, CustomerId);
+
 
             //Link Sold Products to Take Batch So EF can add them together
             soldProducts.ForEach(sp => sp.TakeBatch = takeBatch);
@@ -80,19 +82,21 @@ namespace LogicLayer.Services.Invoices
         public async Task<TakeBatch> CreateTakeBatchAggregateAsync(
     TakeBatchAddDto dto,
     int userId,
-    InvoiceType invoiceType)
+    InvoiceType invoiceType
+            , int CustomerId)
         {
-            return await CreateTakeBatchAggregateInternalAsync(dto, userId, invoiceType);
+            return await CreateTakeBatchAggregateInternalAsync(dto, userId, invoiceType, CustomerId);
         }
 
         public async Task<TakeBatch> CreateTakeBatchAggregateAsync(
     TakeBatchAddDto dto,
-    int userId)
+    int userId,
+    int CustomerId)
         {
             var invoiceType =
                 await _InoviceServicehelper.GetInvoiceTypeByIdAsync(dto.InvoiceId);
 
-            return await CreateTakeBatchAggregateInternalAsync(dto, userId, invoiceType);
+            return await CreateTakeBatchAggregateInternalAsync(dto, userId, invoiceType, CustomerId);
         }
 
 
@@ -103,13 +107,13 @@ namespace LogicLayer.Services.Invoices
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public async Task AddTakeBatchAsync(TakeBatchAddDto dto, int userId)
+        public async Task AddTakeBatchAsync(TakeBatchAddDto dto, int userId, int CustomerId)
         {
             using (var Transaction = await _unitOfWork.BeginTransactionAsync())
             {
                 try
                 {
-                    var TakeBatch = await CreateTakeBatchAggregateAsync(dto, userId);
+                    var TakeBatch = await CreateTakeBatchAggregateAsync(dto, userId, CustomerId);
 
                     await _takeBathcRepo.AddAsync(TakeBatch);
 

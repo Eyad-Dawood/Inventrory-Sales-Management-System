@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.DTOS;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Payments;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +53,7 @@ namespace DataAccessLayer.Repos.Invoices
         {
             IQueryable<Invoice> query = InvoiceWithDetails();
 
-            query = ApplyFilter(query,InvoiceType,InvoiceState);
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
 
             return
                 await query
@@ -214,5 +215,27 @@ namespace DataAccessLayer.Repos.Invoices
 
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
+
+        public async Task<List<InvoiceProductSummary>> GetInvoiceProductSummaryAsync(int invoiceId)
+        {
+            return await _context.SoldProducts
+                .Where(sp => sp.TakeBatch.Invoice.InvoiceId == invoiceId)
+                .GroupBy(sp => new
+                {
+                    sp.ProductId,
+                    sp.Product.ProductName,
+                    sp.Product.ProductType.ProductTypeName
+                })
+                .Select(g => new InvoiceProductSummary
+                {
+                    ProductId = g.Key.ProductId,
+                    ProductFullName = $"{g.Key.ProductTypeName} [{g.Key.ProductName}]",
+                    TotalQuantity = g.Sum(x => x.Quantity),
+                    TotalBuyingPrice = g.Sum(x => x.Quantity * x.BuyingPricePerUnit),
+                    TotalSellingPrice = g.Sum(x => x.Quantity * x.SellingPricePerUnit)
+                })
+                .ToListAsync();
+        }
+
     }
 }

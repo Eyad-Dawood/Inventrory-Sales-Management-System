@@ -99,7 +99,7 @@ namespace InventorySalesManagementSystem.UserControles
                 btnCancelFilter.Visible = _allowCancelButton;
             }
         }
-        
+
 
         #endregion
 
@@ -502,6 +502,14 @@ namespace InventorySalesManagementSystem.UserControles
             dtpLogDate.MaxDate = DateTime.Now;
         }
 
-        
+        private void dgvData_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                var cellValue = dgvData.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                if (cellValue != null)
+                    e.ToolTipText = cellValue.ToString();
+            }
+        }
     }
 }

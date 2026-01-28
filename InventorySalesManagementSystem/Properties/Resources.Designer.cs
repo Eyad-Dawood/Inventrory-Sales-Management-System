@@ -83,6 +83,16 @@ namespace InventorySalesManagementSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BuyingIcon {
+            get {
+                object obj = ResourceManager.GetObject("BuyingIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CancelIcon {
             get {
                 object obj = ResourceManager.GetObject("CancelIcon", resourceCulture);

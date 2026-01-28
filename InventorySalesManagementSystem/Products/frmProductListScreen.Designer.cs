@@ -46,7 +46,7 @@
             cms.Items.AddRange(new ToolStripItem[] { updateMenustripItem, deleteMenustripItem, ShowMenustripItem, toolStripSeparator1, AddQuantityMenustripItem, WithdrawMenustripItem, changeIsAvilableStateMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(189, 212);
+            cms.Size = new Size(188, 190);
             // 
             // updateMenustripItem
             // 
@@ -56,7 +56,7 @@
             updateMenustripItem.Name = "updateMenustripItem";
             updateMenustripItem.RightToLeft = RightToLeft.Yes;
             updateMenustripItem.ShortcutKeyDisplayString = "";
-            updateMenustripItem.Size = new Size(188, 30);
+            updateMenustripItem.Size = new Size(187, 30);
             updateMenustripItem.Tag = "";
             updateMenustripItem.Text = "تعديل البيانات";
             updateMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
@@ -69,7 +69,7 @@
             deleteMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             deleteMenustripItem.Name = "deleteMenustripItem";
             deleteMenustripItem.RightToLeft = RightToLeft.Yes;
-            deleteMenustripItem.Size = new Size(188, 30);
+            deleteMenustripItem.Size = new Size(187, 30);
             deleteMenustripItem.Text = "حذف البيانات";
             deleteMenustripItem.Click += deleteMenustripItem_Click;
             // 
@@ -80,14 +80,14 @@
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
-            ShowMenustripItem.Size = new Size(188, 30);
+            ShowMenustripItem.Size = new Size(187, 30);
             ShowMenustripItem.Text = "عرض البيانات";
             ShowMenustripItem.Click += ShowMenustripItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(185, 6);
+            toolStripSeparator1.Size = new Size(184, 6);
             // 
             // AddQuantityMenustripItem
             // 
@@ -97,7 +97,7 @@
             AddQuantityMenustripItem.Name = "AddQuantityMenustripItem";
             AddQuantityMenustripItem.RightToLeft = RightToLeft.Yes;
             AddQuantityMenustripItem.ShortcutKeyDisplayString = "";
-            AddQuantityMenustripItem.Size = new Size(188, 30);
+            AddQuantityMenustripItem.Size = new Size(187, 30);
             AddQuantityMenustripItem.Tag = "";
             AddQuantityMenustripItem.Text = "إضافة كمية";
             AddQuantityMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
@@ -111,7 +111,7 @@
             WithdrawMenustripItem.Name = "WithdrawMenustripItem";
             WithdrawMenustripItem.RightToLeft = RightToLeft.Yes;
             WithdrawMenustripItem.ShortcutKeyDisplayString = "";
-            WithdrawMenustripItem.Size = new Size(188, 30);
+            WithdrawMenustripItem.Size = new Size(187, 30);
             WithdrawMenustripItem.Tag = "";
             WithdrawMenustripItem.Text = "سحب كمية";
             WithdrawMenustripItem.TextDirection = ToolStripTextDirection.Horizontal;
@@ -125,7 +125,7 @@
             changeIsAvilableStateMenuStripItem.Name = "changeIsAvilableStateMenuStripItem";
             changeIsAvilableStateMenuStripItem.RightToLeft = RightToLeft.Yes;
             changeIsAvilableStateMenuStripItem.ShortcutKeyDisplayString = "";
-            changeIsAvilableStateMenuStripItem.Size = new Size(188, 30);
+            changeIsAvilableStateMenuStripItem.Size = new Size(187, 30);
             changeIsAvilableStateMenuStripItem.Tag = "";
             changeIsAvilableStateMenuStripItem.Text = "تغيير حالة المنتج";
             changeIsAvilableStateMenuStripItem.TextDirection = ToolStripTextDirection.Horizontal;
