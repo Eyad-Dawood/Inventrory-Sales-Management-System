@@ -1,7 +1,9 @@
 ﻿using DataAccessLayer.Entities.Invoices;
+using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
 using LogicLayer.Global.Users;
 using LogicLayer.Services.Invoices;
+using LogicLayer.Services.Products;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -21,12 +23,14 @@ namespace InventorySalesManagementSystem.Invoices
         private readonly IServiceProvider _serviceProvider;
         private readonly int _invoiceId;
 
-        public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId)
+        public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId , TakeBatchType takeBatchType)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
             _invoiceId = invoiceId;
+            ucAddTakeBatch1.takeBatchType = takeBatchType;
         }
+
 
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -50,7 +54,9 @@ namespace InventorySalesManagementSystem.Invoices
                         takeBatch
                          , UserId);
 
-                    MessageBox.Show("تم إضافة العملية بنجاح.", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    string op = takeBatch.TakeBatchType == TakeBatchType.Invoice ? "عملية الشراء" : "المرتجع";
+
+                    MessageBox.Show($"تم إضافة {op} بنجاح.", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Close();
                 }
             }
@@ -81,24 +87,86 @@ namespace InventorySalesManagementSystem.Invoices
         }
         private void btnSave_Click(object sender, EventArgs e)
         {
-            var takeBatch = ucAddTakeBatch1.GetTakeBatch();
-
-            if (takeBatch.SoldProductAddDtos == null ||
-                !takeBatch.SoldProductAddDtos.Any())
+            try
             {
-                MessageBox.Show("لا توجد منتجات في الفاتورة", "تنبيه",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                btnSave.Enabled = false;
+                Cursor = Cursors.WaitCursor;
+
+                var takeBatch = ucAddTakeBatch1.GetTakeBatch();
+
+                if (takeBatch.SoldProductAddDtos == null ||
+                    !takeBatch.SoldProductAddDtos.Any())
+                {
+                    MessageBox.Show("لا توجد منتجات في الفاتورة", "تنبيه",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                _ = AddBatch(takeBatch);
             }
-
-            _ = AddBatch(takeBatch);
+            finally
+            {
+                Cursor = Cursors.Default;
+                btnSave.Enabled = true;
+            }
         }
 
-        private void frmAddBatchToInvoice_Load(object sender, EventArgs e)
+        private async void frmAddBatchToInvoice_Load(object sender, EventArgs e)
         {
-            //Load
-            ucAddTakeBatch1.Initialize(_serviceProvider);
-            _ = ucInvoiceDetails1.ShowInvoice(_serviceProvider, _invoiceId);
+           await LoadFormAsync();
         }
+        private async Task LoadFormAsync()
+        {
+              await ucInvoiceDetails1.ShowInvoice(_serviceProvider, _invoiceId);
+
+            if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Invoice)
+            {
+                ucAddTakeBatch1.Initialize(_serviceProvider);
+            }
+            else if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Refund)
+
+            {
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var invoiceService = scope.ServiceProvider.GetRequiredService<InvoiceService>();
+                    var productService = scope.ServiceProvider.GetRequiredService<ProductService>();
+
+                    var productsSummary =
+                        await invoiceService.GetInvoiceProductSummaryAsync(_invoiceId);
+
+                    var summaryDict = productsSummary
+                        .ToDictionary(p => p.ProductId);
+
+                    var products =
+                        await productService.GetProductsByIdsAsync(summaryDict.Keys.ToList());
+
+                    var productListDtos = new List<SoldProductWithProductListDto>();
+
+                    foreach (var item in products)
+                    {
+                        if (!summaryDict.TryGetValue(item.ProductId, out var summary))
+                            continue;
+
+                        if (summary.NetSellingQuantity <= 0)
+                            continue;
+
+                        productListDtos.Add(new SoldProductWithProductListDto
+                        {
+                            ProductId = item.ProductId,
+                            IsAvilable = item.IsAvailable,
+                            ProductName = item.ProductName,
+                            ProductTypeName = item.ProductType.ProductTypeName,
+                            QuantityInStorage = summary.NetSellingQuantity, // Maximum refundable quantity
+                            Quantity = 0,
+                            SellingPricePerUnit = item.SellingPrice,
+                            UnitName = item.MasurementUnit.UnitName,
+                            SoldProductId = -1
+                        });
+                    }
+                    ucAddTakeBatch1.Initialize(_serviceProvider, productListDtos);
+                }
+            }
+        }
+        
     }
 }

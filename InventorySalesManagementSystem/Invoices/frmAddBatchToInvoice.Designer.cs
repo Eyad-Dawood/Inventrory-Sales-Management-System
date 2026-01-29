@@ -42,7 +42,7 @@
             ucInvoiceDetails1.Location = new Point(75, 61);
             ucInvoiceDetails1.Name = "ucInvoiceDetails1";
             ucInvoiceDetails1.Size = new Size(1528, 443);
-            ucInvoiceDetails1.TabIndex = 0;
+            ucInvoiceDetails1.TabIndex = 5;
             // 
             // lbTitle
             // 
@@ -65,7 +65,7 @@
             ucAddTakeBatch1.Name = "ucAddTakeBatch1";
             ucAddTakeBatch1.ShowInvoiceDetails = false;
             ucAddTakeBatch1.Size = new Size(1402, 520);
-            ucAddTakeBatch1.TabIndex = 51;
+            ucAddTakeBatch1.TabIndex = 1;
             // 
             // btnCancel
             // 
@@ -75,7 +75,7 @@
             btnCancel.Location = new Point(1630, 1012);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(96, 30);
-            btnCancel.TabIndex = 59;
+            btnCancel.TabIndex = 3;
             btnCancel.Text = "إلغاء";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
@@ -88,7 +88,7 @@
             btnSave.Location = new Point(1630, 976);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(96, 30);
-            btnSave.TabIndex = 58;
+            btnSave.TabIndex = 2;
             btnSave.Text = "حفظ";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;

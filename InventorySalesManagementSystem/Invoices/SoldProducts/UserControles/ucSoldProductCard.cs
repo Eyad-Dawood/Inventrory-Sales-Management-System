@@ -26,7 +26,16 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 return Math.Round(_PricePerUnit * (numericUpDown1.Value), 2);
             }
         }
-        private bool _IsAvailable { get; set; } = true;
+        public decimal Quantity
+        {
+            get
+            {
+                return numericUpDown1.Value;
+            }
+        }
+
+
+        public bool IsAvailable { get;private set; } = true;
         private string _UnitName { get; set; }
 
 
@@ -46,7 +55,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         #region Ui
         private void ApplyStateStyle()
         {
-            if (!_IsAvailable)
+            if (!IsAvailable)
             {
                 ApplyUnavailableStyle();
             }
@@ -93,14 +102,25 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         }
         private void SetBackColor(Color color)
         {
-            rtbName.BackColor = color;
-            rtbQuantity.BackColor = color;
-            rtbPricePerUnit.BackColor = color;
-            rtbTotal.BackColor = color;
+            if (color == DefaultBackColor)
+            {
+                DisplayProductName();
+                DisplayQuantityInStorage();
+                DisplayPricePerUnit();
+                rtbTotal.BackColor = Color.Black;
+            }
+            else
+            {
+                rtbName.BackColor = color;
+                rtbQuantity.BackColor = color;
+                rtbPricePerUnit.BackColor = color;
+                rtbTotal.BackColor = color;
+            }
         }
 
         #endregion
-        public void UpdateUI()
+
+        private void DisplayProductName()
         {
             #region productNameFormat
             //Product Name
@@ -113,7 +133,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             rtbName.SelectionColor = Color.DarkRed;
             rtbName.AppendText($"[{_ProductName}]");
             #endregion
+        }
 
+        private void DisplayQuantityInStorage()
+        {
             #region QuantityFormat
             // Quantity
             rtbQuantity.BackColor = this.BackColor;
@@ -136,7 +159,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             rtbQuantity.SelectionColor = Color.DarkRed;
             rtbQuantity.AppendText("." + parts[1]);
             #endregion
+        }
 
+        private void DisplayPricePerUnit()
+        {
             #region PricePerUnit 
             rtbPricePerUnit.BackColor = this.BackColor;
             rtbPricePerUnit.Clear();
@@ -156,10 +182,16 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
             rtbPricePerUnit.AppendText($"[{_UnitName}]");
             #endregion
+        }
 
-            if(!_IsAvailable)
-                ApplyStateStyle();
-            
+        public void UpdateUI()
+        {
+            DisplayProductName();
+            DisplayQuantityInStorage();
+            DisplayPricePerUnit();
+
+            ApplyStateStyle();
+
 
             rtbTotal.Text = Math.Round(_PricePerUnit*(numericUpDown1.Value), 2)
                 .ToString("N2");
@@ -184,6 +216,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         }
         public void LoadData(string productTypeName, string productName, int productId, decimal quantityInStorage , decimal pricePerUnit , string unitName)
         {
+            
             FillData(productTypeName, productName, productId, quantityInStorage, pricePerUnit, unitName);
 
             //Update UI
@@ -194,7 +227,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             FillData(productTypeName, productName, productId, quantityInStorage, pricePerUnit, unitName);
 
             numericUpDown1.Value = Quantity;
-            _IsAvailable = IsAvilable;
+            IsAvailable = IsAvilable;
 
             //Update UI
             UpdateUI();
@@ -224,10 +257,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             rtbTotal.Text = Math.Round(total, 2)
                 .ToString("N2");
 
-            if (numericUpDown1.Value == 0 && _IsAvailable) //WHen its not avilable , it resets to zero , so add this condition so i can see the deffrance
-                ApplyStateStyle();
-            else if (_IsAvailable)
-                ApplyStateStyle();
+            ApplyStateStyle();
 
             OnQuantityChanged?.Invoke();
         }

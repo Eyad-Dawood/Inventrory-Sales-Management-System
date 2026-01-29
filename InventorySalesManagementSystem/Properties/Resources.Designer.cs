@@ -111,6 +111,16 @@ namespace InventorySalesManagementSystem.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap clean {
+            get {
+                object obj = ResourceManager.GetObject("clean", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to جنيها.
         /// </summary>
         internal static string CurrencyName {
@@ -165,6 +175,16 @@ namespace InventorySalesManagementSystem.Properties {
         internal static System.Drawing.Bitmap minus__1_ {
             get {
                 object obj = ResourceManager.GetObject("minus (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Refund {
+            get {
+                object obj = ResourceManager.GetObject("Refund", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

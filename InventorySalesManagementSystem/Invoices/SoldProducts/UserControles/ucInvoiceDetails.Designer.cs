@@ -73,6 +73,7 @@
             panel3 = new Panel();
             ucListView1 = new InventorySalesManagementSystem.UserControles.UcListView();
             lkInvoiceSummary = new LinkLabel();
+            linkLabel1 = new LinkLabel();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
@@ -630,10 +631,22 @@
             lkInvoiceSummary.Text = "الملخص";
             lkInvoiceSummary.LinkClicked += lkInvoiceSummary_LinkClicked;
             // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.Location = new Point(77, 29);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(57, 15);
+            linkLabel1.TabIndex = 100;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "المرتجعات";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            // 
             // ucInvoiceDetails
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(linkLabel1);
             Controls.Add(lkInvoiceSummary);
             Controls.Add(ucListView1);
             Controls.Add(panel3);
@@ -701,5 +714,6 @@
         private Panel panel3;
         private InventorySalesManagementSystem.UserControles.UcListView ucListView1;
         private LinkLabel lkInvoiceSummary;
+        private LinkLabel linkLabel1;
     }
 }

@@ -23,7 +23,6 @@ namespace DataAccessLayer
         public DbSet<TakeBatch> TakeBatches { get; set; }
         public DbSet<SoldProduct> SoldProducts { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<Refund> Refunds { get; set; }
 
 
         public InventoryDbContext(
@@ -104,6 +103,8 @@ namespace DataAccessLayer
             modelBuilder.Entity<TakeBatch>()
                 .HasIndex(t => t.InvoiceId);
 
+            modelBuilder.Entity<TakeBatch>()
+            .HasIndex(t => t.TakeBatchType);
 
 
             //Sold Product
@@ -124,15 +125,6 @@ namespace DataAccessLayer
                 .HasIndex(p => p.CustomerId);
             modelBuilder.Entity<Payment>()
                 .HasIndex(p => p.PaymentReason);
-
-            //Refunds
-
-            //For Faster Search
-            modelBuilder.Entity<Refund>()
-                .HasIndex(r => r.InvoiceId);
-            modelBuilder.Entity<Refund>()
-                .HasIndex(r => r.ProductId);
-
 
 
 

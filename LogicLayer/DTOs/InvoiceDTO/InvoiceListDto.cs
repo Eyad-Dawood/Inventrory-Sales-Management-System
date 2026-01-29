@@ -28,6 +28,7 @@ namespace LogicLayer.DTOs.InvoiceDTO
 
 
         public int CustomerId { get; set; }
+        public int ? WorkerId { get; set; }
 
         // صافي البيع الحقيقي
         [Display(Name = "صافي البيع")]

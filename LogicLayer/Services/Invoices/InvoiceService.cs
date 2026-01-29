@@ -7,6 +7,7 @@ using DataAccessLayer.Repos;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.General;
+using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
 using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Utilities;
@@ -39,23 +40,23 @@ namespace LogicLayer.Services.Invoices
         }
 
         #region Map
-        public InvoiceProductSummaryDto MapInvoiceProductSummary_Dto(InvoiceProductSummary Summary)
+        private InvoiceProductSummaryDto MapInvoiceProductSummary_Dto(InvoiceProductSummary Summary)
         {
             return new InvoiceProductSummaryDto()
             {
                 ProductId = Summary.ProductId,
                 ProductFullName = Summary.ProductFullName,
-                TotalBuyingPrice = Summary.TotalBuyingPrice,
-                TotalQuantity = Summary.TotalQuantity,
-                TotalSellingPrice = Summary.TotalSellingPrice,
-                AvrageBuyingPrice = Summary.TotalQuantity != 0 ? Summary.TotalBuyingPrice / Summary.TotalQuantity : 0,
-                AvrageSellingPrice = Summary.TotalQuantity != 0 ? Summary.TotalSellingPrice / Summary.TotalQuantity : 0,
+                NetBuyingPrice = Summary.NetBuyingPrice,
+                TotalSellingQuantity = Summary.TotalSellingQuantity,
+                NetSellingPrice = Summary.NetSellingPrice,
+                RefundQuanttiy = Summary.RefundQuanttiy,
+                AvrageBuyingPrice = Summary.TotalSellingQuantity != 0 ? Summary.NetBuyingPrice / Summary.TotalSellingQuantity : 0,
+                AvrageSellingPrice = Summary.TotalSellingQuantity != 0 ? Summary.NetSellingPrice / Summary.TotalSellingQuantity : 0,
+                
             };
         }
         public void MapAddDefaltAndNullValues(Invoice Invoice)
         {
-            //OpenDate Is In The Sql Defulat Now()
-
 
             Invoice.CloseDate = null;
 
@@ -133,6 +134,19 @@ namespace LogicLayer.Services.Invoices
                 TotalRefundBuyingPrice = invoice.TotalRefundBuyingPrice,
                 TotalRefundSellingPrice = invoice.TotalRefundSellingPrice,
                 CustomerId = invoice.CustomerId,
+                WorkerId = invoice.WorkerId,
+            };
+        }
+
+        public SoldProductRefundListDto MapInvoiceProductRefundSummary_Dto(SoldProductRefund invoice)
+        {
+            return new SoldProductRefundListDto()
+            {
+                NetRefundBuyingPrice = invoice.NetRefundBuyingPrice,
+                NetRefundSellingPrice = invoice.NetRefundSellingPrice,
+                ProductFullName = invoice.ProductFullName,
+                ProductId = invoice.ProductId,
+                TotalRefundSellingQuantity = invoice.TotalRefundSellingQuantity
             };
         }
         #endregion
@@ -164,8 +178,16 @@ namespace LogicLayer.Services.Invoices
 
         private void CalculateInvoiceFinance(Invoice Invoice,TakeBatch Batch)
         {
-            Invoice.TotalSellingPrice += Batch.SoldProducts.Sum(sp => sp.SellingPricePerUnit * sp.Quantity);
-            Invoice.TotalBuyingPrice += Batch.SoldProducts.Sum(sp => sp.BuyingPricePerUnit * sp.Quantity);
+            if(Batch.TakeBatchType == TakeBatchType.Invoice)
+            {
+                Invoice.TotalSellingPrice += Batch.SoldProducts.Sum(sp => sp.SellingPricePerUnit * sp.Quantity);
+                Invoice.TotalBuyingPrice += Batch.SoldProducts.Sum(sp => sp.BuyingPricePerUnit * sp.Quantity);
+            }
+            else if(Batch.TakeBatchType == TakeBatchType.Refund)
+            {
+                Invoice.TotalRefundSellingPrice += Batch.SoldProducts.Sum(sp => sp.SellingPricePerUnit * sp.Quantity);
+                Invoice.TotalRefundBuyingPrice += Batch.SoldProducts.Sum(sp => sp.BuyingPricePerUnit * sp.Quantity);
+            }
         }
 
 
@@ -395,5 +417,13 @@ namespace LogicLayer.Services.Invoices
                 .Select(c=>MapInvoiceProductSummary_Dto(c))
                 .ToList();
         }
+
+        public async Task<List<SoldProductRefundListDto>> GetInvoiceRefundProductSummaryAsync(int invoiceId)
+        {
+            return (await _invoiceRepo.GetInvoiceRefundProductSummaryAsync(invoiceId))
+                .Select(c => MapInvoiceProductRefundSummary_Dto(c))
+                .ToList();
+        }
+
     }
 }

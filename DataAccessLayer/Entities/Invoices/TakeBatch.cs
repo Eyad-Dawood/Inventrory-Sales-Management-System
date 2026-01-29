@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities.Invoices
 {
+    public enum TakeBatchType { Invoice = 1, Refund = 2  }
+
     [Display(Name = "عملية الشراء")]
     public class TakeBatch : IValidatable
     {
@@ -30,11 +32,13 @@ namespace DataAccessLayer.Entities.Invoices
         public string? Notes { get; set; }
 
 
+        public TakeBatchType TakeBatchType { get; set; }
+
+
         [ForeignKey(nameof(Invoice))]
         public int InvoiceId { get; set; }
         [Display(Name = "بيانات الفاتورة")]
         public Invoice Invoice { get; set; }
-
 
 
         [ForeignKey(nameof(User))]

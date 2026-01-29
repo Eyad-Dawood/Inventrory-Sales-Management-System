@@ -18,6 +18,31 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         public IServiceProvider _serviceProvider { get; private set; }
 
 
+        private TakeBatchType _takeBatchType = TakeBatchType.Invoice;
+        [Browsable(true)]
+        [DefaultValue(TakeBatchType.Invoice)]
+        public TakeBatchType takeBatchType
+        {
+            get { return _takeBatchType; }
+            set { _takeBatchType = value;
+                if (_takeBatchType == TakeBatchType.Invoice)
+                {
+                    lbTakeNameLable.Text = "المستلم : ";
+                    ucProductSelector1.RefundMode(false);
+                }
+                else
+                {
+                    lbTakeNameLable.Text = "المُرجع : ";
+                    ucProductSelector1.GetUcListView.Visible = false;
+                    ucProductSelector1.GetUcListView.Enabled = false;
+
+                    ucProductSelector1.RefundMode(true);
+                }
+
+            }
+        }
+
+
         private bool _allowBathcData = true;
         [Browsable(true)]
         [DefaultValue(true)]
@@ -69,7 +94,8 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 TakeName = txtReciver.Text.Trim(),
                 Notes = txtNote.Text.Trim(),
                 InvoiceId = -1,//to be set later
-                SoldProductAddDtos = ucProductSelector1.GetSoldProducts()
+                SoldProductAddDtos = ucProductSelector1.GetSoldProducts(),
+                TakeBatchType = _takeBatchType
             };
         }
 

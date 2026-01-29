@@ -25,10 +25,29 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         private IServiceProvider _serviceProvider;
         private int RowsPerPage => 15;
 
+        private bool _IsRefundMode = false;
 
         private string _previousSearch1 = "";
         private string _previousSearch2 = "";
 
+        public UcListView GetUcListView
+        {
+            get
+            {
+                return ucListView1;
+            }
+        }
+
+        public void RefundMode(bool Allow)
+        {
+            _IsRefundMode = Allow;
+
+            txtSearchValue1.Enabled = !Allow;
+            txtSearchValue2.Enabled = !Allow;
+            btnAdd.Enabled = !Allow;
+        }
+
+      
 
         public ucProductSelector()
         {
@@ -64,21 +83,29 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
             lbTotal.Text = $"{flwpSoldProducts.Controls.OfType<ucSoldProductCard>().Sum(c => c.TotalPrice):N2}";
         }
+
+        private void CenterControl(Control ctrl)
+        {
+            ctrl.Anchor = AnchorStyles.Top;
+            int margin = (flwpSoldProducts.ClientSize.Width - ctrl.Width) / 2;
+            ctrl.Margin = new Padding(margin, 10, margin, 10);
+        }
         private ucSoldProductCard AddCard()
         {
             ucSoldProductCard ucSoldProductCard = new ucSoldProductCard();
 
             ucSoldProductCard.Enabled = false;
+            ucSoldProductCard.Size = new Size(973, 35);
             ucSoldProductCard.Location = new Point(3, 3);
             ucSoldProductCard.Name = "ucSoldProductCard1";
-            ucSoldProductCard.Size = new Size(973, 35);
             ucSoldProductCard.TabIndex = 0;
             ucSoldProductCard.OnRemoveButtonClicked += OnRemoveButtonClicked;
             ucSoldProductCard.OnQuantityChanged += OnQantityChanged;
 
-
             //This Order , So Total is calculated after adding the control
+            CenterControl(ucSoldProductCard);
             flwpSoldProducts.Controls.Add(ucSoldProductCard);
+
 
             return ucSoldProductCard;
         }
@@ -90,7 +117,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         private void AddSoldProductCard(SoldProductWithProductListDto product)
         {
             ucSoldProductCard ucSoldProductCard = AddCard();
-            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPricePerUnit, product.UnitName,product.Quantity,product.IsAvilable);
+            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPricePerUnit, product.UnitName, product.Quantity, product.IsAvilable);
         }
 
 
@@ -113,14 +140,24 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         }
 
-        public void Initialize(IServiceProvider serviceProvider,List<SoldProductWithProductListDto> products)
+        public void Initialize(IServiceProvider serviceProvider, List<SoldProductWithProductListDto> products)
         {
-            Initialize(serviceProvider);
-
-            foreach (var item in products)
+            try
             {
-                AddSoldProductCard(item);
+                Cursor = Cursors.WaitCursor;
+
+                Initialize(serviceProvider);
+
+                foreach (var item in products)
+                {
+                    AddSoldProductCard(item);
+                }
             }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+
         }
 
 
@@ -188,7 +225,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
-                return await service.GetTotalPagesByActivationState(ActivationState:true,RowsPerPage);
+                return await service.GetTotalPagesByActivationState(ActivationState: true, RowsPerPage);
             }
         }
 
@@ -203,7 +240,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
 
-                return await service.GetTotalPageByFullNameAsync(txtSearchValue1.Text.Trim(), txtSearchValue2.Text.Trim(), RowsPerPage , ActivationState:true);
+                return await service.GetTotalPageByFullNameAsync(txtSearchValue1.Text.Trim(), txtSearchValue2.Text.Trim(), RowsPerPage, ActivationState: true);
 
             }
         }
@@ -213,7 +250,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
-                return await service.GetAllByActivationStateAsync(page,RowsPerPage,ActivationState:true);
+                return await service.GetAllByActivationStateAsync(page, RowsPerPage, ActivationState: true);
             }
         }
 
@@ -230,7 +267,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
 
-                return await service.GetAllByFullNameAsync(page, RowsPerPage, txtSearchValue1.Text.Trim(), txtSearchValue2.Text.Trim(),ActivationState:true);
+                return await service.GetAllByFullNameAsync(page, RowsPerPage, txtSearchValue1.Text.Trim(), txtSearchValue2.Text.Trim(), ActivationState: true);
             }
         }
 
@@ -324,7 +361,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 return;
             }
 
-            if(selectedProduct.QuantityInStorage <= 0)
+            if (selectedProduct.QuantityInStorage <= 0)
             {
                 MessageBox.Show("هذا المنتج منتهي من المخزون", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -344,12 +381,38 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         }
         private void txtSearchValue2_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Tab)
+            if (e.KeyCode == Keys.Enter)
             {
                 ucListView1.DataGridViewControl.Focus();
                 e.SuppressKeyPress = true;
             }
         }
 
+        private void btnClearZeros_Click(object sender, EventArgs e)
+        {
+            if (flwpSoldProducts.Controls.Count == 0)
+                return;
+            try
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                btnClearZeros.Enabled = false;
+
+
+                flwpSoldProducts.Controls
+                .OfType<ucSoldProductCard>()
+                .Where(c => c.Quantity <= 0 || !c.IsAvailable)
+                .ToList()
+                .ForEach(i =>
+                {
+                    flwpSoldProducts.Controls.Remove(i);
+                    i.Dispose();
+                });
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+                btnClearZeros.Enabled = true;
+            }
+        }
     }
 }

@@ -35,6 +35,7 @@
             AddNewBatchMenustripItem = new ToolStripMenuItem();
             CloseInvoiceMenustripItem = new ToolStripMenuItem();
             spEvalucation = new ToolStripSeparator();
+            addRefundMenuStripItem = new ToolStripMenuItem();
             ConvertEvaluationToSaleInvoiceMenuStripItem = new ToolStripMenuItem();
             gpCraft = new GroupBox();
             chkOpen = new CheckBox();
@@ -64,10 +65,10 @@
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
-            cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, ConvertEvaluationToSaleInvoiceMenuStripItem });
+            cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, addRefundMenuStripItem, ConvertEvaluationToSaleInvoiceMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(217, 136);
+            cms.Size = new Size(217, 166);
             cms.Opening += cms_Opening;
             // 
             // ShowMenustripItem
@@ -111,6 +112,16 @@
             // 
             spEvalucation.Name = "spEvalucation";
             spEvalucation.Size = new Size(213, 6);
+            // 
+            // addRefundMenuStripItem
+            // 
+            addRefundMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            addRefundMenuStripItem.Image = Properties.Resources.Refund;
+            addRefundMenuStripItem.Name = "addRefundMenuStripItem";
+            addRefundMenuStripItem.RightToLeft = RightToLeft.Yes;
+            addRefundMenuStripItem.Size = new Size(216, 30);
+            addRefundMenuStripItem.Text = "إضافة مرتجع";
+            addRefundMenuStripItem.Click += addRefundMenuStripItem_Click;
             // 
             // ConvertEvaluationToSaleInvoiceMenuStripItem
             // 
@@ -227,5 +238,6 @@
         private ToolStripMenuItem CloseInvoiceMenustripItem;
         private ToolStripSeparator spEvalucation;
         private ToolStripMenuItem ConvertEvaluationToSaleInvoiceMenuStripItem;
+        private ToolStripMenuItem addRefundMenuStripItem;
     }
 }

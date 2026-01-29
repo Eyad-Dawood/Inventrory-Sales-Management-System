@@ -19,7 +19,9 @@ namespace DataAccessLayer.Entities.Products
         [Display(Name = "ضرر")]
         Damage,
         [Display(Name = "قيمة مبدأية")]
-        InitialStock
+        InitialStock,
+        [Display(Name = "مرتجع")]
+        Refund
     }
 
     public class ProductStockMovementLog

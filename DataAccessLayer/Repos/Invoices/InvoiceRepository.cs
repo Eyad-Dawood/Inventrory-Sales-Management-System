@@ -219,6 +219,7 @@ namespace DataAccessLayer.Repos.Invoices
         public async Task<List<InvoiceProductSummary>> GetInvoiceProductSummaryAsync(int invoiceId)
         {
             return await _context.SoldProducts
+                .AsNoTracking()
                 .Where(sp => sp.TakeBatch.Invoice.InvoiceId == invoiceId)
                 .GroupBy(sp => new
                 {
@@ -230,12 +231,69 @@ namespace DataAccessLayer.Repos.Invoices
                 {
                     ProductId = g.Key.ProductId,
                     ProductFullName = $"{g.Key.ProductTypeName} [{g.Key.ProductName}]",
-                    TotalQuantity = g.Sum(x => x.Quantity),
-                    TotalBuyingPrice = g.Sum(x => x.Quantity * x.BuyingPricePerUnit),
-                    TotalSellingPrice = g.Sum(x => x.Quantity * x.SellingPricePerUnit)
+
+
+                    TotalSellingQuantity = g.Sum(x =>
+                        x.TakeBatch.TakeBatchType == TakeBatchType.Invoice
+                            ? x.Quantity
+                                : 0),
+
+                    RefundQuanttiy = g.Sum(x =>
+                        x.TakeBatch.TakeBatchType == TakeBatchType.Refund
+                            ? x.Quantity
+                                : 0),
+
+
+                    NetBuyingPrice =
+                g.Sum(x =>
+                      x.TakeBatch.TakeBatchType == TakeBatchType.Invoice
+                      ? x.Quantity * x.BuyingPricePerUnit
+                       : x.TakeBatch.TakeBatchType == TakeBatchType.Refund
+                ? -(x.Quantity * x.BuyingPricePerUnit)
+                : 0),
+
+
+                    NetSellingPrice = g.Sum(x =>
+                      x.TakeBatch.TakeBatchType == TakeBatchType.Invoice
+                      ? x.Quantity * x.SellingPricePerUnit
+                       : x.TakeBatch.TakeBatchType == TakeBatchType.Refund
+                ? -(x.Quantity * x.SellingPricePerUnit)
+                : 0),
+
                 })
                 .ToListAsync();
         }
+
+        public async Task<List<SoldProductRefund>> GetInvoiceRefundProductSummaryAsync(int invoiceId)
+        {
+            return await _context.SoldProducts
+                .AsNoTracking()
+                .Where(sp =>
+                    sp.TakeBatch.Invoice.InvoiceId == invoiceId &&
+                    sp.TakeBatch.TakeBatchType == TakeBatchType.Refund)
+                .GroupBy(sp => new
+                {
+                    sp.ProductId,
+                    sp.Product.ProductName,
+                    sp.Product.ProductType.ProductTypeName
+                })
+                .Select(g => new SoldProductRefund
+                {
+                    ProductId = g.Key.ProductId,
+                    ProductFullName = $"{g.Key.ProductTypeName} [{g.Key.ProductName}]",
+
+                    TotalRefundSellingQuantity =
+                        g.Sum(x => x.Quantity),
+
+                    NetRefundBuyingPrice =
+                        g.Sum(x => x.Quantity * x.BuyingPricePerUnit),
+
+                    NetRefundSellingPrice =
+                        g.Sum(x => x.Quantity * x.SellingPricePerUnit)
+                })
+                .ToListAsync();
+        }
+
 
     }
 }

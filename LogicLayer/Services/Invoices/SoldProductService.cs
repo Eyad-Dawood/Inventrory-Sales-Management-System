@@ -115,6 +115,7 @@ namespace LogicLayer.Services.Invoices
             List<SoldProductAddDto> dtos,
             int userId,
             InvoiceType invoiceType,
+            TakeBatchType takeBatchType,
             int CustomerId)
         {
             if (dtos == null || !dtos.Any())
@@ -131,7 +132,8 @@ namespace LogicLayer.Services.Invoices
 
             var soldProducts = await PrepareSoldProductsForCreate(merged);
 
-            if (invoiceType == InvoiceType.Sale)
+            //سحب
+            if (invoiceType == InvoiceType.Sale && takeBatchType == TakeBatchType.Invoice)
             {
                 //take from storage
                 await _productService.UpdateProductsQuantityAsync(
@@ -147,6 +149,23 @@ namespace LogicLayer.Services.Invoices
                     );
             }
 
+
+            if(invoiceType == InvoiceType.Sale && takeBatchType == TakeBatchType.Refund)
+            {
+                //GiveBack from storage
+                await _productService.UpdateProductsQuantityAsync(
+                    merged.Select(p => (p.ProductId, p.Quantity)).ToList(),
+                    userId,
+                    StockMovementReason.Refund,
+                    isAddition: true);
+
+                //Add Price On Customer
+                await _customerService.DepositBalance
+                    (CustomerId,
+                    soldProducts.Sum(p => p.Quantity * p.SellingPricePerUnit)
+                    );
+            }
+
             return soldProducts;
         }
         #endregion
@@ -154,38 +173,39 @@ namespace LogicLayer.Services.Invoices
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public async Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage)
+        public async Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage, List<TakeBatchType> takeBatchTypes)
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return await _SoldProductRepo.GetTotalPagesByInvoiceIdAsync(InvoiceId, RowsPerPage);
+            return await _SoldProductRepo.GetTotalPagesByInvoiceIdAsync(InvoiceId, RowsPerPage, takeBatchTypes);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
-        public async Task<List<SoldProductMiniReadDto>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId, int PageNumber, int RowsPerPage)
+        public async Task<List<SoldProductMiniReadDto>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId, int PageNumber, int RowsPerPage, List<TakeBatchType> takeBatchTypes)
         {
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
 
             return
                 (await _SoldProductRepo
-                .GetAllWithDetailsByInvoiceIdAsync(PageNumber, RowsPerPage, InvoiceId))
+                .GetAllWithDetailsByInvoiceIdAsync(PageNumber, RowsPerPage, InvoiceId, takeBatchTypes))
                 .Select(i => MapSoldProduct_MiniReadDto(i)
                 ).ToList();
         }
 
       
-        public async Task<List<SoldProductWithProductListDto>> GetAllWithProductDetailsByInvoiceIdAsync(int InvoiceId)
+        public async Task<List<SoldProductWithProductListDto>> GetAllWithProductDetailsByInvoiceIdAsync(int InvoiceId, List<TakeBatchType> takeBatchTypes)
         {
             return
                 (await _SoldProductRepo
-                .GetAllWithDetailsByInvoiceIdAsync(1, 2000, InvoiceId))
+                .GetAllWithDetailsByInvoiceIdAsync(InvoiceId, takeBatchTypes))
                 .Select(i => MapSoldProduct_WithProductListDto(i)
                 ).ToList();
         }
 
+        
         public async Task<decimal> GetTotalQuantitySoldByProductIdAsync(int ProductId)
         {
             return await _SoldProductRepo.GetTotalQuantitySoldByProductIdAsync(ProductId);

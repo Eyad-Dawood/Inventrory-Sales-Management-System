@@ -1,6 +1,6 @@
 ﻿namespace InventorySalesManagementSystem.Invoices
 {
-    partial class frmInvoiceProductSummary
+    partial class frmRefundProductsSummary
     {
         /// <summary>
         /// Required designer variable.
@@ -39,17 +39,17 @@
             ucListView1.Location = new Point(0, 0);
             ucListView1.Name = "ucListView1";
             ucListView1.Size = new Size(1561, 773);
-            ucListView1.TabIndex = 0;
+            ucListView1.TabIndex = 1;
             // 
-            // frmInvoiceProductSummary
+            // frmRefundProductsSummary
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1561, 773);
             Controls.Add(ucListView1);
             MinimumSize = new Size(1278, 812);
-            Name = "frmInvoiceProductSummary";
-            Load += frmInvoiceProductSummary_Load;
+            Name = "frmRefundProductsSummary";
+            Load += frmRefundProductsSummary_Load;
             ResumeLayout(false);
         }
 

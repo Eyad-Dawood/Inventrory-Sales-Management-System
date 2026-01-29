@@ -43,7 +43,7 @@ namespace InventorySalesManagementSystem
                 {
                     var service = scope.ServiceProvider.GetRequiredService<UserService>();
 
-                    loginUser = await service.ValidateUserCredentialsAsync(txtUserName.Text,txtPassword.Text);
+                    loginUser = await service.ValidateUserCredentialsAsync(txtUserName.Text.Trim(),txtPassword.Text.Trim());
 
                     //Save the current user 
                     var UserSession = scope.ServiceProvider.GetRequiredService<UserSession>();

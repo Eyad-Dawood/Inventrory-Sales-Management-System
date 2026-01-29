@@ -469,7 +469,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             try
             {
-                var frm = new frmAddBatchToInvoice(_serviceProvider, item.InvoiceId);
+                var frm = new frmAddBatchToInvoice(_serviceProvider, item.InvoiceId, TakeBatchType.Invoice);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -557,7 +557,8 @@ namespace InventorySalesManagementSystem.Invoices
                 {
                     var service = scope.ServiceProvider.GetRequiredService<SoldProductService>();
 
-                    _products = await service.GetAllWithProductDetailsByInvoiceIdAsync(item.InvoiceId);
+                    //There Is No Refunds In The Evalucation Invoice So We Can Take Only The Invoice Sold Products
+                    _products = await service.GetAllWithProductDetailsByInvoiceIdAsync(item.InvoiceId, new List<TakeBatchType>() { TakeBatchType.Invoice });
 
 
                 }
@@ -572,9 +573,9 @@ namespace InventorySalesManagementSystem.Invoices
                     MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage());
                 }
 
-                var frm = new frmAddInvoice(_serviceProvider,item.CustomerId,_products);
+                var frm = new frmAddInvoice(_serviceProvider, item.CustomerId, item.WorkerId, _products);
                 frm.ShowDialog();
-            }           
+            }
 
             ucListView1.RefreshAfterOperation();
         }
@@ -585,7 +586,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             if (item != null)
             {
-               
+
                 CloseInvoiceMenustripItem.Enabled = item.InvoiceState == InvoiceState.Open.GetDisplayName();
 
                 ConvertEvaluationToSaleInvoiceMenuStripItem.Enabled =
@@ -593,12 +594,46 @@ namespace InventorySalesManagementSystem.Invoices
 
                 AddNewBatchMenustripItem.Enabled =
                     item.InvoiceState == InvoiceState.Open.GetDisplayName();
+
+                addRefundMenuStripItem.Enabled =
+                    item.InvoiceState == InvoiceState.Open.GetDisplayName() && item.InvoiceType == InvoiceType.Sale.GetDisplayName();
             }
             else
             {
                 CloseInvoiceMenustripItem.Enabled = false;
                 ConvertEvaluationToSaleInvoiceMenuStripItem.Enabled = false;
             }
+        }
+
+        private void addRefundMenuStripItem_Click(object sender, EventArgs e)
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item == null)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
+                return;
+            }
+
+            try
+            {
+                var frm = new frmAddBatchToInvoice(_serviceProvider, item.InvoiceId, TakeBatchType.Refund);
+                frm.ShowDialog();
+            }
+            catch (NotFoundException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message);
+            }
+            catch (OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("حدث خطأ");
+            }
+            ucListView1.RefreshAfterOperation();
         }
     }
 }

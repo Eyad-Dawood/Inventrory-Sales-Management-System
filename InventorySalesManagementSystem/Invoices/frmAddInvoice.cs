@@ -38,13 +38,14 @@ namespace InventorySalesManagementSystem.Invoices
             _serviceProvider = serviceProvider;
             _IsEvaluationToSaleMode = false;
         }
-        public frmAddInvoice(IServiceProvider serviceProvider, int CustomerId,List<SoldProductWithProductListDto> products)
+        public frmAddInvoice(IServiceProvider serviceProvider, int CustomerId,int? WorkerId,List<SoldProductWithProductListDto> products)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
             _IsEvaluationToSaleMode = true;
             _products = products;
             _SelectedCustomerId = CustomerId;
+            _SelectedWorkerId = WorkerId;
         }
 
 
@@ -117,6 +118,27 @@ namespace InventorySalesManagementSystem.Invoices
 
             if (_IsEvaluationToSaleMode)
             {
+                _products = _products
+                    .GroupBy(p => p.ProductId)
+                    .Select(g =>
+                    {
+                        var p = g.First();
+                        return new SoldProductWithProductListDto
+                        {
+                            IsAvilable = p.IsAvilable,
+                            ProductId = p.ProductId,
+                            ProductName = p.ProductName,
+                            ProductTypeName = p.ProductTypeName,
+                            Quantity = g.Sum(x => x.Quantity),
+                            QuantityInStorage = p.QuantityInStorage,
+                            SellingPricePerUnit = p.SellingPricePerUnit,
+                            SoldProductId = p.ProductId,
+                            UnitName = p.UnitName
+                        };
+                    })
+                    .ToList();
+
+
                 ucAddTakeBatch1.Initialize(_serviceProvider, _products);
 
                 using (var scope = _serviceProvider.CreateScope())
@@ -130,6 +152,23 @@ namespace InventorySalesManagementSystem.Invoices
                         return;
                     }
                     SetEntityDisplay(rtbCustomer, customer.FullName, customer.CustomerId);
+
+                    if(_SelectedWorkerId == null)
+                    {
+                        rtbWorker.Clear();
+                        rtbWorker.Text = "----";
+                        return;
+                    }
+                    
+                        var workerService = scope.ServiceProvider.GetRequiredService<WorkerService>();
+                    var worker = await workerService.GetWorkerByIdAsync((int)_SelectedWorkerId);
+                    if (worker == null)
+                    {
+                        MessageBox.Show("العامل المحدد غير موجود", "خطأ");
+                        this.Close();
+                        return;
+                    }
+                    SetEntityDisplay(rtbWorker, worker.FullName, worker.WorkerId);
                 }
             }
             else

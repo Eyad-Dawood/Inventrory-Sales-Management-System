@@ -13,8 +13,9 @@ namespace DataAccessLayer.Entities.DTOS
     {
         public int ProductId { get; set; }
         public string ProductFullName { get; set; }
-        public decimal TotalQuantity { get; set; }
-        public decimal TotalBuyingPrice { get; set; }
-        public decimal TotalSellingPrice { get; set; }
+        public decimal TotalSellingQuantity { get; set; }
+        public decimal RefundQuanttiy { get; set; }
+        public decimal NetBuyingPrice { get; set; }
+        public decimal NetSellingPrice { get; set; }
     }
 }

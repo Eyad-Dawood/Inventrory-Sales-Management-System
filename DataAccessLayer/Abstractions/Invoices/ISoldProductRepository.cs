@@ -9,15 +9,17 @@ namespace DataAccessLayer.Abstractions.Invoices
 {
     public interface ISoldProductRepository : IRepository<SoldProduct>
     {
-        public Task<List<SoldProduct>> GetAllWithDetailsByProductIdAsync(int PageNumber, int RowsPerPage, int ProductId);
-        public Task<List<SoldProduct>> GetAllWithDetailsByBatchIdAsync(int PageNumber, int RowsPerPage, int BatchId);
-        public Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId);
+        public Task<List<SoldProduct>> GetAllWithDetailsByProductIdAsync(int PageNumber, int RowsPerPage, int ProductId, List<TakeBatchType> takeBatchTypes);
+        public Task<List<SoldProduct>> GetAllWithDetailsByBatchIdAsync(int PageNumber, int RowsPerPage, int BatchId, List<TakeBatchType> takeBatchTypes);
+        public Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId, List<TakeBatchType> takeBatchTypes);
+        public Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId, List<TakeBatchType> takeBatchTypes);
 
 
-        public Task<int> GetTotalPagesByProductIdAsync(int ProductId, int RowsPerPage);
-        public Task<int> GetTotalPagesByBatchIdAsync(int BatchId, int RowsPerPage);
-        public Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage);
+        public Task<int> GetTotalPagesByProductIdAsync(int ProductId, int RowsPerPage, List<TakeBatchType> takeBatchTypes);
+        public Task<int> GetTotalPagesByBatchIdAsync(int BatchId, int RowsPerPage, List<TakeBatchType> takeBatchTypes);
+        public Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage, List<TakeBatchType> takeBatchTypes);
 
         public Task<decimal> GetTotalQuantitySoldByProductIdAsync(int ProductId);
+
     }
 }

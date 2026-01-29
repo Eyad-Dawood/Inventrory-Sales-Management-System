@@ -63,10 +63,25 @@ namespace InventorySalesManagementSystem.Invoices
             // ===== Quantity =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(InvoiceProductSummaryDto.TotalQuantity),
-                DataPropertyName = nameof(InvoiceProductSummaryDto.TotalQuantity),
+                Name = nameof(InvoiceProductSummaryDto.TotalSellingQuantity),
+                DataPropertyName = nameof(InvoiceProductSummaryDto.TotalSellingQuantity),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductSummaryDto), nameof(InvoiceProductSummaryDto.TotalQuantity)),
+                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductSummaryDto), nameof(InvoiceProductSummaryDto.TotalSellingQuantity)),
+                FillWeight = 10,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    Format = "N4"
+                }
+            });
+
+            // ===== RefundQuantity =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(InvoiceProductSummaryDto.RefundQuanttiy),
+                DataPropertyName = nameof(InvoiceProductSummaryDto.RefundQuanttiy),
+                HeaderText = LogicLayer.Utilities
+                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductSummaryDto), nameof(InvoiceProductSummaryDto.RefundQuanttiy)),
                 FillWeight = 10,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -78,10 +93,10 @@ namespace InventorySalesManagementSystem.Invoices
             // ===== TotalBuyingPrice =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(InvoiceProductSummaryDto.TotalBuyingPrice),
-                DataPropertyName = nameof(InvoiceProductSummaryDto.TotalBuyingPrice),
+                Name = nameof(InvoiceProductSummaryDto.NetBuyingPrice),
+                DataPropertyName = nameof(InvoiceProductSummaryDto.NetBuyingPrice),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductSummaryDto), nameof(InvoiceProductSummaryDto.TotalBuyingPrice)),
+                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductSummaryDto), nameof(InvoiceProductSummaryDto.NetBuyingPrice)),
                 FillWeight = 10,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -93,10 +108,10 @@ namespace InventorySalesManagementSystem.Invoices
             // ===== TotalSellingPrice =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(InvoiceProductSummaryDto.TotalSellingPrice),
-                DataPropertyName = nameof(InvoiceProductSummaryDto.TotalSellingPrice),
+                Name = nameof(InvoiceProductSummaryDto.NetSellingPrice),
+                DataPropertyName = nameof(InvoiceProductSummaryDto.NetSellingPrice),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductSummaryDto), nameof(InvoiceProductSummaryDto.TotalSellingPrice)),
+                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductSummaryDto), nameof(InvoiceProductSummaryDto.NetSellingPrice)),
                 FillWeight = 10,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -162,10 +177,14 @@ namespace InventorySalesManagementSystem.Invoices
         }
         #endregion
 
-        private void frmInvoiceProductSummary_Load(object sender, EventArgs e)
+        private async void frmInvoiceProductSummary_Load(object sender, EventArgs e)
+        {
+            await FormLoadAsync();
+        }
+        private async Task FormLoadAsync()
         {
             ConfigureGrid(ucListView1.DataGridViewControl);
-            _ = DisplayAsync();
+            await DisplayAsync();
         }
     }
 }

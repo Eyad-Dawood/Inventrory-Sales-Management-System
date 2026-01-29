@@ -1,4 +1,5 @@
-﻿using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
+﻿using DataAccessLayer.Entities.Invoices;
+using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,7 @@ namespace LogicLayer.DTOs.InvoiceDTO.TakeBatches
         public int InvoiceId { get; set; }
 
         public List<SoldProductAddDto> SoldProductAddDtos { get; set; }
-    }
+
+        public TakeBatchType TakeBatchType { get; set; }
+        }
 }

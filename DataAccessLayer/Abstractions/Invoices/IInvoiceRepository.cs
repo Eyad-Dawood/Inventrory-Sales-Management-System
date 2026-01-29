@@ -26,5 +26,6 @@ namespace DataAccessLayer.Abstractions.Invoices
         public Task<int> GetTotalPageByCustomerNameAsync(string CustomerName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
 
         public Task<List<InvoiceProductSummary>> GetInvoiceProductSummaryAsync(int invoiceId);
+        public Task<List<SoldProductRefund>> GetInvoiceRefundProductSummaryAsync(int invoiceId);
     }
 }

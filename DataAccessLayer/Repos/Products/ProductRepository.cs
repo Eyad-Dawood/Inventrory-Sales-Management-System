@@ -147,6 +147,8 @@ namespace DataAccessLayer.Repos.Products
         public async Task<List<Product>> GetProductsByIdsAsync(List<int> Ids)
         {
             return await _context.Products
+                .Include(p=>p.MasurementUnit)
+                .Include(p=>p.ProductType)
                 .Where(p => Ids.Contains(p.ProductId))
                 .ToListAsync();
         }

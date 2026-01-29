@@ -12,12 +12,25 @@ namespace LogicLayer.DTOs.InvoiceDTO
         public int ProductId { get; set; }
         [Display(Name = "اسم المنتج")]
         public string ProductFullName { get; set; }
-        [Display(Name = "الكمية")]
-        public decimal TotalQuantity { get; set; }
-        [Display(Name = "الشراء")]
-        public decimal TotalBuyingPrice { get; set; }
-        [Display(Name = "البيع")]
-        public decimal TotalSellingPrice { get; set; }
+        [Display(Name = "إجمالي الكمية")]
+        public decimal TotalSellingQuantity { get; set; }
+
+        [Display(Name = "المرتجع")]
+        public decimal RefundQuanttiy { get; set; }
+
+        [Display(Name = "صافي الكمية")]
+        public decimal NetSellingQuantity
+        {
+            get
+            {
+                return TotalSellingQuantity - RefundQuanttiy;
+            }
+        }
+
+        [Display(Name = "صافي الشراء")]
+        public decimal NetBuyingPrice { get; set; }
+        [Display(Name = "صافي البيع")]
+        public decimal NetSellingPrice { get; set; }
         [Display(Name ="متوسط سعر وحدة الشراء")]
         public decimal AvrageBuyingPrice { get; set; }
         [Display(Name = "متوسط سعر وحدة البيع")]

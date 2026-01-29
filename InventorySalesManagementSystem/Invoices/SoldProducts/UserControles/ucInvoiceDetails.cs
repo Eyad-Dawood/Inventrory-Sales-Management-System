@@ -167,7 +167,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<SoldProductService>();
-                return await service.GetTotalPagesByInvoiceIdAsync(InvoiceId, RowsPerPage);
+                return await service.GetTotalPagesByInvoiceIdAsync(InvoiceId, RowsPerPage, new List<TakeBatchType>() { TakeBatchType.Invoice });
             }
         }
 
@@ -176,7 +176,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<SoldProductService>();
-                return await service.GetAllWithDetailsByInvoiceIdAsync(InvoiceId, page, RowsPerPage);
+                return await service.GetAllWithDetailsByInvoiceIdAsync(InvoiceId, page, RowsPerPage, new List<TakeBatchType>() { TakeBatchType.Invoice });
             }
         }
 
@@ -202,7 +202,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         #region Events
         private async Task HandleFilterClicked(UcListView.Filter filter)
         {
+
+
             await DisplayPageAsync(1);
+
         }
 
         private async Task HandlePageChanged(int page, UcListView.Filter filter)
@@ -331,12 +334,23 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         private void lkInvoiceSummary_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if(InvoiceId <= 0)
+            if (InvoiceId <= 0)
             {
                 MessageBox.Show("رقم الفاتورة غير صحيح", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             var frm = new frmInvoiceProductSummary(_serviceProvider, InvoiceId);
+            frm.ShowDialog();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (InvoiceId <= 0)
+            {
+                MessageBox.Show("رقم الفاتورة غير صحيح", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var frm = new frmRefundProductsSummary(_serviceProvider, InvoiceId);
             frm.ShowDialog();
         }
     }

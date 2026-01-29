@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             txtReciver = new TextBox();
-            label1 = new Label();
+            lbTakeNameLable = new Label();
             txtNote = new TextBox();
             label3 = new Label();
             gbInvoiceDetails = new GroupBox();
@@ -53,16 +53,15 @@
             txtReciver.Size = new Size(528, 23);
             txtReciver.TabIndex = 1;
             // 
-            // label1
+            // lbTakeNameLable
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label1.Location = new Point(1297, 10);
-            label1.Name = "label1";
-            label1.RightToLeft = RightToLeft.Yes;
-            label1.Size = new Size(102, 30);
-            label1.TabIndex = 39;
-            label1.Text = "المستلم : ";
+            lbTakeNameLable.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            lbTakeNameLable.Location = new Point(1297, 10);
+            lbTakeNameLable.Name = "lbTakeNameLable";
+            lbTakeNameLable.RightToLeft = RightToLeft.Yes;
+            lbTakeNameLable.Size = new Size(102, 30);
+            lbTakeNameLable.TabIndex = 39;
+            lbTakeNameLable.Text = "المستلم : ";
             // 
             // txtNote
             // 
@@ -213,7 +212,7 @@
             Controls.Add(txtNote);
             Controls.Add(label3);
             Controls.Add(txtReciver);
-            Controls.Add(label1);
+            Controls.Add(lbTakeNameLable);
             Enabled = false;
             Name = "ucAddTakeBatch";
             Size = new Size(1402, 520);
@@ -225,7 +224,7 @@
 
         #endregion
         private TextBox txtReciver;
-        private Label label1;
+        private Label lbTakeNameLable;
         private TextBox txtNote;
         private Label label3;
         private GroupBox gbInvoiceDetails;

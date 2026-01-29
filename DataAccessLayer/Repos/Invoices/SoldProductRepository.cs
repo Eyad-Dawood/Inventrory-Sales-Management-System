@@ -13,18 +13,36 @@ namespace DataAccessLayer.Repos.Invoices
     {
         public SoldProductRepository(InventoryDbContext context) : base(context)
         {
-        }    
+        }
 
-        public async Task<List<SoldProduct>> GetAllWithDetailsByBatchIdAsync(int PageNumber, int RowsPerPage,int BatchId)
+        private IQueryable<SoldProduct> ApplyFilter(
+           IQueryable<SoldProduct> query,
+           List<TakeBatchType> Types)
         {
-            return await
-                _context.
+            var inlineQuery = query;
+
+            if (Types != null && Types.Any())
+            {
+                inlineQuery = inlineQuery.Where(s => Types.Contains(s.TakeBatch.TakeBatchType));
+            }
+
+            return inlineQuery;
+        }
+
+        public async Task<List<SoldProduct>> GetAllWithDetailsByBatchIdAsync(int PageNumber, int RowsPerPage,int BatchId,List<TakeBatchType>takeBatchTypes)
+        {
+            IQueryable<SoldProduct> query = _context.
                 SoldProducts
                 .AsNoTracking()
                 .Include(b => b.Product)
                 .ThenInclude(p => p.ProductType)
                 .Include(b => b.Product)
-                .ThenInclude(p => p.MasurementUnit)
+                .ThenInclude(p => p.MasurementUnit);
+
+            query = ApplyFilter(query, takeBatchTypes);
+
+            return await
+                query
                 .Where(b => b.TakeBatchId == BatchId)
                 .OrderByDescending(b => b.SoldProductId)
                 .Skip((PageNumber - 1) * RowsPerPage)
@@ -32,17 +50,21 @@ namespace DataAccessLayer.Repos.Invoices
                 .ToListAsync();
         }
 
-        public async Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId)
+        public async Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId, List<TakeBatchType> takeBatchTypes)
         {
-            return await
-                _context.
+            IQueryable<SoldProduct> query = _context.
                 SoldProducts
                 .AsNoTracking()
                 .Include(b => b.Product)
                 .ThenInclude(p => p.ProductType)
                 .Include(b => b.Product)
                 .ThenInclude(p => p.MasurementUnit)
-                .Include(b => b.TakeBatch)
+                .Include(b => b.TakeBatch);
+
+            query = ApplyFilter(query, takeBatchTypes);
+
+            return await
+                query
                 .Where(b => b.TakeBatch.InvoiceId == InvoiceId)
                 .OrderByDescending(b => b.TakeBatchId)
                 .Skip((PageNumber - 1) * RowsPerPage)
@@ -50,22 +72,46 @@ namespace DataAccessLayer.Repos.Invoices
                 .ToListAsync();
         }
 
-        public async Task<List<SoldProduct>> GetAllWithDetailsByProductIdAsync(int PageNumber, int RowsPerPage, int ProductId)
+        public async Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId,List<TakeBatchType> takeBatchTypes)
         {
+            IQueryable<SoldProduct> query = _context.
+               SoldProducts
+               .AsNoTracking()
+               .Include(b => b.Product)
+               .ThenInclude(p => p.ProductType)
+               .Include(b => b.Product)
+               .ThenInclude(p => p.MasurementUnit)
+               .Include(b => b.TakeBatch);
+
+            query = ApplyFilter(query, takeBatchTypes);
+
             return await
-                 _context.
+               query
+               .Where(b => b.TakeBatch.InvoiceId == InvoiceId)
+               .OrderByDescending(b => b.TakeBatchId)
+               .ToListAsync();
+        }
+
+        public async Task<List<SoldProduct>> GetAllWithDetailsByProductIdAsync(int PageNumber, int RowsPerPage, int ProductId, List<TakeBatchType> takeBatchTypes)
+        {
+            IQueryable<SoldProduct> query = _context.
                  SoldProducts
                  .AsNoTracking()
-                 .Include(b=>b.TakeBatch)
-                 .ThenInclude(b=>b.Invoice)
-                 .ThenInclude(i=>i.Customer)
-                 .ThenInclude(i=>i.Person)
+                 .Include(b => b.TakeBatch)
+                 .ThenInclude(b => b.Invoice)
+                 .ThenInclude(i => i.Customer)
+                 .ThenInclude(i => i.Person)
 
                  .Include(b => b.TakeBatch)
                  .ThenInclude(b => b.Invoice)
-                 .ThenInclude(i=>i.Worker)
-                 .ThenInclude(w=>w.Person)
+                 .ThenInclude(i => i.Worker)
+                 .ThenInclude(w => w.Person);
 
+            query = ApplyFilter(query, takeBatchTypes);
+
+            return await
+
+                query
                  .Where(b => b.ProductId == ProductId)
                  .OrderByDescending(b => b.SoldProductId)
                  .Skip((PageNumber - 1) * RowsPerPage)
@@ -73,12 +119,16 @@ namespace DataAccessLayer.Repos.Invoices
                  .ToListAsync();
         }
         
-        public async Task<int> GetTotalPagesByBatchIdAsync(int BatchId, int RowsPerPage)
+        public async Task<int> GetTotalPagesByBatchIdAsync(int BatchId, int RowsPerPage, List<TakeBatchType> takeBatchTypes)
         {
-            int totalCount =  await
-                _context.
+            IQueryable<SoldProduct> query = _context.
                 SoldProducts
-                .AsNoTracking()
+                .AsNoTracking();
+
+            query = ApplyFilter(query, takeBatchTypes);
+
+            int totalCount =  await
+                query
                 .Where(b => b.TakeBatchId == BatchId)
                 .CountAsync();
 
@@ -86,12 +136,18 @@ namespace DataAccessLayer.Repos.Invoices
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
 
-        public async Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage)
+        public async Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage, List<TakeBatchType> takeBatchTypes)
         {
-            int totalCount = await
-                           _context.
+
+            IQueryable<SoldProduct> query = _context.
                            SoldProducts
-                           .AsNoTracking()
+                           .AsNoTracking();
+
+            query = ApplyFilter(query, takeBatchTypes);
+
+
+            int totalCount = await
+                           query
                            .Where(b => b.TakeBatch.InvoiceId == InvoiceId)
                            .CountAsync();
 
@@ -99,12 +155,16 @@ namespace DataAccessLayer.Repos.Invoices
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
 
-        public async Task<int> GetTotalPagesByProductIdAsync(int ProductId, int RowsPerPage)
+        public async Task<int> GetTotalPagesByProductIdAsync(int ProductId, int RowsPerPage, List<TakeBatchType> takeBatchTypes)
         {
-            int totalCount = await
-                _context.
+            IQueryable<SoldProduct> query = _context.
                 SoldProducts
-                .AsNoTracking()
+                .AsNoTracking();
+
+            query = ApplyFilter(query, takeBatchTypes);
+
+            int totalCount = await
+                query
                 .Where(b => b.ProductId == ProductId)
                 .CountAsync();
 
@@ -114,12 +174,24 @@ namespace DataAccessLayer.Repos.Invoices
 
         public async Task<decimal> GetTotalQuantitySoldByProductIdAsync(int productId)
         {
-            return await _context.SoldProducts
+            decimal totalQuantitySold = await _context.SoldProducts
                 .AsNoTracking()
                 .Where(sp =>
                     sp.ProductId == productId &&
-                    sp.TakeBatch.Invoice.InvoiceType == InvoiceType.Sale)
+                    sp.TakeBatch.Invoice.InvoiceType == InvoiceType.Sale &&
+                    sp.TakeBatch.TakeBatchType == TakeBatchType.Invoice)
                 .SumAsync(sp => (decimal)sp.Quantity);
+
+            decimal totalQuantityRefunded = await _context.SoldProducts
+                .AsNoTracking()
+                .Where(sp =>
+                    sp.ProductId == productId &&
+                    sp.TakeBatch.Invoice.InvoiceType == InvoiceType.Sale &&
+                    sp.TakeBatch.TakeBatchType == TakeBatchType.Refund)
+                .SumAsync(sp => (decimal)sp.Quantity);
+            return totalQuantitySold - totalQuantityRefunded;
         }
+
+
     }
 }
