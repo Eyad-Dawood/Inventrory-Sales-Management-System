@@ -1,4 +1,6 @@
 ﻿using DataAccessLayer.Entities.Invoices;
+using DataAccessLayer.Entities.Products;
+using DataAccessLayer.Validation;
 using InventorySalesManagementSystem.Customers;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.InvoiceDTO;
@@ -8,6 +10,7 @@ using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
 using LogicLayer.Services.Products;
+using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -19,6 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace InventorySalesManagementSystem.Invoices
 {
@@ -69,7 +73,9 @@ namespace InventorySalesManagementSystem.Invoices
                     {
                         CustomerId = _SelectedCustomerId,
                         InvoiceType = rdSale.Checked ? InvoiceType.Sale : InvoiceType.Evaluation,
-                        WorkerId = _SelectedWorkerId
+                        WorkerId = _SelectedWorkerId,
+                        AdditionAmount = Convert.ToDecimal(string.IsNullOrEmpty(txtAdditional.Text.Trim()) ? 0 : txtAdditional.Text.Trim()),
+                        AdditonNotes = txtAdditionalNotes.Text.Trim()
                     }
                     ,
                     takeBatchAdd
@@ -85,7 +91,7 @@ namespace InventorySalesManagementSystem.Invoices
                 }
                 catch (LogicLayer.Validation.Exceptions.ValidationException ex)
                 {
-                    MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(string.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 catch (OperationFailedException ex)
@@ -184,6 +190,21 @@ namespace InventorySalesManagementSystem.Invoices
             this.Close();
         }
 
+        private void ValidateAdditional()
+        {
+            List<string> errors = new List<string>();
+
+            if (!string.IsNullOrEmpty(txtAdditional.Text.Trim()) && !FormatValidation.IsValidDecimal(txtAdditional.Text.Trim()))
+            {
+                string propertyName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Invoice), nameof(Invoice.Additional));
+                errors.Add($"{propertyName} تنسيقه غير صحيح");
+            }
+
+            if (errors.Any())
+            {
+                throw new ValidationException(errors);
+            }
+        }
         private async Task SaveInvoiceAsync()
         {
             if (_SelectedCustomerId <= 0)
@@ -192,6 +213,8 @@ namespace InventorySalesManagementSystem.Invoices
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
+            ValidateAdditional();
 
             var takeBatch = ucAddTakeBatch1.GetTakeBatch();
 
@@ -213,6 +236,17 @@ namespace InventorySalesManagementSystem.Invoices
             try
             {
                 await SaveInvoiceAsync();
+            }
+            
+            catch (LogicLayer.Validation.Exceptions.ValidationException ex)
+            {
+                MessageBox.Show(string.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
             finally
             {

@@ -177,14 +177,25 @@ namespace InventorySalesManagementSystem.MasurementUnits
 
         private async void btnSave_Click(object sender, EventArgs e)
         {
-            if (State == Enums.FormStateEnum.AddNew)
+            try
             {
-               await AddNew();
+                Cursor.Current = Cursors.WaitCursor;
+                btnSave.Enabled = false;
+                if (State == Enums.FormStateEnum.AddNew)
+                {
+                   await AddNew();
+                }
+                else if (State == Enums.FormStateEnum.Update)
+                {
+                   await UpdateMasurementUnit();
+                }
             }
-            else if (State == Enums.FormStateEnum.Update)
+            finally
             {
-               await UpdateMasurementUnit();
+                Cursor.Current = Cursors.Default;
+                btnSave.Enabled = true;
             }
+           
         }
     }
 }

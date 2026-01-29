@@ -47,6 +47,10 @@
             ucAddTakeBatch1 = new InventorySalesManagementSystem.Invoices.SoldProducts.UserControles.ucAddTakeBatch();
             btnCancel = new Button();
             btnSave = new Button();
+            txtAdditional = new TextBox();
+            label4 = new Label();
+            txtAdditionalNotes = new TextBox();
+            label3 = new Label();
             gpCraft.SuspendLayout();
             panel3.SuspendLayout();
             panel1.SuspendLayout();
@@ -244,6 +248,7 @@
             // 
             // ucAddTakeBatch1
             // 
+            ucAddTakeBatch1.Anchor = AnchorStyles.Right;
             ucAddTakeBatch1.Enabled = false;
             ucAddTakeBatch1.Location = new Point(3, 3);
             ucAddTakeBatch1.Name = "ucAddTakeBatch1";
@@ -275,12 +280,59 @@
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
+            // txtAdditional
+            // 
+            txtAdditional.Anchor = AnchorStyles.Right;
+            txtAdditional.Location = new Point(944, 620);
+            txtAdditional.Name = "txtAdditional";
+            txtAdditional.Size = new Size(94, 23);
+            txtAdditional.TabIndex = 58;
+            // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.Right;
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label4.Location = new Point(1044, 620);
+            label4.Name = "label4";
+            label4.RightToLeft = RightToLeft.Yes;
+            label4.Size = new Size(99, 21);
+            label4.TabIndex = 59;
+            label4.Text = "مبلغ إضافي : ";
+            // 
+            // txtAdditionalNotes
+            // 
+            txtAdditionalNotes.Anchor = AnchorStyles.Right;
+            txtAdditionalNotes.Location = new Point(735, 648);
+            txtAdditionalNotes.Multiline = true;
+            txtAdditionalNotes.Name = "txtAdditionalNotes";
+            txtAdditionalNotes.RightToLeft = RightToLeft.Yes;
+            txtAdditionalNotes.Size = new Size(331, 36);
+            txtAdditionalNotes.TabIndex = 60;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            label3.Location = new Point(1055, 649);
+            label3.Margin = new Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.RightToLeft = RightToLeft.Yes;
+            label3.Size = new Size(112, 30);
+            label3.TabIndex = 61;
+            label3.Text = "التفاصيل : ";
+            // 
             // frmAddInvoice
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = btnCancel;
             ClientSize = new Size(1431, 689);
+            Controls.Add(txtAdditionalNotes);
+            Controls.Add(label3);
+            Controls.Add(txtAdditional);
+            Controls.Add(label4);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(lbTitle);
@@ -301,6 +353,7 @@
             panel2.PerformLayout();
             panel5.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -324,5 +377,9 @@
         private Panel panel5;
         private RichTextBox rtbWorker;
         private SoldProducts.UserControles.ucAddTakeBatch ucAddTakeBatch1;
+        private TextBox txtAdditional;
+        private Label label4;
+        private TextBox txtAdditionalNotes;
+        private Label label3;
     }
 }

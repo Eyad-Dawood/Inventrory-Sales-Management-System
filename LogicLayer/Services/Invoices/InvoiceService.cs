@@ -67,7 +67,6 @@ namespace LogicLayer.Services.Invoices
             Invoice.TotalRefundSellingPrice = 0;
             Invoice.TotalRefundBuyingPrice = 0;
             Invoice.TotalPaid = 0;
-            Invoice.Additional = 0;
 
             Invoice.AdditionNotes = string.IsNullOrEmpty(Invoice.AdditionNotes) ? null : Invoice.AdditionNotes;
             
@@ -88,6 +87,8 @@ namespace LogicLayer.Services.Invoices
                 OpenUserId = UserId,
                 OpenDate = DateTime.Now,
                 InvoiceState = InvoiceState.Open,
+                Additional = DTO.AdditionAmount,
+                AdditionNotes = DTO.AdditonNotes,
             };
         }
 
@@ -425,5 +426,30 @@ namespace LogicLayer.Services.Invoices
                 .ToList();
         }
 
+        public async Task UpdateInvoiceAdditional(int InvoiceId, decimal addition, string AdditionalNotes)
+        {
+            var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
+
+
+            if (invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+
+            if(invoice.InvoiceState == InvoiceState.Closed)
+            {
+                throw new OperationFailedException("لا يمكن إضافة مبالغ لفاتورة مغلقة");
+            }
+
+            if(invoice.InvoiceType == InvoiceType.Evaluation)
+            {
+                throw new OperationFailedException("لا يمكن إضافة مبالغ لفاتورة تسعير");
+            }
+
+            invoice.Additional = addition;
+            invoice.AdditionNotes = AdditionalNotes;
+
+            await _unitOfWork.SaveAsync();
+        }
     }
 }

@@ -597,6 +597,9 @@ namespace InventorySalesManagementSystem.Invoices
 
                 addRefundMenuStripItem.Enabled =
                     item.InvoiceState == InvoiceState.Open.GetDisplayName() && item.InvoiceType == InvoiceType.Sale.GetDisplayName();
+
+                additionalFeesMenuStripItem.Enabled = 
+                    item.InvoiceState == InvoiceState.Open.GetDisplayName() && item.InvoiceType == InvoiceType.Sale.GetDisplayName();
             }
             else
             {
@@ -633,6 +636,22 @@ namespace InventorySalesManagementSystem.Invoices
             {
                 MessageBox.Show("حدث خطأ");
             }
+            ucListView1.RefreshAfterOperation();
+        }
+
+        private void additionalFeesMenuStripItem_Click(object sender, EventArgs e)
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item == null)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
+                return;
+            }
+
+            var frm = new frmInvoiceAdditionalFees(_serviceProvider, item.InvoiceId);
+            frm.ShowDialog();
+
             ucListView1.RefreshAfterOperation();
         }
     }

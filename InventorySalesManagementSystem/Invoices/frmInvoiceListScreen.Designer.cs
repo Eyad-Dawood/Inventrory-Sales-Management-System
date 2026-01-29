@@ -37,6 +37,8 @@
             spEvalucation = new ToolStripSeparator();
             addRefundMenuStripItem = new ToolStripMenuItem();
             ConvertEvaluationToSaleInvoiceMenuStripItem = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
+            additionalFeesMenuStripItem = new ToolStripMenuItem();
             gpCraft = new GroupBox();
             chkOpen = new CheckBox();
             chkClose = new CheckBox();
@@ -65,10 +67,10 @@
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
-            cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, addRefundMenuStripItem, ConvertEvaluationToSaleInvoiceMenuStripItem });
+            cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, addRefundMenuStripItem, ConvertEvaluationToSaleInvoiceMenuStripItem, toolStripSeparator2, additionalFeesMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(217, 166);
+            cms.Size = new Size(217, 224);
             cms.Opening += cms_Opening;
             // 
             // ShowMenustripItem
@@ -132,6 +134,22 @@
             ConvertEvaluationToSaleInvoiceMenuStripItem.Size = new Size(216, 30);
             ConvertEvaluationToSaleInvoiceMenuStripItem.Text = "تحويل إلى فاتورة بيع";
             ConvertEvaluationToSaleInvoiceMenuStripItem.Click += ConvertEvaluationToSaleInvoiceMenuStripItem_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(213, 6);
+            // 
+            // additionalFeesMenuStripItem
+            // 
+            additionalFeesMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            additionalFeesMenuStripItem.Image = Properties.Resources.ShowDetailsIcon;
+            additionalFeesMenuStripItem.ImageScaling = ToolStripItemImageScaling.None;
+            additionalFeesMenuStripItem.Name = "additionalFeesMenuStripItem";
+            additionalFeesMenuStripItem.RightToLeft = RightToLeft.Yes;
+            additionalFeesMenuStripItem.Size = new Size(216, 30);
+            additionalFeesMenuStripItem.Text = "مبلغ إضافي";
+            additionalFeesMenuStripItem.Click += additionalFeesMenuStripItem_Click;
             // 
             // gpCraft
             // 
@@ -239,5 +257,7 @@
         private ToolStripSeparator spEvalucation;
         private ToolStripMenuItem ConvertEvaluationToSaleInvoiceMenuStripItem;
         private ToolStripMenuItem addRefundMenuStripItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem additionalFeesMenuStripItem;
     }
 }

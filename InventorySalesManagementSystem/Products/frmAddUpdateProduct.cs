@@ -248,6 +248,9 @@ namespace InventorySalesManagementSystem.Products
         {
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
+                btnSave.Enabled = false;
+
                 using (var scope = _serviceProvider.CreateScope())
                 {
 
@@ -295,6 +298,11 @@ namespace InventorySalesManagementSystem.Products
 
                 MessageBox.Show("حدث خطأ غير متوقع", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
+            finally
+            {
+                Cursor.Current = Cursors.Default;
+                btnSave.Enabled = true;
             }
         }
 
