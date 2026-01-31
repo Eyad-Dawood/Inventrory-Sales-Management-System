@@ -189,10 +189,10 @@ namespace InventorySalesManagementSystem.Invoices
             // ===== Additional =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(InvoiceListDto.Additional),
-                DataPropertyName = nameof(InvoiceListDto.Additional),
+                Name = nameof(InvoiceListDto.Discount),
+                DataPropertyName = nameof(InvoiceListDto.Discount),
                 HeaderText = LogicLayer.Utilities.NamesManager
-                    .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.Additional)),
+                    .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.Discount)),
                 FillWeight = 20,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -439,8 +439,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             try
             {
-                var frm = new frmShowInvoice(_serviceProvider);
-                _ = frm.ShowInvoice(item.InvoiceId);
+                var frm = new frmShowInvoice(_serviceProvider,item.InvoiceId);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -587,19 +586,19 @@ namespace InventorySalesManagementSystem.Invoices
             if (item != null)
             {
 
-                CloseInvoiceMenustripItem.Enabled = item.InvoiceState == InvoiceState.Open.GetDisplayName();
+                CloseInvoiceMenustripItem.Enabled = item.InvoiceStateEn == InvoiceState.Open;
 
                 ConvertEvaluationToSaleInvoiceMenuStripItem.Enabled =
-                    item.InvoiceType == InvoiceType.Evaluation.GetDisplayName() && item.InvoiceState == InvoiceState.Open.GetDisplayName();
+                    item.InvoiceTypeEn == InvoiceType.Evaluation && item.InvoiceStateEn == InvoiceState.Open;
 
                 AddNewBatchMenustripItem.Enabled =
-                    item.InvoiceState == InvoiceState.Open.GetDisplayName();
+                    item.InvoiceStateEn == InvoiceState.Open;
 
                 addRefundMenuStripItem.Enabled =
-                    item.InvoiceState == InvoiceState.Open.GetDisplayName() && item.InvoiceType == InvoiceType.Sale.GetDisplayName();
+                    item.InvoiceStateEn == InvoiceState.Open && item.InvoiceTypeEn == InvoiceType.Sale;
 
                 additionalFeesMenuStripItem.Enabled = 
-                    item.InvoiceState == InvoiceState.Open.GetDisplayName() && item.InvoiceType == InvoiceType.Sale.GetDisplayName();
+                    item.InvoiceStateEn == InvoiceState.Open && item.InvoiceTypeEn == InvoiceType.Sale;
             }
             else
             {
@@ -649,7 +648,7 @@ namespace InventorySalesManagementSystem.Invoices
                 return;
             }
 
-            var frm = new frmInvoiceAdditionalFees(_serviceProvider, item.InvoiceId);
+            var frm = new frmInvoiceDiscount(_serviceProvider, item.InvoiceId);
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();

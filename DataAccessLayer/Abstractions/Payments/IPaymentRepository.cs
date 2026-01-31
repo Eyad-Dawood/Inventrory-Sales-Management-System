@@ -12,16 +12,22 @@ namespace DataAccessLayer.Abstractions.Payments
     {
         public Task<Payment?> GetWithDetailsByIdAsync(int PaymentId);
 
-        public Task<List<Payment>> GetAllWithDetailsAsync(int PageNumber,int RowsPerPage,params DataAccessLayer.Entities.Payments.PaymentReason[] PaymentReasons);
+        public Task<List<Payment>> GetAllWithDetailsAsync(int PageNumber,int RowsPerPage,List<PaymentReason> PaymentReasons);
 
 
-        public Task<List<Payment>> GetAllWithDetailsByCustomerIdAsync(int PageNumber, int RowsPerPage, int CustomerId, params DataAccessLayer.Entities.Payments.PaymentReason[] PaymentReasons);
-        public Task<int> GetTotalPagesByCustomerIdAsync(int CustomerId, int RowsPerPage,params DataAccessLayer.Entities.Payments.PaymentReason[] PaymentReasons);
+        public Task<int> GetTotalPagesAsync(int RowsPerPage, List<PaymentReason> PaymentReasons);
 
 
-        public Task<List<Payment>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId, params DataAccessLayer.Entities.Payments.PaymentReason[] PaymentReasons);
-        public Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage, params DataAccessLayer.Entities.Payments.PaymentReason[] PaymentReasons);
+        public Task<List<Payment>> GetAllWithDetailsByCustomerIdAsync(int PageNumber, int RowsPerPage, int CustomerId, List<PaymentReason> PaymentReasons);
+        public Task<int> GetTotalPagesByCustomerIdAsync(int CustomerId, int RowsPerPage,List<PaymentReason> PaymentReasons);
 
 
+        public Task<List<Payment>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId, List<PaymentReason> PaymentReasons);
+        public Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId, int RowsPerPage, List<PaymentReason> PaymentReasons);
+
+
+        public  Task<List<Payment>> GetAllByCustomerNameAndDateTimeAsync(int PageNumber, int RowsPerPage, string CustomerName, DateTime? date, List<PaymentReason> PaymentReasons);
+
+        public  Task<int> GetTotalPageByCustomerNameAndDateAsync(int RowsPerPage, string CustomerName, DateTime? date, List<PaymentReason> PaymentReasons);
     }
 }

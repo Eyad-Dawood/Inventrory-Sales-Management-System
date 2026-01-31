@@ -3,7 +3,9 @@ using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.DTOS;
 using DataAccessLayer.Entities.Invoices;
+using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Repos;
+using DataAccessLayer.Validation;
 using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.General;
@@ -68,7 +70,7 @@ namespace LogicLayer.Services.Invoices
             Invoice.TotalRefundBuyingPrice = 0;
             Invoice.TotalPaid = 0;
 
-            Invoice.AdditionNotes = string.IsNullOrEmpty(Invoice.AdditionNotes) ? null : Invoice.AdditionNotes;
+            Invoice.Notes = string.IsNullOrEmpty(Invoice.Notes) ? null : Invoice.Notes;
             
             Invoice.InvoiceState = InvoiceState.Open;
             
@@ -87,8 +89,8 @@ namespace LogicLayer.Services.Invoices
                 OpenUserId = UserId,
                 OpenDate = DateTime.Now,
                 InvoiceState = InvoiceState.Open,
-                Additional = DTO.AdditionAmount,
-                AdditionNotes = DTO.AdditonNotes,
+                Discount = DTO.Discount,
+                Notes = DTO.Notes,
             };
         }
 
@@ -101,11 +103,13 @@ namespace LogicLayer.Services.Invoices
                 CloseDate = Invoice.CloseDate,
                 InvoiceType = Invoice.InvoiceType.GetDisplayName(),
                 InvoiceState = Invoice.InvoiceState.GetDisplayName(),
+                InvoiceStateEn = Invoice.InvoiceState,
+                InvoiceTypeEn = Invoice.InvoiceType,
                 ClosedByUserName = Invoice.CloseUser?.Username,
                 CustomerName = Invoice.Customer.Person.FullName,
                 OpenedByUserName = Invoice.OpenUser.Username,
-                Additional = Invoice.Additional,
-                AdditionalNotes = Invoice.AdditionNotes,
+                Discount = Invoice.Discount,
+                Notes = Invoice.Notes,
                 TotalBuyingPrice = Invoice.TotalBuyingPrice,
                 TotalPaid = Invoice.TotalPaid,
                 TotalRefundBuyingPrice = Invoice.TotalRefundBuyingPrice,
@@ -126,11 +130,13 @@ namespace LogicLayer.Services.Invoices
                 CloseDate = invoice.CloseDate,
                 InvoiceType = invoice.InvoiceType.GetDisplayName(),
                 InvoiceState = invoice.InvoiceState.GetDisplayName(),
+                InvoiceStateEn = invoice.InvoiceState,
+                InvoiceTypeEn = invoice.InvoiceType,
                 CustomerName = invoice.Customer.Person.FullName,
                 WorkerName = invoice.Worker != null ? invoice.Worker.Person.FullName : string.Empty,
                 TotalSellingPrice = invoice.TotalSellingPrice,
                 TotalPaid = invoice.TotalPaid,
-                Additional = invoice.Additional,
+                Discount = invoice.Discount,
                 TotalBuyingPrice = invoice.TotalBuyingPrice,
                 TotalRefundBuyingPrice = invoice.TotalRefundBuyingPrice,
                 TotalRefundSellingPrice = invoice.TotalRefundSellingPrice,
@@ -426,8 +432,23 @@ namespace LogicLayer.Services.Invoices
                 .ToList();
         }
 
-        public async Task UpdateInvoiceAdditional(int InvoiceId, decimal addition, string AdditionalNotes)
+        public async Task AddDiscount(int InvoiceId, decimal discount, string AdditionalNotes)
         {
+            if (discount <= 0)
+            {
+
+                throw new ValidationException(new List<string>()
+                {
+                    ErrorMessagesManager.WriteValidationErrorMessageInArabic(new ValidationError()
+                    {
+                        Code = ValidationErrorCode.ValueOutOfRange,
+                        ObjectType = typeof(Invoice),
+                        PropertyName = nameof(Invoice.Discount),
+                    })
+                }
+              );
+            }
+
             var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
 
 
@@ -438,16 +459,28 @@ namespace LogicLayer.Services.Invoices
 
             if(invoice.InvoiceState == InvoiceState.Closed)
             {
-                throw new OperationFailedException("لا يمكن إضافة مبالغ لفاتورة مغلقة");
+                throw new OperationFailedException("لا يمكن إضافة خصم على فاتورة مغلقة");
             }
 
             if(invoice.InvoiceType == InvoiceType.Evaluation)
             {
-                throw new OperationFailedException("لا يمكن إضافة مبالغ لفاتورة تسعير");
+                throw new OperationFailedException("لا يمكن إضافة على فاتورة تسعير");
             }
 
-            invoice.Additional = addition;
-            invoice.AdditionNotes = AdditionalNotes;
+            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
+            decimal AmountDue = netSale - invoice.Discount;
+            decimal remaining = AmountDue - invoice.TotalPaid;
+
+            if (discount > remaining)
+            {
+                throw new OperationFailedException("لا يمكن إضافة خصم , أكبر من المبلغ الباقي");
+            }
+
+
+            invoice.Discount = discount;
+            invoice.Notes = string.IsNullOrWhiteSpace(AdditionalNotes)
+                            ? null
+                            : AdditionalNotes; ;
 
             await _unitOfWork.SaveAsync();
         }

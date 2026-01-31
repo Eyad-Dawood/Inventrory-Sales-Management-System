@@ -1,6 +1,6 @@
 ﻿namespace InventorySalesManagementSystem.Invoices
 {
-    partial class frmInvoiceAdditionalFees
+    partial class frmInvoiceDiscount
     {
         /// <summary>
         /// Required designer variable.
@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             btnCancel = new Button();
-            btnSave = new Button();
             txtamount = new TextBox();
             label1 = new Label();
             txtAdditionalNotes = new TextBox();
             label3 = new Label();
+            btnSave = new Button();
             SuspendLayout();
             // 
             // btnCancel
@@ -47,18 +47,6 @@
             btnCancel.Text = "إلغاء";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
-            // 
-            // btnSave
-            // 
-            btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            btnSave.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSave.Location = new Point(348, 138);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(96, 30);
-            btnSave.TabIndex = 16;
-            btnSave.Text = "حفظ";
-            btnSave.UseVisualStyleBackColor = true;
-            btnSave.Click += btnSave_Click;
             // 
             // txtamount
             // 
@@ -98,15 +86,28 @@
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.RightToLeft = RightToLeft.Yes;
-            label3.Size = new Size(112, 30);
+            label3.Size = new Size(114, 30);
             label3.TabIndex = 63;
-            label3.Text = "التفاصيل : ";
+            label3.Text = "ملاحظات : ";
             // 
-            // frmInvoiceAdditionalFees
+            // btnSave
             // 
+            btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            btnSave.ForeColor = Color.FromArgb(0, 192, 0);
+            btnSave.Location = new Point(348, 138);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(96, 30);
+            btnSave.TabIndex = 16;
+            btnSave.Text = "حفظ";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
+            // 
+            // frmInvoiceDiscount
+            // 
+            AcceptButton = btnSave;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            CancelButton = btnSave;
+            CancelButton = btnCancel;
             ClientSize = new Size(455, 175);
             Controls.Add(txtAdditionalNotes);
             Controls.Add(label3);
@@ -116,7 +117,7 @@
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
-            Name = "frmInvoiceAdditionalFees";
+            Name = "frmInvoiceDiscount";
             Load += frmInvoiceAdditionalFees_Load;
             ResumeLayout(false);
             PerformLayout();

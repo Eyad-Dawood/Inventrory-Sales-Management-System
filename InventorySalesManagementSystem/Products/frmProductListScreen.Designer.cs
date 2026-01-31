@@ -40,6 +40,10 @@
             cms.SuspendLayout();
             SuspendLayout();
             // 
+            // ucListView1
+            // 
+            ucListView1.AllowSecondSearchBox = true;
+            // 
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);

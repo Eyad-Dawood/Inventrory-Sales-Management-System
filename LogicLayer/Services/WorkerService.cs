@@ -22,7 +22,7 @@ namespace LogicLayer.Services
             _logger = logger;
         }
 
-        #region
+        #region Map
         private Worker MapWorker_AddDto(WorkerAddDto DTO)
         {
             return new Worker()

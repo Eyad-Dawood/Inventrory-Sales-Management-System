@@ -37,7 +37,6 @@ namespace InventorySalesManagementSystem.Products.PricesLog
             base.OnLoad(e);
             SelectButton = false;
             AddButton = false;
-            ucListView1.AllowDatePic = true;
             lbTitle.Text = "سجلات الأسعار";
         }
 

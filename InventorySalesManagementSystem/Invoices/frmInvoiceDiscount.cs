@@ -15,16 +15,16 @@ using System.Windows.Forms;
 
 namespace InventorySalesManagementSystem.Invoices
 {
-    public partial class frmInvoiceAdditionalFees : Form
+    public partial class frmInvoiceDiscount : Form
     {
         private IServiceProvider _serviceProvider { set; get; }
         private int _invoiceId ;
 
-        public frmInvoiceAdditionalFees(IServiceProvider serviceProvider,int IvoiceId)
+        public frmInvoiceDiscount(IServiceProvider serviceProvider,int InvoiceId)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
-            _invoiceId = IvoiceId;
+            _invoiceId = InvoiceId;
         }
 
         private void ValidateAdditional()
@@ -33,7 +33,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             if (!FormatValidation.IsValidDecimal(txtamount.Text.Trim()))
             {
-                string propertyName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Invoice), nameof(Invoice.Additional));
+                string propertyName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Invoice), nameof(Invoice.Discount));
                 errors.Add($"{propertyName} تنسيقه غير صحيح");
             }
 
@@ -54,8 +54,8 @@ namespace InventorySalesManagementSystem.Invoices
 
                     var invoice = await service.GetInvoiceByIdAsync(_invoiceId);
 
-                    txtAdditionalNotes.Text = invoice.AdditionalNotes;
-                    txtamount.Text = invoice.Additional.ToString("N4");
+                    txtAdditionalNotes.Text = invoice.Notes;
+                    txtamount.Text = invoice.Discount.ToString("N2");
                 }
             }
             catch (NotFoundException ex)
@@ -87,14 +87,20 @@ namespace InventorySalesManagementSystem.Invoices
         {
             ValidateAdditional();
 
+            Cursor.Current = Cursors.WaitCursor;
+            btnSave.Enabled = false;
+
             try
             {
                 using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<InvoiceService>();
 
-                   await service.UpdateInvoiceAdditional(_invoiceId, Convert.ToDecimal(txtamount.Text.Trim()), txtAdditionalNotes.Text.Trim());
+                   await service.AddDiscount(_invoiceId, Convert.ToDecimal(txtamount.Text.Trim()), txtAdditionalNotes.Text.Trim());
                 }
+
+                this.Close();
+                MessageBox.Show("تم حفظ البيانات الجديدة", "تمت العملية", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (NotFoundException ex)
             {
@@ -119,25 +125,15 @@ namespace InventorySalesManagementSystem.Invoices
                 MessageBox.Show("حدث خطأ غير متوقع أثناء التحديث", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
-        }
-        private async void btnSave_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Cursor.Current = Cursors.WaitCursor;
-                btnSave.Enabled = false;
-
-                await SaveInvoiceAsync();
-
-                MessageBox.Show("تم حفظ البيانات الجديدة", "تمت العملية", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
-            }
             finally
             {
                 Cursor.Current = Cursors.Default;
                 btnSave.Enabled = true;
             }
+        }
+        private async void btnSave_Click(object sender, EventArgs e)
+        {
+                await SaveInvoiceAsync();            
         }
     }
 }

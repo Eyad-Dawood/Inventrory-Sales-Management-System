@@ -34,13 +34,17 @@
             cms.SuspendLayout();
             SuspendLayout();
             // 
+            // ucListView1
+            // 
+            ucListView1.AllowDatePic = true;
+            // 
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
             cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(173, 34);
+            cms.Size = new Size(189, 56);
             // 
             // ShowMenustripItem
             // 
@@ -49,7 +53,7 @@
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
-            ShowMenustripItem.Size = new Size(172, 30);
+            ShowMenustripItem.Size = new Size(188, 30);
             ShowMenustripItem.Text = "عرض البيانات";
             ShowMenustripItem.Click += ShowMenustripItem_Click;
             // 
@@ -60,6 +64,7 @@
             ClientSize = new Size(1214, 661);
             MinimumSize = new Size(900, 700);
             Name = "FrmStockMovementLogListScreen";
+            Controls.SetChildIndex(ucListView1, 0);
             cms.ResumeLayout(false);
             ResumeLayout(false);
         }

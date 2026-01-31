@@ -251,9 +251,9 @@ namespace InventorySalesManagementSystem.UserControles
             chkUseDateFilter.Visible = !Allow;
 
             if (Allow)
-                pnUpperButtons.Width -= txtSearchValue2.Width + 10;
+                pnSearchBoxes.Width += txtSearchValue2.Width + 10;
             else
-                pnUpperButtons.Width += txtSearchValue2.Width + 10;
+                pnSearchBoxes.Width -= txtSearchValue2.Width + 10;
 
         }
 
@@ -269,9 +269,9 @@ namespace InventorySalesManagementSystem.UserControles
             txtSearchValue2.Visible = !Allow;
 
             if (Allow)
-                pnUpperButtons.Width -= dtpLogDate.Width + chkUseDateFilter.Width + 10;
+                pnSearchBoxes.Width += dtpLogDate.Width + chkUseDateFilter.Width + 10;
             else
-                pnUpperButtons.Width += dtpLogDate.Width + chkUseDateFilter.Width + 10;
+                pnSearchBoxes.Width -= dtpLogDate.Width + chkUseDateFilter.Width + 10;
 
         }
 

@@ -126,9 +126,9 @@
 
         protected UserControles.UcListView ucListView1;
         private Panel panel4;
-        private Button btnAdd;
         private Panel panel2;
         protected Button btnSelect;
         protected Label lbTitle;
+        protected Button btnAdd;
     }
 }

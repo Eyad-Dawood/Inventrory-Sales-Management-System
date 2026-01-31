@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Entities.Invoices;
+﻿using DataAccessLayer.Abstractions;
+using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Validation;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Entities.Payments
 {
-    public enum PaymentReason
+    public enum PaymentReason 
     {
         [Display(Name ="فاتورة")]
         Invoice = 1,
@@ -21,7 +22,7 @@ namespace DataAccessLayer.Entities.Payments
         [Display(Name ="مرتجع")]
         Refund = 3
     }
-    public class Payment
+    public class Payment : IValidatable
     {
         [Key]
         [Display(Name = "معرف العملية")]

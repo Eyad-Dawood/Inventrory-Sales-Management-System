@@ -67,13 +67,13 @@ namespace DataAccessLayer.Entities.Invoices
         /// Positive = additional charges, Negative = discount
         /// </summary>
         [Column(TypeName = "decimal(10,2)")]
-        [Display(Name = "إضافي")]
-        public decimal Additional { get; set; }
+        [Display(Name = "خصم")]
+        public decimal Discount { get; set; }
 
 
         [MaxLength(250)]
-        [Display(Name = "ملاحظات الأموال الإضافية")]
-        public string? AdditionNotes { get; set; }
+        [Display(Name = "ملاحظات")]
+        public string? Notes { get; set; }
 
         [Display(Name = "النوع")]
         public InvoiceType InvoiceType { get; set; }

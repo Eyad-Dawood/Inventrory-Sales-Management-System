@@ -34,6 +34,10 @@
             cms.SuspendLayout();
             SuspendLayout();
             // 
+            // ucListView1
+            // 
+            ucListView1.AllowDatePic = true;
+            // 
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
@@ -60,6 +64,7 @@
             ClientSize = new Size(1214, 661);
             MinimumSize = new Size(900, 700);
             Name = "frmPriceLogListScreen";
+            Controls.SetChildIndex(ucListView1, 0);
             cms.ResumeLayout(false);
             ResumeLayout(false);
         }

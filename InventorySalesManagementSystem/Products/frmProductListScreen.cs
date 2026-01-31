@@ -44,7 +44,6 @@ namespace InventorySalesManagementSystem.Products
             base.OnLoad(e);
             lbTitle.Text = "شاشة المنتجات";
             SelectButton = false;
-            ucListView1.AllowSecondSearchBox = true;
         }
 
 

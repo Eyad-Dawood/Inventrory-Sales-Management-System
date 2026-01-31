@@ -108,6 +108,7 @@
             ClientSize = new Size(1214, 661);
             MinimumSize = new Size(900, 700);
             Name = "frmCustomerListScreen";
+            Controls.SetChildIndex(ucListView1, 0);
             cms.ResumeLayout(false);
             ResumeLayout(false);
         }

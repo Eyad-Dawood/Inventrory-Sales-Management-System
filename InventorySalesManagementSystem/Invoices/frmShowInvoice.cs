@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAccessLayer.Entities.Invoices;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,17 +16,21 @@ namespace InventorySalesManagementSystem.Invoices
         public int InvoiceId = 0;
         private readonly IServiceProvider _serviceProvider;
 
-        public frmShowInvoice(IServiceProvider serviceProvider)
+        public frmShowInvoice(IServiceProvider serviceProvider, int invoiceId)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
-        }
-
-        public async Task ShowInvoice(int invoiceId)
-        {
             InvoiceId = invoiceId;
-            await ucInvoiceDetails1.ShowInvoice(_serviceProvider,InvoiceId);
         }
 
+        private async Task LoadInvoiceAsync()
+        {
+            await ucInvoiceDetails1.ShowInvoice(_serviceProvider, InvoiceId);
+        }
+
+        private async void frmShowInvoice_Load(object sender, EventArgs e)
+        {
+            await LoadInvoiceAsync();
+        }
     }
 }

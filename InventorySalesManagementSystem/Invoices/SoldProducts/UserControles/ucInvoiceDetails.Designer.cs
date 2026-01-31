@@ -278,7 +278,7 @@
             lbAdditional.Margin = new Padding(4, 0, 4, 0);
             lbAdditional.Name = "lbAdditional";
             lbAdditional.RightToLeft = RightToLeft.Yes;
-            lbAdditional.Size = new Size(169, 28);
+            lbAdditional.Size = new Size(242, 28);
             lbAdditional.TabIndex = 74;
             lbAdditional.Text = "----";
             // 
@@ -286,13 +286,13 @@
             // 
             label18.AutoSize = true;
             label18.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label18.Location = new Point(166, 12);
+            label18.Location = new Point(272, 12);
             label18.Margin = new Padding(4, 0, 4, 0);
             label18.Name = "label18";
             label18.RightToLeft = RightToLeft.Yes;
-            label18.Size = new Size(163, 25);
+            label18.Size = new Size(68, 25);
             label18.TabIndex = 73;
-            label18.Text = "مستحقات إضافية : ";
+            label18.Text = "خصم : ";
             // 
             // label19
             // 

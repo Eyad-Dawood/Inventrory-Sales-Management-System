@@ -62,6 +62,7 @@
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "frmShowInvoice";
+            Load += frmShowInvoice_Load;
             ResumeLayout(false);
         }
 

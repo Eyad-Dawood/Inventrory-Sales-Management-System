@@ -39,7 +39,6 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
             base.OnLoad(e);
             SelectButton = false;
             AddButton = false;
-            ucListView1.AllowDatePic = true;
             lbTitle.Text = "سجلات حركة المخزون";
         }
 

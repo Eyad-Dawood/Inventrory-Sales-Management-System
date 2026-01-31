@@ -24,8 +24,8 @@ namespace LogicLayer.DTOs.InvoiceDTO
         public decimal TotalRefundBuyingPrice { get; set; }
         public decimal TotalRefundSellingPrice { get; set; }
         public decimal TotalPaid { get; set; }
-        public decimal Additional { get; set; }
-        public string? AdditionalNotes { get; set; }
+        public decimal Discount { get; set; }
+        public string? Notes { get; set; }
 
         // صافي البيع الحقيقي
         [Display(Name = "صافي البيع")]
@@ -40,7 +40,7 @@ namespace LogicLayer.DTOs.InvoiceDTO
         // الربح المحاسبي
         [Display(Name = "الربح")]
         public decimal NetProfit =>
-            NetSale - NetBuying + Additional;
+            NetSale - NetBuying - Discount;
 
         // الباقي المستحق دفعه
         [Display(Name = "باقي للسداد")]
@@ -50,11 +50,16 @@ namespace LogicLayer.DTOs.InvoiceDTO
         // total يدفعه العميل
         [Display(Name = "المبلغ المستحق النهائي")]
         public decimal AmountDue =>
-            NetSale + Additional;
+            NetSale - Discount;
 
 
         public string InvoiceType { get; set; }
         public string InvoiceState { get; set; }
+
+
+        public InvoiceType InvoiceTypeEn { get; set; }
+        public InvoiceState InvoiceStateEn { get; set; }
+
 
         public DateTime OpenDate { get; set; }
         public DateTime? CloseDate { get; set; }

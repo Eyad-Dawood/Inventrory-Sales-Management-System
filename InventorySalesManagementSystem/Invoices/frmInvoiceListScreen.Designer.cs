@@ -64,13 +64,17 @@
             // 
             lbTitle.Size = new Size(1584, 95);
             // 
+            // btnAdd
+            // 
+            btnAdd.Location = new Point(1544, 0);
+            // 
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
             cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, addRefundMenuStripItem, ConvertEvaluationToSaleInvoiceMenuStripItem, toolStripSeparator2, additionalFeesMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(217, 224);
+            cms.Size = new Size(217, 202);
             cms.Opening += cms_Opening;
             // 
             // ShowMenustripItem
@@ -143,12 +147,11 @@
             // additionalFeesMenuStripItem
             // 
             additionalFeesMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            additionalFeesMenuStripItem.Image = Properties.Resources.ShowDetailsIcon;
-            additionalFeesMenuStripItem.ImageScaling = ToolStripItemImageScaling.None;
+            additionalFeesMenuStripItem.Image = Properties.Resources.Discount;
             additionalFeesMenuStripItem.Name = "additionalFeesMenuStripItem";
             additionalFeesMenuStripItem.RightToLeft = RightToLeft.Yes;
             additionalFeesMenuStripItem.Size = new Size(216, 30);
-            additionalFeesMenuStripItem.Text = "مبلغ إضافي";
+            additionalFeesMenuStripItem.Text = "خصم";
             additionalFeesMenuStripItem.Click += additionalFeesMenuStripItem_Click;
             // 
             // gpCraft

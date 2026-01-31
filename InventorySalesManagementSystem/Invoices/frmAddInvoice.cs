@@ -74,8 +74,8 @@ namespace InventorySalesManagementSystem.Invoices
                         CustomerId = _SelectedCustomerId,
                         InvoiceType = rdSale.Checked ? InvoiceType.Sale : InvoiceType.Evaluation,
                         WorkerId = _SelectedWorkerId,
-                        AdditionAmount = Convert.ToDecimal(string.IsNullOrEmpty(txtAdditional.Text.Trim()) ? 0 : txtAdditional.Text.Trim()),
-                        AdditonNotes = txtAdditionalNotes.Text.Trim()
+                        Discount = Convert.ToDecimal(string.IsNullOrEmpty(txtAdditional.Text.Trim()) ? 0 : txtAdditional.Text.Trim()),
+                        Notes = txtAdditionalNotes.Text.Trim()
                     }
                     ,
                     takeBatchAdd
@@ -196,7 +196,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             if (!string.IsNullOrEmpty(txtAdditional.Text.Trim()) && !FormatValidation.IsValidDecimal(txtAdditional.Text.Trim()))
             {
-                string propertyName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Invoice), nameof(Invoice.Additional));
+                string propertyName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Invoice), nameof(Invoice.Discount));
                 errors.Add($"{propertyName} تنسيقه غير صحيح");
             }
 

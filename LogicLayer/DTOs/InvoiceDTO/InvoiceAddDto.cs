@@ -15,8 +15,8 @@ namespace LogicLayer.DTOs.InvoiceDTO
 
         public int? WorkerId { get; set; } = 0;
 
-        public decimal AdditionAmount { get; set; }
+        public decimal Discount { get; set; }
 
-        public string AdditonNotes { get; set; }
+        public string? Notes { get; set; }
     }
 }

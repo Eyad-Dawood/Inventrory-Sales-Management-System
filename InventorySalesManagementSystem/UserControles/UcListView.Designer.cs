@@ -192,12 +192,12 @@
             // 
             // pnUpperButtons
             // 
-            pnUpperButtons.Anchor = AnchorStyles.Right;
             pnUpperButtons.Controls.Add(btnCancelFilter);
             pnUpperButtons.Controls.Add(btnFilter);
+            pnUpperButtons.Dock = DockStyle.Fill;
             pnUpperButtons.Location = new Point(0, 0);
             pnUpperButtons.Name = "pnUpperButtons";
-            pnUpperButtons.Size = new Size(481, 35);
+            pnUpperButtons.Size = new Size(480, 35);
             pnUpperButtons.TabIndex = 7;
             // 
             // btnCancelFilter
@@ -205,7 +205,7 @@
             btnCancelFilter.Anchor = AnchorStyles.Right;
             btnCancelFilter.BackgroundImage = Properties.Resources.CancelIcon;
             btnCancelFilter.BackgroundImageLayout = ImageLayout.Stretch;
-            btnCancelFilter.Location = new Point(415, 2);
+            btnCancelFilter.Location = new Point(414, 2);
             btnCancelFilter.Name = "btnCancelFilter";
             btnCancelFilter.Size = new Size(30, 30);
             btnCancelFilter.TabIndex = 6;
@@ -217,7 +217,7 @@
             btnFilter.Anchor = AnchorStyles.Right;
             btnFilter.BackgroundImage = Properties.Resources.SearchIcon;
             btnFilter.BackgroundImageLayout = ImageLayout.Stretch;
-            btnFilter.Location = new Point(451, 3);
+            btnFilter.Location = new Point(450, 3);
             btnFilter.Name = "btnFilter";
             btnFilter.Size = new Size(30, 30);
             btnFilter.TabIndex = 3;
@@ -232,10 +232,10 @@
             pnSearchBoxes.Controls.Add(label1);
             pnSearchBoxes.Controls.Add(cmpSearchBy);
             pnSearchBoxes.Controls.Add(txtSearchValue1);
-            pnSearchBoxes.Dock = DockStyle.Fill;
-            pnSearchBoxes.Location = new Point(0, 0);
+            pnSearchBoxes.Dock = DockStyle.Right;
+            pnSearchBoxes.Location = new Point(480, 0);
             pnSearchBoxes.Name = "pnSearchBoxes";
-            pnSearchBoxes.Size = new Size(980, 35);
+            pnSearchBoxes.Size = new Size(500, 35);
             pnSearchBoxes.TabIndex = 8;
             // 
             // chkUseDateFilter
@@ -246,7 +246,7 @@
             chkUseDateFilter.CheckState = CheckState.Checked;
             chkUseDateFilter.Enabled = false;
             chkUseDateFilter.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
-            chkUseDateFilter.Location = new Point(246, 10);
+            chkUseDateFilter.Location = new Point(-234, 10);
             chkUseDateFilter.Name = "chkUseDateFilter";
             chkUseDateFilter.Size = new Size(15, 14);
             chkUseDateFilter.TabIndex = 10;
@@ -258,7 +258,7 @@
             dtpLogDate.Anchor = AnchorStyles.Right;
             dtpLogDate.Enabled = false;
             dtpLogDate.Format = DateTimePickerFormat.Short;
-            dtpLogDate.Location = new Point(267, 6);
+            dtpLogDate.Location = new Point(-213, 6);
             dtpLogDate.Name = "dtpLogDate";
             dtpLogDate.RightToLeft = RightToLeft.Yes;
             dtpLogDate.Size = new Size(214, 23);
@@ -270,7 +270,7 @@
             // 
             txtSearchValue2.Anchor = AnchorStyles.Right;
             txtSearchValue2.Enabled = false;
-            txtSearchValue2.Location = new Point(267, 6);
+            txtSearchValue2.Location = new Point(-213, 6);
             txtSearchValue2.Name = "txtSearchValue2";
             txtSearchValue2.RightToLeft = RightToLeft.Yes;
             txtSearchValue2.Size = new Size(214, 23);
@@ -282,7 +282,7 @@
             label1.Anchor = AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            label1.Location = new Point(902, 6);
+            label1.Location = new Point(422, 6);
             label1.Name = "label1";
             label1.RightToLeft = RightToLeft.Yes;
             label1.Size = new Size(72, 25);
@@ -296,7 +296,7 @@
             cmpSearchBy.DropDownStyle = ComboBoxStyle.DropDownList;
             cmpSearchBy.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             cmpSearchBy.FormattingEnabled = true;
-            cmpSearchBy.Location = new Point(707, 3);
+            cmpSearchBy.Location = new Point(227, 3);
             cmpSearchBy.Name = "cmpSearchBy";
             cmpSearchBy.Size = new Size(189, 28);
             cmpSearchBy.TabIndex = 1;
@@ -304,7 +304,7 @@
             // txtSearchValue1
             // 
             txtSearchValue1.Anchor = AnchorStyles.Right;
-            txtSearchValue1.Location = new Point(487, 6);
+            txtSearchValue1.Location = new Point(7, 6);
             txtSearchValue1.Name = "txtSearchValue1";
             txtSearchValue1.RightToLeft = RightToLeft.Yes;
             txtSearchValue1.Size = new Size(214, 23);

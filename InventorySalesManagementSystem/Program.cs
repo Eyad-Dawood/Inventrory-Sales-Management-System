@@ -1,6 +1,7 @@
 using DataAccessLayer;
 using DataAccessLayer.Abstractions;
 using DataAccessLayer.Abstractions.Invoices;
+using DataAccessLayer.Abstractions.Payments;
 using DataAccessLayer.Abstractions.Products;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
@@ -10,6 +11,7 @@ using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
 using LogicLayer.Services.Invoices.Helper_Service;
+using LogicLayer.Services.Payments;
 using LogicLayer.Services.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -105,6 +107,7 @@ namespace InventorySalesManagementSystem
             services.AddScoped<ISoldProductRepository, SoldProductRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddScoped<ITakeBatchRepository, TakeBatchRepository>();
+            services.AddScoped<IPaymentRepository, IPaymentRepository>();
 
             //Generic Repos
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -126,6 +129,7 @@ namespace InventorySalesManagementSystem
             services.AddScoped<SoldProductService>();
             services.AddScoped<TakeBatchService>();
             services.AddScoped<InvoiceService>();
+            services.AddScoped<PaymentService>();
 
             //Service Helpers
             services.AddScoped<InvoiceServiceHelper>();

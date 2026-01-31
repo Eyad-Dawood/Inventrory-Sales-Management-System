@@ -302,8 +302,8 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             lbRemaining.Text = InvoiceReadDto.Remaining.ToString("N2");
             lbNetProfit.Text = InvoiceReadDto.NetProfit.ToString("N2");
 
-            lbAdditional.Text = InvoiceReadDto.Additional.ToString("N2");
-            txtNotes.Text = InvoiceReadDto.AdditionalNotes;
+            lbAdditional.Text = InvoiceReadDto.Discount.ToString("N2");
+            txtNotes.Text = InvoiceReadDto.Notes;
         }
 
 
@@ -353,5 +353,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             var frm = new frmRefundProductsSummary(_serviceProvider, InvoiceId);
             frm.ShowDialog();
         }
+
+       
     }
 }

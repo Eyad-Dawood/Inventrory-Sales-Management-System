@@ -6,6 +6,7 @@ using DataAccessLayer.Repos;
 using InventorySalesManagementSystem.Customers;
 using InventorySalesManagementSystem.General.General_Forms;
 using InventorySalesManagementSystem.Invoices;
+using InventorySalesManagementSystem.Payments;
 using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.Products.PricesLog;
 using InventorySalesManagementSystem.Products.ProductsTypes;
@@ -256,13 +257,19 @@ namespace InventorySalesManagementSystem
         {
             try
             {
-                var frm = new frmInvoiceListScreen(_serviceProvider,selectButton:false);
+                var frm = new frmInvoiceListScreen(_serviceProvider, selectButton: false);
                 frm.ShowDialog();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            frmPaymentsListScreen frm = new frmPaymentsListScreen(_serviceProvider);
+            frm.ShowDialog();
         }
     }
 }
