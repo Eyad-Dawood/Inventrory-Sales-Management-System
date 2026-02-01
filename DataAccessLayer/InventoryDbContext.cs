@@ -70,9 +70,11 @@ namespace DataAccessLayer
 
             //Person
             modelBuilder.Entity<Person>()
-                .Property(p => p.FullName)
-                .HasComputedColumnSql($"CONCAT_WS(' ', [{nameof(Person.FirstName)}], [{nameof(Person.SecondName)}], [{nameof(Person.ThirdName)}], [{nameof(Person.FourthName)}])"
-                ,stored:true);
+                .Property(e => e.FullName)
+                .HasComputedColumnSql(
+                    $"TRIM({nameof(Person.FirstName)} || ' ' || {nameof(Person.SecondName)} || ' ' || COALESCE({nameof(Person.ThirdName)}, '') || ' ' || COALESCE({nameof(Person.FourthName)}, ''))",
+                    stored: true);
+
 
             //For Faster Search
             modelBuilder.Entity<Person>()

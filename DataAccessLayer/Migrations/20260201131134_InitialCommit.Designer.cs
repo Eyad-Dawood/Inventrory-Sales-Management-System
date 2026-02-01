@@ -3,7 +3,6 @@ using System;
 using DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -12,26 +11,20 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260121092248_AddedUserInRefunds")]
-    partial class AddedUserInRefunds
+    [Migration("20260201131134_InitialCommit")]
+    partial class InitialCommit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
             modelBuilder.Entity("DataAccessLayer.Entities.Customer", b =>
                 {
                     b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Balance")
                         .ValueGeneratedOnAdd()
@@ -40,11 +33,11 @@ namespace DataAccessLayer.Migrations
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("INTEGER")
                         .HasDefaultValue(true);
 
                     b.Property<int>("PersonId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("CustomerId");
 
@@ -53,66 +46,39 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.BoughtProduct", b =>
-                {
-                    b.Property<int>("BoughtProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BoughtProductId"));
-
-                    b.Property<decimal>("BuyingPricePerUnit")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(10,4)");
-
-                    b.Property<decimal>("SellingPricePerUnit")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("TakeBatchId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BoughtProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("TakeBatchId");
-
-                    b.ToTable("BoughtProducts");
-                });
-
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Invoice", b =>
                 {
                     b.Property<int>("InvoiceId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("CloseDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("CloseUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("InvoiceState")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("InvoiceType")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(250)
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("OpenDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("OpenUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("TotalBuyingPrice")
                         .HasColumnType("decimal(10,2)");
@@ -120,11 +86,17 @@ namespace DataAccessLayer.Migrations
                     b.Property<decimal>("TotalPaid")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<decimal>("TotalRefundBuyingPrice")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("TotalRefundSellingPrice")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<decimal>("TotalSellingPrice")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<int?>("WorkerId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("InvoiceId");
 
@@ -139,76 +111,69 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Invoices");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Refund", b =>
+            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.SoldProduct", b =>
                 {
-                    b.Property<int>("RefundId")
+                    b.Property<int>("SoldProductId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RefundId"));
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(350)
-                        .HasColumnType("nvarchar(350)");
+                    b.Property<decimal>("BuyingPricePerUnit")
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(10,4)");
 
-                    b.Property<string>("RefundName")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<decimal>("RefundPrice")
+                    b.Property<decimal>("SellingPricePerUnit")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<int>("TakeBatchId")
+                        .HasColumnType("INTEGER");
 
-                    b.HasKey("RefundId");
-
-                    b.HasIndex("InvoiceId");
+                    b.HasKey("SoldProductId");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("TakeBatchId");
 
-                    b.ToTable("Refunds");
+                    b.ToTable("SoldProducts");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.TakeBatch", b =>
                 {
                     b.Property<int>("TakeBatchId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TakeBatchId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(350)
-                        .HasColumnType("nvarchar(350)");
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TakeBatchType")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("TakeDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("TakeName")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("TakeBatchId");
 
                     b.HasIndex("InvoiceId");
+
+                    b.HasIndex("TakeBatchType");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TakeBatches");
                 });
@@ -217,14 +182,12 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("MasurementUnitId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MasurementUnitId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UnitName")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("MasurementUnitId");
 
@@ -238,31 +201,39 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("PaymentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("InvoiceId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(350)
-                        .HasColumnType("nvarchar(350)");
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PaidBy")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("PaymentReason")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RecivedBy")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PaymentId");
 
@@ -281,44 +252,42 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("PersonId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FourthName")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("nvarchar(450)")
-                        .HasComputedColumnSql("CONCAT_WS(' ', [FirstName], [SecondName], [ThirdName], [FourthName])", true);
+                        .HasColumnType("TEXT")
+                        .HasComputedColumnSql("TRIM(FirstName || ' ' || SecondName || ' ' || COALESCE(ThirdName, '') || ' ' || COALESCE(FourthName, ''))", true);
 
                     b.Property<string>("NationalNumber")
                         .HasMaxLength(14)
-                        .HasColumnType("nvarchar(14)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SecondName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ThirdName")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TownID")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("PersonId");
 
@@ -333,26 +302,24 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("BuyingPrice")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MasurementUnitId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ProductTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("QuantityInStorage")
                         .HasColumnType("decimal(10,4)");
@@ -375,17 +342,13 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("ProductPriceLogId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductPriceLogId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("LogDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSDATETIME()");
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("NewBuyingPrice")
                         .HasColumnType("decimal(10,2)");
@@ -400,7 +363,7 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("ProductPriceLogId");
 
@@ -415,33 +378,29 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("ProductStockMovementId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductStockMovementId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("CreatedByUserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("LogDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSDATETIME()");
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("NewQuantity")
                         .HasColumnType("decimal(10,4)");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("OldQuantity")
                         .HasColumnType("decimal(10,4)");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Reason")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("ProductStockMovementId");
 
@@ -456,14 +415,12 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("ProductTypeId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductTypeId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ProductTypeName")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ProductTypeId");
 
@@ -477,14 +434,12 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("TownID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TownID"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("TownName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("TownID");
 
@@ -498,25 +453,23 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Permissions")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("UserId");
 
@@ -527,20 +480,18 @@ namespace DataAccessLayer.Migrations
                 {
                     b.Property<int>("WorkerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkerId"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Craft")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("INTEGER")
                         .HasDefaultValue(true);
 
                     b.Property<int>("PersonId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("WorkerId");
 
@@ -558,25 +509,6 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.BoughtProduct", b =>
-                {
-                    b.HasOne("DataAccessLayer.Entities.Products.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataAccessLayer.Entities.Invoices.TakeBatch", "TakeBatch")
-                        .WithMany()
-                        .HasForeignKey("TakeBatchId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("TakeBatch");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Invoice", b =>
@@ -612,17 +544,30 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Refund", b =>
+            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.SoldProduct", b =>
                 {
-                    b.HasOne("DataAccessLayer.Entities.Invoices.Invoice", "Invoice")
-                        .WithMany()
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataAccessLayer.Entities.Products.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DataAccessLayer.Entities.Invoices.TakeBatch", "TakeBatch")
+                        .WithMany("SoldProducts")
+                        .HasForeignKey("TakeBatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("TakeBatch");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.TakeBatch", b =>
+                {
+                    b.HasOne("DataAccessLayer.Entities.Invoices.Invoice", "Invoice")
+                        .WithMany("takeBatches")
+                        .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -634,20 +579,7 @@ namespace DataAccessLayer.Migrations
 
                     b.Navigation("Invoice");
 
-                    b.Navigation("Product");
-
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.TakeBatch", b =>
-                {
-                    b.HasOne("DataAccessLayer.Entities.Invoices.Invoice", "Invoice")
-                        .WithMany()
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("DataAccessLayer.Entities.Payments.Payment", b =>
@@ -753,6 +685,16 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
 
                     b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.Invoice", b =>
+                {
+                    b.Navigation("takeBatches");
+                });
+
+            modelBuilder.Entity("DataAccessLayer.Entities.Invoices.TakeBatch", b =>
+                {
+                    b.Navigation("SoldProducts");
                 });
 #pragma warning restore 612, 618
         }

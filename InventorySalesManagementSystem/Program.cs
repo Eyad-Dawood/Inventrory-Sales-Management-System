@@ -3,8 +3,10 @@ using DataAccessLayer.Abstractions;
 using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Abstractions.Payments;
 using DataAccessLayer.Abstractions.Products;
+using DataAccessLayer.DesignTimeOnly;
 using DataAccessLayer.Repos;
 using DataAccessLayer.Repos.Invoices;
+using DataAccessLayer.Repos.Payments;
 using DataAccessLayer.Repos.Products;
 using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
@@ -16,7 +18,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Filters;
-using DataAccessLayer.Repos.Payments;
 
 namespace InventorySalesManagementSystem
 {
@@ -168,6 +169,8 @@ namespace InventorySalesManagementSystem
                     db.Database.Migrate();
                 }
 
+                //Check For Seeds
+                DatabaseSeeder.Seed(db);
             }
             catch (Exception ex)
             {
