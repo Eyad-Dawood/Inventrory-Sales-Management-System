@@ -93,6 +93,36 @@ namespace InventorySalesManagementSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BackGround {
+            get {
+                object obj = ResourceManager.GetObject("BackGround", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap box__1_ {
+            get {
+                object obj = ResourceManager.GetObject("box (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap boxes__1_ {
+            get {
+                object obj = ResourceManager.GetObject("boxes (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap BuyingIcon {
             get {
                 object obj = ResourceManager.GetObject("BuyingIcon", resourceCulture);
@@ -142,6 +172,26 @@ namespace InventorySalesManagementSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap customer__1_ {
+            get {
+                object obj = ResourceManager.GetObject("customer (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap customer__1_1 {
+            get {
+                object obj = ResourceManager.GetObject("customer (1)1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap DeleteIcon {
             get {
                 object obj = ResourceManager.GetObject("DeleteIcon", resourceCulture);
@@ -182,6 +232,36 @@ namespace InventorySalesManagementSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap folder__1_ {
+            get {
+                object obj = ResourceManager.GetObject("folder (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap group__1_ {
+            get {
+                object obj = ResourceManager.GetObject("group (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap invoice__1___1_ {
+            get {
+                object obj = ResourceManager.GetObject("invoice (1) (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap invoice__2_ {
             get {
                 object obj = ResourceManager.GetObject("invoice (2)", resourceCulture);
@@ -205,6 +285,16 @@ namespace InventorySalesManagementSystem.Properties {
         internal static System.Drawing.Bitmap minus__1_ {
             get {
                 object obj = ResourceManager.GetObject("minus (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap price_tag__1_ {
+            get {
+                object obj = ResourceManager.GetObject("price-tag (1)", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -272,9 +362,29 @@ namespace InventorySalesManagementSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap wallet__2___1_ {
+            get {
+                object obj = ResourceManager.GetObject("wallet (2) (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap WithDrawIcon {
             get {
                 object obj = ResourceManager.GetObject("WithDrawIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap workers__1_ {
+            get {
+                object obj = ResourceManager.GetObject("workers (1)", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

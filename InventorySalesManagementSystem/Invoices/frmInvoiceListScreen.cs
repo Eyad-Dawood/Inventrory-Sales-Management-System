@@ -611,7 +611,7 @@ namespace InventorySalesManagementSystem.Invoices
                 PayMenuStripItem.Enabled =
                     item.InvoiceStateEn == InvoiceState.Open && item.InvoiceTypeEn == InvoiceType.Sale;
 
-                PayMenuStripItem.Enabled =
+                PayRefundMenuStripItem.Enabled =
                      item.InvoiceTypeEn == InvoiceType.Sale;
 
             }

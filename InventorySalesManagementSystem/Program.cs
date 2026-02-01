@@ -1,30 +1,21 @@
-using DataAccessLayer;
+﻿using DataAccessLayer;
 using DataAccessLayer.Abstractions;
 using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Abstractions.Payments;
 using DataAccessLayer.Abstractions.Products;
-using DataAccessLayer.Entities;
 using DataAccessLayer.Repos;
 using DataAccessLayer.Repos.Invoices;
 using DataAccessLayer.Repos.Products;
-using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
 using LogicLayer.Services.Invoices.Helper_Service;
 using LogicLayer.Services.Payments;
 using LogicLayer.Services.Products;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic.Logging;
 using Serilog;
-using Serilog.Extensions.Logging;
 using Serilog.Filters;
-using Serilog.Sinks.File;
-using System.CodeDom;
-using System.Globalization;
-using System.Threading;
 using DataAccessLayer.Repos.Payments;
 
 namespace InventorySalesManagementSystem
@@ -40,7 +31,15 @@ namespace InventorySalesManagementSystem
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
 
-            
+            var dbFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                "InventorySales");
+
+
+            var logsFolder = Path.Combine(dbFolder, "Logs");
+            Directory.CreateDirectory(logsFolder);
+
+
 
 
             //Logger Creation
@@ -52,7 +51,7 @@ namespace InventorySalesManagementSystem
                 .Filter.ByExcluding(
                     Matching.FromSource("Microsoft.EntityFrameworkCore"))
                 .WriteTo.File(
-                    path: "Logs\\app-.log",
+                    path: Path.Combine(logsFolder, "app-.log"),
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 14,
                     shared: true))
@@ -61,31 +60,39 @@ namespace InventorySalesManagementSystem
             .WriteTo.Logger(lc => lc
                 .Filter.ByIncludingOnly(
                     Matching.FromSource("Microsoft.EntityFrameworkCore"))
+                .Filter.ByExcluding(
+                    Matching.FromSource("Microsoft.EntityFrameworkCore.Migrations"))
                 .WriteTo.File(
-                    path: "Logs\\ef-.log",
+                    path: Path.Combine(logsFolder, "ef-.log"),
                     rollingInterval: RollingInterval.Day,
                     retainedFileCountLimit: 14,
+                    shared: true))
+
+            // ===== Migrations =====
+            .WriteTo.Logger(lc => lc
+                .Filter.ByIncludingOnly(
+                    Matching.FromSource("Microsoft.EntityFrameworkCore.Migrations"))
+                .WriteTo.File(
+                    path: Path.Combine(logsFolder, "migration-.log"),
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 30,
                     shared: true))
 
             .CreateLogger();
 
 
-
-            //App Setting Config
-            var configuration = new ConfigurationBuilder()
-                    .SetBasePath(AppContext.BaseDirectory)
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .Build();
-
-            //Conneciton String
-            var connectionString =
-                configuration.GetConnectionString("InventorySales");
-
             //Service Config
             var services = new ServiceCollection();
 
+
+
+            Directory.CreateDirectory(dbFolder);
+
+            var dbPath = Path.Combine(dbFolder, "inventory.db");
+
             services.AddDbContext<InventoryDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlite($"Data Source={dbPath}"));
+
 
 
             services.AddLogging(logging =>
@@ -137,7 +144,43 @@ namespace InventorySalesManagementSystem
 
 
             var serviceProvider = services.BuildServiceProvider();
-            
+
+            try
+            {
+                using var scope = serviceProvider.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+
+                var pendingMigrations = db.Database.GetPendingMigrations();
+
+                if (pendingMigrations.Any())
+                {
+                    if (File.Exists(dbPath))
+                    {
+                        var backupFolder = Path.Combine(dbFolder, "Backups");
+                        Directory.CreateDirectory(backupFolder);
+
+                        File.Copy(
+                            dbPath,
+                            Path.Combine(backupFolder, $"inventory_{DateTime.Now:yyyyMMddHHmmss}.db"),
+                            overwrite: false);
+                    }
+
+                    db.Database.Migrate();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Fatal(ex, "Database migration failed");
+                MessageBox.Show(
+                    "حدث خطأ أثناء تحديث قاعدة البيانات.\nتواصل مع الدعم الفني.",
+                    "Database Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+
             try
             {
                 ApplicationConfiguration.Initialize();
@@ -147,7 +190,7 @@ namespace InventorySalesManagementSystem
                 if(loginForm.ShowDialog()!= DialogResult.OK)
                     return;
                 else
-                    Application.Run(new Form1(serviceProvider));
+                    Application.Run(new FrmMain(serviceProvider));
 
             }
             catch (Exception ex)
