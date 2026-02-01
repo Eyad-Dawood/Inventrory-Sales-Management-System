@@ -35,7 +35,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                     lbTakeNameLable.Text = "المُرجع : ";
                     ucProductSelector1.GetUcListView.Visible = false;
                     ucProductSelector1.GetUcListView.Enabled = false;
-
                     ucProductSelector1.RefundMode(true);
                 }
 
@@ -68,19 +67,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             }
         }
 
-        [Browsable(true)]
-        [DefaultValue(true)]
-        public bool ShowInvoiceDetails
-        {
-            get { return _showInvoiceDetails; }
-            set
-            {
-                _showInvoiceDetails = value;
-                gbInvoiceDetails.Visible = value;
-            }
-        }
 
-        private bool _showInvoiceDetails = true;
 
         public ucAddTakeBatch()
         {

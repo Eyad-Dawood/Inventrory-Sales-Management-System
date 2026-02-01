@@ -85,7 +85,7 @@ namespace InventorySalesManagementSystem.Invoices
                 return;
             }
         }
-        private void btnSave_Click(object sender, EventArgs e)
+        private async void btnSave_Click(object sender, EventArgs e)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace InventorySalesManagementSystem.Invoices
                     return;
                 }
 
-                _ = AddBatch(takeBatch);
+                await AddBatch(takeBatch);
             }
             finally
             {

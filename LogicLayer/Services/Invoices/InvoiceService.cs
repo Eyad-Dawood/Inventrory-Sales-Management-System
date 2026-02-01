@@ -3,6 +3,7 @@ using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.DTOS;
 using DataAccessLayer.Entities.Invoices;
+using DataAccessLayer.Entities.Payments;
 using DataAccessLayer.Entities.Products;
 using DataAccessLayer.Repos;
 using DataAccessLayer.Validation;
@@ -160,7 +161,7 @@ namespace LogicLayer.Services.Invoices
 
         #region Validate Logic
 
-        private async Task ValidateMainLogic(Invoice Invoice)
+        private async Task ValidateMainLogic(Invoice Invoice,TakeBatchType batchType)
         {
             var customer = await _customerService.GetCustomerByIdAsync(Invoice.CustomerId);
             
@@ -174,9 +175,14 @@ namespace LogicLayer.Services.Invoices
                 throw new OperationFailedException($"لا يمكن فتح فاتورة للعميل {customer.FullName} لأنه غير نشط");
             }
 
-            if(Invoice.InvoiceState == InvoiceState.Closed)
+            if((Invoice.InvoiceState == InvoiceState.Closed) && batchType==TakeBatchType.Invoice)
             {
                 throw new OperationFailedException("لا يمكن التعديل على فاتورة مغلقة");
+            }
+
+            if(Invoice.Discount>Invoice.TotalBuyingPrice-Invoice.TotalRefundBuyingPrice)
+            {
+                throw new OperationFailedException("لا يمكن أن يكون الخصم أكبر من المبلغ المطلوب");
             }
         }
 
@@ -212,7 +218,7 @@ namespace LogicLayer.Services.Invoices
 
             ValidationHelper.ValidateEntity(Invoice);
 
-            await ValidateMainLogic(Invoice);
+            await ValidateMainLogic(Invoice,BatchDTO.TakeBatchType);
 
             //return the created TakeBatch Aggregate
             //Linked with the SoldProducts
@@ -267,7 +273,7 @@ namespace LogicLayer.Services.Invoices
                 throw new NotFoundException(typeof(Invoice));
             }
 
-            await ValidateMainLogic(Invoice);
+            await ValidateMainLogic(Invoice, BatchDTO.TakeBatchType);
 
             var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId,Invoice.InvoiceType,Invoice.CustomerId);
 
@@ -401,6 +407,15 @@ namespace LogicLayer.Services.Invoices
             if(invoice.InvoiceState == InvoiceState.Closed)
                 throw new OperationFailedException("الفاتورة مغلقة بالفعل");
 
+
+            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
+            decimal AmountDue = netSale - invoice.Discount;
+            decimal remaining = AmountDue - invoice.TotalPaid;
+
+            if (remaining > 0)
+                throw new OperationFailedException("لا يمكن غلق الفاتورة دون سداد كامل المستحقات");
+
+
             invoice.InvoiceState = InvoiceState.Closed;
             invoice.CloseDate = DateTime.Now;
             invoice.CloseUserId = UserId;
@@ -467,15 +482,18 @@ namespace LogicLayer.Services.Invoices
                 throw new OperationFailedException("لا يمكن إضافة على فاتورة تسعير");
             }
 
-            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
+
+            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice; 
             decimal AmountDue = netSale - invoice.Discount;
             decimal remaining = AmountDue - invoice.TotalPaid;
+            decimal discountIncrease = discount - invoice.Discount;
 
-            if (discount > remaining)
+            if (discountIncrease > remaining)
             {
-                throw new OperationFailedException("لا يمكن إضافة خصم , أكبر من المبلغ الباقي");
+                throw new OperationFailedException(
+                    "لا يمكن إضافة خصم يؤدي إلى رصيد سالب"
+                );
             }
-
 
             invoice.Discount = discount;
             invoice.Notes = string.IsNullOrWhiteSpace(AdditionalNotes)
@@ -483,6 +501,87 @@ namespace LogicLayer.Services.Invoices
                             : AdditionalNotes; ;
 
             await _unitOfWork.SaveAsync();
+        }
+
+        public async Task Pay(int InvoiceId, decimal Amount)
+        {
+            if (Amount <= 0)
+            {
+
+                throw new ValidationException(new List<string>()
+                {
+                    ErrorMessagesManager.WriteValidationErrorMessageInArabic(new ValidationError()
+                    {
+                        Code = ValidationErrorCode.ValueOutOfRange,
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(Payment.Amount),
+                    })
+                }
+              );
+            }
+
+            var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
+
+
+            if (invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+
+            if (invoice.InvoiceState == InvoiceState.Closed)
+            {
+                throw new OperationFailedException("لا يمكن الدفع على فاتورة مغلقة");
+            }
+
+            if (invoice.InvoiceType == InvoiceType.Evaluation)
+            {
+                throw new OperationFailedException("لا يمكن الدفع على فاتورة تسعير");
+            }
+
+            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
+            decimal AmountDue = netSale - invoice.Discount;
+            decimal remaining = AmountDue - invoice.TotalPaid;
+
+            if (Amount > remaining)
+            {
+                throw new OperationFailedException("المبلغ المدفوع لا يمكن أن يكون أكبر من المبلغ الباقي");
+            }
+
+
+            invoice.TotalPaid += Amount;
+        }
+
+        public async Task<decimal> Refund(int InvoiceId)
+        {
+            var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
+
+
+            if (invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+
+
+            if (invoice.InvoiceType == InvoiceType.Evaluation)
+            {
+                throw new OperationFailedException("لا يمكن الدفع على فاتورة تسعير");
+            }
+
+            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
+            decimal AmountDue = netSale - invoice.Discount;
+
+
+            decimal RefundAmount = invoice.TotalPaid - AmountDue;
+
+            if(RefundAmount>0)
+            {
+                invoice.TotalPaid -= RefundAmount;
+                return RefundAmount;
+            }
+            else
+            {
+                throw new OperationFailedException("لا يوجد مبلغ مرتجع على الفاتورة");
+            }
         }
     }
 }

@@ -252,7 +252,6 @@
             ucAddTakeBatch1.Enabled = false;
             ucAddTakeBatch1.Location = new Point(3, 3);
             ucAddTakeBatch1.Name = "ucAddTakeBatch1";
-            ucAddTakeBatch1.ShowInvoiceDetails = false;
             ucAddTakeBatch1.Size = new Size(1406, 520);
             ucAddTakeBatch1.TabIndex = 55;
             // 
@@ -296,9 +295,9 @@
             label4.Location = new Point(1044, 620);
             label4.Name = "label4";
             label4.RightToLeft = RightToLeft.Yes;
-            label4.Size = new Size(99, 21);
+            label4.Size = new Size(56, 21);
             label4.TabIndex = 59;
-            label4.Text = "مبلغ إضافي : ";
+            label4.Text = "خصم : ";
             // 
             // txtAdditionalNotes
             // 

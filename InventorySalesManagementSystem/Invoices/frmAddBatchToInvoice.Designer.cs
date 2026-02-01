@@ -63,7 +63,6 @@
             ucAddTakeBatch1.Enabled = false;
             ucAddTakeBatch1.Location = new Point(138, 510);
             ucAddTakeBatch1.Name = "ucAddTakeBatch1";
-            ucAddTakeBatch1.ShowInvoiceDetails = false;
             ucAddTakeBatch1.Size = new Size(1402, 520);
             ucAddTakeBatch1.TabIndex = 1;
             // 

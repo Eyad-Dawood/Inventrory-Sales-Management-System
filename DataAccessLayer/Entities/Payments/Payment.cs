@@ -22,6 +22,7 @@ namespace DataAccessLayer.Entities.Payments
         [Display(Name ="مرتجع")]
         Refund = 3
     }
+    [Display (Name = "المدفوعات")]
     public class Payment : IValidatable
     {
         [Key]
@@ -46,6 +47,14 @@ namespace DataAccessLayer.Entities.Payments
         public PaymentReason PaymentReason { get; set; }
 
 
+        [Display(Name = "من يد")]
+        [MaxLength(50)]
+        public string PaidBy { get; set; }
+
+        [Display(Name = "إلى يد")]
+        [MaxLength(50)]
+        public string RecivedBy { get; set; }
+
         public int UserId { get; set; }
         [Display(Name = "بيانات المستخدم")]
         public User User { get; set; }
@@ -54,6 +63,8 @@ namespace DataAccessLayer.Entities.Payments
         public int? InvoiceId { get; set; }
         [Display(Name = "بيانات الفاتورة")]
         public Invoice? Invoice { get; set; }
+
+
 
 
         public int CustomerId { get; set; }
@@ -111,7 +122,7 @@ namespace DataAccessLayer.Entities.Payments
             }
 
             // Notes length
-            if (!string.IsNullOrWhiteSpace(Notes) && Notes.Length > 350)
+            if (!string.IsNullOrWhiteSpace(Notes) && Notes.Length > 50)
             {
                 errors.Add(
                     new ValidationError
@@ -122,6 +133,55 @@ namespace DataAccessLayer.Entities.Payments
                     });
             }
 
+            // Validate PaidBy
+            if (string.IsNullOrWhiteSpace(PaidBy))
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(PaidBy),
+                        Code = ValidationErrorCode.RequiredFieldMissing
+                    }
+                    );
+            }
+
+            // Validate RecivedBy
+            if (string.IsNullOrWhiteSpace(RecivedBy))
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(RecivedBy),
+                        Code = ValidationErrorCode.RequiredFieldMissing
+                    }
+                    );
+            }
+
+            //PaidBy  length
+            if (!string.IsNullOrEmpty(PaidBy)&& PaidBy.Length > 50)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(PaidBy),
+                        Code = ValidationErrorCode.ValueOutOfRange
+                    });
+            }
+
+            //RecivedBy  length
+            if (!string.IsNullOrEmpty(RecivedBy) &&RecivedBy.Length > 350)
+            {
+                errors.Add(
+                    new ValidationError
+                    {
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(RecivedBy),
+                        Code = ValidationErrorCode.ValueOutOfRange
+                    });
+            }
             // Invoice logic based on PaymentReason
             if (PaymentReason == PaymentReason.Invoice || PaymentReason == PaymentReason.Refund)
             {

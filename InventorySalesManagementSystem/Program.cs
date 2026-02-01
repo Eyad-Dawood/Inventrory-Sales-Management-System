@@ -25,6 +25,7 @@ using Serilog.Sinks.File;
 using System.CodeDom;
 using System.Globalization;
 using System.Threading;
+using DataAccessLayer.Repos.Payments;
 
 namespace InventorySalesManagementSystem
 {
@@ -107,7 +108,7 @@ namespace InventorySalesManagementSystem
             services.AddScoped<ISoldProductRepository, SoldProductRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddScoped<ITakeBatchRepository, TakeBatchRepository>();
-            services.AddScoped<IPaymentRepository, IPaymentRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
 
             //Generic Repos
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

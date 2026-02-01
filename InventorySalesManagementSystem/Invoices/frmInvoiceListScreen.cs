@@ -2,6 +2,7 @@
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Products;
 using InventorySalesManagementSystem.General.General_Forms;
+using InventorySalesManagementSystem.Payments;
 using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.UserControles;
 using InventorySalesManagementSystem.Workers;
@@ -12,6 +13,7 @@ using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Global.Users;
 using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
+using LogicLayer.Services.Payments;
 using LogicLayer.Services.Products;
 using LogicLayer.Utilities;
 using LogicLayer.Validation.Exceptions;
@@ -439,7 +441,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             try
             {
-                var frm = new frmShowInvoice(_serviceProvider,item.InvoiceId);
+                var frm = new frmShowInvoice(_serviceProvider, item.InvoiceId);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -503,6 +505,12 @@ namespace InventorySalesManagementSystem.Invoices
                 MessageBoxIcon.Question,
                 MessageBoxDefaultButton.Button2) != DialogResult.Yes)
             {
+                return;
+            }
+
+            if (item.Remaining > 0)
+            {
+                MessageBox.Show("لا يمكن غلق الفاتورة دون دفع إجمالي مستحقاتها");
                 return;
             }
 
@@ -595,10 +603,17 @@ namespace InventorySalesManagementSystem.Invoices
                     item.InvoiceStateEn == InvoiceState.Open;
 
                 addRefundMenuStripItem.Enabled =
+                     item.InvoiceTypeEn == InvoiceType.Sale;
+
+                DiscountMenuStripItem.Enabled =
                     item.InvoiceStateEn == InvoiceState.Open && item.InvoiceTypeEn == InvoiceType.Sale;
 
-                additionalFeesMenuStripItem.Enabled = 
+                PayMenuStripItem.Enabled =
                     item.InvoiceStateEn == InvoiceState.Open && item.InvoiceTypeEn == InvoiceType.Sale;
+
+                PayMenuStripItem.Enabled =
+                     item.InvoiceTypeEn == InvoiceType.Sale;
+
             }
             else
             {
@@ -629,7 +644,6 @@ namespace InventorySalesManagementSystem.Invoices
             catch (OperationFailedException ex)
             {
                 MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
             }
             catch (Exception ex)
             {
@@ -652,6 +666,98 @@ namespace InventorySalesManagementSystem.Invoices
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();
+        }
+
+        private void PayMenuStripItem_Click(object sender, EventArgs e)
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item == null)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
+                return;
+            }
+
+            var frm = new frmAddPayment(_serviceProvider, DataAccessLayer.Entities.Payments.PaymentReason.Invoice, item.InvoiceId, item.CustomerId);
+            frm.ShowDialog();
+
+            ucListView1.RefreshAfterOperation();
+        }
+
+        private async Task PerformRefund()
+        {
+            var item = ucListView1.GetSelectedItem<InvoiceListDto>();
+
+            if (item == null)
+            {
+                MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
+                return;
+            }
+
+            if (item.TotalPaid <= item.AmountDue)
+            {
+                //No money to refund
+                MessageBox.Show("لا يوجد مبلغ زائد ليتم إرجاعه");
+                return;
+            }
+
+            if (MessageBox.Show($"هل أنت متأكد من دفع {item.TotalPaid - item.AmountDue} كمرتجع للفاتورة رقم : {item.InvoiceId}", "تأكيد الدفع",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Warning,
+                                MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                using (var scope = _serviceProvider.CreateAsyncScope())
+                {
+                    var service = _serviceProvider.GetRequiredService<PaymentService>();
+
+                    var UserSession = scope.ServiceProvider.GetRequiredService<UserSession>();
+
+                    int userid = UserSession.CurrentUser != null ?
+                        UserSession.CurrentUser.UserId
+                        :
+                        -1;
+
+
+                    await service.AddRefundPayment(item.InvoiceId, userid);
+                }
+            }
+            catch (NotFoundException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (LogicLayer.Validation.Exceptions.ValidationException ex)
+            {
+                MessageBox.Show(String.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(
+                      ex,
+                     "Unexpected error while Saving Payment");
+
+                MessageBox.Show(ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
+
+            ucListView1.RefreshAfterOperation();
+        }
+        private async void PayRefundMenuStripItem_Click(object sender, EventArgs e)
+        {
+            await PerformRefund();
         }
     }
 }

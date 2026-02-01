@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.Entities.DTOS;
 
 namespace DataAccessLayer.Repos.Payments
 {
@@ -32,7 +33,8 @@ namespace DataAccessLayer.Repos.Payments
             IQueryable<Payment> query = _context.Payments
                 .AsNoTracking()
                 .Include(p => p.Invoice)
-                .Include(p => p.Customer);
+                .Include(p => p.Customer)
+                .ThenInclude(c=>c.Person);
 
             query = ApplyFilter(query, PaymentReasons);
 
@@ -196,12 +198,40 @@ namespace DataAccessLayer.Repos.Payments
             query = ApplyFilter(query, PaymentReasons);
 
 
-            var totalCount = await _context
-                                    .Payments
-                                    .AsNoTracking()
+            var totalCount = await query
                                     .CountAsync();
 
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
+
+        public async Task<List<InvoicePaymentSummary>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId)
+        {
+
+            return await _context.Payments
+                .AsNoTracking()
+                 .Where(p => p.InvoiceId == InvoiceId)
+                .Select(p=>new InvoicePaymentSummary()
+                {
+                    Date = p.Date,
+                    Amount = p.Amount,
+                    PaidBy = p.PaidBy,
+                    PaymentId = p.PaymentId,
+                    PaymentReason = p.PaymentReason,
+                    RecivedBy = p.RecivedBy,
+                })
+                .OrderByDescending(p => p.Date)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId)
+        {
+            return await _context.Payments
+                           .AsNoTracking()
+                           .Where(i=>i.InvoiceId == InvoiceId)
+                                    .CountAsync();
+
+        }
+
+       
     }
 }

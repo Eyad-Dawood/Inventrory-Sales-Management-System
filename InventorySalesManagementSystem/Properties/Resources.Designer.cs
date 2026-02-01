@@ -252,6 +252,26 @@ namespace InventorySalesManagementSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap transfer__1_ {
+            get {
+                object obj = ResourceManager.GetObject("transfer (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap wallet__1_ {
+            get {
+                object obj = ResourceManager.GetObject("wallet (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap WithDrawIcon {
             get {
                 object obj = ResourceManager.GetObject("WithDrawIcon", resourceCulture);

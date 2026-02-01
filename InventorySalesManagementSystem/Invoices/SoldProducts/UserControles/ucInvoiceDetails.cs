@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Products;
 using InventorySalesManagementSystem.Customers;
+using InventorySalesManagementSystem.Payments;
 using InventorySalesManagementSystem.UserControles;
 using InventorySalesManagementSystem.Workers;
 using LogicLayer.DTOs.InvoiceDTO;
@@ -302,7 +303,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             lbRemaining.Text = InvoiceReadDto.Remaining.ToString("N2");
             lbNetProfit.Text = InvoiceReadDto.NetProfit.ToString("N2");
 
-            lbAdditional.Text = InvoiceReadDto.Discount.ToString("N2");
+            lbDiscount.Text = InvoiceReadDto.Discount.ToString("N2");
             txtNotes.Text = InvoiceReadDto.Notes;
         }
 
@@ -354,6 +355,15 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             frm.ShowDialog();
         }
 
-       
+        private void lkPayments_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (InvoiceId <= 0)
+            {
+                MessageBox.Show("رقم الفاتورة غير صحيح", "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            var frm = new frmInvoicePaymentSummary(_serviceProvider, InvoiceId);
+            frm.ShowDialog();
+        }
     }
 }

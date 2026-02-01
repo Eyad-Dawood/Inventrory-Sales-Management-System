@@ -61,11 +61,30 @@ namespace InventorySalesManagementSystem.Payments
             {
                 Name = nameof(PaymentListDto.CustomerName),
                 DataPropertyName = nameof(PaymentListDto.CustomerName),
-                FillWeight = 45,
+                FillWeight = 40,
                 HeaderText = LogicLayer.Utilities.NamesManager
                 .GetArabicPropertyName(typeof(PaymentListDto), nameof(PaymentListDto.CustomerName))
             });
 
+            // ===== PaidBuyName =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(PaymentListDto.PaidBy),
+                DataPropertyName = nameof(PaymentListDto.PaidBy),
+                FillWeight = 40,
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(PaymentListDto), nameof(PaymentListDto.PaidBy))
+            });
+
+            // ===== RecivedByName =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(PaymentListDto.RecivedBy),
+                DataPropertyName = nameof(PaymentListDto.RecivedBy),
+                FillWeight = 40,
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(PaymentListDto), nameof(PaymentListDto.RecivedBy))
+            });
 
 
             // ===== Amount =====
@@ -88,7 +107,7 @@ namespace InventorySalesManagementSystem.Payments
             {
                 Name = nameof(PaymentListDto.PaymentReason),
                 DataPropertyName = nameof(PaymentListDto.PaymentReason),
-                FillWeight = 20,
+                FillWeight = 10,
                 HeaderText = LogicLayer.Utilities.NamesManager
                 .GetArabicPropertyName(typeof(PaymentListDto), nameof(PaymentListDto.PaymentReason))
             });
@@ -101,10 +120,10 @@ namespace InventorySalesManagementSystem.Payments
                 DataPropertyName = nameof(PaymentListDto.Date),
                 HeaderText = LogicLayer.Utilities.NamesManager
                 .GetArabicPropertyName(typeof(PaymentListDto), nameof(PaymentListDto.Date)),
-                FillWeight = 15,
+                FillWeight = 25,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
-                    Format = "yyyy/MM/dd",
+                    Format = "yyyy/MM/dd hh:mm",
                     Alignment = DataGridViewContentAlignment.MiddleCenter
                 }
             });

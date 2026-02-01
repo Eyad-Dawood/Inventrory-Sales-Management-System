@@ -41,7 +41,9 @@
             // 
             // ucListView1
             // 
+            ucListView1.AllowCancelButton = false;
             ucListView1.AllowDatePic = true;
+            ucListView1.AllowEmptyFilter = true;
             // 
             // btnSelect
             // 
@@ -57,7 +59,7 @@
             cms.Items.AddRange(new ToolStripItem[] { ShowCustomerMenuToolStrip, ShowInvoiceToolMenuStrip });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(174, 64);
+            cms.Size = new Size(189, 86);
             // 
             // ShowCustomerMenuToolStrip
             // 
@@ -66,7 +68,7 @@
             ShowCustomerMenuToolStrip.ImageScaling = ToolStripItemImageScaling.None;
             ShowCustomerMenuToolStrip.Name = "ShowCustomerMenuToolStrip";
             ShowCustomerMenuToolStrip.RightToLeft = RightToLeft.Yes;
-            ShowCustomerMenuToolStrip.Size = new Size(173, 30);
+            ShowCustomerMenuToolStrip.Size = new Size(188, 30);
             ShowCustomerMenuToolStrip.Text = "عرض العميل";
             ShowCustomerMenuToolStrip.Click += ShowCustomerMenuToolStrip_Click;
             // 
@@ -76,7 +78,7 @@
             ShowInvoiceToolMenuStrip.Image = Properties.Resources.invoice__2_;
             ShowInvoiceToolMenuStrip.Name = "ShowInvoiceToolMenuStrip";
             ShowInvoiceToolMenuStrip.RightToLeft = RightToLeft.Yes;
-            ShowInvoiceToolMenuStrip.Size = new Size(173, 30);
+            ShowInvoiceToolMenuStrip.Size = new Size(188, 30);
             ShowInvoiceToolMenuStrip.Text = "عرض الفاتورة";
             ShowInvoiceToolMenuStrip.Click += ShowInvoiceToolMenuStrip_Click;
             // 
@@ -86,7 +88,7 @@
             groupBox1.Controls.Add(chkInvoice);
             groupBox1.Controls.Add(chkRefund);
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(270, 129);
+            groupBox1.Location = new Point(305, 129);
             groupBox1.Name = "groupBox1";
             groupBox1.RightToLeft = RightToLeft.Yes;
             groupBox1.Size = new Size(138, 40);

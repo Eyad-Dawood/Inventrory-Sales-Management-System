@@ -1,5 +1,4 @@
-﻿using DataAccessLayer.Entities.Payments;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LogicLayer.DTOs.PaymentDTO
 {
-    public class PaymentListDto
+    public class InvoicePaymentSummaryDto
     {
         public int PaymentId { get; set; }
 
@@ -18,15 +17,8 @@ namespace LogicLayer.DTOs.PaymentDTO
         [Display(Name = "التاريخ")]
         public DateTime Date { get; set; }
 
-        public PaymentReason PaymentReasonEn { get; set; }
         [Display(Name = "السبب")]
         public string PaymentReason { get; set; }
-
-        public int? InvoiceId { get; set; }
-        public int CustomerId { get; set; }
-
-        [Display(Name = "إسم العميل")]
-        public string CustomerName { get; set; }
 
         [Display(Name = "من يد")]
         public string PaidBy { get; set; }

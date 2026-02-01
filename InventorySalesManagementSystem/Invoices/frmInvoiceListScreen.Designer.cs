@@ -38,7 +38,10 @@
             addRefundMenuStripItem = new ToolStripMenuItem();
             ConvertEvaluationToSaleInvoiceMenuStripItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
-            additionalFeesMenuStripItem = new ToolStripMenuItem();
+            DiscountMenuStripItem = new ToolStripMenuItem();
+            toolStripSeparator3 = new ToolStripSeparator();
+            PayMenuStripItem = new ToolStripMenuItem();
+            PayRefundMenuStripItem = new ToolStripMenuItem();
             gpCraft = new GroupBox();
             chkOpen = new CheckBox();
             chkClose = new CheckBox();
@@ -71,10 +74,10 @@
             // cms
             // 
             cms.ImageScalingSize = new Size(24, 24);
-            cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, addRefundMenuStripItem, ConvertEvaluationToSaleInvoiceMenuStripItem, toolStripSeparator2, additionalFeesMenuStripItem });
+            cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, addRefundMenuStripItem, ConvertEvaluationToSaleInvoiceMenuStripItem, toolStripSeparator2, DiscountMenuStripItem, toolStripSeparator3, PayMenuStripItem, PayRefundMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(217, 202);
+            cms.Size = new Size(217, 290);
             cms.Opening += cms_Opening;
             // 
             // ShowMenustripItem
@@ -144,15 +147,40 @@
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new Size(213, 6);
             // 
-            // additionalFeesMenuStripItem
+            // DiscountMenuStripItem
             // 
-            additionalFeesMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            additionalFeesMenuStripItem.Image = Properties.Resources.Discount;
-            additionalFeesMenuStripItem.Name = "additionalFeesMenuStripItem";
-            additionalFeesMenuStripItem.RightToLeft = RightToLeft.Yes;
-            additionalFeesMenuStripItem.Size = new Size(216, 30);
-            additionalFeesMenuStripItem.Text = "خصم";
-            additionalFeesMenuStripItem.Click += additionalFeesMenuStripItem_Click;
+            DiscountMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            DiscountMenuStripItem.Image = Properties.Resources.Discount;
+            DiscountMenuStripItem.Name = "DiscountMenuStripItem";
+            DiscountMenuStripItem.RightToLeft = RightToLeft.Yes;
+            DiscountMenuStripItem.Size = new Size(216, 30);
+            DiscountMenuStripItem.Text = "خصم";
+            DiscountMenuStripItem.Click += additionalFeesMenuStripItem_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(213, 6);
+            // 
+            // PayMenuStripItem
+            // 
+            PayMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            PayMenuStripItem.Image = Properties.Resources.wallet__1_;
+            PayMenuStripItem.Name = "PayMenuStripItem";
+            PayMenuStripItem.RightToLeft = RightToLeft.Yes;
+            PayMenuStripItem.Size = new Size(216, 30);
+            PayMenuStripItem.Text = "دفع";
+            PayMenuStripItem.Click += PayMenuStripItem_Click;
+            // 
+            // PayRefundMenuStripItem
+            // 
+            PayRefundMenuStripItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            PayRefundMenuStripItem.Image = Properties.Resources.transfer__1_;
+            PayRefundMenuStripItem.Name = "PayRefundMenuStripItem";
+            PayRefundMenuStripItem.RightToLeft = RightToLeft.Yes;
+            PayRefundMenuStripItem.Size = new Size(216, 30);
+            PayRefundMenuStripItem.Text = "دفع المرتجع";
+            PayRefundMenuStripItem.Click += PayRefundMenuStripItem_Click;
             // 
             // gpCraft
             // 
@@ -261,6 +289,9 @@
         private ToolStripMenuItem ConvertEvaluationToSaleInvoiceMenuStripItem;
         private ToolStripMenuItem addRefundMenuStripItem;
         private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem additionalFeesMenuStripItem;
+        private ToolStripMenuItem DiscountMenuStripItem;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem PayMenuStripItem;
+        private ToolStripMenuItem PayRefundMenuStripItem;
     }
 }

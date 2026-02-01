@@ -2,6 +2,7 @@
 using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Abstractions.Payments;
 using DataAccessLayer.Entities;
+using DataAccessLayer.Entities.DTOS;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Payments;
 using DataAccessLayer.Repos.Payments;
@@ -54,6 +55,22 @@ namespace LogicLayer.Services.Payments
                 Notes = DTO.Notes,
                 UserId = UserId,
                 PaymentReason = DTO.PaymentReason,
+                PaidBy = DTO.PaidBy,
+                RecivedBy = DTO.RecivedBy,
+            };
+        }
+        public Payment MapPayment_AddDto(int InvoiceId,decimal amount , int CustomerId,int UserId)
+        {
+            return new Payment()
+            {
+                Date = DateTime.Now,
+                Amount = amount,
+                CustomerId = CustomerId,
+                InvoiceId =InvoiceId,
+                UserId = UserId,
+                PaymentReason = PaymentReason.Refund,
+                PaidBy = "المستخدم",
+                RecivedBy = "المستلم"
             };
         }
 
@@ -74,9 +91,25 @@ namespace LogicLayer.Services.Payments
                 CustomerName = payment.Customer.Person.FullName,
                 InvoiceId = payment.InvoiceId,
                 PaymentId = payment.PaymentId,
-                PaymentReason = payment.PaymentReason.GetDisplayName()
+                PaymentReason = payment.PaymentReason.GetDisplayName(),
+                PaidBy = payment.PaidBy,
+                RecivedBy = payment.RecivedBy,
             };
         }
+
+        public InvoicePaymentSummaryDto MapPayment_SummaryDto(InvoicePaymentSummary invoicePayment)
+        {
+            return new InvoicePaymentSummaryDto()
+            {
+                Date = invoicePayment.Date,
+                Amount = invoicePayment.Amount,
+                PaidBy = invoicePayment.PaidBy,
+                PaymentId = invoicePayment.PaymentId,
+                PaymentReason = invoicePayment.PaymentReason.GetDisplayName(),
+                RecivedBy = invoicePayment.RecivedBy,
+            };
+        }
+
         #endregion
 
 
@@ -166,7 +199,7 @@ namespace LogicLayer.Services.Payments
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public async Task AddPaymentAsync(PaymentAddDto PaymentDTO, int UserId)
+        public async Task AddInvoicePaymentAsync(PaymentAddDto PaymentDTO, int UserId)
         {
             Payment Payment = MapPayment_AddDto(PaymentDTO, UserId);
 
@@ -182,12 +215,14 @@ namespace LogicLayer.Services.Payments
                 {
                     await _paymentRepository.AddAsync(Payment);
 
+                    if(Payment.InvoiceId!=null)
+                    {
+                        if (Payment.PaymentReason == PaymentReason.Invoice)
+                              await _invoiceService.Pay((int)Payment.InvoiceId, Payment.Amount);
+                    }
+
                     switch (Payment.PaymentReason)
                     {
-                        case PaymentReason.Refund:
-                            await _customerService.WithdrawBalance(Payment.CustomerId, Payment.Amount);
-                            break;
-
                         case PaymentReason.Invoice:
                         case PaymentReason.Investment:
                             await _customerService.DepositBalance(Payment.CustomerId, Payment.Amount);
@@ -198,11 +233,75 @@ namespace LogicLayer.Services.Payments
                     await _unitOfWork.SaveAsync();
                     
                     await Transaction.CommitAsync();
+
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex,
                             "Failed to add Payment To Customer {CustomerId} Amount : {amount}",
+                            Payment.CustomerId,
+                            Payment.Amount);
+
+                    await Transaction.RollbackAsync();
+
+                    throw;
+                }
+
+            }
+        }
+
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public async Task<decimal> AddRefundPayment(int invoiceId,int userId)
+        {
+            var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+            if(invoice == null)
+                throw new NotFoundException(typeof(Invoice));
+
+
+            Payment Payment = MapPayment_AddDto(invoiceId,(invoice.TotalPaid-invoice.AmountDue),invoice.CustomerId,userId);
+
+            MapAddDefaltAndNullValues(Payment);
+
+            ValidationHelper.ValidateEntity(Payment);
+
+            await ValidateMainLogic(Payment);
+
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
+            {
+                try
+                {
+                    decimal amount = 0;
+
+                    await _paymentRepository.AddAsync(Payment);
+
+                    if (Payment.InvoiceId != null)
+                    {
+                        if (Payment.PaymentReason == PaymentReason.Refund)
+                            amount = await _invoiceService.Refund((int)Payment.InvoiceId);
+                    }
+
+                    switch (Payment.PaymentReason)
+                    {
+                        case PaymentReason.Refund:
+                            await _customerService.DepositBalance(Payment.CustomerId,amount);
+                            break;
+                    }
+
+
+                    await _unitOfWork.SaveAsync();
+
+                    await Transaction.CommitAsync();
+                    return amount;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                            "Failed to add Refund Payment To Customer {CustomerId} Amount : {amount}",
                             Payment.CustomerId,
                             Payment.Amount);
 
@@ -263,6 +362,11 @@ namespace LogicLayer.Services.Payments
                             .ToList();
         }
 
-
+        public async Task<List<InvoicePaymentSummaryDto>> GetInvoiceProductSummaryAsync(int invoiceId)
+        {
+            return (await _paymentRepository.GetAllWithDetailsByInvoiceIdAsync(invoiceId))
+                .Select(c => MapPayment_SummaryDto(c))
+                .ToList();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Entities.Invoices;
+﻿using DataAccessLayer.Entities.DTOS;
+using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Payments;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,10 @@ namespace DataAccessLayer.Abstractions.Payments
 
         public Task<List<Payment>> GetAllWithDetailsByCustomerIdAsync(int PageNumber, int RowsPerPage, int CustomerId, List<PaymentReason> PaymentReasons);
         public Task<int> GetTotalPagesByCustomerIdAsync(int CustomerId, int RowsPerPage,List<PaymentReason> PaymentReasons);
+
+
+        public Task<List<InvoicePaymentSummary>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId);
+        public Task<int> GetTotalPagesByInvoiceIdAsync(int InvoiceId);
 
 
         public Task<List<Payment>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId, List<PaymentReason> PaymentReasons);

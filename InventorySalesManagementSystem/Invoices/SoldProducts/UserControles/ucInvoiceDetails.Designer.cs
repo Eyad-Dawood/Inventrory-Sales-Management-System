@@ -44,7 +44,7 @@
             label12 = new Label();
             lbPaied = new Label();
             label14 = new Label();
-            lbAdditional = new Label();
+            lbDiscount = new Label();
             label18 = new Label();
             label19 = new Label();
             txtNotes = new TextBox();
@@ -74,6 +74,7 @@
             ucListView1 = new InventorySalesManagementSystem.UserControles.UcListView();
             lkInvoiceSummary = new LinkLabel();
             linkLabel1 = new LinkLabel();
+            lkPayments = new LinkLabel();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
@@ -271,16 +272,16 @@
             label14.TabIndex = 69;
             label14.Text = "المدفوع : ";
             // 
-            // lbAdditional
+            // lbDiscount
             // 
-            lbAdditional.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbAdditional.Location = new Point(5, 12);
-            lbAdditional.Margin = new Padding(4, 0, 4, 0);
-            lbAdditional.Name = "lbAdditional";
-            lbAdditional.RightToLeft = RightToLeft.Yes;
-            lbAdditional.Size = new Size(242, 28);
-            lbAdditional.TabIndex = 74;
-            lbAdditional.Text = "----";
+            lbDiscount.Font = new Font("Calibri", 15F, FontStyle.Bold);
+            lbDiscount.Location = new Point(5, 12);
+            lbDiscount.Margin = new Padding(4, 0, 4, 0);
+            lbDiscount.Name = "lbDiscount";
+            lbDiscount.RightToLeft = RightToLeft.Yes;
+            lbDiscount.Size = new Size(242, 28);
+            lbDiscount.TabIndex = 74;
+            lbDiscount.Text = "----";
             // 
             // label18
             // 
@@ -597,7 +598,7 @@
             panel3.Controls.Add(lbPaied);
             panel3.Controls.Add(txtNotes);
             panel3.Controls.Add(lbDueAmount);
-            panel3.Controls.Add(lbAdditional);
+            panel3.Controls.Add(lbDiscount);
             panel3.Controls.Add(lbNetProfit);
             panel3.Controls.Add(lbRemaining);
             panel3.Controls.Add(label29);
@@ -642,10 +643,22 @@
             linkLabel1.Text = "المرتجعات";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
+            // lkPayments
+            // 
+            lkPayments.AutoSize = true;
+            lkPayments.Location = new Point(140, 29);
+            lkPayments.Name = "lkPayments";
+            lkPayments.Size = new Size(60, 15);
+            lkPayments.TabIndex = 101;
+            lkPayments.TabStop = true;
+            lkPayments.Text = "المدفوعات";
+            lkPayments.LinkClicked += lkPayments_LinkClicked;
+            // 
             // ucInvoiceDetails
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(lkPayments);
             Controls.Add(linkLabel1);
             Controls.Add(lkInvoiceSummary);
             Controls.Add(ucListView1);
@@ -685,7 +698,7 @@
         private Label label12;
         private Label lbPaied;
         private Label label14;
-        private Label lbAdditional;
+        private Label lbDiscount;
         private Label label18;
         private Label label19;
         private TextBox txtNotes;
@@ -715,5 +728,6 @@
         private InventorySalesManagementSystem.UserControles.UcListView ucListView1;
         private LinkLabel lkInvoiceSummary;
         private LinkLabel linkLabel1;
+        private LinkLabel lkPayments;
     }
 }
