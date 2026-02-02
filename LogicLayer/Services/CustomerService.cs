@@ -331,6 +331,12 @@ namespace LogicLayer.Services
 
             customer.IsActive = State;
 
+            if(!customer.IsActive &&
+               await _customerRepo.HasOpenInvoice(customer.CustomerId))
+            {
+                throw new OperationFailedException("لا يمكن إلغاء تنشيط حالة العميل , لوجود فواتير مفتوحة باسمه");
+            }
+
             try
             {
                 await _unitOfWork.SaveAsync();

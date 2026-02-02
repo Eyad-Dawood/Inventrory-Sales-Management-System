@@ -47,7 +47,7 @@ namespace InventorySalesManagementSystem.Products
 
         private async Task FillUnitsComboBox()
         {
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
                 var units = await service.GetAllMasurementUnitAsync();
@@ -117,7 +117,7 @@ namespace InventorySalesManagementSystem.Products
         }
         public static async Task<frmAddUpdateProduct> CreateForUpdate(IServiceProvider serviceProvider, int ProductId)
         {
-            using (var scope = serviceProvider.CreateScope())
+            using (var scope = serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
 
@@ -251,7 +251,7 @@ namespace InventorySalesManagementSystem.Products
                 Cursor.Current = Cursors.WaitCursor;
                 btnSave.Enabled = false;
 
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
 
                     var UserSession = scope.ServiceProvider.GetRequiredService<UserSession>();

@@ -73,7 +73,7 @@ namespace InventorySalesManagementSystem.Customers
         }
         public static async Task<frmAddUpdateCustomer> CreateForUpdate(IServiceProvider serviceProvider,int CustomerId)
         {
-            using (var scope = serviceProvider.CreateScope())
+            using (var scope = serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
 
@@ -135,7 +135,7 @@ namespace InventorySalesManagementSystem.Customers
                 Cursor.Current = Cursors.WaitCursor;
                 btnSave.Enabled = false;
 
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
 
                     var CustomerService = scope.ServiceProvider.GetRequiredService<CustomerService>();

@@ -77,7 +77,7 @@ namespace InventorySalesManagementSystem.Workers
         }
         public static async Task<frmAddUpdateWorker> CreateForUpdate(IServiceProvider serviceProvider, int WorkerId)
         {
-            using (var scope = serviceProvider.CreateScope())
+            using (var scope = serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<WorkerService>();
 
@@ -164,7 +164,7 @@ namespace InventorySalesManagementSystem.Workers
                 Cursor.Current = Cursors.WaitCursor;
                 btnSave.Enabled = false;
 
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var WorkerService = scope.ServiceProvider.GetRequiredService<WorkerService>();
 

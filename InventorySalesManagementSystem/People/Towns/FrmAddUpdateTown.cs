@@ -79,7 +79,7 @@ namespace InventorySalesManagementSystem.People.Towns
         {
             TownUpdateDto dto;
 
-            using (var scope = serviceProvider.CreateScope())
+            using (var scope = serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<TownService>();
 
@@ -113,7 +113,7 @@ namespace InventorySalesManagementSystem.People.Towns
 
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<TownService>();
 
@@ -154,7 +154,7 @@ namespace InventorySalesManagementSystem.People.Towns
 
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<TownService>();
 

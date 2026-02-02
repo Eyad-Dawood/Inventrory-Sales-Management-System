@@ -134,7 +134,10 @@ namespace LogicLayer.Services.Payments
             }
 
 
-            if(payment.PaymentReason == PaymentReason.Invoice && payment.InvoiceId == null)
+           
+
+
+            if (payment.PaymentReason == PaymentReason.Invoice && payment.InvoiceId == null)
             {
                 throw new ValidationException(
                      new List<string>()
@@ -159,6 +162,14 @@ namespace LogicLayer.Services.Payments
                 if (invoice == null)
                 {
                     throw new NotFoundException(typeof(Invoice));
+                }
+
+                
+
+                if (invoice.TotalPaid <= _invoiceService.GetRemainingAmount(invoice.TotalSellingPrice,invoice.TotalRefundSellingPrice,invoice.Discount,invoice.TotalPaid))
+                {
+                    //No money to refund
+                    throw new OperationFailedException("لا يوجد مبلغ زائد ليتم إرجاعه");
                 }
 
                 if (invoice.InvoiceTypeEn == InvoiceType.Evaluation)
@@ -259,6 +270,7 @@ namespace LogicLayer.Services.Payments
         public async Task<decimal> AddRefundPayment(int invoiceId,int userId)
         {
             var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+
             if(invoice == null)
                 throw new NotFoundException(typeof(Invoice));
 

@@ -93,8 +93,8 @@
             Invoices.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
             Invoices.Image = Properties.Resources.invoice__1___1_;
             Invoices.Name = "Invoices";
-            Invoices.Size = new Size(158, 49);
-            Invoices.Text = "الفاتورة";
+            Invoices.Size = new Size(156, 49);
+            Invoices.Text = "الفواتير";
             Invoices.Click += Invoices_Click;
             // 
             // Payments

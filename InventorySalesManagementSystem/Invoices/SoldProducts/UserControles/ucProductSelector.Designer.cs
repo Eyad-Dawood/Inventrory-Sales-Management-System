@@ -31,12 +31,13 @@
             components = new System.ComponentModel.Container();
             ucListView1 = new InventorySalesManagementSystem.UserControles.UcListView();
             txtSearchValue1 = new TextBox();
-            btnAdd = new Button();
+            btnSelect = new Button();
             txtSearchValue2 = new TextBox();
             timer1 = new System.Windows.Forms.Timer(components);
             label2 = new Label();
             lbTotal = new Label();
             pnBottom = new Panel();
+            btnAddProduct = new Button();
             btnClearZeros = new Button();
             panel2 = new Panel();
             flwpSoldProducts = new FlowLayoutPanel();
@@ -64,18 +65,18 @@
             txtSearchValue1.TextChanged += txtSearchValue1_TextChanged;
             txtSearchValue1.KeyDown += txtSearchValue1_KeyDown;
             // 
-            // btnAdd
+            // btnSelect
             // 
-            btnAdd.Anchor = AnchorStyles.Right;
-            btnAdd.BackgroundImage = Properties.Resources.addIcon;
-            btnAdd.BackgroundImageLayout = ImageLayout.Stretch;
-            btnAdd.Location = new Point(343, 5);
-            btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(30, 30);
-            btnAdd.TabIndex = 4;
-            btnAdd.TabStop = false;
-            btnAdd.UseVisualStyleBackColor = true;
-            btnAdd.Click += btnAdd_Click;
+            btnSelect.Anchor = AnchorStyles.Right;
+            btnSelect.BackgroundImage = Properties.Resources.CheckIcon;
+            btnSelect.BackgroundImageLayout = ImageLayout.Stretch;
+            btnSelect.Location = new Point(343, 5);
+            btnSelect.Name = "btnSelect";
+            btnSelect.Size = new Size(30, 30);
+            btnSelect.TabIndex = 4;
+            btnSelect.TabStop = false;
+            btnSelect.UseVisualStyleBackColor = true;
+            btnSelect.Click += btnAdd_Click;
             // 
             // txtSearchValue2
             // 
@@ -107,33 +108,47 @@
             // lbTotal
             // 
             lbTotal.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lbTotal.Location = new Point(59, 5);
+            lbTotal.Location = new Point(87, 5);
             lbTotal.Name = "lbTotal";
             lbTotal.RightToLeft = RightToLeft.Yes;
-            lbTotal.Size = new Size(169, 30);
+            lbTotal.Size = new Size(141, 30);
             lbTotal.TabIndex = 52;
             lbTotal.Text = "0.00";
             // 
             // pnBottom
             // 
+            pnBottom.Controls.Add(btnAddProduct);
             pnBottom.Controls.Add(btnClearZeros);
             pnBottom.Controls.Add(lbTotal);
             pnBottom.Controls.Add(label2);
             pnBottom.Controls.Add(txtSearchValue1);
             pnBottom.Controls.Add(txtSearchValue2);
-            pnBottom.Controls.Add(btnAdd);
+            pnBottom.Controls.Add(btnSelect);
             pnBottom.Dock = DockStyle.Bottom;
             pnBottom.Location = new Point(0, 356);
             pnBottom.Name = "pnBottom";
             pnBottom.Size = new Size(993, 35);
             pnBottom.TabIndex = 53;
             // 
+            // btnAddProduct
+            // 
+            btnAddProduct.Anchor = AnchorStyles.Left;
+            btnAddProduct.BackgroundImage = Properties.Resources.addIcon;
+            btnAddProduct.BackgroundImageLayout = ImageLayout.Stretch;
+            btnAddProduct.Location = new Point(6, 3);
+            btnAddProduct.Name = "btnAddProduct";
+            btnAddProduct.Size = new Size(30, 30);
+            btnAddProduct.TabIndex = 54;
+            btnAddProduct.TabStop = false;
+            btnAddProduct.UseVisualStyleBackColor = true;
+            btnAddProduct.Click += btnAddProduct_Click;
+            // 
             // btnClearZeros
             // 
-            btnClearZeros.Anchor = AnchorStyles.Right;
+            btnClearZeros.Anchor = AnchorStyles.Left;
             btnClearZeros.BackgroundImage = Properties.Resources.clean;
             btnClearZeros.BackgroundImageLayout = ImageLayout.Stretch;
-            btnClearZeros.Location = new Point(6, 2);
+            btnClearZeros.Location = new Point(42, 3);
             btnClearZeros.Name = "btnClearZeros";
             btnClearZeros.Size = new Size(30, 30);
             btnClearZeros.TabIndex = 53;
@@ -181,7 +196,7 @@
         #endregion
         private InventorySalesManagementSystem.UserControles.UcListView ucListView1;
         private TextBox txtSearchValue1;
-        private Button btnAdd;
+        private Button btnSelect;
         private TextBox txtSearchValue2;
         private System.Windows.Forms.Timer timer1;
         private Label label2;
@@ -190,5 +205,6 @@
         private Panel panel2;
         private FlowLayoutPanel flwpSoldProducts;
         private Button btnClearZeros;
+        private Button btnAddProduct;
     }
 }

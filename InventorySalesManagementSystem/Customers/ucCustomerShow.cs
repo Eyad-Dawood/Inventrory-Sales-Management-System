@@ -51,7 +51,7 @@ namespace InventorySalesManagementSystem.Customers
         {
             _serviceProvider = serviceProvider;
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
                 try

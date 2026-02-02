@@ -25,6 +25,7 @@ namespace InventorySalesManagementSystem.Products.PricesLog
     {
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
+        private const string ProductFullNameFilter = "FullName";
 
         public frmPriceLogListScreen(IServiceProvider serviceProvider)
         {
@@ -48,7 +49,7 @@ namespace InventorySalesManagementSystem.Products.PricesLog
                 {
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager
                 .GetArabicPropertyName(typeof(ProductPriceLogListDto), nameof(ProductPriceLogListDto.ProductFullName)),
-                                                 Value = nameof(ProductPriceLogListDto.ProductFullName)},
+                                                 Value = ProductFullNameFilter},
                 };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -186,7 +187,7 @@ namespace InventorySalesManagementSystem.Products.PricesLog
 
                 return filter.ColumnName switch
                 {
-                    nameof(ProductPriceLogListDto.ProductFullName)
+                    ProductFullNameFilter
                    => await service.GetTotalPageByProductNameAndDateAsync(RowsPerPage, filter.Text1Value,filter.dateTime),
 
 
@@ -211,8 +212,8 @@ namespace InventorySalesManagementSystem.Products.PricesLog
                 var service = scope.ServiceProvider.GetRequiredService<ProductPriceLogService>();
                 return filter.ColumnName switch
                 {
-                    nameof(ProductPriceLogListDto.ProductFullName)
-                    => await service.GetAllByProductNameAndDateTimeAsync(page, RowsPerPage, filter.Text1Value,filter.dateTime),
+                    ProductFullNameFilter
+                     => await service.GetAllByProductNameAndDateTimeAsync(page, RowsPerPage, filter.Text1Value,filter.dateTime),
 
 
                     _ => new List<ProductPriceLogListDto>()

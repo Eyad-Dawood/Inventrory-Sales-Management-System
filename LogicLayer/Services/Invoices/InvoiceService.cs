@@ -4,24 +4,14 @@ using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.DTOS;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Payments;
-using DataAccessLayer.Entities.Products;
-using DataAccessLayer.Repos;
 using DataAccessLayer.Validation;
-using LogicLayer.DTOs.CustomerDTO;
 using LogicLayer.DTOs.InvoiceDTO;
-using LogicLayer.DTOs.InvoiceDTO.General;
 using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
-using LogicLayer.DTOs.WorkerDTO;
 using LogicLayer.Utilities;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogicLayer.Services.Invoices
 {
@@ -58,7 +48,8 @@ namespace LogicLayer.Services.Invoices
                 
             };
         }
-        public void MapAddDefaltAndNullValues(Invoice Invoice)
+
+        public void MapNullDefValues(Invoice Invoice)
         {
 
             Invoice.CloseDate = null;
@@ -146,9 +137,9 @@ namespace LogicLayer.Services.Invoices
             };
         }
 
-        public SoldProductRefundListDto MapInvoiceProductRefundSummary_Dto(SoldProductRefund invoice)
+        public InvoiceProductRefundSummaryListDto MapInvoiceProductRefundSummary_Dto(SoldProductRefund invoice)
         {
-            return new SoldProductRefundListDto()
+            return new InvoiceProductRefundSummaryListDto()
             {
                 NetRefundBuyingPrice = invoice.NetRefundBuyingPrice,
                 NetRefundSellingPrice = invoice.NetRefundSellingPrice,
@@ -159,9 +150,54 @@ namespace LogicLayer.Services.Invoices
         }
         #endregion
 
-        #region Validate Logic
+        #region Helpers
+        public decimal GetRemainingAmount(
+            decimal TotalSellingPrice,
+            decimal TotalRefundSellingPrice,
+            decimal Discount,
+            decimal TotalPaid)
+        {
+            decimal netSale = TotalSellingPrice - TotalRefundSellingPrice;
+            decimal AmountDue = netSale - Discount;
+            decimal remaining = AmountDue - TotalPaid;
 
-        private async Task ValidateMainLogic(Invoice Invoice,TakeBatchType batchType)
+            return remaining;
+        }
+
+        private decimal GetRefundAmount(Invoice invoice)
+        {
+            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
+            decimal AmountDue = netSale - invoice.Discount;
+            decimal RefundAmount = invoice.TotalPaid - AmountDue;
+
+            return RefundAmount;
+        }
+
+        private void CalculateInvoiceFinance(Invoice Invoice, TakeBatch Batch)
+        {
+            if (Batch.TakeBatchType == TakeBatchType.Invoice)
+            {
+                foreach (var sp in Batch.SoldProducts)
+                {
+                    Invoice.TotalSellingPrice += sp.SellingPricePerUnit * sp.Quantity;
+                    Invoice.TotalBuyingPrice += sp.BuyingPricePerUnit * sp.Quantity;
+                }
+            }
+            else if (Batch.TakeBatchType == TakeBatchType.Refund)
+            {
+                foreach (var sp in Batch.SoldProducts)
+                {
+                    Invoice.TotalRefundSellingPrice += sp.SellingPricePerUnit * sp.Quantity;
+                    Invoice.TotalRefundBuyingPrice += sp.BuyingPricePerUnit * sp.Quantity;
+                }
+            }
+        }
+
+
+        #endregion
+
+        #region Validate Logic
+        private async Task ValidateMainAddingLogic(Invoice Invoice,TakeBatchType batchType)
         {
             var customer = await _customerService.GetCustomerByIdAsync(Invoice.CustomerId);
             
@@ -172,144 +208,212 @@ namespace LogicLayer.Services.Invoices
 
             if(!customer.IsActive)
             {
-                throw new OperationFailedException($"لا يمكن فتح فاتورة للعميل {customer.FullName} لأنه غير نشط");
+                throw new OperationFailedException($"لا يمكن تنفيذ العميلة للعميل {customer.FullName} لأنه غير نشط");
             }
 
             if((Invoice.InvoiceState == InvoiceState.Closed) && batchType==TakeBatchType.Invoice)
             {
+                //Allow Refund
                 throw new OperationFailedException("لا يمكن التعديل على فاتورة مغلقة");
             }
-
-            if(Invoice.Discount>Invoice.TotalBuyingPrice-Invoice.TotalRefundBuyingPrice)
+            
+            decimal Requierd = Invoice.TotalSellingPrice - Invoice.TotalRefundSellingPrice;
+            if (Invoice.Discount>Requierd)
             {
                 throw new OperationFailedException("لا يمكن أن يكون الخصم أكبر من المبلغ المطلوب");
             }
         }
 
+        private void ValidateMainDiscountLogic(Invoice invoice,decimal discount)
+        {
+            if (discount <= 0)
+            {
+                throw new ValidationException(
+                    ErrorMessagesManager.WriteValidationErrorMessageInArabic(new ValidationError()
+                    {
+                        Code = ValidationErrorCode.ValueOutOfRange,
+                        ObjectType = typeof(Invoice),
+                        PropertyName = nameof(Invoice.Discount),
+                    })
+              );
+            }
+
+            if (invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+
+            if (invoice.InvoiceState == InvoiceState.Closed)
+            {
+                throw new OperationFailedException("لا يمكن إضافة خصم على فاتورة مغلقة");
+            }
+
+            if (invoice.InvoiceType == InvoiceType.Evaluation)
+            {
+                throw new OperationFailedException("لا يمكن إضافة على فاتورة تسعير");
+            }
+
+            decimal remaining = GetRemainingAmount(invoice.TotalSellingPrice, invoice.TotalRefundSellingPrice, invoice.Discount, invoice.TotalPaid);
+            decimal discountIncrease = discount - invoice.Discount;
+
+            if (discountIncrease > remaining)
+            {
+                throw new OperationFailedException(
+                    "لا يمكن إضافة خصم يؤدي إلى رصيد سالب"
+                );
+            }
+        }
+
+        private void ValidateMainPayLogic(Invoice invoice,decimal Amount)
+        {
+            if (Amount <= 0)
+            {
+                throw new ValidationException(
+
+                    ErrorMessagesManager.WriteValidationErrorMessageInArabic(new ValidationError()
+                    {
+                        Code = ValidationErrorCode.ValueOutOfRange,
+                        ObjectType = typeof(Payment),
+                        PropertyName = nameof(Payment.Amount),
+                    })
+              );
+            }
+
+
+
+            if (invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+
+            if (invoice.InvoiceState == InvoiceState.Closed)
+            {
+                throw new OperationFailedException("لا يمكن الدفع على فاتورة مغلقة");
+            }
+
+            if (invoice.InvoiceType == InvoiceType.Evaluation)
+            {
+                throw new OperationFailedException("لا يمكن الدفع على فاتورة تسعير");
+            }
+
+          
+            decimal remaining = GetRemainingAmount(invoice.TotalSellingPrice,invoice.TotalRefundSellingPrice,invoice.Discount,invoice.TotalPaid);
+
+            if (Amount > remaining)
+            {
+                throw new OperationFailedException("المبلغ المدفوع لا يمكن أن يكون أكبر من المبلغ الباقي");
+            }
+
+        }
+
+        private decimal ValidateMainRefundLogic(Invoice invoice)
+        {
+            if (invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+
+
+            if (invoice.InvoiceType == InvoiceType.Evaluation)
+            {
+                throw new OperationFailedException("لا يمكن الدفع على فاتورة تسعير");
+            }
+
+            decimal RefundAmount = GetRefundAmount(invoice);
+
+            if (RefundAmount <= 0)
+            {
+                throw new OperationFailedException("لا يوجد مبلغ مرتجع على الفاتورة");
+            }
+
+            return RefundAmount;
+        }
+
+        private void ValidateMainCloseLogic(Invoice invoice,int UserId)
+        {
+            
+
+            if (invoice == null)
+                throw new NotFoundException(typeof(Invoice));
+
+            if (invoice.InvoiceState == InvoiceState.Closed)
+                throw new OperationFailedException("الفاتورة مغلقة بالفعل");
+
+
+            decimal remaining = GetRemainingAmount(invoice.TotalSellingPrice, invoice.TotalRefundSellingPrice, invoice.Discount, invoice.TotalPaid);
+
+            if (remaining > 0)
+                throw new OperationFailedException("لا يمكن غلق الفاتورة دون سداد كامل المستحقات");
+
+        }
         #endregion
 
+        #region ListData
 
-        private void CalculateInvoiceFinance(Invoice Invoice,TakeBatch Batch)
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<InvoiceListDto>> GetAllInvoicesAsync(int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
         {
-            if(Batch.TakeBatchType == TakeBatchType.Invoice)
-            {
-                Invoice.TotalSellingPrice += Batch.SoldProducts.Sum(sp => sp.SellingPricePerUnit * sp.Quantity);
-                Invoice.TotalBuyingPrice += Batch.SoldProducts.Sum(sp => sp.BuyingPricePerUnit * sp.Quantity);
-            }
-            else if(Batch.TakeBatchType == TakeBatchType.Refund)
-            {
-                Invoice.TotalRefundSellingPrice += Batch.SoldProducts.Sum(sp => sp.SellingPricePerUnit * sp.Quantity);
-                Invoice.TotalRefundBuyingPrice += Batch.SoldProducts.Sum(sp => sp.BuyingPricePerUnit * sp.Quantity);
-            }
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _invoiceRepo
+                .GetAllWithDetailsAsync(PageNumber, RowsPerPage, invoiceTypes, invoiceStates))
+                .Select(i => MapInvoice_ListDto(i)
+                ).ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<InvoiceListDto>> GetAllByWorkerNameAsync(string Name, int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _invoiceRepo
+                .GetAllWithDetailsByWorkerNameAsync(PageNumber, RowsPerPage, Name, invoiceTypes, invoiceStates))
+                .Select(i => MapInvoice_ListDto(i)
+                ).ToList();
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<InvoiceListDto>> GetAllByCustomerNameAsync(string Name, int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _invoiceRepo
+                .GetAllWithDetailsByCustomerNameAsync(PageNumber, RowsPerPage, Name, invoiceTypes, invoiceStates))
+                .Select(i => MapInvoice_ListDto(i)
+                ).ToList();
         }
 
 
-        /// <exception cref="ValidationException">
-        /// Thrown when the entity fails validation rules.
-        /// </exception>
-        /// <exception cref="OperationFailedException">
-        /// Thrown when the Operation fails.
-        /// </exception>
-        public async Task AddInvoiceAsync(InvoiceAddDto InvoiceDTO,TakeBatchAddDto BatchDTO,int UserId)
+        public async Task<List<InvoiceProductSummaryDto>> GetInvoiceProductSummaryAsync(int invoiceId)
         {
-            Invoice Invoice = MapInvoice_AddDto(InvoiceDTO,UserId);
-
-            MapAddDefaltAndNullValues(Invoice);
-
-            ValidationHelper.ValidateEntity(Invoice);
-
-            await ValidateMainLogic(Invoice,BatchDTO.TakeBatchType);
-
-            //return the created TakeBatch Aggregate
-            //Linked with the SoldProducts
-            //Should Send The Invoice Type cuz its not yet in DB so it cant find it
-            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId , InvoiceDTO.InvoiceType, Invoice.CustomerId);
-
-            //Link The TakeBatch With The Invoice
-            Invoice.takeBatches.Add(TakeBatch);
-
-            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
-            {
-                try
-                {
-                    await _invoiceRepo.AddAsync(Invoice);
-
-                    CalculateInvoiceFinance(Invoice,TakeBatch);
-
-                    await _unitOfWork.SaveAsync();
-
-                    await Transaction.CommitAsync();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex,
-                            "Failed to add Invoice To Customer {CustomerId}",
-                            InvoiceDTO.CustomerId);
-
-                    _logger.LogError(ex,
-                        "Failed To Add Take Batches To Customer {CustomertId}",
-                        InvoiceDTO.CustomerId);
-
-                    await Transaction.RollbackAsync();
-
-                    throw;
-                }
-
-            }
+            return (await _invoiceRepo.GetInvoiceProductSummaryAsync(invoiceId))
+                .Select(c => MapInvoiceProductSummary_Dto(c))
+                .ToList();
         }
 
-        /// <exception cref="ValidationException">
-        /// Thrown when the entity fails validation rules.
-        /// </exception>
-        /// <exception cref="OperationFailedException">
-        /// Thrown when the Operation fails.
-        /// </exception>
-        public async Task AddBatchToInvoice(int InvoiceId,TakeBatchAddDto BatchDTO,int UserId)
+        public async Task<List<InvoiceProductRefundSummaryListDto>> GetInvoiceRefundProductSummaryAsync(int invoiceId)
         {
-            var Invoice = await _invoiceRepo.GetWithDetailsByIdAsync(InvoiceId);
-            
-            if(Invoice == null)
-            {
-                throw new NotFoundException(typeof(Invoice));
-            }
-
-            await ValidateMainLogic(Invoice, BatchDTO.TakeBatchType);
-
-            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId,Invoice.InvoiceType,Invoice.CustomerId);
-
-            using(var Transaction = await _unitOfWork.BeginTransactionAsync())
-            {
-                try
-                {
-                    Invoice.takeBatches.Add(TakeBatch);
-
-                    CalculateInvoiceFinance(Invoice, TakeBatch);
-
-                    await _unitOfWork.SaveAsync();
-
-                    await Transaction.CommitAsync();
-                }
-                catch(Exception ex)
-                {
-                    _logger.LogError(ex,
-                            "Failed to add Take Batches To Invoice {InvoiceId}",
-                            InvoiceId);
-                    await Transaction.RollbackAsync();
-                    throw;
-                }
-            }
+            return (await _invoiceRepo.GetInvoiceRefundProductSummaryAsync(invoiceId))
+                .Select(c => MapInvoiceProductRefundSummary_Dto(c))
+                .ToList();
         }
 
-        public async Task<InvoiceReadDto> GetInvoiceByIdAsync(int InvoiceId)
-        {
-            Invoice? Invoice = await _invoiceRepo.GetWithDetailsByIdAsync(InvoiceId);
 
-            if (Invoice == null)
-            {
-                throw new NotFoundException(typeof(Invoice));
-            }
-            return MapInvoice_ReadDto(Invoice);
-        }
+        #endregion
+
+        #region PagesNumbers
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
@@ -328,7 +432,7 @@ namespace LogicLayer.Services.Invoices
         {
             Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
 
-            return await _invoiceRepo.GetTotalPageByWorkerNameAsync(Name,RowsPerPage, invoiceTypes,invoiceStates);
+            return await _invoiceRepo.GetTotalPageByWorkerNameAsync(Name, RowsPerPage, invoiceTypes, invoiceStates);
         }
 
         /// <exception cref="ArgumentOutOfRangeException">
@@ -342,158 +446,151 @@ namespace LogicLayer.Services.Invoices
         }
 
 
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when the provided Values out Of Range
-        /// </exception>
-        public async Task<List<InvoiceListDto>> GetAllInvoicesAsync(int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        #endregion
+
+        #region Operations
+
+        public async Task<InvoiceReadDto> GetInvoiceByIdAsync(int InvoiceId)
         {
-            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+            Invoice? Invoice = await _invoiceRepo.GetWithDetailsByIdAsync(InvoiceId);
 
-
-            return
-                (await _invoiceRepo
-                .GetAllWithDetailsAsync(PageNumber, RowsPerPage,invoiceTypes,invoiceStates))
-                .Select(i => MapInvoice_ListDto(i)
-                ).ToList();
+            if (Invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
+            return MapInvoice_ReadDto(Invoice);
         }
 
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when the provided Values out Of Range
+
+
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
         /// </exception>
-        public async Task<List<InvoiceListDto>> GetAllByWorkerNameAsync(string Name,int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public async Task AddInvoiceAsync(InvoiceAddDto InvoiceDTO, TakeBatchAddDto BatchDTO, int UserId)
         {
-            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+            Invoice Invoice = MapInvoice_AddDto(InvoiceDTO, UserId);
 
+            MapNullDefValues(Invoice);
 
-            return
-                (await _invoiceRepo
-                .GetAllWithDetailsByWorkerNameAsync(PageNumber, RowsPerPage,Name, invoiceTypes, invoiceStates))
-                .Select(i => MapInvoice_ListDto(i)
-                ).ToList();
+            ValidationHelper.ValidateEntity(Invoice);
+
+            await ValidateMainAddingLogic(Invoice, BatchDTO.TakeBatchType);
+
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId, InvoiceDTO.InvoiceType, Invoice.CustomerId);
+
+            //Link The TakeBatch With The Invoice
+            Invoice.takeBatches.Add(TakeBatch);
+
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _invoiceRepo.AddAsync(Invoice);
+
+                    CalculateInvoiceFinance(Invoice, TakeBatch);
+
+                    await _unitOfWork.SaveAsync();
+
+                    await Transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                            "Failed to add Invoice To Customer {CustomerId}",
+                            InvoiceDTO.CustomerId);
+
+                    await Transaction.RollbackAsync();
+                    throw;
+                }
+
+            }
         }
 
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when the provided Values out Of Range
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
         /// </exception>
-        public async Task<List<InvoiceListDto>> GetAllByCustomerNameAsync(string Name,int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public async Task AddBatchToInvoice(int InvoiceId, TakeBatchAddDto BatchDTO, int UserId)
         {
-            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+            var Invoice = await _invoiceRepo.GetWithDetailsByIdAsync(InvoiceId);
 
+            if (Invoice == null)
+            {
+                throw new NotFoundException(typeof(Invoice));
+            }
 
-            return
-                (await _invoiceRepo
-                .GetAllWithDetailsByCustomerNameAsync(PageNumber, RowsPerPage,Name,invoiceTypes, invoiceStates))
-                .Select(i => MapInvoice_ListDto(i)
-                ).ToList();
+            await ValidateMainAddingLogic(Invoice, BatchDTO.TakeBatchType);
+
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId, Invoice.InvoiceType, Invoice.CustomerId);
+
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
+            {
+                try
+                {
+                    Invoice.takeBatches.Add(TakeBatch);
+
+                    CalculateInvoiceFinance(Invoice, TakeBatch);
+
+                    await _unitOfWork.SaveAsync();
+
+                    await Transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                            "Failed to add Take Batches To Invoice {InvoiceId}",
+                            InvoiceId);
+                    await Transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
 
-        public async Task CloseInvoiceAsync(int InvoiceId,int UserId)
+        public async Task CloseInvoiceAsync(int InvoiceId, int UserId)
         {
             Invoice? invoice;
-
             try
             {
-                 invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
+                invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "فشل جلب الفاتورة {invoiceId} عن طريق المستخدم {userId}", InvoiceId, UserId);
                 throw new OperationFailedException(ex);
             }
 
-            if (invoice == null)
-                throw new NotFoundException(typeof(Invoice));
+            ValidateMainCloseLogic(invoice, UserId);
 
-            if(invoice.InvoiceState == InvoiceState.Closed)
-                throw new OperationFailedException("الفاتورة مغلقة بالفعل");
-
-
-            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
-            decimal AmountDue = netSale - invoice.Discount;
-            decimal remaining = AmountDue - invoice.TotalPaid;
-
-            if (remaining > 0)
-                throw new OperationFailedException("لا يمكن غلق الفاتورة دون سداد كامل المستحقات");
-
-
+            //Close NOW
             invoice.InvoiceState = InvoiceState.Closed;
-            invoice.CloseDate = DateTime.Now;
+            invoice.CloseDate = DateTime.Now; // If We Hosted on A server , we should change it to GMT with no offsets
             invoice.CloseUserId = UserId;
 
             try
             {
                 await _unitOfWork.SaveAsync();
-                _logger.LogInformation("تم غلق الفاتورة : {invoiceId} عن طريق المستخدم : {userId}",InvoiceId,UserId);
+                _logger.LogInformation("تم غلق الفاتورة : {invoiceId} عن طريق المستخدم : {userId}", InvoiceId, UserId);
             }
 
             catch (Exception ex)
             {
-                _logger.LogError(ex, "فشل قفل الفاتورة {invoiceId} عن طريق المستخدم {userId}", InvoiceId,UserId);
+                _logger.LogError(ex, "فشل قفل الفاتورة {invoiceId} عن طريق المستخدم {userId}", InvoiceId, UserId);
                 throw new OperationFailedException(ex);
             }
         }
 
-        public async Task<List<InvoiceProductSummaryDto>> GetInvoiceProductSummaryAsync(int invoiceId)
-        {
-            return (await _invoiceRepo.GetInvoiceProductSummaryAsync(invoiceId))
-                .Select(c=>MapInvoiceProductSummary_Dto(c))
-                .ToList();
-        }
-
-        public async Task<List<SoldProductRefundListDto>> GetInvoiceRefundProductSummaryAsync(int invoiceId)
-        {
-            return (await _invoiceRepo.GetInvoiceRefundProductSummaryAsync(invoiceId))
-                .Select(c => MapInvoiceProductRefundSummary_Dto(c))
-                .ToList();
-        }
-
         public async Task AddDiscount(int InvoiceId, decimal discount, string AdditionalNotes)
         {
-            if (discount <= 0)
-            {
-
-                throw new ValidationException(new List<string>()
-                {
-                    ErrorMessagesManager.WriteValidationErrorMessageInArabic(new ValidationError()
-                    {
-                        Code = ValidationErrorCode.ValueOutOfRange,
-                        ObjectType = typeof(Invoice),
-                        PropertyName = nameof(Invoice.Discount),
-                    })
-                }
-              );
-            }
-
+           
             var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
 
+            ValidateMainDiscountLogic(invoice, discount);
 
-            if (invoice == null)
-            {
-                throw new NotFoundException(typeof(Invoice));
-            }
-
-            if(invoice.InvoiceState == InvoiceState.Closed)
-            {
-                throw new OperationFailedException("لا يمكن إضافة خصم على فاتورة مغلقة");
-            }
-
-            if(invoice.InvoiceType == InvoiceType.Evaluation)
-            {
-                throw new OperationFailedException("لا يمكن إضافة على فاتورة تسعير");
-            }
-
-
-            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice; 
-            decimal AmountDue = netSale - invoice.Discount;
-            decimal remaining = AmountDue - invoice.TotalPaid;
-            decimal discountIncrease = discount - invoice.Discount;
-
-            if (discountIncrease > remaining)
-            {
-                throw new OperationFailedException(
-                    "لا يمكن إضافة خصم يؤدي إلى رصيد سالب"
-                );
-            }
 
             invoice.Discount = discount;
             invoice.Notes = string.IsNullOrWhiteSpace(AdditionalNotes)
@@ -505,48 +602,9 @@ namespace LogicLayer.Services.Invoices
 
         public async Task Pay(int InvoiceId, decimal Amount)
         {
-            if (Amount <= 0)
-            {
-
-                throw new ValidationException(new List<string>()
-                {
-                    ErrorMessagesManager.WriteValidationErrorMessageInArabic(new ValidationError()
-                    {
-                        Code = ValidationErrorCode.ValueOutOfRange,
-                        ObjectType = typeof(Payment),
-                        PropertyName = nameof(Payment.Amount),
-                    })
-                }
-              );
-            }
-
             var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
 
-
-            if (invoice == null)
-            {
-                throw new NotFoundException(typeof(Invoice));
-            }
-
-            if (invoice.InvoiceState == InvoiceState.Closed)
-            {
-                throw new OperationFailedException("لا يمكن الدفع على فاتورة مغلقة");
-            }
-
-            if (invoice.InvoiceType == InvoiceType.Evaluation)
-            {
-                throw new OperationFailedException("لا يمكن الدفع على فاتورة تسعير");
-            }
-
-            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
-            decimal AmountDue = netSale - invoice.Discount;
-            decimal remaining = AmountDue - invoice.TotalPaid;
-
-            if (Amount > remaining)
-            {
-                throw new OperationFailedException("المبلغ المدفوع لا يمكن أن يكون أكبر من المبلغ الباقي");
-            }
-
+            ValidateMainPayLogic(invoice,Amount);
 
             invoice.TotalPaid += Amount;
         }
@@ -555,33 +613,12 @@ namespace LogicLayer.Services.Invoices
         {
             var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
 
+            decimal RefundAmount = ValidateMainRefundLogic(invoice);
 
-            if (invoice == null)
-            {
-                throw new NotFoundException(typeof(Invoice));
-            }
-
-
-            if (invoice.InvoiceType == InvoiceType.Evaluation)
-            {
-                throw new OperationFailedException("لا يمكن الدفع على فاتورة تسعير");
-            }
-
-            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
-            decimal AmountDue = netSale - invoice.Discount;
-
-
-            decimal RefundAmount = invoice.TotalPaid - AmountDue;
-
-            if(RefundAmount>0)
-            {
-                invoice.TotalPaid -= RefundAmount;
-                return RefundAmount;
-            }
-            else
-            {
-                throw new OperationFailedException("لا يوجد مبلغ مرتجع على الفاتورة");
-            }
+            invoice.TotalPaid -= RefundAmount;
+            return RefundAmount;
         }
+
+        #endregion
     }
 }

@@ -136,5 +136,11 @@ namespace DataAccessLayer.Repos
 
             return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
         }
+
+        public async Task<bool> HasOpenInvoice(int customerId)
+        {
+           return await _context.Invoices.
+                AnyAsync(i=> i.CustomerId == customerId && i.InvoiceState == Entities.Invoices.InvoiceState.Open);
+        }
     }
 }

@@ -98,7 +98,7 @@ namespace InventorySalesManagementSystem.Products
         {
             _serviceProvider = serviceProvider;
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var productservice = scope.ServiceProvider.GetRequiredService<ProductService>();
                 var soldProductservice = scope.ServiceProvider.GetRequiredService<SoldProductService>();

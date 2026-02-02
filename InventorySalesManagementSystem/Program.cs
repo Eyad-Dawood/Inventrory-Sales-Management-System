@@ -148,7 +148,7 @@ namespace InventorySalesManagementSystem
 
             try
             {
-                using var scope = serviceProvider.CreateScope();
+                using var scope = serviceProvider.CreateAsyncScope();
                 var db = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
 
                 var pendingMigrations = db.Database.GetPendingMigrations();

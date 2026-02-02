@@ -34,7 +34,7 @@ namespace InventorySalesManagementSystem.Invoices
         private int? _SelectedWorkerId = null;
 
         private bool _IsEvaluationToSaleMode = false;
-        private List<SoldProductWithProductListDto> _products = null;
+        private List<SoldProductSaleDetailsListDto> _products = null;
 
         public frmAddInvoice(IServiceProvider serviceProvider)
         {
@@ -42,7 +42,7 @@ namespace InventorySalesManagementSystem.Invoices
             _serviceProvider = serviceProvider;
             _IsEvaluationToSaleMode = false;
         }
-        public frmAddInvoice(IServiceProvider serviceProvider, int CustomerId,int? WorkerId,List<SoldProductWithProductListDto> products)
+        public frmAddInvoice(IServiceProvider serviceProvider, int CustomerId,int? WorkerId,List<SoldProductSaleDetailsListDto> products)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
@@ -55,7 +55,7 @@ namespace InventorySalesManagementSystem.Invoices
 
         private async Task AddInvoice(TakeBatchAddDto takeBatchAdd)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 try
                 {
@@ -129,7 +129,7 @@ namespace InventorySalesManagementSystem.Invoices
                     .Select(g =>
                     {
                         var p = g.First();
-                        return new SoldProductWithProductListDto
+                        return new SoldProductSaleDetailsListDto
                         {
                             IsAvilable = p.IsAvilable,
                             ProductId = p.ProductId,
@@ -147,7 +147,7 @@ namespace InventorySalesManagementSystem.Invoices
 
                 ucAddTakeBatch1.Initialize(_serviceProvider, _products);
 
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var customerService = scope.ServiceProvider.GetRequiredService<CustomerService>();
                     var customer = await customerService.GetCustomerByIdAsync(_SelectedCustomerId);

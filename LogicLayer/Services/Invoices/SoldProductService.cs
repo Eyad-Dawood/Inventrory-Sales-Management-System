@@ -2,18 +2,11 @@
 using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Products;
-using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.Services.Products;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogicLayer.Services.Invoices
 {
@@ -36,9 +29,9 @@ namespace LogicLayer.Services.Invoices
 
         #region Map
 
-        private SoldProductMiniReadDto MapSoldProduct_MiniReadDto(SoldProduct soldProduct)
+        private SoldProductListDto MapSoldProduct_ListDto(SoldProduct soldProduct)
         {
-            return new SoldProductMiniReadDto
+            return new SoldProductListDto
             {
                 TakeDate = soldProduct.TakeBatch.TakeDate,
                 BatchId = soldProduct.TakeBatchId,
@@ -51,9 +44,9 @@ namespace LogicLayer.Services.Invoices
             };
         }
 
-        private SoldProductWithProductListDto MapSoldProduct_WithProductListDto(SoldProduct soldProduct)
+        private SoldProductSaleDetailsListDto MapSoldProduct_WithProductListDto(SoldProduct soldProduct)
         {
-            return new SoldProductWithProductListDto
+            return new SoldProductSaleDetailsListDto
             {
                 SoldProductId = soldProduct.SoldProductId,
                 ProductId = soldProduct.ProductId,
@@ -67,18 +60,23 @@ namespace LogicLayer.Services.Invoices
             };
         }
 
+
+        #endregion
+
+        #region Helpers
+
+
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
         /// </exception>
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        public async Task<List<SoldProduct>> PrepareSoldProductsForCreate(List<SoldProductAddDto> SoldProductsDTO)
+        private async Task<List<SoldProduct>> ProcessSoldProductsAsyncForCreate(List<SoldProductAddDto> SoldProductsDTO)
         {
             List<SoldProduct> result = new List<SoldProduct>();
 
             var productIds = SoldProductsDTO.Select(p => p.ProductId).Distinct().ToList();
-
             var products = await _productService.GetProductsByIdsAsync(productIds);
 
             foreach (var item in SoldProductsDTO)
@@ -104,14 +102,19 @@ namespace LogicLayer.Services.Invoices
                 //If Failed Throw An Exception
                 ValidationHelper.ValidateEntity(SoldProduct);
 
-
                 result.Add(SoldProduct);
             }
 
             return result;
         }
 
-        public async Task<List<SoldProduct>> PrepareSoldProductsAsync(
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="NotFoundException">
+        /// Thrown when the provided entity is null.
+        /// </exception>
+        public async Task<List<SoldProduct>> ProcessSoldProductsAsync(
             List<SoldProductAddDto> dtos,
             int userId,
             InvoiceType invoiceType,
@@ -130,46 +133,78 @@ namespace LogicLayer.Services.Invoices
                 })
                 .ToList();
 
-            var soldProducts = await PrepareSoldProductsForCreate(merged);
+            var soldProducts = await ProcessSoldProductsAsyncForCreate(merged);
 
-            //سحب
-            if (invoiceType == InvoiceType.Sale && takeBatchType == TakeBatchType.Invoice)
+            //Withdraw
+            
+
+            if(invoiceType == InvoiceType.Sale)
             {
-                //take from storage
-                await _productService.UpdateProductsQuantityAsync(
-                    merged.Select(p => (p.ProductId, p.Quantity)).ToList(),
-                    userId,
-                    StockMovementReason.Sale,
-                    isAddition: false);
+                if(takeBatchType == TakeBatchType.Invoice)
+                {
+                    //take from storage
+                    await _productService.UpdateProductsQuantityAsync(
+                        merged.Select(p => (p.ProductId, p.Quantity)).ToList(),
+                        userId,
+                        StockMovementReason.Sale,
+                        isAddition: false);
 
-                //Add Price On Customer
-                await _customerService.WithdrawBalance
-                    (CustomerId,
-                    soldProducts.Sum(p => p.Quantity * p.SellingPricePerUnit)
-                    );
-            }
+                    //Add Price On Customer
+                    await _customerService.WithdrawBalance
+                        (CustomerId,
+                        soldProducts.Sum(p => p.Quantity * p.SellingPricePerUnit)
+                        );
+                }
+                else if (takeBatchType == TakeBatchType.Refund)
+                {
+                    //GiveBack from storage
+                    await _productService.UpdateProductsQuantityAsync(
+                        merged.Select(p => (p.ProductId, p.Quantity)).ToList(),
+                        userId,
+                        StockMovementReason.Refund,
+                        isAddition: true);
 
-
-            if(invoiceType == InvoiceType.Sale && takeBatchType == TakeBatchType.Refund)
-            {
-                //GiveBack from storage
-                await _productService.UpdateProductsQuantityAsync(
-                    merged.Select(p => (p.ProductId, p.Quantity)).ToList(),
-                    userId,
-                    StockMovementReason.Refund,
-                    isAddition: true);
-
-                //Add Price On Customer
-                await _customerService.DepositBalance
-                    (CustomerId,
-                    soldProducts.Sum(p => p.Quantity * p.SellingPricePerUnit)
-                    );
-            }
+                    //Add Price On Customer
+                    await _customerService.DepositBalance
+                        (CustomerId,
+                        soldProducts.Sum(p => p.Quantity * p.SellingPricePerUnit)
+                        );
+                }
+            }            
 
             return soldProducts;
         }
+
         #endregion
 
+        #region ListData
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<SoldProductListDto>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId, int PageNumber, int RowsPerPage, List<TakeBatchType> takeBatchTypes)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _SoldProductRepo
+                .GetAllWithDetailsByInvoiceIdAsync(PageNumber, RowsPerPage, InvoiceId, takeBatchTypes))
+                .Select(i => MapSoldProduct_ListDto(i)
+                ).ToList();
+        }
+
+        public async Task<List<SoldProductSaleDetailsListDto>> GetAllWithProductDetailsByInvoiceIdAsync(int InvoiceId, List<TakeBatchType> takeBatchTypes)
+        {
+            return
+                (await _SoldProductRepo
+                .GetAllWithDetailsByInvoiceIdAsync(InvoiceId, takeBatchTypes))
+                .Select(i => MapSoldProduct_WithProductListDto(i)
+                ).ToList();
+        }
+        #endregion
+
+        #region PageNumber
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
         /// </exception>
@@ -179,37 +214,14 @@ namespace LogicLayer.Services.Invoices
 
             return await _SoldProductRepo.GetTotalPagesByInvoiceIdAsync(InvoiceId, RowsPerPage, takeBatchTypes);
         }
+        #endregion
 
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when the provided Values out Of Range
-        /// </exception>
-        public async Task<List<SoldProductMiniReadDto>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId, int PageNumber, int RowsPerPage, List<TakeBatchType> takeBatchTypes)
-        {
-            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
-
-
-            return
-                (await _SoldProductRepo
-                .GetAllWithDetailsByInvoiceIdAsync(PageNumber, RowsPerPage, InvoiceId, takeBatchTypes))
-                .Select(i => MapSoldProduct_MiniReadDto(i)
-                ).ToList();
-        }
-
-      
-        public async Task<List<SoldProductWithProductListDto>> GetAllWithProductDetailsByInvoiceIdAsync(int InvoiceId, List<TakeBatchType> takeBatchTypes)
-        {
-            return
-                (await _SoldProductRepo
-                .GetAllWithDetailsByInvoiceIdAsync(InvoiceId, takeBatchTypes))
-                .Select(i => MapSoldProduct_WithProductListDto(i)
-                ).ToList();
-        }
-
-        
+        #region Etc
         public async Task<decimal> GetTotalQuantitySoldByProductIdAsync(int ProductId)
         {
             return await _SoldProductRepo.GetTotalQuantitySoldByProductIdAsync(ProductId);
         }
+        #endregion
     }
 
 }

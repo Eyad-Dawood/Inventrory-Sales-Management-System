@@ -100,7 +100,7 @@ namespace InventorySalesManagementSystem.People
         private async Task LoadTowns()
         {
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<TownService>();
 

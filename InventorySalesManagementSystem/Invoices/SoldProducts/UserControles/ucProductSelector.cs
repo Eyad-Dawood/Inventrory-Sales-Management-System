@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Products;
+using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.UserControles;
 using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
@@ -44,10 +45,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
             txtSearchValue1.Enabled = !Allow;
             txtSearchValue2.Enabled = !Allow;
-            btnAdd.Enabled = !Allow;
+            btnSelect.Enabled = !Allow;
         }
 
-      
+
 
         public ucProductSelector()
         {
@@ -59,7 +60,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         {
             if (e.KeyCode == Keys.Enter)
             {
-                btnAdd.PerformClick();
+                btnSelect.PerformClick();
                 e.SuppressKeyPress = true; // Stop the beeb sound
             }
         }
@@ -114,7 +115,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             ucSoldProductCard ucSoldProductCard = AddCard();
             ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPrice, product.MesurementUnitName);
         }
-        private void AddSoldProductCard(SoldProductWithProductListDto product)
+        private void AddSoldProductCard(SoldProductSaleDetailsListDto product)
         {
             ucSoldProductCard ucSoldProductCard = AddCard();
             ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPricePerUnit, product.UnitName, product.Quantity, product.IsAvilable);
@@ -140,7 +141,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         }
 
-        public void Initialize(IServiceProvider serviceProvider, List<SoldProductWithProductListDto> products)
+        public void Initialize(IServiceProvider serviceProvider, List<SoldProductSaleDetailsListDto> products)
         {
             try
             {
@@ -375,7 +376,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         {
             if (e.KeyCode == Keys.Enter)
             {
-                btnAdd.PerformClick();
+                btnSelect.PerformClick();
                 e.SuppressKeyPress = true; // Stop the beeb sound
             }
         }
@@ -413,6 +414,18 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 Cursor.Current = Cursors.Default;
                 btnClearZeros.Enabled = true;
             }
+        }
+
+        private async Task PerformAddProduct()
+        {
+            var frm = await frmAddUpdateProduct.CreateForAdd(_serviceProvider);
+            frm.ShowDialog();
+
+            ucListView1.RefreshAfterOperation();
+        }
+        private async void btnAddProduct_Click(object sender, EventArgs e)
+        {
+           await PerformAddProduct();
         }
     }
 }

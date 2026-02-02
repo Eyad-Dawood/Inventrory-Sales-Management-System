@@ -39,7 +39,7 @@ namespace InventorySalesManagementSystem
             {
                 UserReadDto loginUser;
 
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<UserService>();
 

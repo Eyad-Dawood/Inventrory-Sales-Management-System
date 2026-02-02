@@ -55,7 +55,7 @@ namespace InventorySalesManagementSystem.Workers
         {
             _serviceProvider = serviceProvider;
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<WorkerService>();
                 try

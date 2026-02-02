@@ -93,7 +93,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             this.Enabled = true;
         }
 
-        public void Initialize(IServiceProvider serviceProvider,List<SoldProductWithProductListDto>products)
+        public void Initialize(IServiceProvider serviceProvider,List<SoldProductSaleDetailsListDto>products)
         {
             _serviceProvider = serviceProvider;
             ucProductSelector1.Initialize(_serviceProvider,products);

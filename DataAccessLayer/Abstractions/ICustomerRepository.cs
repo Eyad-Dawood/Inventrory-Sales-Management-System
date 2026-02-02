@@ -16,5 +16,6 @@ namespace DataAccessLayer.Abstractions
         public Task<List<Customer>> GetAllByTownNameAsync(int PageNumber, int RowsPerPage,string townName);
         public Task<int> GetTotalPagesByFullNameAsync(string Name,int RowsPerPage);
         public Task<int> GetTotalPagesByTownNameAsync(string TownName,int RowsPerPage);
+        public Task<bool> HasOpenInvoice(int customerId);
     }
 }

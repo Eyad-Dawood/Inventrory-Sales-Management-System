@@ -25,7 +25,7 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
     {
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
-
+        private const string ProductFullNameFilter = "FullName";
 
         public FrmStockMovementLogListScreen(IServiceProvider serviceProvider)
         {
@@ -50,7 +50,7 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
                 {
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager
                 .GetArabicPropertyName(typeof(ProductStockMovementLogListDto), nameof(ProductStockMovementLogListDto.ProductFullName)),
-                                                 Value = nameof(ProductStockMovementLogListDto.ProductFullName)},
+                                                 Value = ProductFullNameFilter},
                 };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -208,9 +208,8 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
 
                 return filter.ColumnName switch
                 {
-                    nameof(ProductStockMovementLogListDto.ProductFullName)
+                    ProductFullNameFilter
                     => await service.GetTotalPageByProductNameAndDateAsync(RowsPerPage, filter.Text1Value,filter.dateTime),
-
 
                     _ => 0
                 };
@@ -233,7 +232,7 @@ namespace InventorySalesManagementSystem.Products.StockMovementLog
                 var service = scope.ServiceProvider.GetRequiredService<ProductStockMovementLogService>();
                 return filter.ColumnName switch
                 {
-                    nameof(ProductStockMovementLogListDto.ProductFullName)
+                    ProductFullNameFilter
                     => await service.GetAllByProductNameAndDateTimeAsync(page, RowsPerPage, filter.Text1Value,filter.dateTime),
 
 

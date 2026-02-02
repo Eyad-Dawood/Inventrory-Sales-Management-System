@@ -28,6 +28,8 @@ namespace InventorySalesManagementSystem.Workers
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
         public WorkerListDto SelectedWorker { get; private set; }
+        private const string WorkerNameFilter = nameof(Worker.Person.FullName);
+        private const string TownNameFilter = nameof(Worker.Person.Town.TownName);
 
 
         public frmWorkerListScreen(IServiceProvider serviceProvider,bool selectButton)
@@ -50,9 +52,9 @@ namespace InventorySalesManagementSystem.Workers
             return new List<UcListView.FilterItems>()
                 {
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Person), nameof(Worker.Person.FullName)),
-                                                 Value = nameof(Worker.Person.FullName)},
+                                                 Value = WorkerNameFilter},
                      new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Town), nameof(Worker.Person.Town.TownName)),
-                                                 Value = nameof(Worker.Person.Town.TownName)}
+                                                 Value = TownNameFilter}
                 };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -141,10 +143,10 @@ namespace InventorySalesManagementSystem.Workers
 
                 return filter.ColumnName switch
                 {
-                    nameof(Worker.Person.FullName)
+                    WorkerNameFilter
                         => await service.GetTotalPageByFullNameAsync(filter.Text1Value, RowsPerPage),
 
-                    nameof(Worker.Person.Town.TownName)
+                    TownNameFilter
                         => await service.GetTotalPageByTownNameAsync(filter.Text1Value, RowsPerPage),
 
                     _ => 0
@@ -168,10 +170,10 @@ namespace InventorySalesManagementSystem.Workers
                 var service = scope.ServiceProvider.GetRequiredService<WorkerService>();
                 return filter.ColumnName switch
                 {
-                    nameof(Worker.Person.FullName)
+                    WorkerNameFilter
                         => await service.GetAllByFullNameAsync(page, RowsPerPage, filter.Text1Value),
 
-                    nameof(Worker.Person.Town.TownName)
+                    TownNameFilter
                         => await service.GetAllByTownNameAsync(page, RowsPerPage, filter.Text1Value),
 
                     _ => new List<WorkerListDto>()

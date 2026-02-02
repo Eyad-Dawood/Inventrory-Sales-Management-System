@@ -31,6 +31,8 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
+        private const string ProductTypeNameFilter = nameof(ProductType.ProductTypeName);
+
 
         public frmProductTypeListScreen(IServiceProvider serviceProvider)
         {
@@ -52,7 +54,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
             return new List<UcListView.FilterItems>()
                 {
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(ProductType), nameof(ProductType.ProductTypeName)),
-                                                 Value = nameof(ProductType.ProductTypeName)}                
+                                                 Value = ProductTypeNameFilter}                
             };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -100,7 +102,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
                 return filter.ColumnName switch
                 {
-                    nameof(ProductType.ProductTypeName)
+                    ProductTypeNameFilter
                      => await service.GetTotalPagesByProductTypeNameAsync(filter.Text1Value, RowsPerPage),
 
                     _ => 0
@@ -124,8 +126,8 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                 var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
                 return filter.ColumnName switch
                 {
-                    nameof(ProductType.ProductTypeName)
-                    => await service.GetAllByProductTypeNameAsync(page, RowsPerPage, filter.Text1Value),
+                    ProductTypeNameFilter
+                     => await service.GetAllByProductTypeNameAsync(page, RowsPerPage, filter.Text1Value),
 
                     _ => new List<ProductTypeListDto>()
                 };
@@ -208,7 +210,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
                 return;
             }
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 

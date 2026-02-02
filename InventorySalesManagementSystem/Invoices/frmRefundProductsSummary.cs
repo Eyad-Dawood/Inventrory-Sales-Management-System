@@ -52,20 +52,20 @@ namespace InventorySalesManagementSystem.Invoices
             // ===== ProductFullName =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductRefundListDto.ProductFullName),
-                DataPropertyName = nameof(SoldProductRefundListDto.ProductFullName),
+                Name = nameof(InvoiceProductRefundSummaryListDto.ProductFullName),
+                DataPropertyName = nameof(InvoiceProductRefundSummaryListDto.ProductFullName),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductRefundListDto), nameof(SoldProductRefundListDto.ProductFullName)),
+                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductRefundSummaryListDto), nameof(InvoiceProductRefundSummaryListDto.ProductFullName)),
                 FillWeight = 45
             });
 
             // ===== TotalRefundSellingQuantity =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductRefundListDto.TotalRefundSellingQuantity),
-                DataPropertyName = nameof(SoldProductRefundListDto.TotalRefundSellingQuantity),
+                Name = nameof(InvoiceProductRefundSummaryListDto.TotalRefundSellingQuantity),
+                DataPropertyName = nameof(InvoiceProductRefundSummaryListDto.TotalRefundSellingQuantity),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductRefundListDto), nameof(SoldProductRefundListDto.TotalRefundSellingQuantity)),
+                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductRefundSummaryListDto), nameof(InvoiceProductRefundSummaryListDto.TotalRefundSellingQuantity)),
                 FillWeight = 10,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -77,10 +77,10 @@ namespace InventorySalesManagementSystem.Invoices
             // ===== NetRefundBuyingPrice =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductRefundListDto.NetRefundBuyingPrice),
-                DataPropertyName = nameof(SoldProductRefundListDto.NetRefundBuyingPrice),
+                Name = nameof(InvoiceProductRefundSummaryListDto.NetRefundBuyingPrice),
+                DataPropertyName = nameof(InvoiceProductRefundSummaryListDto.NetRefundBuyingPrice),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductRefundListDto), nameof(SoldProductRefundListDto.NetRefundBuyingPrice)),
+                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductRefundSummaryListDto), nameof(InvoiceProductRefundSummaryListDto.NetRefundBuyingPrice)),
                 FillWeight = 10,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -92,10 +92,10 @@ namespace InventorySalesManagementSystem.Invoices
             // ===== TotalBuyingPrice =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductRefundListDto.NetRefundSellingPrice),
-                DataPropertyName = nameof(SoldProductRefundListDto.NetRefundSellingPrice),
+                Name = nameof(InvoiceProductRefundSummaryListDto.NetRefundSellingPrice),
+                DataPropertyName = nameof(InvoiceProductRefundSummaryListDto.NetRefundSellingPrice),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductRefundListDto), nameof(SoldProductRefundListDto.NetRefundSellingPrice)),
+                .NamesManager.GetArabicPropertyName(typeof(InvoiceProductRefundSummaryListDto), nameof(InvoiceProductRefundSummaryListDto.NetRefundSellingPrice)),
                 FillWeight = 10,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {

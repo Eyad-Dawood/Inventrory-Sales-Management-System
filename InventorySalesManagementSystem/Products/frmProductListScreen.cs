@@ -31,7 +31,7 @@ namespace InventorySalesManagementSystem.Products
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
 
-        private const string FilterName = "FullName";
+        private const string FullNameFilter = "FullName";
 
         public frmProductListScreen(IServiceProvider serviceProvider)
         {
@@ -53,7 +53,7 @@ namespace InventorySalesManagementSystem.Products
             return new List<UcListView.FilterItems>()
                 {
                     new UcListView.FilterItems(){DisplayName = "إسم الموديل/المنتج",
-                                                 Value = FilterName},
+                                                 Value = FullNameFilter},
                 };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -197,7 +197,7 @@ namespace InventorySalesManagementSystem.Products
 
                 return filter.ColumnName switch
                 {
-                    FilterName
+                    FullNameFilter
                       => await service.GetTotalPageByFullNameAsync(filter.Text1Value, filter.Text2Value, RowsPerPage,ActivationState:null),
 
                     _ => 0
@@ -221,7 +221,7 @@ namespace InventorySalesManagementSystem.Products
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
                 return filter.ColumnName switch
                 {
-                    FilterName
+                    FullNameFilter
                     => await service.GetAllByFullNameAsync(page, RowsPerPage, filter.Text1Value, filter.Text2Value,ActivationState:null),
 
                     _ => new List<ProductListDto>()
@@ -296,7 +296,7 @@ namespace InventorySalesManagementSystem.Products
                 return;
             }
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
 
@@ -371,7 +371,7 @@ namespace InventorySalesManagementSystem.Products
             }
 
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
                 try
@@ -409,7 +409,7 @@ namespace InventorySalesManagementSystem.Products
             }
 
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var UserSession = scope.ServiceProvider.GetRequiredService<UserSession>();
 
@@ -462,7 +462,7 @@ namespace InventorySalesManagementSystem.Products
             }
 
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var UserSession = scope.ServiceProvider.GetRequiredService<UserSession>();
 

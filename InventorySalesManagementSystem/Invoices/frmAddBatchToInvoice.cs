@@ -126,7 +126,7 @@ namespace InventorySalesManagementSystem.Invoices
             else if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Refund)
 
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var invoiceService = scope.ServiceProvider.GetRequiredService<InvoiceService>();
                     var productService = scope.ServiceProvider.GetRequiredService<ProductService>();
@@ -140,7 +140,7 @@ namespace InventorySalesManagementSystem.Invoices
                     var products =
                         await productService.GetProductsByIdsAsync(summaryDict.Keys.ToList());
 
-                    var productListDtos = new List<SoldProductWithProductListDto>();
+                    var productListDtos = new List<SoldProductSaleDetailsListDto>();
 
                     foreach (var item in products)
                     {
@@ -150,7 +150,7 @@ namespace InventorySalesManagementSystem.Invoices
                         if (summary.NetSellingQuantity <= 0)
                             continue;
 
-                        productListDtos.Add(new SoldProductWithProductListDto
+                        productListDtos.Add(new SoldProductSaleDetailsListDto
                         {
                             ProductId = item.ProductId,
                             IsAvilable = item.IsAvailable,

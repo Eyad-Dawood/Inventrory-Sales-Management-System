@@ -69,7 +69,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
         {
             MasurementUnitUpdateDto dto;
 
-            using (var scope = serviceProvider.CreateScope())
+            using (var scope = serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 
@@ -102,7 +102,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
 
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 
@@ -145,7 +145,7 @@ namespace InventorySalesManagementSystem.MasurementUnits
 
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
 

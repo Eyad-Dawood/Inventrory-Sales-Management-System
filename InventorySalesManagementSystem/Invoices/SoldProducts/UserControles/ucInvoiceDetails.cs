@@ -71,10 +71,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             // ===== Quantity =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductMiniReadDto.Quantity),
-                DataPropertyName = nameof(SoldProductMiniReadDto.Quantity),
+                Name = nameof(SoldProductListDto.Quantity),
+                DataPropertyName = nameof(SoldProductListDto.Quantity),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.Quantity)),
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductListDto), nameof(SoldProductListDto.Quantity)),
                 FillWeight = 10,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -86,18 +86,18 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             // ===== UnitName =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductMiniReadDto.UnitName),
-                DataPropertyName = nameof(SoldProductMiniReadDto.UnitName),
+                Name = nameof(SoldProductListDto.UnitName),
+                DataPropertyName = nameof(SoldProductListDto.UnitName),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.UnitName)),
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductListDto), nameof(SoldProductListDto.UnitName)),
                 FillWeight = 20
             });
 
             // ===== ProductFullName =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductMiniReadDto.ProductFullName),
-                DataPropertyName = nameof(SoldProductMiniReadDto.ProductFullName),
+                Name = nameof(SoldProductListDto.ProductFullName),
+                DataPropertyName = nameof(SoldProductListDto.ProductFullName),
                 HeaderText = LogicLayer.Utilities
                 .NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.ProductName)),
                 FillWeight = 45
@@ -106,10 +106,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             // ===== PricePerUnit =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductMiniReadDto.SellingPricePerUnit),
-                DataPropertyName = nameof(SoldProductMiniReadDto.SellingPricePerUnit),
+                Name = nameof(SoldProductListDto.SellingPricePerUnit),
+                DataPropertyName = nameof(SoldProductListDto.SellingPricePerUnit),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.SellingPricePerUnit)),
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductListDto), nameof(SoldProductListDto.SellingPricePerUnit)),
                 FillWeight = 10,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -121,10 +121,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             // ===== Total =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductMiniReadDto.TotalSellingPrice),
-                DataPropertyName = nameof(SoldProductMiniReadDto.TotalSellingPrice),
+                Name = nameof(SoldProductListDto.TotalSellingPrice),
+                DataPropertyName = nameof(SoldProductListDto.TotalSellingPrice),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.TotalSellingPrice)),
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductListDto), nameof(SoldProductListDto.TotalSellingPrice)),
                 FillWeight = 15,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -137,10 +137,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             // ===== TakeDate =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductMiniReadDto.TakeDate),
-                DataPropertyName = nameof(SoldProductMiniReadDto.TakeDate),
+                Name = nameof(SoldProductListDto.TakeDate),
+                DataPropertyName = nameof(SoldProductListDto.TakeDate),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.TakeDate)),
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductListDto), nameof(SoldProductListDto.TakeDate)),
                 FillWeight = 15,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
@@ -151,10 +151,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             // ===== UnitName =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = nameof(SoldProductMiniReadDto.Reciver),
-                DataPropertyName = nameof(SoldProductMiniReadDto.Reciver),
+                Name = nameof(SoldProductListDto.Reciver),
+                DataPropertyName = nameof(SoldProductListDto.Reciver),
                 HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductMiniReadDto), nameof(SoldProductMiniReadDto.Reciver)),
+                .NamesManager.GetArabicPropertyName(typeof(SoldProductListDto), nameof(SoldProductListDto.Reciver)),
                 FillWeight = 20
             });
 
@@ -225,7 +225,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             var dgv = sender as DataGridView;
             var row = dgv.Rows[e.RowIndex];
 
-            if (row.DataBoundItem is not SoldProductMiniReadDto dto)
+            if (row.DataBoundItem is not SoldProductListDto dto)
                 return;
 
             int batchId = dto.BatchId;
@@ -254,7 +254,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             // Initial Display
             _ = DisplayPageAsync(1);
 
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<InvoiceService>();
                 try

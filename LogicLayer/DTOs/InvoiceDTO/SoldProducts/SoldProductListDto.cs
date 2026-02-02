@@ -8,24 +8,10 @@ using System.Threading.Tasks;
 
 namespace LogicLayer.DTOs.InvoiceDTO.SoldProducts
 {
-    public class SoldProductWithBatchListDto
+    //This For Selling Products
+    public class SoldProductSaleDetailsListDto
     {
         public int SoldProductId { get; set; }
-
-        public decimal BuyingPricePerUnit { get; set; }
-        public decimal SellingPricePerUnit { get; set; }
-        public decimal Quantity { get; set; }
-        public DateTime TakeDate { get; set; }
-        public string? TakeName { get; set; }
-        public int InvoiceId { get; set; }
-        public string CustomerName { get; set; }
-        public string? WorkerName { get; set; }
-
-    }
-    public class SoldProductWithProductListDto
-    {
-        public int SoldProductId { get; set; }
-
         public string ProductTypeName { get; set; }
         public string ProductName { get; set; }
         public int ProductId { get; set; }
@@ -36,7 +22,8 @@ namespace LogicLayer.DTOs.InvoiceDTO.SoldProducts
         public bool IsAvilable { get; set; }
     }
 
-    public class SoldProductRefundListDto
+    //This For Refund Summary
+    public class InvoiceProductRefundSummaryListDto
     {
         public int ProductId { get; set; }
         [Display(Name = "اسم المنتج")]
@@ -50,4 +37,24 @@ namespace LogicLayer.DTOs.InvoiceDTO.SoldProducts
         [Display(Name = "صافي البيع")]
         public decimal NetRefundSellingPrice { get; set; }
     }
+
+    //This For Invoice Details
+    public class SoldProductListDto
+    {
+        public int BatchId { get; set; }
+        public string ProductFullName { get; set; }
+        [Display(Name = "سعر الوحدة")]
+        public decimal SellingPricePerUnit { get; set; }
+        [Display(Name = "الإجمالي")]
+        public decimal TotalSellingPrice { get; set; }
+        [Display(Name = "الكمية")]
+        public decimal Quantity { get; set; }
+        [Display(Name = "الوحدة")]
+        public string UnitName { get; set; }
+        [Display(Name = "التاريخ")]
+        public DateTime TakeDate { get; set; }
+        [Display(Name = "المستلم")]
+        public string? Reciver { get; set; }
+    }
+
 }

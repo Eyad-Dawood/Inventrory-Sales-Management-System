@@ -15,5 +15,11 @@ namespace LogicLayer.Validation.Exceptions
         {
             Errors = errors.ToList();
         }
+
+        public ValidationException(string error)
+            : base("فشل التحقق")
+        {
+            Errors = new List<string>() { error };
+        }
     }
 }

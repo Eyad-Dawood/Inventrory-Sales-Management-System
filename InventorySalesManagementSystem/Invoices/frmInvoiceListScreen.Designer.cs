@@ -155,7 +155,7 @@
             DiscountMenuStripItem.RightToLeft = RightToLeft.Yes;
             DiscountMenuStripItem.Size = new Size(216, 30);
             DiscountMenuStripItem.Text = "خصم";
-            DiscountMenuStripItem.Click += additionalFeesMenuStripItem_Click;
+            DiscountMenuStripItem.Click += DiscountMenuStripItem_Click;
             // 
             // toolStripSeparator3
             // 

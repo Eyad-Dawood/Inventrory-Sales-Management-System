@@ -29,7 +29,7 @@ namespace InventorySalesManagementSystem.Payments
     {
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
-
+        private const string CustomerNameFilter = nameof(PaymentListDto.CustomerName);
 
         public frmPaymentsListScreen(IServiceProvider serviceProvider)
         {
@@ -48,7 +48,7 @@ namespace InventorySalesManagementSystem.Payments
                 {
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager
                 .GetArabicPropertyName(typeof(PaymentListDto), nameof(PaymentListDto.CustomerName)),
-                                                 Value = nameof(PaymentListDto.CustomerName)},
+                                                 Value = CustomerNameFilter},
                 };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -169,7 +169,7 @@ namespace InventorySalesManagementSystem.Payments
 
                 return filter.ColumnName switch
                 {
-                    nameof(PaymentListDto.CustomerName)
+                    CustomerNameFilter
                     => await service.GetTotalPageByCustomerNameAndDateAsync(RowsPerPage, filter.Text1Value, filter.dateTime, reasons),
 
 
@@ -201,7 +201,7 @@ namespace InventorySalesManagementSystem.Payments
                 var service = scope.ServiceProvider.GetRequiredService<PaymentService>();
                 return filter.ColumnName switch
                 {
-                    nameof(PaymentListDto.CustomerName)
+                    CustomerNameFilter
                     => await service.GetAllByCustomerNameAndDateTimeAsync(page, RowsPerPage, filter.Text1Value, filter.dateTime, reasons),
 
 

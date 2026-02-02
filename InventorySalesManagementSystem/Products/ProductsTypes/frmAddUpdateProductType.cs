@@ -70,7 +70,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
         {
             ProductTypeUpdateDto dto;
 
-            using (var scope = serviceProvider.CreateScope())
+            using (var scope = serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
@@ -105,7 +105,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
@@ -147,7 +147,7 @@ namespace InventorySalesManagementSystem.Products.ProductsTypes
 
             try
             {
-                using (var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 

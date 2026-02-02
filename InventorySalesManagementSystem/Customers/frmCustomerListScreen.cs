@@ -25,7 +25,8 @@ namespace InventorySalesManagementSystem.Customers
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
         public CustomerListDto SelectedCustomer { get; private set; }
-
+        private const string PersonFilter = nameof(Customer.Person.FullName);
+        private const string TownFilter = nameof(Customer.Person.Town.TownName);
 
         public frmCustomerListScreen(IServiceProvider serviceProvider,bool selectButton)
         {
@@ -47,9 +48,9 @@ namespace InventorySalesManagementSystem.Customers
             return new List<UcListView.FilterItems>()
                 {
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Person), nameof(Customer.Person.FullName)),
-                                                 Value = nameof(Customer.Person.FullName)},
+                                                 Value = PersonFilter},
                      new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Town), nameof(Customer.Person.Town.TownName)),
-                                                 Value = nameof(Customer.Person.Town.TownName)}
+                                                 Value = TownFilter}
                 };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -133,26 +134,6 @@ namespace InventorySalesManagementSystem.Customers
                 return await service.GetTotalPageNumberAsync(RowsPerPage);
             }
         }
-
-        protected async override Task<int> GetTotalFilteredPagesAsync(UcListView.Filter filter)
-        {
-            using (var scope = _serviceProvider.CreateAsyncScope())
-            {
-                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
-
-                return filter.ColumnName switch
-                {
-                    nameof(Customer.Person.FullName)
-                        => await service.GetTotalPageByFullNameAsync(filter.Text1Value, RowsPerPage),
-
-                    nameof(Customer.Person.Town.TownName)
-                        => await service.GetTotalPageByTownNameAsync(filter.Text1Value, RowsPerPage),
-
-                    _ => 0
-                };
-            }
-        }
-
         protected async override Task<IEnumerable<object>> GetDataAsync(int page)
         {
             using (var scope = _serviceProvider.CreateAsyncScope())
@@ -169,16 +150,35 @@ namespace InventorySalesManagementSystem.Customers
                 var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
                 return filter.ColumnName switch
                 {
-                    nameof(Customer.Person.FullName)
+                    PersonFilter
                         => await service.GetAllByFullNameAsync(page, RowsPerPage, filter.Text1Value),
 
-                    nameof(Customer.Person.Town.TownName)
+                    TownFilter
                         => await service.GetAllByTownNameAsync(page, RowsPerPage, filter.Text1Value),
 
                     _ => new List<CustomerListDto>()
                 };
             }
         }
+        protected async override Task<int> GetTotalFilteredPagesAsync(UcListView.Filter filter)
+        {
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<CustomerService>();
+
+                return filter.ColumnName switch
+                {
+                    PersonFilter
+                        => await service.GetTotalPageByFullNameAsync(filter.Text1Value, RowsPerPage),
+
+                    TownFilter
+                        => await service.GetTotalPageByTownNameAsync(filter.Text1Value, RowsPerPage),
+
+                    _ => 0
+                };
+            }
+        }
+
         #endregion
 
         #region Buttons Event

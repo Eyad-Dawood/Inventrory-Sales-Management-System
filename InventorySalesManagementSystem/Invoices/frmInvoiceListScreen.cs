@@ -35,6 +35,8 @@ namespace InventorySalesManagementSystem.Invoices
     {
         private readonly IServiceProvider _serviceProvider;
         protected override ContextMenuStrip GridContextMenu => cms;
+        private const string WorkerFilter = nameof(Worker) + nameof(Worker.Person.FullName);
+        private const string CustomerFilter = nameof(Customer) + nameof(Customer.Person.FullName);
 
         public frmInvoiceListScreen(IServiceProvider serviceProvider, bool selectButton)
         {
@@ -55,9 +57,9 @@ namespace InventorySalesManagementSystem.Invoices
             return new List<UcListView.FilterItems>()
                 {
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicEntityName(typeof(Customer)),
-                                                 Value = nameof(Customer)+nameof(Customer.Person.FullName)},
+                                                 Value = CustomerFilter},
                      new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicEntityName(typeof(Worker)),
-                                                 Value = nameof(Worker)+nameof(Worker.Person.FullName)}
+                                                 Value = WorkerFilter}
                 };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -355,30 +357,6 @@ namespace InventorySalesManagementSystem.Invoices
                 return await service.GetTotalPageNumberAsync(RowsPerPage);
             }
         }
-
-
-        protected async override Task<int> GetTotalFilteredPagesAsync(UcListView.Filter filter)
-        {
-            using (var scope = _serviceProvider.CreateAsyncScope())
-            {
-                var service = scope.ServiceProvider.GetRequiredService<InvoiceService>();
-
-                List<InvoiceType> types = GetInvoiceTypes();
-                List<InvoiceState> states = GetInvoiceStates();
-
-                return filter.ColumnName switch
-                {
-                    nameof(Worker) + nameof(Worker.Person.FullName)
-                        => await service.GetTotalPageByWorkerNameAsync(filter.Text1Value, RowsPerPage, types, states),
-
-                    nameof(Customer) + nameof(Customer.Person.FullName)
-                        => await service.GetTotalPageByCustomerNameAsync(filter.Text1Value, RowsPerPage, types, states),
-
-                    _ => 0
-                };
-            }
-        }
-
         protected async override Task<IEnumerable<object>> GetDataAsync(int page)
         {
             using (var scope = _serviceProvider.CreateAsyncScope())
@@ -392,6 +370,27 @@ namespace InventorySalesManagementSystem.Invoices
             }
         }
 
+        protected async override Task<int> GetTotalFilteredPagesAsync(UcListView.Filter filter)
+        {
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                var service = scope.ServiceProvider.GetRequiredService<InvoiceService>();
+
+                List<InvoiceType> types = GetInvoiceTypes();
+                List<InvoiceState> states = GetInvoiceStates();
+
+                return filter.ColumnName switch
+                {
+                    WorkerFilter
+                        => await service.GetTotalPageByWorkerNameAsync(filter.Text1Value, RowsPerPage, types, states),
+                   
+                    CustomerFilter
+                        => await service.GetTotalPageByCustomerNameAsync(filter.Text1Value, RowsPerPage, types, states),
+
+                    _ => 0
+                };
+            }
+        }
         protected async override Task<IEnumerable<object>> GetFilteredDataAsync(int page, UcListView.Filter filter)
         {
             using (var scope = _serviceProvider.CreateAsyncScope())
@@ -403,10 +402,10 @@ namespace InventorySalesManagementSystem.Invoices
 
                 return filter.ColumnName switch
                 {
-                    nameof(Worker) + nameof(Worker.Person.FullName)
+                    WorkerFilter
                         => await service.GetAllByWorkerNameAsync(filter.Text1Value, page, RowsPerPage, types, states),
 
-                    nameof(Customer) + nameof(Customer.Person.FullName)
+                    CustomerFilter
                         => await service.GetAllByCustomerNameAsync(filter.Text1Value, page, RowsPerPage, types, states),
 
                     _ => new List<InvoiceListDto>()
@@ -448,10 +447,11 @@ namespace InventorySalesManagementSystem.Invoices
             {
                 MessageBox.Show(ex.MainBody, ex.Message);
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("حدث خطأ");
             }
+
             ucListView1.RefreshAfterOperation();
         }
 
@@ -482,14 +482,15 @@ namespace InventorySalesManagementSystem.Invoices
                 MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("حدث خطأ");
             }
+
             ucListView1.RefreshAfterOperation();
         }
 
-        private async void CloseInvoiceMenustripItem_Click(object sender, EventArgs e)
+        private async Task PerformCloseInvoice()
         {
             var item = ucListView1.GetSelectedItem<InvoiceListDto>();
 
@@ -508,14 +509,7 @@ namespace InventorySalesManagementSystem.Invoices
                 return;
             }
 
-            if (item.Remaining > 0)
-            {
-                MessageBox.Show("لا يمكن غلق الفاتورة دون دفع إجمالي مستحقاتها");
-                return;
-            }
-
-
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<InvoiceService>();
 
@@ -545,8 +539,13 @@ namespace InventorySalesManagementSystem.Invoices
 
             ucListView1.RefreshAfterOperation();
         }
+        private async void CloseInvoiceMenustripItem_Click(object sender, EventArgs e)
+        {
+           await PerformCloseInvoice();
+        }
 
-        private async void ConvertEvaluationToSaleInvoiceMenuStripItem_Click(object sender, EventArgs e)
+
+        private async Task PerformConvertingEvaluationToSale()
         {
             var item = ucListView1.GetSelectedItem<InvoiceListDto>();
 
@@ -558,34 +557,40 @@ namespace InventorySalesManagementSystem.Invoices
 
             using (var scope = _serviceProvider.CreateAsyncScope())
             {
-                List<SoldProductWithProductListDto> _products = new List<SoldProductWithProductListDto>();
 
                 try
                 {
+
                     var service = scope.ServiceProvider.GetRequiredService<SoldProductService>();
 
                     //There Is No Refunds In The Evalucation Invoice So We Can Take Only The Invoice Sold Products
-                    _products = await service.GetAllWithProductDetailsByInvoiceIdAsync(item.InvoiceId, new List<TakeBatchType>() { TakeBatchType.Invoice });
+                    var _products =
+                     await service.GetAllWithProductDetailsByInvoiceIdAsync(item.InvoiceId, new List<TakeBatchType>() { TakeBatchType.Invoice });
 
-
+                    var frm = new frmAddInvoice(_serviceProvider, item.CustomerId, item.WorkerId, _products);
+                    frm.ShowDialog();
+                }
+                catch (NotFoundException ex)
+                {
+                    MessageBox.Show(ex.MainBody, ex.Message);
                 }
                 catch (OperationFailedException ex)
                 {
-                    Serilog.Log.Error(ex.InnerException, "Unexcepected Error During Finding Invoice Sold Products ");
                     MessageBox.Show(ex.MainBody, ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    Serilog.Log.Error(ex, "Unexcepected Error During Finding Invoice Sold Products  ");
                     MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.OperationFailedErrorMessage());
                 }
-
-                var frm = new frmAddInvoice(_serviceProvider, item.CustomerId, item.WorkerId, _products);
-                frm.ShowDialog();
             }
 
             ucListView1.RefreshAfterOperation();
         }
+        private async void ConvertEvaluationToSaleInvoiceMenuStripItem_Click(object sender, EventArgs e)
+        {
+            await PerformConvertingEvaluationToSale();
+        }
+
 
         private void cms_Opening(object sender, CancelEventArgs e)
         {
@@ -645,14 +650,14 @@ namespace InventorySalesManagementSystem.Invoices
             {
                 MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("حدث خطأ");
             }
             ucListView1.RefreshAfterOperation();
         }
 
-        private void additionalFeesMenuStripItem_Click(object sender, EventArgs e)
+        private void DiscountMenuStripItem_Click(object sender, EventArgs e)
         {
             var item = ucListView1.GetSelectedItem<InvoiceListDto>();
 
@@ -662,8 +667,16 @@ namespace InventorySalesManagementSystem.Invoices
                 return;
             }
 
-            var frm = new frmInvoiceDiscount(_serviceProvider, item.InvoiceId);
-            frm.ShowDialog();
+            try
+            {
+                var frm = new frmInvoiceDiscount(_serviceProvider, item.InvoiceId);
+                frm.ShowDialog();
+            }
+            catch
+            {
+                MessageBox.Show("حدث خطأ");
+            }
+           
 
             ucListView1.RefreshAfterOperation();
         }
@@ -678,11 +691,21 @@ namespace InventorySalesManagementSystem.Invoices
                 return;
             }
 
-            var frm = new frmAddPayment(_serviceProvider, DataAccessLayer.Entities.Payments.PaymentReason.Invoice, item.InvoiceId, item.CustomerId);
-            frm.ShowDialog();
+            try
+            {
+                var frm = new frmAddPayment(_serviceProvider, DataAccessLayer.Entities.Payments.PaymentReason.Invoice, item.InvoiceId, item.CustomerId);
+                frm.ShowDialog();
+            }
+            catch
+            {
+                MessageBox.Show("حدث خطأ");
+            }
+
+
 
             ucListView1.RefreshAfterOperation();
         }
+
 
         private async Task PerformRefund()
         {
@@ -691,13 +714,6 @@ namespace InventorySalesManagementSystem.Invoices
             if (item == null)
             {
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
-                return;
-            }
-
-            if (item.TotalPaid <= item.AmountDue)
-            {
-                //No money to refund
-                MessageBox.Show("لا يوجد مبلغ زائد ليتم إرجاعه");
                 return;
             }
 
@@ -713,7 +729,7 @@ namespace InventorySalesManagementSystem.Invoices
             {
                 using (var scope = _serviceProvider.CreateAsyncScope())
                 {
-                    var service = _serviceProvider.GetRequiredService<PaymentService>();
+                    var service = scope.ServiceProvider.GetRequiredService<PaymentService>();
 
                     var UserSession = scope.ServiceProvider.GetRequiredService<UserSession>();
 
@@ -743,16 +759,9 @@ namespace InventorySalesManagementSystem.Invoices
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(
-                      ex,
-                     "Unexpected error while Saving Payment");
-
                 MessageBox.Show(ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
-
-
             ucListView1.RefreshAfterOperation();
         }
         private async void PayRefundMenuStripItem_Click(object sender, EventArgs e)
