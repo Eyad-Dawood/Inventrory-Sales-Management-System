@@ -77,7 +77,7 @@
             cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem, toolStripSeparator1, AddNewBatchMenustripItem, CloseInvoiceMenustripItem, spEvalucation, addRefundMenuStripItem, ConvertEvaluationToSaleInvoiceMenuStripItem, toolStripSeparator2, DiscountMenuStripItem, toolStripSeparator3, PayMenuStripItem, PayRefundMenuStripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(217, 290);
+            cms.Size = new Size(217, 268);
             cms.Opening += cms_Opening;
             // 
             // ShowMenustripItem

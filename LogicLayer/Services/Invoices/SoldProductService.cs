@@ -7,6 +7,7 @@ using LogicLayer.Services.Products;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
+using DataAccessLayer.Entities.DTOS;
 
 namespace LogicLayer.Services.Invoices
 {
@@ -18,6 +19,7 @@ namespace LogicLayer.Services.Invoices
         private readonly ILogger<SoldProductService> _logger;
         private readonly ProductService _productService;
         private readonly CustomerService _customerService;
+        
         public SoldProductService(ISoldProductRepository SoldProductRepo, IUnitOfWork unitOfWork, ILogger<SoldProductService> logger, ProductService productService, CustomerService customerService)
         {
             _SoldProductRepo = SoldProductRepo;
@@ -57,6 +59,20 @@ namespace LogicLayer.Services.Invoices
                 QuantityInStorage = soldProduct.Product.QuantityInStorage,
                 SellingPricePerUnit = soldProduct.SellingPricePerUnit,
                 UnitName = soldProduct.Product.MasurementUnit.UnitName
+            };
+        }
+        private SoldProductSaleDetailsListDto MapSoldProduct_WithProductListDto(SoldProductForRefund soldProduct)
+        {
+            return new SoldProductSaleDetailsListDto
+            {
+                ProductId = soldProduct.ProductId,
+                ProductName = soldProduct.ProductName,
+                ProductTypeName = soldProduct.ProductTypeName,
+                Quantity = soldProduct.Quantity,
+                IsAvilable = soldProduct.IsAvilable,
+                QuantityInStorage = soldProduct.QuantityInStorage,
+                SellingPricePerUnit = soldProduct.SellingPricePerUnit,
+                UnitName = soldProduct.UnitName
             };
         }
 
@@ -202,6 +218,16 @@ namespace LogicLayer.Services.Invoices
                 .Select(i => MapSoldProduct_WithProductListDto(i)
                 ).ToList();
         }
+
+        public async Task<List<SoldProductSaleDetailsListDto>> GetAllSoldProductsToRefund(int InvoiceId)
+        {
+            return
+                (await _SoldProductRepo
+                .GetAllForRefundWithDetailsByInvoiceIdAsync(InvoiceId))
+                .Select(i => MapSoldProduct_WithProductListDto(i)
+                ).ToList();
+        }
+           
         #endregion
 
         #region PageNumber

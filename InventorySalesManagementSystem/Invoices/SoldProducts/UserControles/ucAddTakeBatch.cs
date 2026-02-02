@@ -57,8 +57,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 
                 txtReciver.Enabled = value;
                 txtReciver.Text = value? txtReciver.Text: string.Empty;
-                
-
             }
 
             get

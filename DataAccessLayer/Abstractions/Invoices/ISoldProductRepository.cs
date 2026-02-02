@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Entities.Invoices;
+﻿using DataAccessLayer.Entities.DTOS;
+using DataAccessLayer.Entities.Invoices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace DataAccessLayer.Abstractions.Invoices
         public Task<List<SoldProduct>> GetAllWithDetailsByBatchIdAsync(int PageNumber, int RowsPerPage, int BatchId, List<TakeBatchType> takeBatchTypes);
         public Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int PageNumber, int RowsPerPage, int InvoiceId, List<TakeBatchType> takeBatchTypes);
         public Task<List<SoldProduct>> GetAllWithDetailsByInvoiceIdAsync(int InvoiceId, List<TakeBatchType> takeBatchTypes);
+        public Task<List<SoldProductForRefund>> GetAllForRefundWithDetailsByInvoiceIdAsync(int InvoiceId);
 
 
         public Task<int> GetTotalPagesByProductIdAsync(int ProductId, int RowsPerPage, List<TakeBatchType> takeBatchTypes);

@@ -264,7 +264,7 @@ namespace DataAccessLayer.Repos.Invoices
                 .ToListAsync();
         }
 
-        public async Task<List<SoldProductRefund>> GetInvoiceRefundProductSummaryAsync(int invoiceId)
+        public async Task<List<SoldProductRefundSummary>> GetInvoiceRefundProductSummaryAsync(int invoiceId)
         {
             return await _context.SoldProducts
                 .AsNoTracking()
@@ -277,7 +277,7 @@ namespace DataAccessLayer.Repos.Invoices
                     sp.Product.ProductName,
                     sp.Product.ProductType.ProductTypeName
                 })
-                .Select(g => new SoldProductRefund
+                .Select(g => new SoldProductRefundSummary
                 {
                     ProductId = g.Key.ProductId,
                     ProductFullName = $"{g.Key.ProductTypeName} [{g.Key.ProductName}]",

@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Entities.Invoices;
 using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
+using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.Global.Users;
 using LogicLayer.Services.Invoices;
 using LogicLayer.Services.Products;
@@ -22,15 +23,22 @@ namespace InventorySalesManagementSystem.Invoices
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly int _invoiceId;
-
-        public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId , TakeBatchType takeBatchType)
+        private readonly List<SoldProductSaleDetailsListDto> _products;
+        public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
             _invoiceId = invoiceId;
-            ucAddTakeBatch1.takeBatchType = takeBatchType;
+            ucAddTakeBatch1.takeBatchType = TakeBatchType.Invoice;
         }
-
+        public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId,List<SoldProductSaleDetailsListDto>products)
+        {
+            InitializeComponent();
+            _serviceProvider = serviceProvider;
+            _invoiceId = invoiceId;
+            ucAddTakeBatch1.takeBatchType = TakeBatchType.Refund;
+            _products = products;
+        }
 
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -115,56 +123,18 @@ namespace InventorySalesManagementSystem.Invoices
         {
            await LoadFormAsync();
         }
+        
         private async Task LoadFormAsync()
         {
-              await ucInvoiceDetails1.ShowInvoice(_serviceProvider, _invoiceId);
+            await ucInvoiceDetails1.ShowInvoice(_serviceProvider, _invoiceId);
 
             if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Invoice)
             {
                 ucAddTakeBatch1.Initialize(_serviceProvider);
             }
             else if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Refund)
-
             {
-                using (var scope = _serviceProvider.CreateAsyncScope())
-                {
-                    var invoiceService = scope.ServiceProvider.GetRequiredService<InvoiceService>();
-                    var productService = scope.ServiceProvider.GetRequiredService<ProductService>();
-
-                    var productsSummary =
-                        await invoiceService.GetInvoiceProductSummaryAsync(_invoiceId);
-
-                    var summaryDict = productsSummary
-                        .ToDictionary(p => p.ProductId);
-
-                    var products =
-                        await productService.GetProductsByIdsAsync(summaryDict.Keys.ToList());
-
-                    var productListDtos = new List<SoldProductSaleDetailsListDto>();
-
-                    foreach (var item in products)
-                    {
-                        if (!summaryDict.TryGetValue(item.ProductId, out var summary))
-                            continue;
-
-                        if (summary.NetSellingQuantity <= 0)
-                            continue;
-
-                        productListDtos.Add(new SoldProductSaleDetailsListDto
-                        {
-                            ProductId = item.ProductId,
-                            IsAvilable = item.IsAvailable,
-                            ProductName = item.ProductName,
-                            ProductTypeName = item.ProductType.ProductTypeName,
-                            QuantityInStorage = summary.NetSellingQuantity, // Maximum refundable quantity
-                            Quantity = 0,
-                            SellingPricePerUnit = item.SellingPrice,
-                            UnitName = item.MasurementUnit.UnitName,
-                            SoldProductId = -1
-                        });
-                    }
-                    ucAddTakeBatch1.Initialize(_serviceProvider, productListDtos);
-                }
+                ucAddTakeBatch1.Initialize(_serviceProvider,_products);             
             }
         }
         

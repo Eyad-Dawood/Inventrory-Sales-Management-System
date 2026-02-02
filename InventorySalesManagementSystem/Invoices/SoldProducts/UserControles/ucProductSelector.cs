@@ -46,6 +46,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             txtSearchValue1.Enabled = !Allow;
             txtSearchValue2.Enabled = !Allow;
             btnSelect.Enabled = !Allow;
+            btnAddProduct.Enabled = !Allow;
         }
 
 

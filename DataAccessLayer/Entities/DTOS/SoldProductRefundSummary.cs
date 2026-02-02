@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DataAccessLayer.Entities.DTOS
 {
     [NotMapped]
-    public class SoldProductRefund
+    public class SoldProductRefundSummary
     {
             public int ProductId { get; set; }
             public string ProductFullName { get; set; }

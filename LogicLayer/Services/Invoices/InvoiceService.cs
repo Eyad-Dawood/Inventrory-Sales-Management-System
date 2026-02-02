@@ -152,7 +152,7 @@ namespace LogicLayer.Services.Invoices
             };
         }
 
-        public InvoiceProductRefundSummaryListDto MapInvoiceProductRefundSummary_Dto(SoldProductRefund invoice)
+        public InvoiceProductRefundSummaryListDto MapInvoiceProductRefundSummary_Dto(SoldProductRefundSummary invoice)
         {
             return new InvoiceProductRefundSummaryListDto()
             {
@@ -223,7 +223,7 @@ namespace LogicLayer.Services.Invoices
 
         private void ValidateMainDiscountLogic(Invoice invoice,decimal discount)
         {
-            if (discount <= 0)
+            if (discount < 0)
             {
                 throw new ValidationException(
                     ErrorMessagesManager.WriteValidationErrorMessageInArabic(new ValidationError()
@@ -426,6 +426,7 @@ namespace LogicLayer.Services.Invoices
                 .Select(c => MapInvoiceProductRefundSummary_Dto(c))
                 .ToList();
         }
+
 
 
         #endregion

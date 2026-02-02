@@ -470,7 +470,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             try
             {
-                var frm = new frmAddBatchToInvoice(_serviceProvider, item.InvoiceId, TakeBatchType.Invoice);
+                var frm = new frmAddBatchToInvoice(_serviceProvider, item.InvoiceId);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -560,7 +560,6 @@ namespace InventorySalesManagementSystem.Invoices
 
                 try
                 {
-
                     var service = scope.ServiceProvider.GetRequiredService<SoldProductService>();
 
                     //There Is No Refunds In The Evalucation Invoice So We Can Take Only The Invoice Sold Products
@@ -627,7 +626,7 @@ namespace InventorySalesManagementSystem.Invoices
             }
         }
 
-        private void addRefundMenuStripItem_Click(object sender, EventArgs e)
+        private async Task PerformRefundBatch()
         {
             var item = ucListView1.GetSelectedItem<InvoiceListDto>();
 
@@ -636,25 +635,38 @@ namespace InventorySalesManagementSystem.Invoices
                 MessageBox.Show(LogicLayer.Validation.ErrorMessagesManager.ErrorMessages.NotFoundErrorMessage(typeof(Invoice)));
                 return;
             }
+            using (var scope = _serviceProvider.CreateAsyncScope())
+            {
+                try
+                {
+                    var service = scope.ServiceProvider.GetRequiredService<SoldProductService>();
 
-            try
-            {
-                var frm = new frmAddBatchToInvoice(_serviceProvider, item.InvoiceId, TakeBatchType.Refund);
-                frm.ShowDialog();
-            }
-            catch (NotFoundException ex)
-            {
-                MessageBox.Show(ex.MainBody, ex.Message);
-            }
-            catch (OperationFailedException ex)
-            {
-                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            catch
-            {
-                MessageBox.Show("حدث خطأ");
+                    //There Is No Refunds In The Evalucation Invoice So We Can Take Only The Invoice Sold Products
+                    var _products =
+                     await service.GetAllSoldProductsToRefund(item.InvoiceId);
+
+
+                    var frm = new frmAddBatchToInvoice(_serviceProvider, item.InvoiceId,_products);
+                    frm.ShowDialog();
+                }
+                catch (NotFoundException ex)
+                {
+                    MessageBox.Show(ex.MainBody, ex.Message);
+                }
+                catch (OperationFailedException ex)
+                {
+                    MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch
+                {
+                    MessageBox.Show("حدث خطأ");
+                }
             }
             ucListView1.RefreshAfterOperation();
+        }
+        private async void addRefundMenuStripItem_Click(object sender, EventArgs e)
+        {
+           await PerformRefundBatch();
         }
 
         private void DiscountMenuStripItem_Click(object sender, EventArgs e)
@@ -707,7 +719,7 @@ namespace InventorySalesManagementSystem.Invoices
         }
 
 
-        private async Task PerformRefund()
+        private async Task PerformRefundPayment()
         {
             var item = ucListView1.GetSelectedItem<InvoiceListDto>();
 
@@ -766,7 +778,7 @@ namespace InventorySalesManagementSystem.Invoices
         }
         private async void PayRefundMenuStripItem_Click(object sender, EventArgs e)
         {
-            await PerformRefund();
+            await PerformRefundPayment();
         }
     }
 }

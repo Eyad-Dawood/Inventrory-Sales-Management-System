@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Abstractions.Invoices;
+using DataAccessLayer.Entities.DTOS;
 using DataAccessLayer.Entities.Invoices;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccessLayer.Repos.Invoices
 {
@@ -91,6 +93,7 @@ namespace DataAccessLayer.Repos.Invoices
                .OrderByDescending(b => b.TakeBatchId)
                .ToListAsync();
         }
+
 
         public async Task<List<SoldProduct>> GetAllWithDetailsByProductIdAsync(int PageNumber, int RowsPerPage, int ProductId, List<TakeBatchType> takeBatchTypes)
         {
@@ -192,6 +195,39 @@ namespace DataAccessLayer.Repos.Invoices
             return totalQuantitySold - totalQuantityRefunded;
         }
 
-
+        public async Task<List<SoldProductForRefund>> GetAllForRefundWithDetailsByInvoiceIdAsync(int invoiceId)
+        {
+            return await _context.SoldProducts
+                .AsNoTracking()
+                .Where(sp => sp.TakeBatch.Invoice.InvoiceId == invoiceId)
+                .GroupBy(sp => new
+                {
+                    sp.ProductId,
+                    sp.Product.ProductName,
+                    sp.Product.ProductType.ProductTypeName,
+                    sp.Product.IsAvailable,
+                    sp.Product.MasurementUnit.UnitName
+                })
+                .Select(g => new SoldProductForRefund
+                {
+                    ProductId = g.Key.ProductId,
+                    ProductName = $"{g.Key.ProductName}",
+                    ProductTypeName = $"{g.Key.ProductTypeName}",
+                    IsAvilable = g.Key.IsAvailable,
+                    Quantity = 0, // The Quantity User Has Take , Def = 0 let Ui detirmin
+                    QuantityInStorage = g.Sum(x =>
+                              x.TakeBatch.TakeBatchType == TakeBatchType.Invoice
+                              ? x.Quantity
+                               : x.TakeBatch.TakeBatchType == TakeBatchType.Refund
+                                    ? -x.Quantity
+                                        : 0),
+                    SellingPricePerUnit = g.Where(x => x.TakeBatch.TakeBatchType == TakeBatchType.Invoice) // setting the price based on the buying price
+                                   .Select(x => x.SellingPricePerUnit) 
+                                   .FirstOrDefault(),
+                    UnitName = g.Key.UnitName                    
+                })
+               .Where(x => x.QuantityInStorage > 0)
+                .ToListAsync();
+        }
     }
 }
