@@ -10,7 +10,6 @@ using DataAccessLayer.Repos.Payments;
 using DataAccessLayer.Repos.Products;
 using LogicLayer.Services;
 using LogicLayer.Services.Invoices;
-using LogicLayer.Services.Invoices.Helper_Service;
 using LogicLayer.Services.Payments;
 using LogicLayer.Services.Products;
 using Microsoft.EntityFrameworkCore;
@@ -139,9 +138,6 @@ namespace InventorySalesManagementSystem
             services.AddScoped<TakeBatchService>();
             services.AddScoped<InvoiceService>();
             services.AddScoped<PaymentService>();
-
-            //Service Helpers
-            services.AddScoped<InvoiceServiceHelper>();
 
 
             var serviceProvider = services.BuildServiceProvider();

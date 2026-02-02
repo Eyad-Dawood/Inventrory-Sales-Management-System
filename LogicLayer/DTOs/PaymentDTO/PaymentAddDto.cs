@@ -14,7 +14,7 @@ namespace LogicLayer.DTOs.PaymentDTO
         public string? Notes { get; set; }
 
         public PaymentReason PaymentReason { get; set; }
-        public int? InvoiceId { get; set; }
+        public int InvoiceId { get; set; }
         public int CustomerId { get; set; }
 
         public string PaidBy {  get; set; }

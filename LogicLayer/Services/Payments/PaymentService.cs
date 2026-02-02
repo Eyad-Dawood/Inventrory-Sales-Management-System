@@ -43,7 +43,6 @@ namespace LogicLayer.Services.Payments
 
 
         #region Map
-
         public Payment MapPayment_AddDto(PaymentAddDto DTO,int UserId)
         {
             return new Payment()
@@ -59,12 +58,12 @@ namespace LogicLayer.Services.Payments
                 RecivedBy = DTO.RecivedBy,
             };
         }
-        public Payment MapPayment_AddDto(int InvoiceId,decimal amount , int CustomerId,int UserId)
+        public Payment MapPayment_AddDto(int InvoiceId,decimal TotalPaied,decimal AmountDue , int CustomerId,int UserId)
         {
             return new Payment()
             {
                 Date = DateTime.Now,
-                Amount = amount,
+                Amount = TotalPaied - AmountDue,
                 CustomerId = CustomerId,
                 InvoiceId =InvoiceId,
                 UserId = UserId,
@@ -73,13 +72,10 @@ namespace LogicLayer.Services.Payments
                 RecivedBy = "المستلم"
             };
         }
-
         public void MapAddDefaltAndNullValues(Payment payment)
         {
             payment.Notes = string.IsNullOrEmpty(payment.Notes) ? null : payment.Notes;
-            payment.InvoiceId = payment.InvoiceId <= 0 ? null : payment.InvoiceId;
         }
-
         public PaymentListDto MapPayment_ListDto(Payment payment)
         {
             return new PaymentListDto()
@@ -96,7 +92,6 @@ namespace LogicLayer.Services.Payments
                 RecivedBy = payment.RecivedBy,
             };
         }
-
         public InvoicePaymentSummaryDto MapPayment_SummaryDto(InvoicePaymentSummary invoicePayment)
         {
             return new InvoicePaymentSummaryDto()
@@ -109,243 +104,27 @@ namespace LogicLayer.Services.Payments
                 RecivedBy = invoicePayment.RecivedBy,
             };
         }
-
         #endregion
 
-
-        #region Validate Logic
-
-        private async Task ValidateMainLogic(Payment payment)
+        #region Validation 
+        private void ValidatePayMainLogic(Payment payment)
         {
-            if (payment.Amount <= 0)
+            if (payment.PaymentReason != PaymentReason.Invoice)
             {
-                throw new ValidationException(
-                    new List<string>()
-                    {
-                        LogicLayer.Validation.ErrorMessagesManager
-                        .WriteValidationErrorMessageInArabic(
-                            new DataAccessLayer.Validation.ValidationError()
-                            {
-                                Code = DataAccessLayer.Validation.ValidationErrorCode.ValueOutOfRange,
-                                ObjectType = typeof(Payment),
-                                PropertyName = nameof(Payment.Amount)
-                            })
-                    });
-            }
-
-
-           
-
-
-            if (payment.PaymentReason == PaymentReason.Invoice && payment.InvoiceId == null)
-            {
-                throw new ValidationException(
-                     new List<string>()
-                     {
-                        LogicLayer.Validation.ErrorMessagesManager
-                        .WriteValidationErrorMessageInArabic(
-                            new DataAccessLayer.Validation.ValidationError()
-                            {
-                                Code = DataAccessLayer.Validation.ValidationErrorCode.RequiredFieldMissing,
-                                ObjectType = typeof(Payment),
-                                PropertyName = nameof(Payment.Invoice)
-                            })
-                     });
-            }
-
-
-
-            if (payment.InvoiceId != null)
-            {
-                var invoice = await _invoiceService.GetInvoiceByIdAsync((int)payment.InvoiceId);
-
-                if (invoice == null)
-                {
-                    throw new NotFoundException(typeof(Invoice));
-                }
-
-                
-
-                if (invoice.TotalPaid <= _invoiceService.GetRemainingAmount(invoice.TotalSellingPrice,invoice.TotalRefundSellingPrice,invoice.Discount,invoice.TotalPaid))
-                {
-                    //No money to refund
-                    throw new OperationFailedException("لا يوجد مبلغ زائد ليتم إرجاعه");
-                }
-
-                if (invoice.InvoiceTypeEn == InvoiceType.Evaluation)
-                {
-                    throw new OperationFailedException("لا يمكن الدفع لفاتورة تسعير");
-                }
-
-                if(invoice.InvoiceStateEn == InvoiceState.Closed)
-                {
-                    throw new OperationFailedException("لا يمكن الدفع لفاتورة مغلقة");
-                }
-
-            }
-
-            var customer = await _customerService.GetCustomerByIdAsync(payment.CustomerId);
-
-
-            if (customer == null)
-            {
-                throw new NotFoundException(typeof(Customer));
-            }
-            else
-            {
-                if (!customer.IsActive)
-                {
-                    throw new OperationFailedException($"لا يمكن الدفع للعميل {customer.FullName} لأنه غير نشط");
-                }
+                throw new OperationFailedException("حالة الفاتورة غير صحيحة");
             }
         }
 
+        private void ValidateRefundMainLogic(Payment payment)
+        {
+            if (payment.PaymentReason != PaymentReason.Refund)
+            {
+                throw new OperationFailedException("حالة الفاتورة غير صحيحة");
+            }
+        }
         #endregion
 
-
-
-        /// <exception cref="ValidationException">
-        /// Thrown when the entity fails validation rules.
-        /// </exception>
-        /// <exception cref="OperationFailedException">
-        /// Thrown when the Operation fails.
-        /// </exception>
-        public async Task AddInvoicePaymentAsync(PaymentAddDto PaymentDTO, int UserId)
-        {
-            Payment Payment = MapPayment_AddDto(PaymentDTO, UserId);
-
-            MapAddDefaltAndNullValues(Payment);
-
-            ValidationHelper.ValidateEntity(Payment);
-
-            await ValidateMainLogic(Payment);
-
-            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
-            {
-                try
-                {
-                    await _paymentRepository.AddAsync(Payment);
-
-                    if(Payment.InvoiceId!=null)
-                    {
-                        if (Payment.PaymentReason == PaymentReason.Invoice)
-                              await _invoiceService.Pay((int)Payment.InvoiceId, Payment.Amount);
-                    }
-
-                    switch (Payment.PaymentReason)
-                    {
-                        case PaymentReason.Invoice:
-                        case PaymentReason.Investment:
-                            await _customerService.DepositBalance(Payment.CustomerId, Payment.Amount);
-                            break;
-                    }
-
-
-                    await _unitOfWork.SaveAsync();
-                    
-                    await Transaction.CommitAsync();
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex,
-                            "Failed to add Payment To Customer {CustomerId} Amount : {amount}",
-                            Payment.CustomerId,
-                            Payment.Amount);
-
-                    await Transaction.RollbackAsync();
-
-                    throw;
-                }
-
-            }
-        }
-
-        /// <exception cref="ValidationException">
-        /// Thrown when the entity fails validation rules.
-        /// </exception>
-        /// <exception cref="OperationFailedException">
-        /// Thrown when the Operation fails.
-        /// </exception>
-        public async Task<decimal> AddRefundPayment(int invoiceId,int userId)
-        {
-            var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
-
-            if(invoice == null)
-                throw new NotFoundException(typeof(Invoice));
-
-
-            Payment Payment = MapPayment_AddDto(invoiceId,(invoice.TotalPaid-invoice.AmountDue),invoice.CustomerId,userId);
-
-            MapAddDefaltAndNullValues(Payment);
-
-            ValidationHelper.ValidateEntity(Payment);
-
-            await ValidateMainLogic(Payment);
-
-            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
-            {
-                try
-                {
-                    decimal amount = 0;
-
-                    await _paymentRepository.AddAsync(Payment);
-
-                    if (Payment.InvoiceId != null)
-                    {
-                        if (Payment.PaymentReason == PaymentReason.Refund)
-                            amount = await _invoiceService.Refund((int)Payment.InvoiceId);
-                    }
-
-                    switch (Payment.PaymentReason)
-                    {
-                        case PaymentReason.Refund:
-                            await _customerService.DepositBalance(Payment.CustomerId,amount);
-                            break;
-                    }
-
-
-                    await _unitOfWork.SaveAsync();
-
-                    await Transaction.CommitAsync();
-                    return amount;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex,
-                            "Failed to add Refund Payment To Customer {CustomerId} Amount : {amount}",
-                            Payment.CustomerId,
-                            Payment.Amount);
-
-                    await Transaction.RollbackAsync();
-
-                    throw;
-                }
-
-            }
-        }
-
-
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when the provided Values out Of Range
-        /// </exception>
-        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage, List<PaymentReason> PaymentReasons)
-        {
-            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
-
-            return await _paymentRepository.GetTotalPagesAsync(RowsPerPage, PaymentReasons);
-        }
-
-
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when the provided Values out Of Range
-        /// </exception>
-        public async Task<int> GetTotalPageByCustomerNameAndDateAsync(int RowsPerPage, string CustomerName, DateTime? date, List<PaymentReason> PaymentReasons)
-        {
-            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
-
-            return await _paymentRepository.GetTotalPageByCustomerNameAndDateAsync(RowsPerPage,CustomerName, date, PaymentReasons);
-        }
+        #region List Data
 
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when the provided Values out Of Range
@@ -355,7 +134,7 @@ namespace LogicLayer.Services.Payments
             Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
 
             return (await _paymentRepository
-                .GetAllWithDetailsAsync(PageNumber, RowsPerPage,PaymentReasons))
+                .GetAllWithDetailsAsync(PageNumber, RowsPerPage, PaymentReasons))
                 .Select(p => MapPayment_ListDto(p)
                 ).ToList();
         }
@@ -380,5 +159,131 @@ namespace LogicLayer.Services.Payments
                 .Select(c => MapPayment_SummaryDto(c))
                 .ToList();
         }
+
+
+        #endregion
+
+        #region PageNumber
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPageNumberAsync(int RowsPerPage, List<PaymentReason> PaymentReasons)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _paymentRepository.GetTotalPagesAsync(RowsPerPage, PaymentReasons);
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPageByCustomerNameAndDateAsync(int RowsPerPage, string CustomerName, DateTime? date, List<PaymentReason> PaymentReasons)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _paymentRepository.GetTotalPageByCustomerNameAndDateAsync(RowsPerPage, CustomerName, date, PaymentReasons);
+        }
+
+        #endregion
+
+        #region Operation
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public async Task AddInvoicePaymentAsync(PaymentAddDto PaymentDTO, int UserId)
+        {
+            Payment Payment = MapPayment_AddDto(PaymentDTO, UserId);
+
+            MapAddDefaltAndNullValues(Payment);
+
+            ValidationHelper.ValidateEntity(Payment);
+
+            ValidatePayMainLogic(Payment);
+
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _paymentRepository.AddAsync(Payment);
+
+                    //Validation In Here
+                    await _invoiceService.Pay(Payment.InvoiceId, Payment.Amount);
+
+
+                    await _unitOfWork.SaveAsync();
+                    await Transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                            "Failed to add Payment To Customer {CustomerId} Amount : {amount}",
+                            Payment.CustomerId,
+                            Payment.Amount);
+
+                    await Transaction.RollbackAsync();
+
+                    throw;
+                }
+
+            }
+        }
+
+        /// <exception cref="ValidationException">
+        /// Thrown when the entity fails validation rules.
+        /// </exception>
+        /// <exception cref="OperationFailedException">
+        /// Thrown when the Operation fails.
+        /// </exception>
+        public async Task<decimal> AddRefundPayment(int invoiceId, int userId)
+        {
+            var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+
+            if (invoice == null)
+                throw new NotFoundException(typeof(Invoice));
+
+            Payment Payment = MapPayment_AddDto(invoiceId, invoice.TotalPaid, invoice.AmountDue, invoice.CustomerId, userId);
+
+            MapAddDefaltAndNullValues(Payment);
+
+            ValidationHelper.ValidateEntity(Payment);
+
+            ValidateRefundMainLogic(Payment);
+
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _paymentRepository.AddAsync(Payment);
+
+                    //Validation Inside
+                    decimal RefundAmount = await _invoiceService.Refund(Payment.InvoiceId);
+
+                    await _unitOfWork.SaveAsync();
+
+                    await Transaction.CommitAsync();
+                    return RefundAmount;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                            "Failed to add Refund Payment To Customer {CustomerId} Amount : {amount}",
+                            Payment.CustomerId,
+                            Payment.Amount);
+
+                    await Transaction.RollbackAsync();
+
+                    throw;
+                }
+
+            }
+        }
+
+        #endregion
+
     }
 }

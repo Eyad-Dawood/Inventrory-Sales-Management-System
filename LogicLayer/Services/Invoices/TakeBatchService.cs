@@ -2,7 +2,6 @@
 using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Entities.Invoices;
 using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
-using LogicLayer.Services.Invoices.Helper_Service;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;

@@ -8,6 +8,7 @@ using DataAccessLayer.Validation;
 using LogicLayer.DTOs.InvoiceDTO;
 using LogicLayer.DTOs.InvoiceDTO.SoldProducts;
 using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
+using LogicLayer.Services.Helpers;
 using LogicLayer.Utilities;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
@@ -88,6 +89,8 @@ namespace LogicLayer.Services.Invoices
 
         public InvoiceReadDto MapInvoice_ReadDto(Invoice Invoice)
         {
+            var finance = InvoiceFinanceHelper.InvoiceFinance(Invoice);
+
             return new InvoiceReadDto()
             {
                 InvoiceId = Invoice.InvoiceId,
@@ -110,11 +113,18 @@ namespace LogicLayer.Services.Invoices
                 WorkerName = Invoice.Worker != null ? Invoice.Worker.Person.FullName : string.Empty,
                 CustomerId = Invoice.CustomerId,
                 WorkerId = Invoice.WorkerId.HasValue ? Invoice.WorkerId.Value : null,
+                AmountDue = finance.AmountDue,
+                NetBuying = finance.NetBuying,
+                NetProfit = finance.NetProfit,
+                NetSale = finance.NetSale,
+                Remaining = finance.Remaining,
             };
         }
 
         public InvoiceListDto MapInvoice_ListDto(Invoice invoice)
         {
+            var finance = InvoiceFinanceHelper.InvoiceFinance(invoice);
+
             return new InvoiceListDto()
             {
                 InvoiceId = invoice.InvoiceId,
@@ -134,6 +144,11 @@ namespace LogicLayer.Services.Invoices
                 TotalRefundSellingPrice = invoice.TotalRefundSellingPrice,
                 CustomerId = invoice.CustomerId,
                 WorkerId = invoice.WorkerId,
+                AmountDue = finance.AmountDue,
+                NetBuying = finance.NetBuying,
+                NetProfit = finance.NetProfit,
+                NetSale = finance.NetSale,
+                Remaining = finance.Remaining,
             };
         }
 
@@ -151,27 +166,9 @@ namespace LogicLayer.Services.Invoices
         #endregion
 
         #region Helpers
-        public decimal GetRemainingAmount(
-            decimal TotalSellingPrice,
-            decimal TotalRefundSellingPrice,
-            decimal Discount,
-            decimal TotalPaid)
-        {
-            decimal netSale = TotalSellingPrice - TotalRefundSellingPrice;
-            decimal AmountDue = netSale - Discount;
-            decimal remaining = AmountDue - TotalPaid;
+       
 
-            return remaining;
-        }
-
-        private decimal GetRefundAmount(Invoice invoice)
-        {
-            decimal netSale = invoice.TotalSellingPrice - invoice.TotalRefundSellingPrice;
-            decimal AmountDue = netSale - invoice.Discount;
-            decimal RefundAmount = invoice.TotalPaid - AmountDue;
-
-            return RefundAmount;
-        }
+        
 
         private void CalculateInvoiceFinance(Invoice Invoice, TakeBatch Batch)
         {
@@ -253,7 +250,7 @@ namespace LogicLayer.Services.Invoices
                 throw new OperationFailedException("لا يمكن إضافة على فاتورة تسعير");
             }
 
-            decimal remaining = GetRemainingAmount(invoice.TotalSellingPrice, invoice.TotalRefundSellingPrice, invoice.Discount, invoice.TotalPaid);
+            decimal remaining = InvoiceFinanceHelper.GetRemainingAmount(invoice);
             decimal discountIncrease = discount - invoice.Discount;
 
             if (discountIncrease > remaining)
@@ -264,7 +261,7 @@ namespace LogicLayer.Services.Invoices
             }
         }
 
-        private void ValidateMainPayLogic(Invoice invoice,decimal Amount)
+        private async Task ValidateMainPayLogic(Invoice invoice,decimal Amount)
         {
             if (Amount <= 0)
             {
@@ -279,6 +276,16 @@ namespace LogicLayer.Services.Invoices
               );
             }
 
+
+            var customer = await _customerService.GetCustomerByIdAsync(invoice.CustomerId);
+            if (customer == null)
+            {
+                throw new NotFoundException(typeof(Customer));
+            }
+            else if(!customer.IsActive)
+            {
+                    throw new OperationFailedException($"لا يمكن الدفع للعميل {customer.FullName} لأنه غير نشط");
+            }
 
 
             if (invoice == null)
@@ -296,8 +303,8 @@ namespace LogicLayer.Services.Invoices
                 throw new OperationFailedException("لا يمكن الدفع على فاتورة تسعير");
             }
 
-          
-            decimal remaining = GetRemainingAmount(invoice.TotalSellingPrice,invoice.TotalRefundSellingPrice,invoice.Discount,invoice.TotalPaid);
+
+            decimal remaining = InvoiceFinanceHelper.GetRemainingAmount(invoice);
 
             if (Amount > remaining)
             {
@@ -306,20 +313,30 @@ namespace LogicLayer.Services.Invoices
 
         }
 
-        private decimal ValidateMainRefundLogic(Invoice invoice)
+        private async Task<decimal> ValidateMainRefundLogic(Invoice invoice)
         {
             if (invoice == null)
             {
                 throw new NotFoundException(typeof(Invoice));
             }
 
+            var customer = await _customerService.GetCustomerByIdAsync(invoice.CustomerId);
+            if (customer == null)
+            {
+                throw new NotFoundException(typeof(Customer));
+            }
+            else if (!customer.IsActive)
+            {
+                throw new OperationFailedException($"لا يمكن عمل مرتجع للعميل {customer.FullName} لأنه غير نشط");
+            }
+
 
             if (invoice.InvoiceType == InvoiceType.Evaluation)
             {
-                throw new OperationFailedException("لا يمكن الدفع على فاتورة تسعير");
+                throw new OperationFailedException("لا يمكن عمل مرتجع على فاتورة تسعير");
             }
 
-            decimal RefundAmount = GetRefundAmount(invoice);
+            decimal RefundAmount = InvoiceFinanceHelper.GetRefundAmount(invoice);
 
             if (RefundAmount <= 0)
             {
@@ -340,7 +357,7 @@ namespace LogicLayer.Services.Invoices
                 throw new OperationFailedException("الفاتورة مغلقة بالفعل");
 
 
-            decimal remaining = GetRemainingAmount(invoice.TotalSellingPrice, invoice.TotalRefundSellingPrice, invoice.Discount, invoice.TotalPaid);
+            decimal remaining = InvoiceFinanceHelper.GetRemainingAmount(invoice);
 
             if (remaining > 0)
                 throw new OperationFailedException("لا يمكن غلق الفاتورة دون سداد كامل المستحقات");
@@ -603,19 +620,24 @@ namespace LogicLayer.Services.Invoices
         public async Task Pay(int InvoiceId, decimal Amount)
         {
             var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
-
-            ValidateMainPayLogic(invoice,Amount);
+            
+            await ValidateMainPayLogic(invoice,Amount);
 
             invoice.TotalPaid += Amount;
+
+            await _customerService.DepositBalance(invoice.CustomerId,Amount);
         }
 
         public async Task<decimal> Refund(int InvoiceId)
         {
             var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
-
-            decimal RefundAmount = ValidateMainRefundLogic(invoice);
+            
+            decimal RefundAmount = await ValidateMainRefundLogic(invoice);
 
             invoice.TotalPaid -= RefundAmount;
+
+            await _customerService.WithdrawBalance(invoice.CustomerId, RefundAmount);
+
             return RefundAmount;
         }
 

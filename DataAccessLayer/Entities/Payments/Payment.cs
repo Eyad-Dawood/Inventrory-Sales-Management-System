@@ -16,9 +16,6 @@ namespace DataAccessLayer.Entities.Payments
         [Display(Name ="فاتورة")]
         Invoice = 1,
 
-        [Display(Name = "إيداع")]
-        Investment = 2,
-
         [Display(Name ="مرتجع")]
         Refund = 3
     }
@@ -60,9 +57,9 @@ namespace DataAccessLayer.Entities.Payments
         public User User { get; set; }
 
 
-        public int? InvoiceId { get; set; }
+        public int InvoiceId { get; set; }
         [Display(Name = "بيانات الفاتورة")]
-        public Invoice? Invoice { get; set; }
+        public Invoice Invoice { get; set; }
 
 
 
@@ -185,7 +182,7 @@ namespace DataAccessLayer.Entities.Payments
             // Invoice logic based on PaymentReason
             if (PaymentReason == PaymentReason.Invoice || PaymentReason == PaymentReason.Refund)
             {
-                if (!InvoiceId.HasValue || InvoiceId <= 0)
+                if (InvoiceId <= 0)
                 {
                     errors.Add(
                         new ValidationError

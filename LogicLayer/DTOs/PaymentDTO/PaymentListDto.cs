@@ -22,7 +22,7 @@ namespace LogicLayer.DTOs.PaymentDTO
         [Display(Name = "السبب")]
         public string PaymentReason { get; set; }
 
-        public int? InvoiceId { get; set; }
+        public int InvoiceId { get; set; }
         public int CustomerId { get; set; }
 
         [Display(Name = "إسم العميل")]

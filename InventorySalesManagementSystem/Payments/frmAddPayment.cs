@@ -29,7 +29,7 @@ namespace InventorySalesManagementSystem.Payments
 {
     public partial class frmAddPayment : Form
     {
-        private readonly int? _invoiceId = null;
+        private readonly int _invoiceId = 0;
         private readonly int _customerId = 0;
         private readonly PaymentReason _paymentReason;
         private readonly IServiceProvider _serviceProvider;
