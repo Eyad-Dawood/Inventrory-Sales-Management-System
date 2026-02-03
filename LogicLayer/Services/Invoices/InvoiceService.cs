@@ -360,7 +360,13 @@ namespace LogicLayer.Services.Invoices
             decimal remaining = InvoiceFinanceHelper.GetRemainingAmount(invoice);
 
             if (remaining > 0)
-                throw new OperationFailedException("لا يمكن غلق الفاتورة دون سداد كامل المستحقات");
+            {
+                throw new OperationFailedException("لا يمكن غلق الفاتورة دون سداد كامل مستحقات المحل");
+            }
+            else if (remaining < 0)
+            {
+                throw new OperationFailedException("لا يمكن غلق الفاتورة دون سداد كامل مستحقات العميل");
+            }
 
         }
         #endregion
@@ -604,18 +610,42 @@ namespace LogicLayer.Services.Invoices
 
         public async Task AddDiscount(int InvoiceId, decimal discount, string AdditionalNotes)
         {
-           
+
             var invoice = await _invoiceRepo.GetByIdAsync(InvoiceId);
 
             ValidateMainDiscountLogic(invoice, discount);
 
 
-            invoice.Discount = discount;
-            invoice.Notes = string.IsNullOrWhiteSpace(AdditionalNotes)
-                            ? null
-                            : AdditionalNotes; ;
+            using (var Transaction = await _unitOfWork.BeginTransactionAsync())
+            {
 
-            await _unitOfWork.SaveAsync();
+                try
+                {
+                    //When Customer Bought Products we Decreased its Balance
+                    decimal disocuntdiff = discount - invoice.Discount;
+
+                    invoice.Discount = discount;
+                    invoice.Notes = string.IsNullOrWhiteSpace(AdditionalNotes)
+                                    ? null
+                                    : AdditionalNotes;
+
+                    if(disocuntdiff > 0) // Increased The Discoun , Add To Customer Balance
+                        await _customerService.DepositBalance(invoice.CustomerId, disocuntdiff);
+                    else if (disocuntdiff < 0) //Decreased Discount , Take From Customer Balance
+                        await _customerService.WithdrawBalance(invoice.CustomerId,Math.Abs(disocuntdiff));
+
+
+                    await _unitOfWork.SaveAsync();
+                    await Transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "فشل عمل خصم على الفاتورة {invoiceId} بقيمة {disoucnt}", InvoiceId, discount);
+                    await Transaction.RollbackAsync();
+                    throw;
+                }
+
+            }
         }
 
         public async Task Pay(int InvoiceId, decimal Amount)

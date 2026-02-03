@@ -165,7 +165,7 @@ namespace LogicLayer.Services.Invoices
                         StockMovementReason.Sale,
                         isAddition: false);
 
-                    //Add Price On Customer
+                    //Take From Customer Balance -> it becomes (-) unitl he pays ,
                     await _customerService.WithdrawBalance
                         (CustomerId,
                         soldProducts.Sum(p => p.Quantity * p.SellingPricePerUnit)
@@ -180,7 +180,7 @@ namespace LogicLayer.Services.Invoices
                         StockMovementReason.Refund,
                         isAddition: true);
 
-                    //Add Price On Customer
+                    //Add To Customer Balance , So It Gets Positive
                     await _customerService.DepositBalance
                         (CustomerId,
                         soldProducts.Sum(p => p.Quantity * p.SellingPricePerUnit)
