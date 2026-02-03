@@ -102,7 +102,6 @@
             // 
             // label4
             // 
-            label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label4.Location = new Point(626, 80);
             label4.Margin = new Padding(4, 0, 4, 0);
@@ -114,7 +113,6 @@
             // 
             // label3
             // 
-            label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.Location = new Point(212, 10);
             label3.Margin = new Padding(4, 0, 4, 0);
@@ -126,7 +124,6 @@
             // 
             // label2
             // 
-            label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(180, 45);
             label2.Margin = new Padding(4, 0, 4, 0);
@@ -149,7 +146,6 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
             label9.Location = new Point(673, 12);
@@ -161,7 +157,6 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.Location = new Point(673, 45);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -184,7 +179,6 @@
             // 
             // label7
             // 
-            label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label7.Location = new Point(247, 80);
             label7.Margin = new Padding(4, 0, 4, 0);
@@ -215,7 +209,6 @@
             Name = "ucWorkerShow";
             Size = new Size(748, 116);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion

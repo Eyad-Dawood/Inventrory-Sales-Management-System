@@ -81,7 +81,6 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
             label9.Location = new Point(232, 10);
@@ -93,7 +92,6 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label1.Location = new Point(238, 61);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -106,8 +104,8 @@
             // frmAddUpdateMasurementUnit
             // 
             AcceptButton = btnSave;
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(339, 149);
             Controls.Add(btnCancel);
@@ -119,7 +117,6 @@
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
             Name = "frmAddUpdateMasurementUnit";
-            Text = "إضافة وحدة قياس";
             ResumeLayout(false);
             PerformLayout();
         }

@@ -58,7 +58,6 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label1.Location = new Point(292, 9);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -81,7 +80,6 @@
             // 
             // label2
             // 
-            label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label2.Location = new Point(289, 39);
             label2.Margin = new Padding(4, 0, 4, 0);
@@ -102,7 +100,6 @@
             // 
             // label3
             // 
-            label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label3.Location = new Point(281, 74);
             label3.Margin = new Padding(4, 0, 4, 0);
@@ -115,8 +112,8 @@
             // frmReadQuantityChangeInfo
             // 
             AcceptButton = btnSave;
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(381, 179);
             Controls.Add(txtNote);
             Controls.Add(label3);

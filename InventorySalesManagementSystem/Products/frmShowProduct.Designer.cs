@@ -33,16 +33,17 @@
             // 
             // ucProductShow1
             // 
+            ucProductShow1.Dock = DockStyle.Fill;
             ucProductShow1.Enabled = false;
-            ucProductShow1.Location = new Point(9, 10);
+            ucProductShow1.Location = new Point(0, 0);
             ucProductShow1.Name = "ucProductShow1";
-            ucProductShow1.Size = new Size(844, 127);
+            ucProductShow1.Size = new Size(859, 143);
             ucProductShow1.TabIndex = 0;
             // 
             // frmShowProduct
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(859, 143);
             Controls.Add(ucProductShow1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;

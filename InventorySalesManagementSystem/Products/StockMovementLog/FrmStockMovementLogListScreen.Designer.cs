@@ -44,7 +44,7 @@
             cms.Items.AddRange(new ToolStripItem[] { ShowMenustripItem });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(189, 56);
+            cms.Size = new Size(173, 34);
             // 
             // ShowMenustripItem
             // 
@@ -53,14 +53,14 @@
             ShowMenustripItem.ImageScaling = ToolStripItemImageScaling.None;
             ShowMenustripItem.Name = "ShowMenustripItem";
             ShowMenustripItem.RightToLeft = RightToLeft.Yes;
-            ShowMenustripItem.Size = new Size(188, 30);
+            ShowMenustripItem.Size = new Size(172, 30);
             ShowMenustripItem.Text = "عرض البيانات";
             ShowMenustripItem.Click += ShowMenustripItem_Click;
             // 
             // FrmStockMovementLogListScreen
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(1214, 661);
             MinimumSize = new Size(900, 700);
             Name = "FrmStockMovementLogListScreen";

@@ -87,7 +87,6 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
             label9.Location = new Point(580, 76);
@@ -99,19 +98,19 @@
             // 
             // lbTitle
             // 
+            lbTitle.Dock = DockStyle.Top;
             lbTitle.Font = new Font("Calibri", 30F, FontStyle.Bold);
-            lbTitle.Location = new Point(243, 9);
+            lbTitle.Location = new Point(0, 0);
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(241, 49);
+            lbTitle.Size = new Size(724, 62);
             lbTitle.TabIndex = 36;
             lbTitle.Text = "إضافة صنف";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label1.Location = new Point(656, 142);
             label1.Name = "label1";
@@ -130,7 +129,6 @@
             // 
             // label2
             // 
-            label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label2.Location = new Point(641, 106);
             label2.Name = "label2";
@@ -163,7 +161,6 @@
             // 
             // lkSelectProductType
             // 
-            lkSelectProductType.AutoSize = true;
             lkSelectProductType.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             lkSelectProductType.Location = new Point(305, 113);
             lkSelectProductType.Name = "lkSelectProductType";
@@ -176,7 +173,6 @@
             // 
             // label3
             // 
-            label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label3.Location = new Point(603, 181);
             label3.Name = "label3";
@@ -194,7 +190,6 @@
             // 
             // label4
             // 
-            label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label4.Location = new Point(123, 108);
             label4.Name = "label4";
@@ -212,7 +207,6 @@
             // 
             // label5
             // 
-            label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label5.Location = new Point(133, 143);
             label5.Name = "label5";
@@ -223,7 +217,6 @@
             // 
             // lkAddUnit
             // 
-            lkAddUnit.AutoSize = true;
             lkAddUnit.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             lkAddUnit.Location = new Point(352, 188);
             lkAddUnit.Name = "lkAddUnit";
@@ -236,7 +229,6 @@
             // 
             // chkAvilable
             // 
-            chkAvilable.AutoSize = true;
             chkAvilable.Checked = true;
             chkAvilable.CheckState = CheckState.Checked;
             chkAvilable.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
@@ -256,7 +248,6 @@
             // 
             // lbStorageQuantity
             // 
-            lbStorageQuantity.AutoSize = true;
             lbStorageQuantity.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             lbStorageQuantity.Location = new Point(106, 181);
             lbStorageQuantity.Name = "lbStorageQuantity";
@@ -268,8 +259,8 @@
             // frmAddUpdateProduct
             // 
             AcceptButton = btnSave;
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(724, 263);
             Controls.Add(txtQuantity);

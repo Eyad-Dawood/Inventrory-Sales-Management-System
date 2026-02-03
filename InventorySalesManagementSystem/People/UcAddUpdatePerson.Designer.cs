@@ -90,7 +90,6 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
             label9.Location = new Point(487, 12);
@@ -102,7 +101,6 @@
             // 
             // lkAddTown
             // 
-            lkAddTown.AutoSize = true;
             lkAddTown.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             lkAddTown.Location = new Point(223, 177);
             lkAddTown.Name = "lkAddTown";
@@ -149,7 +147,6 @@
             // 
             // label8
             // 
-            label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label8.Location = new Point(483, 172);
             label8.Name = "label8";
@@ -168,7 +165,6 @@
             // 
             // label7
             // 
-            label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label7.Location = new Point(167, 133);
             label7.Name = "label7";
@@ -187,7 +183,6 @@
             // 
             // label6
             // 
-            label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label6.Location = new Point(499, 133);
             label6.Name = "label6";
@@ -206,7 +201,6 @@
             // 
             // label5
             // 
-            label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label5.Location = new Point(50, 50);
             label5.Name = "label5";
@@ -217,7 +211,6 @@
             // 
             // label4
             // 
-            label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label4.Location = new Point(167, 50);
             label4.Name = "label4";
@@ -228,7 +221,6 @@
             // 
             // label3
             // 
-            label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label3.Location = new Point(274, 50);
             label3.Name = "label3";
@@ -239,7 +231,6 @@
             // 
             // label2
             // 
-            label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label2.Location = new Point(392, 50);
             label2.Name = "label2";
@@ -250,7 +241,6 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label1.Location = new Point(543, 50);
             label1.Name = "label1";
@@ -261,8 +251,8 @@
             // 
             // UcAddUpdatePerson
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             Controls.Add(pnAllControles);
             Name = "UcAddUpdatePerson";
             Size = new Size(632, 208);

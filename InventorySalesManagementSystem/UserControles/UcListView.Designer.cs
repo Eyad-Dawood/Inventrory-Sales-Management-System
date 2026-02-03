@@ -38,23 +38,19 @@
             lbPageNumber = new Label();
             lbrowsCount = new Label();
             pnUpperBar = new Panel();
-            pnUpperButtons = new Panel();
-            btnCancelFilter = new Button();
-            btnFilter = new Button();
-            pnSearchBoxes = new Panel();
-            chkUseDateFilter = new CheckBox();
+            tlpUpper = new TableLayoutPanel();
             dtpLogDate = new DateTimePicker();
-            txtSearchValue2 = new TextBox();
-            label1 = new Label();
-            cmpSearchBy = new ComboBox();
+            chkUseDateFilter = new CheckBox();
+            btnCancelFilter = new Button();
             txtSearchValue1 = new TextBox();
+            cmpSearchBy = new ComboBox();
+            txtSearchValue2 = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             pnBottomBar.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
             pnUpperBar.SuspendLayout();
-            pnUpperButtons.SuspendLayout();
-            pnSearchBoxes.SuspendLayout();
+            tlpUpper.SuspendLayout();
             SuspendLayout();
             // 
             // dgvData
@@ -76,7 +72,7 @@
             dgvData.ColumnHeadersHeight = 25;
             dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvData.Dock = DockStyle.Fill;
-            dgvData.Location = new Point(0, 35);
+            dgvData.Location = new Point(0, 39);
             dgvData.MultiSelect = false;
             dgvData.Name = "dgvData";
             dgvData.ReadOnly = true;
@@ -90,7 +86,7 @@
             dgvData.ShowCellErrors = false;
             dgvData.ShowEditingIcon = false;
             dgvData.ShowRowErrors = false;
-            dgvData.Size = new Size(980, 401);
+            dgvData.Size = new Size(1049, 397);
             dgvData.TabIndex = 1;
             dgvData.CellMouseDown += dgvData_CellMouseDoun;
             dgvData.CellToolTipTextNeeded += dgvData_CellToolTipTextNeeded;
@@ -101,7 +97,7 @@
             pnBottomBar.Dock = DockStyle.Bottom;
             pnBottomBar.Location = new Point(0, 436);
             pnBottomBar.Name = "pnBottomBar";
-            pnBottomBar.Size = new Size(980, 34);
+            pnBottomBar.Size = new Size(1049, 34);
             pnBottomBar.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -118,7 +114,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(980, 34);
+            tableLayoutPanel1.Size = new Size(1049, 34);
             tableLayoutPanel1.TabIndex = 5;
             // 
             // flowLayoutPanel1
@@ -127,9 +123,9 @@
             flowLayoutPanel1.Controls.Add(btnPrevious);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel1.Location = new Point(655, 3);
+            flowLayoutPanel1.Location = new Point(701, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(322, 28);
+            flowLayoutPanel1.Size = new Size(345, 28);
             flowLayoutPanel1.TabIndex = 16;
             // 
             // btnNext
@@ -137,7 +133,7 @@
             btnNext.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnNext.BackgroundImage = Properties.Resources.RightArrow;
             btnNext.BackgroundImageLayout = ImageLayout.Stretch;
-            btnNext.Location = new Point(289, 3);
+            btnNext.Location = new Point(312, 3);
             btnNext.Name = "btnNext";
             btnNext.Size = new Size(30, 27);
             btnNext.TabIndex = 4;
@@ -149,7 +145,7 @@
             btnPrevious.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnPrevious.BackgroundImage = Properties.Resources.LeftArrow;
             btnPrevious.BackgroundImageLayout = ImageLayout.Stretch;
-            btnPrevious.Location = new Point(253, 3);
+            btnPrevious.Location = new Point(276, 3);
             btnPrevious.Name = "btnPrevious";
             btnPrevious.Padding = new Padding(0, 0, 0, 5);
             btnPrevious.Size = new Size(30, 27);
@@ -161,9 +157,9 @@
             // 
             lbPageNumber.Dock = DockStyle.Fill;
             lbPageNumber.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbPageNumber.Location = new Point(329, 0);
+            lbPageNumber.Location = new Point(352, 0);
             lbPageNumber.Name = "lbPageNumber";
-            lbPageNumber.Size = new Size(320, 34);
+            lbPageNumber.Size = new Size(343, 34);
             lbPageNumber.TabIndex = 6;
             lbPageNumber.Text = "1/??";
             lbPageNumber.TextAlign = ContentAlignment.MiddleCenter;
@@ -182,113 +178,84 @@
             // 
             // pnUpperBar
             // 
-            pnUpperBar.Controls.Add(pnUpperButtons);
-            pnUpperBar.Controls.Add(pnSearchBoxes);
+            pnUpperBar.Controls.Add(tlpUpper);
             pnUpperBar.Dock = DockStyle.Top;
             pnUpperBar.Location = new Point(0, 0);
             pnUpperBar.Name = "pnUpperBar";
-            pnUpperBar.Size = new Size(980, 35);
+            pnUpperBar.Size = new Size(1049, 39);
             pnUpperBar.TabIndex = 2;
             // 
-            // pnUpperButtons
+            // tlpUpper
             // 
-            pnUpperButtons.Controls.Add(btnCancelFilter);
-            pnUpperButtons.Controls.Add(btnFilter);
-            pnUpperButtons.Dock = DockStyle.Fill;
-            pnUpperButtons.Location = new Point(0, 0);
-            pnUpperButtons.Name = "pnUpperButtons";
-            pnUpperButtons.Size = new Size(480, 35);
-            pnUpperButtons.TabIndex = 7;
+            tlpUpper.AutoSize = true;
+            tlpUpper.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tlpUpper.ColumnCount = 6;
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 36F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 221F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 219F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 225F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tlpUpper.Controls.Add(dtpLogDate, 2, 0);
+            tlpUpper.Controls.Add(chkUseDateFilter, 1, 0);
+            tlpUpper.Controls.Add(btnCancelFilter, 0, 0);
+            tlpUpper.Controls.Add(txtSearchValue1, 4, 0);
+            tlpUpper.Controls.Add(cmpSearchBy, 5, 0);
+            tlpUpper.Controls.Add(txtSearchValue2, 3, 0);
+            tlpUpper.Dock = DockStyle.Right;
+            tlpUpper.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
+            tlpUpper.Location = new Point(128, 0);
+            tlpUpper.Name = "tlpUpper";
+            tlpUpper.RowCount = 1;
+            tlpUpper.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpUpper.Size = new Size(921, 39);
+            tlpUpper.TabIndex = 11;
+            // 
+            // dtpLogDate
+            // 
+            dtpLogDate.Anchor = AnchorStyles.Right;
+            dtpLogDate.Format = DateTimePickerFormat.Short;
+            dtpLogDate.Location = new Point(62, 8);
+            dtpLogDate.Name = "dtpLogDate";
+            dtpLogDate.RightToLeft = RightToLeft.Yes;
+            dtpLogDate.Size = new Size(212, 23);
+            dtpLogDate.TabIndex = 9;
+            dtpLogDate.Value = new DateTime(2000, 1, 1, 0, 0, 0, 0);
+            dtpLogDate.Visible = false;
+            // 
+            // chkUseDateFilter
+            // 
+            chkUseDateFilter.Checked = true;
+            chkUseDateFilter.CheckState = CheckState.Checked;
+            chkUseDateFilter.Dock = DockStyle.Fill;
+            chkUseDateFilter.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
+            chkUseDateFilter.Location = new Point(39, 3);
+            chkUseDateFilter.Name = "chkUseDateFilter";
+            chkUseDateFilter.Size = new Size(14, 33);
+            chkUseDateFilter.TabIndex = 10;
+            chkUseDateFilter.UseVisualStyleBackColor = true;
+            chkUseDateFilter.Visible = false;
             // 
             // btnCancelFilter
             // 
             btnCancelFilter.Anchor = AnchorStyles.Right;
             btnCancelFilter.BackgroundImage = Properties.Resources.CancelIcon;
             btnCancelFilter.BackgroundImageLayout = ImageLayout.Stretch;
-            btnCancelFilter.Location = new Point(414, 2);
+            btnCancelFilter.Location = new Point(3, 4);
             btnCancelFilter.Name = "btnCancelFilter";
             btnCancelFilter.Size = new Size(30, 30);
             btnCancelFilter.TabIndex = 6;
             btnCancelFilter.UseVisualStyleBackColor = true;
-            btnCancelFilter.Click += btnCancelFilter_Click;
             // 
-            // btnFilter
+            // txtSearchValue1
             // 
-            btnFilter.Anchor = AnchorStyles.Right;
-            btnFilter.BackgroundImage = Properties.Resources.SearchIcon;
-            btnFilter.BackgroundImageLayout = ImageLayout.Stretch;
-            btnFilter.Location = new Point(450, 3);
-            btnFilter.Name = "btnFilter";
-            btnFilter.Size = new Size(30, 30);
-            btnFilter.TabIndex = 3;
-            btnFilter.UseVisualStyleBackColor = true;
-            btnFilter.Click += btnFilter_Click;
-            // 
-            // pnSearchBoxes
-            // 
-            pnSearchBoxes.Controls.Add(chkUseDateFilter);
-            pnSearchBoxes.Controls.Add(dtpLogDate);
-            pnSearchBoxes.Controls.Add(txtSearchValue2);
-            pnSearchBoxes.Controls.Add(label1);
-            pnSearchBoxes.Controls.Add(cmpSearchBy);
-            pnSearchBoxes.Controls.Add(txtSearchValue1);
-            pnSearchBoxes.Dock = DockStyle.Right;
-            pnSearchBoxes.Location = new Point(480, 0);
-            pnSearchBoxes.Name = "pnSearchBoxes";
-            pnSearchBoxes.Size = new Size(500, 35);
-            pnSearchBoxes.TabIndex = 8;
-            // 
-            // chkUseDateFilter
-            // 
-            chkUseDateFilter.Anchor = AnchorStyles.Right;
-            chkUseDateFilter.AutoSize = true;
-            chkUseDateFilter.Checked = true;
-            chkUseDateFilter.CheckState = CheckState.Checked;
-            chkUseDateFilter.Enabled = false;
-            chkUseDateFilter.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
-            chkUseDateFilter.Location = new Point(-234, 10);
-            chkUseDateFilter.Name = "chkUseDateFilter";
-            chkUseDateFilter.Size = new Size(15, 14);
-            chkUseDateFilter.TabIndex = 10;
-            chkUseDateFilter.UseVisualStyleBackColor = true;
-            chkUseDateFilter.Visible = false;
-            // 
-            // dtpLogDate
-            // 
-            dtpLogDate.Anchor = AnchorStyles.Right;
-            dtpLogDate.Enabled = false;
-            dtpLogDate.Format = DateTimePickerFormat.Short;
-            dtpLogDate.Location = new Point(-213, 6);
-            dtpLogDate.Name = "dtpLogDate";
-            dtpLogDate.RightToLeft = RightToLeft.Yes;
-            dtpLogDate.Size = new Size(214, 23);
-            dtpLogDate.TabIndex = 9;
-            dtpLogDate.Value = new DateTime(2000, 1, 1, 0, 0, 0, 0);
-            dtpLogDate.Visible = false;
-            // 
-            // txtSearchValue2
-            // 
-            txtSearchValue2.Anchor = AnchorStyles.Right;
-            txtSearchValue2.Enabled = false;
-            txtSearchValue2.Location = new Point(-213, 6);
-            txtSearchValue2.Name = "txtSearchValue2";
-            txtSearchValue2.RightToLeft = RightToLeft.Yes;
-            txtSearchValue2.Size = new Size(214, 23);
-            txtSearchValue2.TabIndex = 1;
-            txtSearchValue2.Visible = false;
-            // 
-            // label1
-            // 
-            label1.Anchor = AnchorStyles.Right;
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            label1.Location = new Point(422, 6);
-            label1.Name = "label1";
-            label1.RightToLeft = RightToLeft.Yes;
-            label1.Size = new Size(72, 25);
-            label1.TabIndex = 8;
-            label1.Text = "البحث : ";
-            label1.TextAlign = ContentAlignment.MiddleCenter;
+            txtSearchValue1.Anchor = AnchorStyles.Right;
+            txtSearchValue1.Location = new Point(504, 8);
+            txtSearchValue1.Name = "txtSearchValue1";
+            txtSearchValue1.RightToLeft = RightToLeft.Yes;
+            txtSearchValue1.Size = new Size(214, 23);
+            txtSearchValue1.TabIndex = 2;
             // 
             // cmpSearchBy
             // 
@@ -296,38 +263,39 @@
             cmpSearchBy.DropDownStyle = ComboBoxStyle.DropDownList;
             cmpSearchBy.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             cmpSearchBy.FormattingEnabled = true;
-            cmpSearchBy.Location = new Point(227, 3);
+            cmpSearchBy.Location = new Point(729, 5);
             cmpSearchBy.Name = "cmpSearchBy";
             cmpSearchBy.Size = new Size(189, 28);
             cmpSearchBy.TabIndex = 1;
             // 
-            // txtSearchValue1
+            // txtSearchValue2
             // 
-            txtSearchValue1.Anchor = AnchorStyles.Right;
-            txtSearchValue1.Location = new Point(7, 6);
-            txtSearchValue1.Name = "txtSearchValue1";
-            txtSearchValue1.RightToLeft = RightToLeft.Yes;
-            txtSearchValue1.Size = new Size(214, 23);
-            txtSearchValue1.TabIndex = 2;
+            txtSearchValue2.Anchor = AnchorStyles.Right;
+            txtSearchValue2.Location = new Point(280, 8);
+            txtSearchValue2.Name = "txtSearchValue2";
+            txtSearchValue2.RightToLeft = RightToLeft.Yes;
+            txtSearchValue2.Size = new Size(213, 23);
+            txtSearchValue2.TabIndex = 1;
+            txtSearchValue2.Visible = false;
             // 
             // UcListView
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             Controls.Add(dgvData);
             Controls.Add(pnUpperBar);
             Controls.Add(pnBottomBar);
             Name = "UcListView";
-            Size = new Size(980, 470);
+            Size = new Size(1049, 470);
             Load += UcListView_Load;
             ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
             pnBottomBar.ResumeLayout(false);
             tableLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
             pnUpperBar.ResumeLayout(false);
-            pnUpperButtons.ResumeLayout(false);
-            pnSearchBoxes.ResumeLayout(false);
-            pnSearchBoxes.PerformLayout();
+            pnUpperBar.PerformLayout();
+            tlpUpper.ResumeLayout(false);
+            tlpUpper.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -342,15 +310,12 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private Button btnNext;
         private Button btnPrevious;
-        private Panel pnSearchBoxes;
-        private Label label1;
+        private TableLayoutPanel tlpUpper;
+        private Button btnCancelFilter;
         private ComboBox cmpSearchBy;
         private TextBox txtSearchValue1;
-        private Panel pnUpperButtons;
-        private Button btnCancelFilter;
-        private Button btnFilter;
+        private CheckBox chkUseDateFilter;
         private TextBox txtSearchValue2;
         private DateTimePicker dtpLogDate;
-        private CheckBox chkUseDateFilter;
     }
 }

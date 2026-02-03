@@ -68,10 +68,10 @@ namespace InventorySalesManagementSystem.Products
             _productAdd = new ProductAddDto();
 
 
-           await FillUnitsComboBox();
+            await FillUnitsComboBox();
         }
 
-        private void SetupUpdate(ProductUpdateDto dto,ProductReadDto productReadDto)
+        private void SetupUpdate(ProductUpdateDto dto, ProductReadDto productReadDto)
         {
             State = Enums.FormStateEnum.Update;
 
@@ -126,7 +126,7 @@ namespace InventorySalesManagementSystem.Products
                 var productRead = await service.GetProductByIdAsync(ProductId); // To Get The Un Editable Data
 
                 frmAddUpdateProduct frm = new frmAddUpdateProduct(serviceProvider);
-                 frm.SetupUpdate(dto,productRead);
+                frm.SetupUpdate(dto, productRead);
                 return frm;
             }
         }
@@ -190,7 +190,7 @@ namespace InventorySalesManagementSystem.Products
             }
         }
 
-        private async Task UpdateProduct(ProductService ProductService,int userId)
+        private async Task UpdateProduct(ProductService ProductService, int userId)
         {
             //Validate Values Format
             ValidationCore(txtBuyingPrice.Text, txtSellingPrice.Text, txtQuantity.Text, false);
@@ -201,15 +201,15 @@ namespace InventorySalesManagementSystem.Products
             FillProductUpdate();
 
 
-            
-           
-           await ProductService.UpdateProductAsync(_productUpdate, userId);
+
+
+            await ProductService.UpdateProductAsync(_productUpdate, userId);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تم التحديث بنجاح");
             this.Close();
         }
-        private async Task AddProduct(ProductService ProductService,int userId)
+        private async Task AddProduct(ProductService ProductService, int userId)
         {
             //Validate Cmp Units
             if (cmpUnit.SelectedValue == null)
@@ -236,7 +236,7 @@ namespace InventorySalesManagementSystem.Products
 
             FillProductAdd();
 
-           await ProductService.AddProductAsync(_productAdd, userId);
+            await ProductService.AddProductAsync(_productAdd, userId);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تمت الإضافة بنجاح");
@@ -269,9 +269,9 @@ namespace InventorySalesManagementSystem.Products
                     }
                     else if (State == Enums.FormStateEnum.Update)
                     {
-                        
 
-                       await UpdateProduct(ProductService, userid);
+
+                        await UpdateProduct(ProductService, userid);
                     }
                 }
             }
@@ -287,7 +287,7 @@ namespace InventorySalesManagementSystem.Products
             }
             catch (OperationFailedException ex)
             {
-                MessageBox.Show(ex.MainBody,ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.MainBody, ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             catch (Exception ex)
@@ -335,7 +335,12 @@ namespace InventorySalesManagementSystem.Products
             frm.ShowDialog();
 
             //Reload Units
-           await FillUnitsComboBox();
+            await FillUnitsComboBox();
+        }
+
+        private void txtProductTypeName_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

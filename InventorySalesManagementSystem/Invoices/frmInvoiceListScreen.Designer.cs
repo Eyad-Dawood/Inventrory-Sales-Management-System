@@ -57,19 +57,19 @@
             // 
             ucListView1.AllowCancelButton = false;
             ucListView1.AllowEmptyFilter = true;
-            ucListView1.Size = new Size(1584, 526);
+            ucListView1.Size = new Size(1262, 526);
             // 
             // btnSelect
             // 
-            btnSelect.Location = new Point(1504, 0);
+            btnSelect.Location = new Point(1182, 0);
             // 
             // lbTitle
             // 
-            lbTitle.Size = new Size(1584, 95);
+            lbTitle.Size = new Size(1262, 95);
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(1544, 0);
+            btnAdd.Location = new Point(1222, 0);
             // 
             // cms
             // 
@@ -188,7 +188,7 @@
             gpCraft.Controls.Add(chkOpen);
             gpCraft.Controls.Add(chkClose);
             gpCraft.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            gpCraft.Location = new Point(908, 128);
+            gpCraft.Location = new Point(688, 130);
             gpCraft.Name = "gpCraft";
             gpCraft.RightToLeft = RightToLeft.Yes;
             gpCraft.Size = new Size(143, 40);
@@ -197,7 +197,6 @@
             // 
             // chkOpen
             // 
-            chkOpen.AutoSize = true;
             chkOpen.Checked = true;
             chkOpen.CheckState = CheckState.Checked;
             chkOpen.Location = new Point(73, 11);
@@ -209,7 +208,6 @@
             // 
             // chkClose
             // 
-            chkClose.AutoSize = true;
             chkClose.Location = new Point(4, 12);
             chkClose.Name = "chkClose";
             chkClose.Size = new Size(60, 23);
@@ -223,7 +221,7 @@
             groupBox1.Controls.Add(chkSell);
             groupBox1.Controls.Add(chkEvaluation);
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(774, 128);
+            groupBox1.Location = new Point(550, 130);
             groupBox1.Name = "groupBox1";
             groupBox1.RightToLeft = RightToLeft.Yes;
             groupBox1.Size = new Size(132, 40);
@@ -232,7 +230,6 @@
             // 
             // chkSell
             // 
-            chkSell.AutoSize = true;
             chkSell.Checked = true;
             chkSell.CheckState = CheckState.Checked;
             chkSell.Location = new Point(76, 12);
@@ -244,7 +241,6 @@
             // 
             // chkEvaluation
             // 
-            chkEvaluation.AutoSize = true;
             chkEvaluation.Location = new Point(6, 12);
             chkEvaluation.Name = "chkEvaluation";
             chkEvaluation.Size = new Size(64, 23);
@@ -254,9 +250,9 @@
             // 
             // frmInvoiceListScreen
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1584, 661);
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            ClientSize = new Size(1262, 661);
             Controls.Add(groupBox1);
             Controls.Add(gpCraft);
             MinimumSize = new Size(1278, 700);
@@ -266,9 +262,7 @@
             Controls.SetChildIndex(groupBox1, 0);
             cms.ResumeLayout(false);
             gpCraft.ResumeLayout(false);
-            gpCraft.PerformLayout();
             groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             ResumeLayout(false);
         }
 

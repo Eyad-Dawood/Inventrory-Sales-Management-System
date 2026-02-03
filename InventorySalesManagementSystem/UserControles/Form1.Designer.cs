@@ -1,6 +1,6 @@
-﻿namespace InventorySalesManagementSystem.Workers
+﻿namespace InventorySalesManagementSystem.UserControles
 {
-    partial class frmShowWorker
+    partial class Form1
     {
         /// <summary>
         /// Required designer variable.
@@ -28,33 +28,39 @@
         /// </summary>
         private void InitializeComponent()
         {
-            ucWorkerShow1 = new ucWorkerShow();
+            pnSearchBoxes = new Panel();
+            pnUpperButtons = new Panel();
             SuspendLayout();
             // 
-            // ucWorkerShow1
+            // pnSearchBoxes
             // 
-            ucWorkerShow1.Dock = DockStyle.Fill;
-            ucWorkerShow1.Enabled = false;
-            ucWorkerShow1.Location = new Point(0, 0);
-            ucWorkerShow1.Name = "ucWorkerShow1";
-            ucWorkerShow1.Size = new Size(765, 134);
-            ucWorkerShow1.TabIndex = 0;
+            pnSearchBoxes.Location = new Point(23, 90);
+            pnSearchBoxes.Name = "pnSearchBoxes";
+            pnSearchBoxes.Size = new Size(1018, 72);
+            pnSearchBoxes.TabIndex = 10;
             // 
-            // frmShowWorker
+            // pnUpperButtons
+            // 
+            pnUpperButtons.Location = new Point(807, 235);
+            pnUpperButtons.Name = "pnUpperButtons";
+            pnUpperButtons.Size = new Size(383, 175);
+            pnUpperButtons.TabIndex = 11;
+            // 
+            // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(765, 134);
-            Controls.Add(ucWorkerShow1);
-            FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            MaximizeBox = false;
-            Name = "frmShowWorker";
-            Load += frmShowWorker_Load;
+            ClientSize = new Size(1347, 546);
+            Controls.Add(pnUpperButtons);
+            Controls.Add(pnSearchBoxes);
+            Name = "Form1";
+            Text = "Form1";
             ResumeLayout(false);
         }
 
         #endregion
 
-        private ucWorkerShow ucWorkerShow1;
+        private Panel pnSearchBoxes;
+        private Panel pnUpperButtons;
     }
 }

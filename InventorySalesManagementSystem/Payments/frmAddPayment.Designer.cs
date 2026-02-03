@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Button btnSave;
             txtAdditionalNotes = new TextBox();
             label3 = new Label();
             btnCancel = new Button();
@@ -68,7 +69,6 @@
             // label3
             // 
             label3.Anchor = AnchorStyles.None;
-            label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label3.Location = new Point(318, 236);
             label3.Margin = new Padding(4, 0, 4, 0);
@@ -99,7 +99,6 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label1.Location = new Point(701, 128);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -135,7 +134,6 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
             label9.Location = new Point(671, 96);
@@ -158,7 +156,6 @@
             // 
             // lkshowCustomer
             // 
-            lkshowCustomer.AutoSize = true;
             lkshowCustomer.Location = new Point(81, 66);
             lkshowCustomer.Name = "lkshowCustomer";
             lkshowCustomer.Size = new Size(34, 15);
@@ -169,7 +166,6 @@
             // 
             // label2
             // 
-            label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(673, 59);
             label2.Margin = new Padding(4, 0, 4, 0);
@@ -181,7 +177,6 @@
             // 
             // lkShowInvoice
             // 
-            lkShowInvoice.AutoSize = true;
             lkShowInvoice.Location = new Point(488, 101);
             lkShowInvoice.Name = "lkShowInvoice";
             lkShowInvoice.Size = new Size(34, 15);
@@ -272,7 +267,6 @@
             // 
             // label29
             // 
-            label29.AutoSize = true;
             label29.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label29.Location = new Point(637, 209);
             label29.Margin = new Padding(4, 0, 4, 0);
@@ -284,7 +278,6 @@
             // 
             // label14
             // 
-            label14.AutoSize = true;
             label14.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label14.Location = new Point(692, 243);
             label14.Margin = new Padding(4, 0, 4, 0);
@@ -296,7 +289,6 @@
             // 
             // label18
             // 
-            label18.AutoSize = true;
             label18.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label18.Location = new Point(713, 277);
             label18.Margin = new Padding(4, 0, 4, 0);
@@ -308,7 +300,6 @@
             // 
             // label27
             // 
-            label27.AutoSize = true;
             label27.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label27.Location = new Point(662, 314);
             label27.Margin = new Padding(4, 0, 4, 0);
@@ -332,8 +323,8 @@
             // 
             // frmAddPayment
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(792, 395);
             Controls.Add(lbPaied);

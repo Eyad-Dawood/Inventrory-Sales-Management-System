@@ -103,12 +103,40 @@ namespace InventorySalesManagementSystem.UserControles
 
         #endregion
 
-
+        private float _dateColWidth;
+        private float _txt2ColWidth;
         enum RefreshDataOperation { NextPage = 0, PreviousPage = 1, DirectFilter = 2, DirectFilterCancel = 3, Operation = 4 }
         public UcListView()
         {
             InitializeComponent();
+
+            _dateColWidth = tlpUpper.ColumnStyles[2].Width;
+            _txt2ColWidth = tlpUpper.ColumnStyles[3].Width;
+
+            ChangeSecondFilterUi(_allowSecondSearchBox);
+            ChangeDatePicFilterUi(_allowDatePic);
+
+            // Defualt Settings
             dgvData.AutoGenerateColumns = false;
+            dgvData.Columns.Clear();
+
+            dgvData.AllowUserToAddRows = false;
+            dgvData.AllowUserToDeleteRows = false;
+            dgvData.ReadOnly = true;
+            dgvData.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvData.MultiSelect = false;
+
+            dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            dgvData.ColumnHeadersDefaultCellStyle.Font =
+                new Font(dgvData.Font, FontStyle.Bold);
+
+            dgvData.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvData.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
+            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
         }
 
 
@@ -239,40 +267,40 @@ namespace InventorySalesManagementSystem.UserControles
             pnUpperBar.Enabled = filtered;
             pnUpperBar.Visible = filtered;
         }
-        private void ChangeSecondFilterUi(bool Allow)
+        private void ChangeSecondFilterUi(bool allow)
         {
-            txtSearchValue2.Enabled = Allow;
-            txtSearchValue2.Visible = Allow;
+            txtSearchValue2.Visible = allow;
+            txtSearchValue2.Enabled = allow;
 
-            dtpLogDate.Enabled = !Allow;
-            dtpLogDate.Visible = !Allow;
+            dtpLogDate.Visible = !allow;
+            dtpLogDate.Enabled = !allow;
 
-            chkUseDateFilter.Enabled = !Allow;
-            chkUseDateFilter.Visible = !Allow;
+            chkUseDateFilter.Visible = !allow;
+            chkUseDateFilter.Enabled = !allow;
 
-            if (Allow)
-                pnSearchBoxes.Width += txtSearchValue2.Width + 10;
-            else
-                pnSearchBoxes.Width -= txtSearchValue2.Width + 10;
 
+            var col = tlpUpper.ColumnStyles[3];
+            col.SizeType = SizeType.Absolute;
+            col.Width = allow ? _txt2ColWidth : 0;
         }
 
-        private void ChangeDatePicFilterUi(bool Allow)
+        private void ChangeDatePicFilterUi(bool allow)
         {
-            dtpLogDate.Enabled = Allow;
-            dtpLogDate.Visible = Allow;
+            dtpLogDate.Visible = allow;
+            dtpLogDate.Enabled = allow;
 
-            chkUseDateFilter.Enabled = Allow;
-            chkUseDateFilter.Visible = Allow;
 
-            txtSearchValue2.Enabled = !Allow;
-            txtSearchValue2.Visible = !Allow;
+            chkUseDateFilter.Visible = allow;
+            chkUseDateFilter.Enabled = allow;
 
-            if (Allow)
-                pnSearchBoxes.Width += dtpLogDate.Width + chkUseDateFilter.Width + 10;
-            else
-                pnSearchBoxes.Width -= dtpLogDate.Width + chkUseDateFilter.Width + 10;
+            txtSearchValue2.Visible = !allow;
+            txtSearchValue2.Enabled = !allow;
 
+
+            var col = tlpUpper.ColumnStyles[2];
+
+            col.SizeType = SizeType.Absolute;
+            col.Width = allow ? _dateColWidth : 0;
         }
 
         private void ChangePagginUI(bool value)
@@ -511,5 +539,6 @@ namespace InventorySalesManagementSystem.UserControles
                     e.ToolTipText = cellValue.ToString();
             }
         }
+
     }
 }

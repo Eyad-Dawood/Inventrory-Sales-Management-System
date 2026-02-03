@@ -77,7 +77,6 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
             label9.Location = new Point(771, 6);
@@ -89,7 +88,6 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.Location = new Point(771, 36);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -112,7 +110,6 @@
             // 
             // label5
             // 
-            label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(146, 36);
             label5.Margin = new Padding(4, 0, 4, 0);
@@ -135,7 +132,6 @@
             // 
             // label3
             // 
-            label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.Location = new Point(136, 6);
             label3.Margin = new Padding(4, 0, 4, 0);
@@ -147,7 +143,6 @@
             // 
             // label6
             // 
-            label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label6.Location = new Point(163, 96);
             label6.Margin = new Padding(4, 0, 4, 0);
@@ -170,7 +165,6 @@
             // 
             // label8
             // 
-            label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label8.Location = new Point(714, 66);
             label8.Margin = new Padding(4, 0, 4, 0);
@@ -193,7 +187,6 @@
             // 
             // label4
             // 
-            label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label4.Location = new Point(175, 66);
             label4.Margin = new Padding(4, 0, 4, 0);
@@ -216,7 +209,6 @@
             // 
             // label11
             // 
-            label11.AutoSize = true;
             label11.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label11.Location = new Point(722, 95);
             label11.Margin = new Padding(4, 0, 4, 0);
@@ -297,7 +289,6 @@
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion

@@ -59,7 +59,7 @@
             cms.Items.AddRange(new ToolStripItem[] { ShowCustomerMenuToolStrip, ShowInvoiceToolMenuStrip });
             cms.Name = "contextMenuStrip1";
             cms.RightToLeft = RightToLeft.Yes;
-            cms.Size = new Size(189, 86);
+            cms.Size = new Size(174, 64);
             // 
             // ShowCustomerMenuToolStrip
             // 
@@ -68,7 +68,7 @@
             ShowCustomerMenuToolStrip.ImageScaling = ToolStripItemImageScaling.None;
             ShowCustomerMenuToolStrip.Name = "ShowCustomerMenuToolStrip";
             ShowCustomerMenuToolStrip.RightToLeft = RightToLeft.Yes;
-            ShowCustomerMenuToolStrip.Size = new Size(188, 30);
+            ShowCustomerMenuToolStrip.Size = new Size(173, 30);
             ShowCustomerMenuToolStrip.Text = "عرض العميل";
             ShowCustomerMenuToolStrip.Click += ShowCustomerMenuToolStrip_Click;
             // 
@@ -78,7 +78,7 @@
             ShowInvoiceToolMenuStrip.Image = Properties.Resources.invoice__2_;
             ShowInvoiceToolMenuStrip.Name = "ShowInvoiceToolMenuStrip";
             ShowInvoiceToolMenuStrip.RightToLeft = RightToLeft.Yes;
-            ShowInvoiceToolMenuStrip.Size = new Size(188, 30);
+            ShowInvoiceToolMenuStrip.Size = new Size(173, 30);
             ShowInvoiceToolMenuStrip.Text = "عرض الفاتورة";
             ShowInvoiceToolMenuStrip.Click += ShowInvoiceToolMenuStrip_Click;
             // 
@@ -88,7 +88,7 @@
             groupBox1.Controls.Add(chkInvoice);
             groupBox1.Controls.Add(chkRefund);
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(305, 129);
+            groupBox1.Location = new Point(402, 129);
             groupBox1.Name = "groupBox1";
             groupBox1.RightToLeft = RightToLeft.Yes;
             groupBox1.Size = new Size(138, 40);
@@ -97,7 +97,6 @@
             // 
             // chkInvoice
             // 
-            chkInvoice.AutoSize = true;
             chkInvoice.Checked = true;
             chkInvoice.CheckState = CheckState.Checked;
             chkInvoice.Location = new Point(72, 12);
@@ -109,7 +108,6 @@
             // 
             // chkRefund
             // 
-            chkRefund.AutoSize = true;
             chkRefund.Checked = true;
             chkRefund.CheckState = CheckState.Checked;
             chkRefund.Location = new Point(6, 12);
@@ -121,8 +119,8 @@
             // 
             // frmPaymentsListScreen
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(1214, 661);
             Controls.Add(groupBox1);
             Name = "frmPaymentsListScreen";
@@ -130,7 +128,6 @@
             Controls.SetChildIndex(groupBox1, 0);
             cms.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             ResumeLayout(false);
         }
 

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            Button btnSave;
             btnCancel = new Button();
             txtamount = new TextBox();
             label1 = new Label();
@@ -57,7 +58,6 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label1.Location = new Point(362, 24);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -80,7 +80,6 @@
             // label3
             // 
             label3.Anchor = AnchorStyles.Right;
-            label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label3.Location = new Point(334, 60);
             label3.Margin = new Padding(4, 0, 4, 0);
@@ -105,8 +104,8 @@
             // frmInvoiceDiscount
             // 
             AcceptButton = btnSave;
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(455, 175);
             Controls.Add(txtAdditionalNotes);

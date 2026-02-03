@@ -74,7 +74,6 @@
             // 
             // rdEvaluation
             // 
-            rdEvaluation.AutoSize = true;
             rdEvaluation.Location = new Point(6, 34);
             rdEvaluation.Name = "rdEvaluation";
             rdEvaluation.Size = new Size(77, 29);
@@ -86,7 +85,6 @@
             // 
             // rdSale
             // 
-            rdSale.AutoSize = true;
             rdSale.Checked = true;
             rdSale.Location = new Point(89, 34);
             rdSale.Name = "rdSale";
@@ -98,12 +96,13 @@
             // 
             // lbTitle
             // 
+            lbTitle.Dock = DockStyle.Top;
             lbTitle.Font = new Font("Calibri", 30F, FontStyle.Bold);
-            lbTitle.Location = new Point(598, 9);
+            lbTitle.Location = new Point(0, 0);
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(241, 49);
+            lbTitle.Size = new Size(1431, 66);
             lbTitle.TabIndex = 49;
             lbTitle.Text = "إضافة فاتورة";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -290,7 +289,6 @@
             // label4
             // 
             label4.Anchor = AnchorStyles.Right;
-            label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label4.Location = new Point(1044, 620);
             label4.Name = "label4";
@@ -312,7 +310,6 @@
             // label3
             // 
             label3.Anchor = AnchorStyles.Right;
-            label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label3.Location = new Point(1055, 649);
             label3.Margin = new Padding(4, 0, 4, 0);
@@ -324,8 +321,8 @@
             // 
             // frmAddInvoice
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(1431, 689);
             Controls.Add(txtAdditionalNotes);
@@ -343,7 +340,6 @@
             Name = "frmAddInvoice";
             Load += frmAddInvoice_Load;
             gpCraft.ResumeLayout(false);
-            gpCraft.PerformLayout();
             panel3.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();

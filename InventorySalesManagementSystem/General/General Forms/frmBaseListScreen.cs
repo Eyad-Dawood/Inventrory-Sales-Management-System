@@ -17,10 +17,10 @@ namespace InventorySalesManagementSystem.General.General_Forms
     public partial class frmBaseListScreen : Form
     {
         private bool _selectbutton = true;
-        
+
         [Browsable(true)]
         [DefaultValue(true)]
-        public bool SelectButton 
+        public bool SelectButton
         {
             get
             {
@@ -66,23 +66,7 @@ namespace InventorySalesManagementSystem.General.General_Forms
         #region Config
         protected virtual void ConfigureGrid(DataGridView dgv)
         {
-            // Defualt Settings
-            dgv.AutoGenerateColumns = false;
-            dgv.Columns.Clear();
 
-            dgv.AllowUserToAddRows = false;
-            dgv.AllowUserToDeleteRows = false;
-            dgv.ReadOnly = true;
-            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgv.MultiSelect = false;
-
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            dgv.ColumnHeadersDefaultCellStyle.Font =
-                new Font(dgv.Font, FontStyle.Bold);
-
-            dgv.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
 
             dgv.ContextMenuStrip = GridContextMenu;
         }
@@ -161,11 +145,11 @@ namespace InventorySalesManagementSystem.General.General_Forms
 
         private async void BtnAdd_Click(object sender, EventArgs e)
         {
-          await HandleAddButtonClicked();
+            await HandleAddButtonClicked();
         }
         private async void BtnSelect_Click(object sender, EventArgs e)
         {
-           await HandleSelectButtonClicked();
+            await HandleSelectButtonClicked();
         }
         #endregion
 
@@ -215,5 +199,9 @@ namespace InventorySalesManagementSystem.General.General_Forms
 
         #endregion
 
+        private void frmBaseListScreen_Load(object sender, EventArgs e)
+        {
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+        }
     }
 }

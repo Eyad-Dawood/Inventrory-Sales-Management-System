@@ -105,14 +105,15 @@
             // 
             // frmBaseListScreen
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(1214, 661);
             Controls.Add(ucListView1);
             Controls.Add(panel4);
             Controls.Add(panel2);
             MinimumSize = new Size(450, 350);
             Name = "frmBaseListScreen";
+            Load += frmBaseListScreen_Load;
             panel4.ResumeLayout(false);
             panel2.ResumeLayout(false);
             ResumeLayout(false);

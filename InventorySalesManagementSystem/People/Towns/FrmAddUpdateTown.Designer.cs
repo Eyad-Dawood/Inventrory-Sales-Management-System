@@ -38,7 +38,6 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
             label1.Location = new Point(247, 60);
             label1.Margin = new Padding(4, 0, 4, 0);
@@ -61,7 +60,6 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
             label9.Location = new Point(241, 9);
@@ -105,8 +103,8 @@
             // FrmAddUpdateTown
             // 
             AcceptButton = btnSave;
-            AutoScaleDimensions = new SizeF(10F, 23F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(339, 149);
             Controls.Add(btnCancel);
@@ -121,7 +119,6 @@
             MaximizeBox = false;
             MdiChildrenMinimizedAnchorBottom = false;
             Name = "FrmAddUpdateTown";
-            Text = "إضافة بلد/مدينة";
             ResumeLayout(false);
             PerformLayout();
         }

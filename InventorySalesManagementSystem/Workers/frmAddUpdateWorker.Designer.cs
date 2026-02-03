@@ -53,7 +53,6 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
             label9.Location = new Point(536, 61);
@@ -96,12 +95,13 @@
             // 
             // lbTitle
             // 
+            lbTitle.Dock = DockStyle.Top;
             lbTitle.Font = new Font("Calibri", 30F, FontStyle.Bold);
-            lbTitle.Location = new Point(212, 5);
+            lbTitle.Location = new Point(0, 0);
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(241, 49);
+            lbTitle.Size = new Size(679, 61);
             lbTitle.TabIndex = 36;
             lbTitle.Text = "إضافة عامل";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -120,7 +120,6 @@
             // 
             // chkPainter
             // 
-            chkPainter.AutoSize = true;
             chkPainter.Location = new Point(72, 16);
             chkPainter.Name = "chkPainter";
             chkPainter.Size = new Size(74, 29);
@@ -130,7 +129,6 @@
             // 
             // chkCarpenter
             // 
-            chkCarpenter.AutoSize = true;
             chkCarpenter.Location = new Point(6, 16);
             chkCarpenter.Name = "chkCarpenter";
             chkCarpenter.Size = new Size(61, 29);
@@ -141,8 +139,8 @@
             // frmAddUpdateWorker
             // 
             AcceptButton = btnSave;
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(679, 384);
             Controls.Add(gpCraft);
@@ -157,9 +155,7 @@
             Name = "frmAddUpdateWorker";
             RightToLeft = RightToLeft.Yes;
             gpCraft.ResumeLayout(false);
-            gpCraft.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
