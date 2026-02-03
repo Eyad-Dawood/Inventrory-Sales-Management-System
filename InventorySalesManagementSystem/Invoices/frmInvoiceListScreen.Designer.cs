@@ -188,7 +188,7 @@
             gpCraft.Controls.Add(chkOpen);
             gpCraft.Controls.Add(chkClose);
             gpCraft.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            gpCraft.Location = new Point(688, 130);
+            gpCraft.Location = new Point(639, 130);
             gpCraft.Name = "gpCraft";
             gpCraft.RightToLeft = RightToLeft.Yes;
             gpCraft.Size = new Size(143, 40);
@@ -221,7 +221,7 @@
             groupBox1.Controls.Add(chkSell);
             groupBox1.Controls.Add(chkEvaluation);
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(550, 130);
+            groupBox1.Location = new Point(501, 130);
             groupBox1.Name = "groupBox1";
             groupBox1.RightToLeft = RightToLeft.Yes;
             groupBox1.Size = new Size(132, 40);

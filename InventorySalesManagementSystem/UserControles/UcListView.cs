@@ -95,8 +95,7 @@ namespace InventorySalesManagementSystem.UserControles
             set
             {
                 _allowCancelButton = value;
-                btnCancelFilter.Enabled = _allowCancelButton;
-                btnCancelFilter.Visible = _allowCancelButton;
+                ChangeCancelFilterUi(_allowCancelButton);
             }
         }
 
@@ -105,17 +104,29 @@ namespace InventorySalesManagementSystem.UserControles
 
         private float _dateColWidth;
         private float _txt2ColWidth;
+        private float _btnSearchWidth;
+        private float _btnCancelFilterWidth;
+
+        private string _previousSearch1 = string.Empty;
+        private string _previousSearch2 = string.Empty;
+        private DateTime _previousDate;
+
+
         enum RefreshDataOperation { NextPage = 0, PreviousPage = 1, DirectFilter = 2, DirectFilterCancel = 3, Operation = 4 }
         public UcListView()
         {
             InitializeComponent();
 
-            _dateColWidth = tlpUpper.ColumnStyles[2].Width;
-            _txt2ColWidth = tlpUpper.ColumnStyles[3].Width;
+            _dateColWidth = tlpUpper.ColumnStyles[3].Width;
+            _txt2ColWidth = tlpUpper.ColumnStyles[4].Width;
+            _btnSearchWidth = tlpUpper.ColumnStyles[0].Width;
+            _btnCancelFilterWidth = tlpUpper.ColumnStyles[1].Width;
+
+            _previousDate = dtpLogDate.Value;
 
             ChangeSecondFilterUi(_allowSecondSearchBox);
             ChangeDatePicFilterUi(_allowDatePic);
-
+            ChangeCancelFilterUi(_allowCancelButton);
             // Defualt Settings
             dgvData.AutoGenerateColumns = false;
             dgvData.Columns.Clear();
@@ -235,6 +246,8 @@ namespace InventorySalesManagementSystem.UserControles
                 txtSearchValue1.Text = string.Empty;
                 txtSearchValue2.Text = string.Empty;
 
+                //Stop The Timer
+                timer1.Stop();
             }
         }
         private void RefreshDataAfterOperation()
@@ -279,11 +292,30 @@ namespace InventorySalesManagementSystem.UserControles
             chkUseDateFilter.Enabled = !allow;
 
 
-            var col = tlpUpper.ColumnStyles[3];
+            var col = tlpUpper.ColumnStyles[4];
             col.SizeType = SizeType.Absolute;
             col.Width = allow ? _txt2ColWidth : 0;
         }
+        private void ChangeCancelFilterUi(bool allow)
+        {
+            btnCancelFilter.Enabled = allow;
+            btnCancelFilter.Visible = allow;
 
+            var col = tlpUpper.ColumnStyles[1];
+
+            col.SizeType = SizeType.Absolute;
+            col.Width = allow ? _btnCancelFilterWidth : 0;
+        }
+        private void ChangeSearchFilterUi(bool allow)
+        {
+            btnSearch.Enabled = allow;
+            btnSearch.Visible = allow;
+
+            var col = tlpUpper.ColumnStyles[0];
+
+            col.SizeType = SizeType.Absolute;
+            col.Width = allow ? _btnSearchWidth : 0;
+        }
         private void ChangeDatePicFilterUi(bool allow)
         {
             dtpLogDate.Visible = allow;
@@ -297,7 +329,7 @@ namespace InventorySalesManagementSystem.UserControles
             txtSearchValue2.Enabled = !allow;
 
 
-            var col = tlpUpper.ColumnStyles[2];
+            var col = tlpUpper.ColumnStyles[3];
 
             col.SizeType = SizeType.Absolute;
             col.Width = allow ? _dateColWidth : 0;
@@ -432,10 +464,6 @@ namespace InventorySalesManagementSystem.UserControles
             cmpSearchBy.DataSource = items;
 
         }
-        private void btnFilter_Click(object sender, EventArgs e)
-        {
-            RefreshData(RefreshDataOperation.DirectFilter);
-        }
         private void btnCancelFilter_Click(object sender, EventArgs e)
         {
             RefreshData(RefreshDataOperation.DirectFilterCancel);
@@ -540,5 +568,46 @@ namespace InventorySalesManagementSystem.UserControles
             }
         }
 
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Stop(); // Important , stop the timer , so it doesnt call the db every interval even if user didnt change the text
+
+            bool isChanged = (_previousSearch1.Trim() != txtSearchValue1.Text) ||
+                                   (_previousSearch2.Trim() != txtSearchValue2.Text
+                                   || _previousDate != dtpLogDate.Value);
+            ;
+
+            _previousSearch1 = txtSearchValue1.Text.Trim();
+            _previousSearch2 = txtSearchValue2.Text.Trim();
+
+            if (isChanged)
+                RefreshData(RefreshDataOperation.DirectFilter);
+        }
+
+        private void txtSearchValue1_TextChanged(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            timer1.Start();
+        }
+
+        private void txtSearchValue2_TextChanged(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            timer1.Start();
+        }
+
+        private void dtpLogDate_ValueChanged(object sender, EventArgs e)
+        {
+            timer1.Stop();
+            timer1.Start();
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            RefreshData(RefreshDataOperation.DirectFilter);
+        }
     }
+
+
 }

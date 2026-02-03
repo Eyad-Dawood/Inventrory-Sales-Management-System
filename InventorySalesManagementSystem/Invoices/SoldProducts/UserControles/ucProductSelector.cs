@@ -330,7 +330,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             await DisplayPageAsync(page);
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private async void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Stop(); // Important , stop the timer , so it doesnt call the db every interval even if user didnt change the text
 
@@ -342,7 +342,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             _previousSearch2 = txtSearchValue2.Text.Trim();
 
             if (isSearchChanged)
-                _ = PerformDisplayPage(1);
+                await PerformDisplayPage(1);
         }
 
 

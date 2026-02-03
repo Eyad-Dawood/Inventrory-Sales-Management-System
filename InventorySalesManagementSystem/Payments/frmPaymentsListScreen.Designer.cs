@@ -88,7 +88,7 @@
             groupBox1.Controls.Add(chkInvoice);
             groupBox1.Controls.Add(chkRefund);
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(402, 129);
+            groupBox1.Location = new Point(372, 129);
             groupBox1.Name = "groupBox1";
             groupBox1.RightToLeft = RightToLeft.Yes;
             groupBox1.Size = new Size(138, 40);

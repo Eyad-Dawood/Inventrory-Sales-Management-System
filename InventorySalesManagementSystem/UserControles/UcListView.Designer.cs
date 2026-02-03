@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             dgvData = new DataGridView();
             pnBottomBar = new Panel();
@@ -45,6 +46,8 @@
             txtSearchValue1 = new TextBox();
             cmpSearchBy = new ComboBox();
             txtSearchValue2 = new TextBox();
+            timer1 = new System.Windows.Forms.Timer(components);
+            btnSearch = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             pnBottomBar.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -189,40 +192,42 @@
             // 
             tlpUpper.AutoSize = true;
             tlpUpper.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tlpUpper.ColumnCount = 6;
+            tlpUpper.ColumnCount = 7;
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 36F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 36F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 221F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 219F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 225F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            tlpUpper.Controls.Add(dtpLogDate, 2, 0);
-            tlpUpper.Controls.Add(chkUseDateFilter, 1, 0);
-            tlpUpper.Controls.Add(btnCancelFilter, 0, 0);
-            tlpUpper.Controls.Add(txtSearchValue1, 4, 0);
-            tlpUpper.Controls.Add(cmpSearchBy, 5, 0);
-            tlpUpper.Controls.Add(txtSearchValue2, 3, 0);
+            tlpUpper.Controls.Add(btnSearch, 0, 0);
+            tlpUpper.Controls.Add(dtpLogDate, 3, 0);
+            tlpUpper.Controls.Add(chkUseDateFilter, 2, 0);
+            tlpUpper.Controls.Add(btnCancelFilter, 1, 0);
+            tlpUpper.Controls.Add(txtSearchValue1, 5, 0);
+            tlpUpper.Controls.Add(cmpSearchBy, 6, 0);
+            tlpUpper.Controls.Add(txtSearchValue2, 4, 0);
             tlpUpper.Dock = DockStyle.Right;
             tlpUpper.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            tlpUpper.Location = new Point(128, 0);
+            tlpUpper.Location = new Point(92, 0);
             tlpUpper.Name = "tlpUpper";
             tlpUpper.RowCount = 1;
             tlpUpper.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpUpper.Size = new Size(921, 39);
+            tlpUpper.Size = new Size(957, 39);
             tlpUpper.TabIndex = 11;
             // 
             // dtpLogDate
             // 
             dtpLogDate.Anchor = AnchorStyles.Right;
             dtpLogDate.Format = DateTimePickerFormat.Short;
-            dtpLogDate.Location = new Point(62, 8);
+            dtpLogDate.Location = new Point(98, 8);
             dtpLogDate.Name = "dtpLogDate";
             dtpLogDate.RightToLeft = RightToLeft.Yes;
             dtpLogDate.Size = new Size(212, 23);
             dtpLogDate.TabIndex = 9;
             dtpLogDate.Value = new DateTime(2000, 1, 1, 0, 0, 0, 0);
             dtpLogDate.Visible = false;
+            dtpLogDate.ValueChanged += dtpLogDate_ValueChanged;
             // 
             // chkUseDateFilter
             // 
@@ -230,7 +235,7 @@
             chkUseDateFilter.CheckState = CheckState.Checked;
             chkUseDateFilter.Dock = DockStyle.Fill;
             chkUseDateFilter.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
-            chkUseDateFilter.Location = new Point(39, 3);
+            chkUseDateFilter.Location = new Point(75, 3);
             chkUseDateFilter.Name = "chkUseDateFilter";
             chkUseDateFilter.Size = new Size(14, 33);
             chkUseDateFilter.TabIndex = 10;
@@ -242,20 +247,22 @@
             btnCancelFilter.Anchor = AnchorStyles.Right;
             btnCancelFilter.BackgroundImage = Properties.Resources.CancelIcon;
             btnCancelFilter.BackgroundImageLayout = ImageLayout.Stretch;
-            btnCancelFilter.Location = new Point(3, 4);
+            btnCancelFilter.Location = new Point(39, 4);
             btnCancelFilter.Name = "btnCancelFilter";
             btnCancelFilter.Size = new Size(30, 30);
             btnCancelFilter.TabIndex = 6;
             btnCancelFilter.UseVisualStyleBackColor = true;
+            btnCancelFilter.Click += btnCancelFilter_Click;
             // 
             // txtSearchValue1
             // 
             txtSearchValue1.Anchor = AnchorStyles.Right;
-            txtSearchValue1.Location = new Point(504, 8);
+            txtSearchValue1.Location = new Point(540, 8);
             txtSearchValue1.Name = "txtSearchValue1";
             txtSearchValue1.RightToLeft = RightToLeft.Yes;
             txtSearchValue1.Size = new Size(214, 23);
             txtSearchValue1.TabIndex = 2;
+            txtSearchValue1.TextChanged += txtSearchValue1_TextChanged;
             // 
             // cmpSearchBy
             // 
@@ -263,7 +270,7 @@
             cmpSearchBy.DropDownStyle = ComboBoxStyle.DropDownList;
             cmpSearchBy.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             cmpSearchBy.FormattingEnabled = true;
-            cmpSearchBy.Location = new Point(729, 5);
+            cmpSearchBy.Location = new Point(765, 5);
             cmpSearchBy.Name = "cmpSearchBy";
             cmpSearchBy.Size = new Size(189, 28);
             cmpSearchBy.TabIndex = 1;
@@ -271,12 +278,30 @@
             // txtSearchValue2
             // 
             txtSearchValue2.Anchor = AnchorStyles.Right;
-            txtSearchValue2.Location = new Point(280, 8);
+            txtSearchValue2.Location = new Point(316, 8);
             txtSearchValue2.Name = "txtSearchValue2";
             txtSearchValue2.RightToLeft = RightToLeft.Yes;
             txtSearchValue2.Size = new Size(213, 23);
             txtSearchValue2.TabIndex = 1;
             txtSearchValue2.Visible = false;
+            txtSearchValue2.TextChanged += txtSearchValue2_TextChanged;
+            // 
+            // timer1
+            // 
+            timer1.Interval = 250;
+            timer1.Tick += timer1_Tick;
+            // 
+            // btnSearch
+            // 
+            btnSearch.Anchor = AnchorStyles.Right;
+            btnSearch.BackgroundImage = Properties.Resources.SearchIcon;
+            btnSearch.BackgroundImageLayout = ImageLayout.Stretch;
+            btnSearch.Location = new Point(3, 4);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new Size(30, 30);
+            btnSearch.TabIndex = 11;
+            btnSearch.UseVisualStyleBackColor = true;
+            btnSearch.Click += btnSearch_Click;
             // 
             // UcListView
             // 
@@ -317,5 +342,7 @@
         private CheckBox chkUseDateFilter;
         private TextBox txtSearchValue2;
         private DateTimePicker dtpLogDate;
+        private System.Windows.Forms.Timer timer1;
+        private Button btnSearch;
     }
 }
