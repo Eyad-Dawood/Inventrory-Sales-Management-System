@@ -324,27 +324,11 @@ namespace InventorySalesManagementSystem.Invoices
 
         private List<InvoiceType> GetInvoiceTypes()
         {
-            List<InvoiceType> types = new List<InvoiceType>();
-
-            if (chkSell.Checked)
-                types.Add(InvoiceType.Sale);
-
-            if (chkEvaluation.Checked)
-                types.Add(InvoiceType.Evaluation);
-
-            return types;
+            return ucListView1.GetInvoiceTypes();
         }
         private List<InvoiceState> GetInvoiceStates()
         {
-            List<InvoiceState> states = new List<InvoiceState>();
-
-            if (chkOpen.Checked)
-                states.Add(InvoiceState.Open);
-
-            if (chkClose.Checked)
-                states.Add(InvoiceState.Closed);
-
-            return states;
+            return ucListView1.GetInvoiceStates();
         }
 
 

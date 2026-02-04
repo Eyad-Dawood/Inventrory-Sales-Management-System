@@ -133,16 +133,7 @@ namespace InventorySalesManagementSystem.Payments
 
         private List<PaymentReason> GetPaymentReasons()
         {
-            List<PaymentReason> reasons = new List<PaymentReason>();
-
-
-            if (chkInvoice.Checked)
-                reasons.Add(PaymentReason.Invoice);
-
-            if (chkRefund.Checked)
-                reasons.Add(PaymentReason.Refund);
-
-            return reasons;
+            return ucListView1.GetPaymentReasons();
         }
 
         #region Hooks

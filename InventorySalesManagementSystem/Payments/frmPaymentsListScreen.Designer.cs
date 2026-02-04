@@ -32,17 +32,14 @@
             cms = new ContextMenuStrip(components);
             ShowCustomerMenuToolStrip = new ToolStripMenuItem();
             ShowInvoiceToolMenuStrip = new ToolStripMenuItem();
-            groupBox1 = new GroupBox();
-            chkInvoice = new CheckBox();
-            chkRefund = new CheckBox();
             cms.SuspendLayout();
-            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // ucListView1
             // 
             ucListView1.AllowDatePic = true;
             ucListView1.AllowEmptyFilter = true;
+            ucListView1.AllowPaymentFilter = true;
             ucListView1.Size = new Size(1214, 576);
             // 
             // btnSelect
@@ -82,53 +79,15 @@
             ShowInvoiceToolMenuStrip.Text = "عرض الفاتورة";
             ShowInvoiceToolMenuStrip.Click += ShowInvoiceToolMenuStrip_Click;
             // 
-            // groupBox1
-            // 
-            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            groupBox1.Controls.Add(chkInvoice);
-            groupBox1.Controls.Add(chkRefund);
-            groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(338, 129);
-            groupBox1.Name = "groupBox1";
-            groupBox1.RightToLeft = RightToLeft.Yes;
-            groupBox1.Size = new Size(138, 40);
-            groupBox1.TabIndex = 42;
-            groupBox1.TabStop = false;
-            // 
-            // chkInvoice
-            // 
-            chkInvoice.Checked = true;
-            chkInvoice.CheckState = CheckState.Checked;
-            chkInvoice.Location = new Point(72, 12);
-            chkInvoice.Name = "chkInvoice";
-            chkInvoice.Size = new Size(63, 23);
-            chkInvoice.TabIndex = 1;
-            chkInvoice.Text = "فاتورة";
-            chkInvoice.UseVisualStyleBackColor = true;
-            // 
-            // chkRefund
-            // 
-            chkRefund.Checked = true;
-            chkRefund.CheckState = CheckState.Checked;
-            chkRefund.Location = new Point(6, 12);
-            chkRefund.Name = "chkRefund";
-            chkRefund.Size = new Size(62, 23);
-            chkRefund.TabIndex = 0;
-            chkRefund.Text = "مرتجع";
-            chkRefund.UseVisualStyleBackColor = true;
-            // 
             // frmPaymentsListScreen
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1214, 711);
-            Controls.Add(groupBox1);
             MinimumSize = new Size(900, 700);
             Name = "frmPaymentsListScreen";
             Controls.SetChildIndex(ucListView1, 0);
-            Controls.SetChildIndex(groupBox1, 0);
             cms.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -136,9 +95,6 @@
 
         private ContextMenuStrip cms;
         private ToolStripMenuItem ShowInvoiceToolMenuStrip;
-        private GroupBox groupBox1;
-        private CheckBox chkInvoice;
-        private CheckBox chkRefund;
         private ToolStripMenuItem ShowCustomerMenuToolStrip;
     }
 }

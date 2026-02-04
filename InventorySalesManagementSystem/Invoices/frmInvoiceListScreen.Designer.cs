@@ -42,20 +42,13 @@
             toolStripSeparator3 = new ToolStripSeparator();
             PayMenuStripItem = new ToolStripMenuItem();
             PayRefundMenuStripItem = new ToolStripMenuItem();
-            gpCraft = new GroupBox();
-            chkOpen = new CheckBox();
-            chkClose = new CheckBox();
-            groupBox1 = new GroupBox();
-            chkSell = new CheckBox();
-            chkEvaluation = new CheckBox();
             cms.SuspendLayout();
-            gpCraft.SuspendLayout();
-            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // ucListView1
             // 
             ucListView1.AllowEmptyFilter = true;
+            ucListView1.AllowInvoiceFilter = true;
             ucListView1.Size = new Size(1262, 526);
             // 
             // btnSelect
@@ -181,87 +174,15 @@
             PayRefundMenuStripItem.Text = "دفع المرتجع";
             PayRefundMenuStripItem.Click += PayRefundMenuStripItem_Click;
             // 
-            // gpCraft
-            // 
-            gpCraft.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            gpCraft.Controls.Add(chkOpen);
-            gpCraft.Controls.Add(chkClose);
-            gpCraft.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            gpCraft.Location = new Point(601, 130);
-            gpCraft.Name = "gpCraft";
-            gpCraft.RightToLeft = RightToLeft.Yes;
-            gpCraft.Size = new Size(143, 40);
-            gpCraft.TabIndex = 40;
-            gpCraft.TabStop = false;
-            // 
-            // chkOpen
-            // 
-            chkOpen.Checked = true;
-            chkOpen.CheckState = CheckState.Checked;
-            chkOpen.Location = new Point(73, 11);
-            chkOpen.Name = "chkOpen";
-            chkOpen.Size = new Size(64, 23);
-            chkOpen.TabIndex = 1;
-            chkOpen.Text = "مفتوح";
-            chkOpen.UseVisualStyleBackColor = true;
-            // 
-            // chkClose
-            // 
-            chkClose.Location = new Point(4, 12);
-            chkClose.Name = "chkClose";
-            chkClose.Size = new Size(60, 23);
-            chkClose.TabIndex = 0;
-            chkClose.Text = "مغلق";
-            chkClose.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            groupBox1.Controls.Add(chkSell);
-            groupBox1.Controls.Add(chkEvaluation);
-            groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(463, 130);
-            groupBox1.Name = "groupBox1";
-            groupBox1.RightToLeft = RightToLeft.Yes;
-            groupBox1.Size = new Size(132, 40);
-            groupBox1.TabIndex = 41;
-            groupBox1.TabStop = false;
-            // 
-            // chkSell
-            // 
-            chkSell.Checked = true;
-            chkSell.CheckState = CheckState.Checked;
-            chkSell.Location = new Point(76, 12);
-            chkSell.Name = "chkSell";
-            chkSell.Size = new Size(46, 23);
-            chkSell.TabIndex = 1;
-            chkSell.Text = "بيع";
-            chkSell.UseVisualStyleBackColor = true;
-            // 
-            // chkEvaluation
-            // 
-            chkEvaluation.Location = new Point(6, 12);
-            chkEvaluation.Name = "chkEvaluation";
-            chkEvaluation.Size = new Size(64, 23);
-            chkEvaluation.TabIndex = 0;
-            chkEvaluation.Text = "تسعير";
-            chkEvaluation.UseVisualStyleBackColor = true;
-            // 
             // frmInvoiceListScreen
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1262, 661);
-            Controls.Add(groupBox1);
-            Controls.Add(gpCraft);
             MinimumSize = new Size(900, 700);
             Name = "frmInvoiceListScreen";
             Controls.SetChildIndex(ucListView1, 0);
-            Controls.SetChildIndex(gpCraft, 0);
-            Controls.SetChildIndex(groupBox1, 0);
             cms.ResumeLayout(false);
-            gpCraft.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -269,12 +190,6 @@
 
         private ContextMenuStrip cms;
         private ToolStripMenuItem ShowMenustripItem;
-        private GroupBox gpCraft;
-        private CheckBox chkOpen;
-        private CheckBox chkClose;
-        private GroupBox groupBox1;
-        private CheckBox chkSell;
-        private CheckBox chkEvaluation;
         private ToolStripMenuItem AddNewBatchMenustripItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem CloseInvoiceMenustripItem;

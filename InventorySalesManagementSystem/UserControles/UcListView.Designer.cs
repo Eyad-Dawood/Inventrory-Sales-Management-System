@@ -40,6 +40,9 @@
             lbrowsCount = new Label();
             pnUpperBar = new Panel();
             tlpUpper = new TableLayoutPanel();
+            gpInvoiceType = new GroupBox();
+            chkSell = new CheckBox();
+            chkEvaluation = new CheckBox();
             btnSearch = new Button();
             dtpLogDate = new DateTimePicker();
             chkUseDateFilter = new CheckBox();
@@ -47,6 +50,12 @@
             txtSearchValue1 = new TextBox();
             cmpSearchBy = new ComboBox();
             txtSearchValue2 = new TextBox();
+            gpPaymentType = new GroupBox();
+            chkInvoice = new CheckBox();
+            chkRefund = new CheckBox();
+            gpInvoiceState = new GroupBox();
+            chkOpen = new CheckBox();
+            chkClose = new CheckBox();
             timer1 = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             pnBottomBar.SuspendLayout();
@@ -54,6 +63,9 @@
             flowLayoutPanel1.SuspendLayout();
             pnUpperBar.SuspendLayout();
             tlpUpper.SuspendLayout();
+            gpInvoiceType.SuspendLayout();
+            gpPaymentType.SuspendLayout();
+            gpInvoiceState.SuspendLayout();
             SuspendLayout();
             // 
             // dgvData
@@ -89,7 +101,7 @@
             dgvData.ShowCellErrors = false;
             dgvData.ShowEditingIcon = false;
             dgvData.ShowRowErrors = false;
-            dgvData.Size = new Size(1049, 397);
+            dgvData.Size = new Size(1703, 397);
             dgvData.TabIndex = 1;
             dgvData.CellMouseDown += dgvData_CellMouseDoun;
             dgvData.CellToolTipTextNeeded += dgvData_CellToolTipTextNeeded;
@@ -100,7 +112,7 @@
             pnBottomBar.Dock = DockStyle.Bottom;
             pnBottomBar.Location = new Point(0, 436);
             pnBottomBar.Name = "pnBottomBar";
-            pnBottomBar.Size = new Size(1049, 34);
+            pnBottomBar.Size = new Size(1703, 34);
             pnBottomBar.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -117,7 +129,7 @@
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1049, 34);
+            tableLayoutPanel1.Size = new Size(1703, 34);
             tableLayoutPanel1.TabIndex = 5;
             // 
             // flowLayoutPanel1
@@ -126,9 +138,9 @@
             flowLayoutPanel1.Controls.Add(btnPrevious);
             flowLayoutPanel1.Dock = DockStyle.Fill;
             flowLayoutPanel1.FlowDirection = FlowDirection.RightToLeft;
-            flowLayoutPanel1.Location = new Point(701, 3);
+            flowLayoutPanel1.Location = new Point(1137, 3);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(345, 28);
+            flowLayoutPanel1.Size = new Size(563, 28);
             flowLayoutPanel1.TabIndex = 16;
             // 
             // btnNext
@@ -136,7 +148,7 @@
             btnNext.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnNext.BackgroundImage = Properties.Resources.RightArrow;
             btnNext.BackgroundImageLayout = ImageLayout.Stretch;
-            btnNext.Location = new Point(312, 3);
+            btnNext.Location = new Point(530, 3);
             btnNext.Name = "btnNext";
             btnNext.Size = new Size(30, 27);
             btnNext.TabIndex = 4;
@@ -148,7 +160,7 @@
             btnPrevious.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnPrevious.BackgroundImage = Properties.Resources.LeftArrow;
             btnPrevious.BackgroundImageLayout = ImageLayout.Stretch;
-            btnPrevious.Location = new Point(276, 3);
+            btnPrevious.Location = new Point(494, 3);
             btnPrevious.Name = "btnPrevious";
             btnPrevious.Padding = new Padding(0, 0, 0, 5);
             btnPrevious.Size = new Size(30, 27);
@@ -160,9 +172,9 @@
             // 
             lbPageNumber.Dock = DockStyle.Fill;
             lbPageNumber.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lbPageNumber.Location = new Point(352, 0);
+            lbPageNumber.Location = new Point(570, 0);
             lbPageNumber.Name = "lbPageNumber";
-            lbPageNumber.Size = new Size(343, 34);
+            lbPageNumber.Size = new Size(561, 34);
             lbPageNumber.TabIndex = 6;
             lbPageNumber.Text = "1/??";
             lbPageNumber.TextAlign = ContentAlignment.MiddleCenter;
@@ -185,43 +197,82 @@
             pnUpperBar.Dock = DockStyle.Top;
             pnUpperBar.Location = new Point(0, 0);
             pnUpperBar.Name = "pnUpperBar";
-            pnUpperBar.Size = new Size(1049, 39);
+            pnUpperBar.Size = new Size(1703, 39);
             pnUpperBar.TabIndex = 2;
             // 
             // tlpUpper
             // 
             tlpUpper.AutoSize = true;
             tlpUpper.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tlpUpper.ColumnCount = 7;
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 36F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 36F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 221F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 219F));
+            tlpUpper.ColumnCount = 10;
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 141F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 159F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 159F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 43F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 25F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 222F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 225F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200F));
-            tlpUpper.Controls.Add(btnSearch, 0, 0);
-            tlpUpper.Controls.Add(dtpLogDate, 3, 0);
-            tlpUpper.Controls.Add(chkUseDateFilter, 2, 0);
-            tlpUpper.Controls.Add(btnCancelFilter, 1, 0);
-            tlpUpper.Controls.Add(txtSearchValue1, 5, 0);
-            tlpUpper.Controls.Add(cmpSearchBy, 6, 0);
-            tlpUpper.Controls.Add(txtSearchValue2, 4, 0);
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 229F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 287F));
+            tlpUpper.Controls.Add(gpInvoiceType, 0, 0);
+            tlpUpper.Controls.Add(btnSearch, 3, 0);
+            tlpUpper.Controls.Add(dtpLogDate, 6, 0);
+            tlpUpper.Controls.Add(chkUseDateFilter, 5, 0);
+            tlpUpper.Controls.Add(btnCancelFilter, 4, 0);
+            tlpUpper.Controls.Add(txtSearchValue1, 8, 0);
+            tlpUpper.Controls.Add(cmpSearchBy, 9, 0);
+            tlpUpper.Controls.Add(txtSearchValue2, 7, 0);
+            tlpUpper.Controls.Add(gpPaymentType, 2, 0);
+            tlpUpper.Controls.Add(gpInvoiceState, 1, 0);
             tlpUpper.Dock = DockStyle.Right;
             tlpUpper.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            tlpUpper.Location = new Point(92, 0);
+            tlpUpper.Location = new Point(173, 0);
             tlpUpper.Name = "tlpUpper";
             tlpUpper.RowCount = 1;
             tlpUpper.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpUpper.Size = new Size(957, 39);
+            tlpUpper.Size = new Size(1530, 39);
             tlpUpper.TabIndex = 11;
+            // 
+            // gpInvoiceType
+            // 
+            gpInvoiceType.Controls.Add(chkSell);
+            gpInvoiceType.Controls.Add(chkEvaluation);
+            gpInvoiceType.Dock = DockStyle.Fill;
+            gpInvoiceType.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            gpInvoiceType.Location = new Point(3, 3);
+            gpInvoiceType.Name = "gpInvoiceType";
+            gpInvoiceType.RightToLeft = RightToLeft.Yes;
+            gpInvoiceType.Size = new Size(135, 33);
+            gpInvoiceType.TabIndex = 45;
+            gpInvoiceType.TabStop = false;
+            // 
+            // chkSell
+            // 
+            chkSell.Checked = true;
+            chkSell.CheckState = CheckState.Checked;
+            chkSell.Location = new Point(76, 5);
+            chkSell.Name = "chkSell";
+            chkSell.Size = new Size(46, 23);
+            chkSell.TabIndex = 1;
+            chkSell.Text = "بيع";
+            chkSell.UseVisualStyleBackColor = true;
+            // 
+            // chkEvaluation
+            // 
+            chkEvaluation.Location = new Point(6, 5);
+            chkEvaluation.Name = "chkEvaluation";
+            chkEvaluation.Size = new Size(64, 23);
+            chkEvaluation.TabIndex = 0;
+            chkEvaluation.Text = "تسعير";
+            chkEvaluation.UseVisualStyleBackColor = true;
             // 
             // btnSearch
             // 
             btnSearch.Anchor = AnchorStyles.Right;
             btnSearch.BackgroundImage = Properties.Resources.SearchIcon;
             btnSearch.BackgroundImageLayout = ImageLayout.Stretch;
-            btnSearch.Location = new Point(3, 4);
+            btnSearch.Location = new Point(469, 4);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(30, 30);
             btnSearch.TabIndex = 11;
@@ -232,7 +283,7 @@
             // 
             dtpLogDate.Anchor = AnchorStyles.Right;
             dtpLogDate.Format = DateTimePickerFormat.Short;
-            dtpLogDate.Location = new Point(98, 8);
+            dtpLogDate.Location = new Point(574, 8);
             dtpLogDate.Name = "dtpLogDate";
             dtpLogDate.RightToLeft = RightToLeft.Yes;
             dtpLogDate.Size = new Size(212, 23);
@@ -245,9 +296,9 @@
             // 
             chkUseDateFilter.Dock = DockStyle.Fill;
             chkUseDateFilter.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
-            chkUseDateFilter.Location = new Point(75, 3);
+            chkUseDateFilter.Location = new Point(545, 3);
             chkUseDateFilter.Name = "chkUseDateFilter";
-            chkUseDateFilter.Size = new Size(14, 33);
+            chkUseDateFilter.Size = new Size(19, 33);
             chkUseDateFilter.TabIndex = 10;
             chkUseDateFilter.UseVisualStyleBackColor = true;
             chkUseDateFilter.Visible = false;
@@ -257,7 +308,7 @@
             btnCancelFilter.Anchor = AnchorStyles.Right;
             btnCancelFilter.BackgroundImage = Properties.Resources.CancelIcon;
             btnCancelFilter.BackgroundImageLayout = ImageLayout.Stretch;
-            btnCancelFilter.Location = new Point(39, 4);
+            btnCancelFilter.Location = new Point(509, 4);
             btnCancelFilter.Name = "btnCancelFilter";
             btnCancelFilter.Size = new Size(30, 30);
             btnCancelFilter.TabIndex = 6;
@@ -267,7 +318,7 @@
             // txtSearchValue1
             // 
             txtSearchValue1.Anchor = AnchorStyles.Right;
-            txtSearchValue1.Location = new Point(540, 8);
+            txtSearchValue1.Location = new Point(1026, 8);
             txtSearchValue1.Name = "txtSearchValue1";
             txtSearchValue1.RightToLeft = RightToLeft.Yes;
             txtSearchValue1.Size = new Size(214, 23);
@@ -276,11 +327,10 @@
             // 
             // cmpSearchBy
             // 
-            cmpSearchBy.Anchor = AnchorStyles.Right;
             cmpSearchBy.DropDownStyle = ComboBoxStyle.DropDownList;
             cmpSearchBy.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             cmpSearchBy.FormattingEnabled = true;
-            cmpSearchBy.Location = new Point(765, 5);
+            cmpSearchBy.Location = new Point(1246, 3);
             cmpSearchBy.Name = "cmpSearchBy";
             cmpSearchBy.Size = new Size(189, 28);
             cmpSearchBy.TabIndex = 1;
@@ -288,13 +338,81 @@
             // txtSearchValue2
             // 
             txtSearchValue2.Anchor = AnchorStyles.Right;
-            txtSearchValue2.Location = new Point(316, 8);
+            txtSearchValue2.Location = new Point(798, 8);
             txtSearchValue2.Name = "txtSearchValue2";
             txtSearchValue2.RightToLeft = RightToLeft.Yes;
             txtSearchValue2.Size = new Size(213, 23);
             txtSearchValue2.TabIndex = 1;
             txtSearchValue2.Visible = false;
             txtSearchValue2.TextChanged += txtSearchValue2_TextChanged;
+            // 
+            // gpPaymentType
+            // 
+            gpPaymentType.Controls.Add(chkInvoice);
+            gpPaymentType.Controls.Add(chkRefund);
+            gpPaymentType.Dock = DockStyle.Fill;
+            gpPaymentType.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            gpPaymentType.Location = new Point(303, 3);
+            gpPaymentType.Name = "gpPaymentType";
+            gpPaymentType.RightToLeft = RightToLeft.Yes;
+            gpPaymentType.Size = new Size(153, 33);
+            gpPaymentType.TabIndex = 43;
+            gpPaymentType.TabStop = false;
+            // 
+            // chkInvoice
+            // 
+            chkInvoice.Checked = true;
+            chkInvoice.CheckState = CheckState.Checked;
+            chkInvoice.Location = new Point(72, 4);
+            chkInvoice.Name = "chkInvoice";
+            chkInvoice.Size = new Size(63, 23);
+            chkInvoice.TabIndex = 1;
+            chkInvoice.Text = "فاتورة";
+            chkInvoice.UseVisualStyleBackColor = true;
+            // 
+            // chkRefund
+            // 
+            chkRefund.Checked = true;
+            chkRefund.CheckState = CheckState.Checked;
+            chkRefund.Location = new Point(6, 4);
+            chkRefund.Name = "chkRefund";
+            chkRefund.Size = new Size(62, 23);
+            chkRefund.TabIndex = 0;
+            chkRefund.Text = "مرتجع";
+            chkRefund.UseVisualStyleBackColor = true;
+            // 
+            // gpInvoiceState
+            // 
+            gpInvoiceState.Controls.Add(chkOpen);
+            gpInvoiceState.Controls.Add(chkClose);
+            gpInvoiceState.Dock = DockStyle.Fill;
+            gpInvoiceState.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            gpInvoiceState.Location = new Point(144, 3);
+            gpInvoiceState.Name = "gpInvoiceState";
+            gpInvoiceState.RightToLeft = RightToLeft.Yes;
+            gpInvoiceState.Size = new Size(153, 33);
+            gpInvoiceState.TabIndex = 44;
+            gpInvoiceState.TabStop = false;
+            // 
+            // chkOpen
+            // 
+            chkOpen.Checked = true;
+            chkOpen.CheckState = CheckState.Checked;
+            chkOpen.Location = new Point(73, 5);
+            chkOpen.Name = "chkOpen";
+            chkOpen.Size = new Size(64, 23);
+            chkOpen.TabIndex = 1;
+            chkOpen.Text = "مفتوح";
+            chkOpen.UseVisualStyleBackColor = true;
+            // 
+            // chkClose
+            // 
+            chkClose.Location = new Point(4, 6);
+            chkClose.Name = "chkClose";
+            chkClose.Size = new Size(60, 23);
+            chkClose.TabIndex = 0;
+            chkClose.Text = "مغلق";
+            chkClose.UseVisualStyleBackColor = true;
             // 
             // timer1
             // 
@@ -309,7 +427,7 @@
             Controls.Add(pnUpperBar);
             Controls.Add(pnBottomBar);
             Name = "UcListView";
-            Size = new Size(1049, 470);
+            Size = new Size(1703, 470);
             Load += UcListView_Load;
             ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
             pnBottomBar.ResumeLayout(false);
@@ -319,6 +437,9 @@
             pnUpperBar.PerformLayout();
             tlpUpper.ResumeLayout(false);
             tlpUpper.PerformLayout();
+            gpInvoiceType.ResumeLayout(false);
+            gpPaymentType.ResumeLayout(false);
+            gpInvoiceState.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -342,5 +463,14 @@
         private DateTimePicker dtpLogDate;
         private System.Windows.Forms.Timer timer1;
         private Button btnSearch;
+        private GroupBox gpPaymentType;
+        private CheckBox chkInvoice;
+        private CheckBox chkRefund;
+        private GroupBox gpInvoiceState;
+        private CheckBox chkOpen;
+        private CheckBox chkClose;
+        private GroupBox gpInvoiceType;
+        private CheckBox chkSell;
+        private CheckBox chkEvaluation;
     }
 }

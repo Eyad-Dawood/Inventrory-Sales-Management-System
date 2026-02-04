@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using DataAccessLayer.Entities.Invoices;
+using DataAccessLayer.Entities.Payments;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,6 +51,40 @@ namespace InventorySalesManagementSystem.UserControles
                 ChangeFilterUI(_allowFilter);
             }
         }
+
+        private bool _allowInvoiceFilter = false;
+        [Browsable(true)]
+        [DefaultValue(false)]
+        public bool AllowInvoiceFilter
+        {
+            get
+            {
+                return _allowInvoiceFilter;
+            }
+            set
+            {
+                _allowInvoiceFilter = value;
+                ChangeInvoiceFilterUi(_allowInvoiceFilter);
+            }
+        }
+
+
+        private bool _allowPaymentFilter = false;
+        [Browsable(true)]
+        [DefaultValue(false)]
+        public bool AllowPaymentFilter
+        {
+            get
+            {
+                return _allowPaymentFilter;
+            }
+            set
+            {
+                _allowPaymentFilter = value;
+                ChangePaymentFilterUi(_allowPaymentFilter);
+            }
+        }
+
 
         private bool _allowSecondSearchBox = false;
         [Browsable(true)]
@@ -104,8 +140,23 @@ namespace InventorySalesManagementSystem.UserControles
 
         private float _dateColWidth;
         private float _txt2ColWidth;
-        private float _btnSearchWidth;
         private float _btnCancelFilterWidth;
+        private float _chkUseDateWidth;
+        private float _InvoiceTypeWidth;
+        private float _InvoiceStateWidth;
+        private float _PaymentReasonWidth;
+
+
+        private int _InvoiceTypeIndex = 0;
+        private int _InvoiceStateIndex = 1;
+        private int _PaymentReasonIndex = 2;
+
+        private int _CancelFilterIndex = 4;
+        private int _datecheckBoxIndex = 5;
+        private int _DateTimePicerIndex = 6;
+        private int _secondtxtSearchIndex = 7;
+
+
 
         private string _previousSearch1 = string.Empty;
         private string _previousSearch2 = string.Empty;
@@ -117,16 +168,24 @@ namespace InventorySalesManagementSystem.UserControles
         {
             InitializeComponent();
 
-            _dateColWidth = tlpUpper.ColumnStyles[3].Width;
-            _txt2ColWidth = tlpUpper.ColumnStyles[4].Width;
-            _btnSearchWidth = tlpUpper.ColumnStyles[0].Width;
-            _btnCancelFilterWidth = tlpUpper.ColumnStyles[1].Width;
+            _dateColWidth = tlpUpper.ColumnStyles[_DateTimePicerIndex].Width;
+            _txt2ColWidth = tlpUpper.ColumnStyles[_secondtxtSearchIndex].Width;
+            _btnCancelFilterWidth = tlpUpper.ColumnStyles[_CancelFilterIndex].Width;
+            _chkUseDateWidth = tlpUpper.ColumnStyles[_CancelFilterIndex].Width;
+            _InvoiceTypeWidth = tlpUpper.ColumnStyles[_InvoiceTypeIndex].Width;
+            _InvoiceStateWidth = tlpUpper.ColumnStyles[_InvoiceStateIndex].Width;
+            _PaymentReasonWidth = tlpUpper.ColumnStyles[_PaymentReasonIndex].Width;
 
-            _previousDate = dtpLogDate.Value;
 
             ChangeSecondFilterUi(_allowSecondSearchBox);
             ChangeDatePicFilterUi(_allowDatePic);
             ChangeCancelFilterUi(_allowCancelButton);
+            ChangePaymentFilterUi(_allowPaymentFilter);
+            ChangeInvoiceFilterUi(_allowInvoiceFilter);
+
+
+            _previousDate = dtpLogDate.Value;
+
             // Defualt Settings
             dgvData.AutoGenerateColumns = false;
             dgvData.Columns.Clear();
@@ -292,7 +351,7 @@ namespace InventorySalesManagementSystem.UserControles
             chkUseDateFilter.Enabled = !allow;
 
 
-            var col = tlpUpper.ColumnStyles[4];
+            var col = tlpUpper.ColumnStyles[_secondtxtSearchIndex];
             col.SizeType = SizeType.Absolute;
             col.Width = allow ? _txt2ColWidth : 0;
         }
@@ -301,20 +360,10 @@ namespace InventorySalesManagementSystem.UserControles
             btnCancelFilter.Enabled = allow;
             btnCancelFilter.Visible = allow;
 
-            var col = tlpUpper.ColumnStyles[1];
+            var col = tlpUpper.ColumnStyles[_CancelFilterIndex];
 
             col.SizeType = SizeType.Absolute;
             col.Width = allow ? _btnCancelFilterWidth : 0;
-        }
-        private void ChangeSearchFilterUi(bool allow)
-        {
-            btnSearch.Enabled = allow;
-            btnSearch.Visible = allow;
-
-            var col = tlpUpper.ColumnStyles[0];
-
-            col.SizeType = SizeType.Absolute;
-            col.Width = allow ? _btnSearchWidth : 0;
         }
         private void ChangeDatePicFilterUi(bool allow)
         {
@@ -329,10 +378,42 @@ namespace InventorySalesManagementSystem.UserControles
             txtSearchValue2.Enabled = !allow;
 
 
-            var col = tlpUpper.ColumnStyles[3];
+            var datecol = tlpUpper.ColumnStyles[_DateTimePicerIndex];
+            var checkcol = tlpUpper.ColumnStyles[_datecheckBoxIndex];
+
+
+            datecol.SizeType = SizeType.Absolute;
+            datecol.Width = allow ? _dateColWidth : 0;
+
+            checkcol.SizeType = SizeType.Absolute;
+            checkcol.Width = allow ? _chkUseDateWidth : 0;
+        }
+        private void ChangeInvoiceFilterUi(bool allow)
+        {
+            gpInvoiceState.Enabled = allow;
+            gpInvoiceState.Visible = allow;
+
+            gpInvoiceType.Enabled = allow;
+            gpInvoiceType.Visible = allow;
+
+            var statecol = tlpUpper.ColumnStyles[_InvoiceStateIndex];
+            var typecol = tlpUpper.ColumnStyles[_InvoiceTypeIndex];
+
+            statecol.SizeType = SizeType.Absolute;
+            statecol.Width = allow ? _InvoiceStateWidth : 0;
+
+            statecol.SizeType = SizeType.Absolute;
+            statecol.Width = allow ? _InvoiceTypeWidth : 0;
+        }
+        private void ChangePaymentFilterUi(bool allow)
+        {
+            gpPaymentType.Enabled = allow;
+            gpPaymentType.Visible = allow;
+
+            var col = tlpUpper.ColumnStyles[_PaymentReasonIndex];
 
             col.SizeType = SizeType.Absolute;
-            col.Width = allow ? _dateColWidth : 0;
+            col.Width = allow ? _PaymentReasonWidth : 0;
         }
 
         private void ChangePagginUI(bool value)
@@ -433,9 +514,43 @@ namespace InventorySalesManagementSystem.UserControles
         {
             return dgvData.CurrentRow?.DataBoundItem as T;
         }
+        public List<InvoiceType> GetInvoiceTypes()
+        {
+            List<InvoiceType> types = new List<InvoiceType>();
 
+            if (_allowInvoiceFilter && chkSell.Checked)
+                types.Add(InvoiceType.Sale);
 
+            if (_allowInvoiceFilter && chkEvaluation.Checked)
+                types.Add(InvoiceType.Evaluation);
 
+            return types;
+        }
+        public List<InvoiceState> GetInvoiceStates()
+        {
+            List<InvoiceState> states = new List<InvoiceState>();
+
+            if (_allowInvoiceFilter && chkOpen.Checked)
+                states.Add(InvoiceState.Open);
+
+            if (_allowInvoiceFilter && chkClose.Checked)
+                states.Add(InvoiceState.Closed);
+
+            return states;
+        }
+        public List<PaymentReason> GetPaymentReasons()
+        {
+            List<PaymentReason> reasons = new List<PaymentReason>();
+
+            if (_allowPaymentFilter && chkRefund.Checked)
+                reasons.Add(PaymentReason.Refund);
+
+            if (_allowPaymentFilter && chkInvoice.Checked)
+                reasons.Add(PaymentReason.Invoice);
+
+            return reasons;
+
+        }
         public class FilterItems
         {
             public string DisplayName { get; set; }
@@ -607,6 +722,7 @@ namespace InventorySalesManagementSystem.UserControles
         {
             RefreshData(RefreshDataOperation.DirectFilter);
         }
+
     }
 
 
