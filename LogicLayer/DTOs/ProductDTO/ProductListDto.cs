@@ -7,6 +7,7 @@
         public decimal SellingPrice { get; set; }
         public decimal QuantityInStorage { get; set; }
         public bool IsAvilable { get; set; }
+        public int ProductTypeId { get; set; }
         public decimal Profit
         {
             get

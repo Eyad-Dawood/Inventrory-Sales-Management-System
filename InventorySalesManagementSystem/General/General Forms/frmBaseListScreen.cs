@@ -66,8 +66,6 @@ namespace InventorySalesManagementSystem.General.General_Forms
         #region Config
         protected virtual void ConfigureGrid(DataGridView dgv)
         {
-
-
             dgv.ContextMenuStrip = GridContextMenu;
         }
 

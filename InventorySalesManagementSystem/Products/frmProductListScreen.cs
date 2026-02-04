@@ -61,6 +61,7 @@ namespace InventorySalesManagementSystem.Products
             base.ConfigureGrid(dgv);
 
 
+
             // ===== ProductId =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
@@ -222,7 +223,7 @@ namespace InventorySalesManagementSystem.Products
         #region Buttons Event
         protected async override Task HandleAddButtonClicked()
         {
-            var frm = await frmUpdateProduct.CreateForAdd(_serviceProvider);
+            var frm = await frmAddUpdateProduct.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();
@@ -243,7 +244,7 @@ namespace InventorySalesManagementSystem.Products
 
             try
             {
-                var frm = await frmUpdateProduct.CreateForUpdate(_serviceProvider, item.ProductId);
+                var frm = await frmAddUpdateProduct.CreateForUpdate(_serviceProvider, item.ProductTypeId);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)

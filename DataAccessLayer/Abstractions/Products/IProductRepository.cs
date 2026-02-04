@@ -21,5 +21,6 @@ namespace DataAccessLayer.Abstractions.Products
         public Task<int> GetTotalPagesByProductTypeNameAsync(string ProductTypeName, int RowsPerPage, bool? ActivationState);
         public Task<int> GetTotalPagesByActivationState(bool? ActivationState, int RowsPerPage);
         public Task<List<Product>> GetProductsByIdsAsync(List<int> Ids);
+        public Task<List<Product>> GetProductsForUpdateAggregateByTypeIdAsync(int ProductTypeId);
     }
 }

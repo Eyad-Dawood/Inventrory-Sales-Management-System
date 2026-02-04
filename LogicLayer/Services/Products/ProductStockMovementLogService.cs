@@ -1,17 +1,9 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Abstractions.Products;
 using DataAccessLayer.Entities.Products;
-using DataAccessLayer.Repos;
-using LogicLayer.DTOs.ProductDTO;
-using LogicLayer.DTOs.ProductDTO.PriceLogDTO;
 using LogicLayer.DTOs.ProductDTO.StockMovementLogDTO;
 using LogicLayer.Utilities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LogicLayer.Validation.Exceptions;
 
 namespace LogicLayer.Services.Products
 {
@@ -62,6 +54,26 @@ namespace LogicLayer.Services.Products
         }
         #endregion
 
+        public async Task AddProductStockMovementLogAggregateAsync(List<ProductStockMovementLogAddDto>DTOs)
+        {
+            List<ProductStockMovementLog> Products = new List<ProductStockMovementLog>();
+
+            if (DTOs.Count == 0)
+                throw new OperationFailedException("لا يوجد سجلات لحفظها");
+
+
+            foreach(ProductStockMovementLogAddDto dto in DTOs)
+            {
+                MapNullValues(dto);
+
+                ProductStockMovementLog productStockMovementLog = MapProductStockMovementLog_AddDto(dto);
+
+                Products.Add( productStockMovementLog);
+            }
+
+            await _ProductStockMovementLogrepository.AddRangeAsync(Products);
+
+        }
         public async Task AddProductStockMovementLogAsync(ProductStockMovementLogAddDto DTO)
         {
             MapNullValues(DTO);

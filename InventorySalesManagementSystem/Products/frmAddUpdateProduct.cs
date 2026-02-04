@@ -7,141 +7,283 @@ using LogicLayer.Services.Products;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel;
 
 namespace InventorySalesManagementSystem.Products
 {
-    public partial class frmUpdateProduct : Form
+    public partial class frmAddUpdateProduct : Form
     {
         int ProductTypeId = -1;
 
         private Enums.FormStateEnum State { set; get; }
 
-        private ProductAddDto _productAdd { set; get; }
-        private ProductUpdateDto _productUpdate { set; get; }
-
+        private BindingList<ProductAddDto> _productsAdd;
+        private BindingList<ProductUpdateDto> _productsUpdate;
         private IServiceProvider _serviceProvider { set; get; }
 
-        private frmUpdateProduct(IServiceProvider serviceProvider)
+        private frmAddUpdateProduct(IServiceProvider serviceProvider)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
         }
 
+        #region Config
+
+        private void ConfigAddMode()
+        {
+            // Defualt Settings
+            dgvData.AutoGenerateColumns = false;
+            dgvData.Columns.Clear();
+
+
+            dgvData.AllowUserToAddRows = false;
+            dgvData.AllowUserToDeleteRows = false;
+            dgvData.ReadOnly = false;
+            dgvData.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dgvData.MultiSelect = false;
+
+            dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            dgvData.ColumnHeadersDefaultCellStyle.Font =
+                new Font(dgvData.Font, FontStyle.Bold);
+
+            dgvData.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvData.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+
+            dgvData.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
+            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            // ===== ProductName =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(ProductAddDto.ProductName),
+                DataPropertyName = nameof(ProductAddDto.ProductName),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.ProductName)),
+                FillWeight = 35
+            });
+
+
+            // ===== BuyingPrice =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(ProductAddDto.BuyingPrice),
+                DataPropertyName = nameof(ProductAddDto.BuyingPrice),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.BuyingPrice)),
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                }
+            });
+
+            // ===== SellingPrice =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(ProductAddDto.SellingPrice),
+                DataPropertyName = nameof(ProductAddDto.SellingPrice),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.SellingPrice)),
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                }
+            });
+
+
+
+
+            // ===== Quantity =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(ProductAddDto.QuantityInStorage),
+                DataPropertyName = nameof(ProductAddDto.QuantityInStorage),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.QuantityInStorage)),
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                }
+            });
+
+
+            // ===== IsAvilable =====
+            dgvData.Columns.Add(new DataGridViewCheckBoxColumn
+            {
+                Name = nameof(ProductAddDto.IsAvailable),
+                DataPropertyName = nameof(ProductAddDto.IsAvailable),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.IsAvailable)),
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+            });
+
+
+            dgvData.DataSource = this._productsAdd;
+        }
+
+        private void ConfigUpdateMode()
+        {
+            // Defualt Settings
+            dgvData.AutoGenerateColumns = false;
+            dgvData.Columns.Clear();
+
+            dgvData.AllowUserToAddRows = true;
+            dgvData.AllowUserToDeleteRows = false;
+            dgvData.ReadOnly = false;
+            dgvData.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dgvData.MultiSelect = false;
+
+            dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            dgvData.ColumnHeadersDefaultCellStyle.Font =
+                new Font(dgvData.Font, FontStyle.Bold);
+
+            dgvData.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvData.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+
+            dgvData.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
+            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            // ===== ProductName =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(ProductUpdateDto.ProductName),
+                DataPropertyName = nameof(ProductUpdateDto.ProductName),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.ProductName)),
+                FillWeight = 35
+            });
+
+
+            // ===== BuyingPrice =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(ProductUpdateDto.BuyingPrice),
+                DataPropertyName = nameof(ProductUpdateDto.BuyingPrice),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.BuyingPrice)),
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                }
+            });
+
+            // ===== SellingPrice =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(ProductUpdateDto.SellingPrice),
+                DataPropertyName = nameof(ProductUpdateDto.SellingPrice),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.SellingPrice)),
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                }
+            });
+
+            // ===== Quantity =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(ProductUpdateDto.Quantity),
+                DataPropertyName = nameof(ProductUpdateDto.Quantity),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.QuantityInStorage)),
+                FillWeight = 15,
+                ReadOnly = true,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                }
+            });
+
+
+            // ===== IsAvilable =====
+            dgvData.Columns.Add(new DataGridViewCheckBoxColumn
+            {
+                Name = nameof(ProductUpdateDto.IsAvilable),
+                DataPropertyName = nameof(ProductUpdateDto.IsAvilable),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.IsAvailable)),
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                ReadOnly = true
+            });
+
+
+            dgvData.DataSource = this._productsUpdate;
+
+        }
+        #endregion
 
         private async Task SetupAdd()
         {
             State = Enums.FormStateEnum.AddNew;
 
-            lbTitle.Text = "إضافة صنف";
-            lbId.Text = "---";
+            lbTitle.Text = "إضافة أصناف";
 
-            _productAdd = new ProductAddDto();
+            _productsAdd = new BindingList<ProductAddDto>();
+
+            ConfigAddMode();
         }
 
-        private void SetupUpdate(ProductUpdateDto dto, ProductReadDto productReadDto)
+        private void SetupUpdate(BindingList<ProductUpdateDto> dtos,string ProductTypeName)
         {
             State = Enums.FormStateEnum.Update;
 
-            _productUpdate = dto;
+            _productsUpdate = dtos;
 
-            lbTitle.Text = "تعديل صنف";
+            lbTitle.Text = "تعديل أصناف";
+            txtProductTypeName.Text = ProductTypeName;
 
+            btnAddProduct.Enabled = false;
+            btnAddProduct.Visible = false;
 
-            chkAvilable.Enabled = false;
-            txtQuantity.Enabled = false;
-            txtProductTypeName.Enabled = false;
-
+            btnDelete.Visible = false;
+            btnDelete.Enabled = false;
 
             lkSelectProductType.Enabled = false;
 
-            LoadUpdateData(productReadDto);
+            ConfigUpdateMode();
         }
 
-        private void LoadUpdateData(ProductReadDto productReadDto)
+        public static async Task<frmAddUpdateProduct> CreateForAdd(IServiceProvider serviceProvider)
         {
-            lbId.Text = _productUpdate.ProductId.ToString();
-
-            txtQuantity.Text = productReadDto.QuantityInStorage.ToString();
-            txtProductTypeName.Text = productReadDto.ProductTypeName;
-            chkAvilable.Checked = productReadDto.IsAvailable;
-
-            txtProductName.Text = _productUpdate.ProductName.ToString();
-            txtBuyingPrice.Text = _productUpdate.BuyingPrice.ToString();
-            txtSellingPrice.Text = _productUpdate.SellingPrice.ToString();
-            chkAvilable.Checked = _productUpdate.IsAvilable;
-        }
-
-        public static async Task<frmUpdateProduct> CreateForAdd(IServiceProvider serviceProvider)
-        {
-            var form = new frmUpdateProduct(serviceProvider);
+            var form = new frmAddUpdateProduct(serviceProvider);
             await form.SetupAdd();
             return form;
         }
-        public static async Task<frmUpdateProduct> CreateForUpdate(IServiceProvider serviceProvider, int ProductId)
+        public static async Task<frmAddUpdateProduct> CreateForUpdate(IServiceProvider serviceProvider, int ProductTypeId)
         {
             using (var scope = serviceProvider.CreateAsyncScope())
             {
                 var service = scope.ServiceProvider.GetRequiredService<ProductService>();
+                var TypeService = scope.ServiceProvider.GetRequiredService<ProductTypeService>();
 
-                var dto = await service.GetProductForUpdateAsync(ProductId);
+                var type = await TypeService.GetProductTypeByIdAsync(ProductTypeId);
+                var dtos = await service.GetProductsForUpdateAggregateByTypeIdAsync(ProductTypeId);
 
-                var productRead = await service.GetProductByIdAsync(ProductId); // To Get The Un Editable Data
-
-                frmUpdateProduct frm = new frmUpdateProduct(serviceProvider);
-                frm.SetupUpdate(dto, productRead);
+                frmAddUpdateProduct frm = new frmAddUpdateProduct(serviceProvider);
+                frm.SetupUpdate(new BindingList<ProductUpdateDto>(dtos),type.Name);
                 return frm;
             }
         }
 
-        private void FillProductAdd()
+
+        private void ValidatePricesLogic(decimal buyingPrice, decimal SellingPrice)
         {
-            _productAdd.ProductName = txtProductName.Text;
-            _productAdd.QuantityInStorage = Convert.ToDecimal(txtQuantity.Text);
-            _productAdd.BuyingPrice = Convert.ToDecimal(txtBuyingPrice.Text);
-            _productAdd.SellingPrice = Convert.ToDecimal(txtSellingPrice.Text);
-            _productAdd.ProductTypeId = ProductTypeId;
-            _productAdd.IsAvailable = chkAvilable.Checked;
-      
-        }
-        private void FillProductUpdate()
-        {
-            _productUpdate.ProductName = txtProductName.Text;
-            _productUpdate.BuyingPrice = Convert.ToDecimal(txtBuyingPrice.Text);
-            _productUpdate.SellingPrice = Convert.ToDecimal(txtSellingPrice.Text);
-        }
-
-
-        private void ValidationCore(string BuyingPrice, string SellingPrice, string Quantity, bool ValidateQuantity)
-        {
-            var errors = new List<string>();
-
-            if (!FormatValidation.IsValidDecimal(BuyingPrice))
-            {
-                string propertyName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.BuyingPrice));
-                errors.Add($"{propertyName} تنسيقه غير صحيح");
-            }
-
-            if (!FormatValidation.IsValidDecimal(SellingPrice))
-            {
-                string propertyName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.SellingPrice));
-                errors.Add($"{propertyName} تنسيقه غير صحيح");
-            }
-
-            if (ValidateQuantity && !FormatValidation.IsValidDecimal(Quantity))
-            {
-                string propertyName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.QuantityInStorage));
-                errors.Add($"{propertyName} تنسيقه غير صحيح");
-            }
-
-            if (errors.Any())
-            {
-                throw new ValidationException(errors);
-            }
-        }
-
-        private void ValidatePricesLogic()
-        {
-            if (Convert.ToDecimal(txtBuyingPrice.Text) > Convert.ToDecimal(txtSellingPrice.Text))
+            if (buyingPrice > SellingPrice)
             {
                 string arabicbuyingprice = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.BuyingPrice));
                 string arabicSellingprice = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Product), nameof(Product.SellingPrice));
@@ -151,42 +293,45 @@ namespace InventorySalesManagementSystem.Products
 
         private async Task UpdateProduct(ProductService ProductService, int userId)
         {
-            //Validate Values Format
-            ValidationCore(txtBuyingPrice.Text, txtSellingPrice.Text, txtQuantity.Text, false);
+            foreach (ProductUpdateDto product in _productsUpdate)
+            {
+                ValidatePricesLogic(product.BuyingPrice, product.SellingPrice);
+            }
 
-            //Validate Logic (cannot do it before the text values check)
-            ValidatePricesLogic();
-
-            FillProductUpdate();
-
-
-
-
-            await ProductService.UpdateProductAsync(_productUpdate, userId);
+            await ProductService.UpdateProductAggregateAsync(_productsUpdate.ToList(), userId);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تم التحديث بنجاح");
             this.Close();
         }
+
         private async Task AddProduct(ProductService ProductService, int userId)
         {
-
-            //Validate Model
             if (ProductTypeId <= 0)
             {
                 throw new ValidationException(new List<string> { "يجب اختيار موديل المنتج أولاً" });
             }
 
-            //Validate Values Format
-            ValidationCore(txtBuyingPrice.Text, txtSellingPrice.Text, txtQuantity.Text, true);
+            if (_productsAdd.Count == 0)
+            {
+                throw new ValidationException(new List<string> { "يجب إضافة منتج واحد على الأقل" });
+            }
 
-            //Validate Logic (cannot do it before the text values check)
-            ValidatePricesLogic();
+            foreach (ProductAddDto product in _productsAdd)
+            {
+                ValidatePricesLogic(product.BuyingPrice, product.SellingPrice);
+
+                if (string.IsNullOrEmpty(product.ProductName))
+                    throw new ValidationException(new List<string> { "إسم المنتج لا يمكن أن يكون فارغا" });
+
+                product.ProductTypeId = ProductTypeId;
+
+            }
+            //Validate Model
 
 
-            FillProductAdd();
 
-            await ProductService.AddProductAsync(_productAdd, userId);
+            await ProductService.AddProductAggregateAsync(_productsAdd.ToList(), userId);
 
             //If Exception Is Thrown it Will Stop Here
             MessageBox.Show($"تمت الإضافة بنجاح");
@@ -219,8 +364,6 @@ namespace InventorySalesManagementSystem.Products
                     }
                     else if (State == Enums.FormStateEnum.Update)
                     {
-
-
                         await UpdateProduct(ProductService, userid);
                     }
                 }
@@ -279,9 +422,34 @@ namespace InventorySalesManagementSystem.Products
             }
         }
 
-        private void txtProductTypeName_TextChanged(object sender, EventArgs e)
+        private void btnAddProduct_Click(object sender, EventArgs e)
         {
+            if (ProductTypeId <= 0)
+            {
+                MessageBox.Show("يجب اختيار موديل المنتج أولاً");
+                return;
+            }
 
+            if (State == Enums.FormStateEnum.AddNew)
+            {
+                _productsAdd.Add(new ProductAddDto() { IsAvailable = true });
+            }
+        }
+
+        private void dgvData_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            MessageBox.Show("من فضلك أدخل رقم صحيح");
+            e.Cancel = true;
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+           var item =  dgvData.CurrentRow?.DataBoundItem as ProductAddDto;
+
+            if (item != null)
+            {
+                _productsAdd.Remove(item);
+            }
         }
     }
 }

@@ -37,19 +37,19 @@
             // 
             // ucListView1
             // 
-            ucListView1.Size = new Size(1007, 423);
+            ucListView1.Size = new Size(884, 526);
             // 
             // btnSelect
             // 
-            btnSelect.Location = new Point(927, 0);
+            btnSelect.Location = new Point(804, 0);
             // 
             // lbTitle
             // 
-            lbTitle.Size = new Size(1007, 95);
+            lbTitle.Size = new Size(884, 95);
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(967, 0);
+            btnAdd.Location = new Point(844, 0);
             // 
             // cms
             // 
@@ -88,9 +88,10 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1007, 558);
+            ClientSize = new Size(884, 661);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
+            MinimumSize = new Size(900, 700);
             Name = "frmProductTypeListScreen";
             Controls.SetChildIndex(ucListView1, 0);
             cms.ResumeLayout(false);

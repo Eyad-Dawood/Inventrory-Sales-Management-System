@@ -175,5 +175,18 @@ namespace DataAccessLayer.Repos.Products
                .Take(RowsPerPage)
                .ToListAsync();
         }
+
+        public async Task<List<Product>> GetProductsForUpdateAggregateByTypeIdAsync(int ProductTypeId)
+        {
+            return
+               await
+               _context.Products
+               .AsNoTracking()
+               .Include(p => p.ProductType)
+               .Where(p =>
+                ProductTypeId == p.ProductTypeId)
+               .OrderBy(c => c.ProductId)
+               .ToListAsync();
+        }
     }
 }

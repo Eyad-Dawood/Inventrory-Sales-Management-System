@@ -1,6 +1,6 @@
 ﻿namespace InventorySalesManagementSystem.Products
 {
-    partial class frmUpdateProduct
+    partial class frmAddUpdateProduct
     {
         /// <summary>
         /// Required designer variable.
@@ -30,28 +30,26 @@
         {
             btnCancel = new Button();
             btnSave = new Button();
-            lbId = new Label();
-            label9 = new Label();
             lbTitle = new Label();
-            label1 = new Label();
-            txtProductName = new TextBox();
             label2 = new Label();
             txtProductTypeName = new TextBox();
             lkSelectProductType = new LinkLabel();
-            txtBuyingPrice = new TextBox();
-            label4 = new Label();
-            txtSellingPrice = new TextBox();
-            label5 = new Label();
-            chkAvilable = new CheckBox();
-            txtQuantity = new TextBox();
-            lbStorageQuantity = new Label();
+            dgvData = new DataGridView();
+            panel1 = new Panel();
+            panel2 = new Panel();
+            btnAddProduct = new Button();
+            btnDelete = new Button();
+            ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // btnCancel
             // 
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnCancel.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnCancel.ForeColor = Color.Red;
-            btnCancel.Location = new Point(513, 229);
+            btnCancel.Location = new Point(567, 6);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(96, 30);
             btnCancel.TabIndex = 9;
@@ -61,37 +59,16 @@
             // 
             // btnSave
             // 
+            btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnSave.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSave.Location = new Point(615, 229);
+            btnSave.Location = new Point(669, 6);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(96, 30);
             btnSave.TabIndex = 8;
             btnSave.Text = "حفظ";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
-            // 
-            // lbId
-            // 
-            lbId.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            lbId.ForeColor = Color.Red;
-            lbId.Location = new Point(412, 76);
-            lbId.Name = "lbId";
-            lbId.RightToLeft = RightToLeft.Yes;
-            lbId.Size = new Size(162, 25);
-            lbId.TabIndex = 35;
-            lbId.Text = "----";
-            // 
-            // label9
-            // 
-            label9.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            label9.ForeColor = Color.Red;
-            label9.Location = new Point(580, 76);
-            label9.Name = "label9";
-            label9.RightToLeft = RightToLeft.Yes;
-            label9.Size = new Size(131, 25);
-            label9.TabIndex = 34;
-            label9.Text = "معرف الصنف : ";
             // 
             // lbTitle
             // 
@@ -101,33 +78,16 @@
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(724, 62);
+            lbTitle.Size = new Size(771, 62);
             lbTitle.TabIndex = 36;
-            lbTitle.Text = "إضافة صنف";
+            lbTitle.Text = "إضافة أصناف";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // label1
-            // 
-            label1.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            label1.Location = new Point(656, 142);
-            label1.Name = "label1";
-            label1.RightToLeft = RightToLeft.Yes;
-            label1.Size = new Size(69, 25);
-            label1.TabIndex = 37;
-            label1.Text = "الإسم : ";
-            // 
-            // txtProductName
-            // 
-            txtProductName.Location = new Point(356, 145);
-            txtProductName.Name = "txtProductName";
-            txtProductName.RightToLeft = RightToLeft.Yes;
-            txtProductName.Size = new Size(259, 23);
-            txtProductName.TabIndex = 1;
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label2.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            label2.Location = new Point(641, 106);
+            label2.Location = new Point(680, 7);
             label2.Name = "label2";
             label2.RightToLeft = RightToLeft.Yes;
             label2.Size = new Size(85, 25);
@@ -136,9 +96,10 @@
             // 
             // txtProductTypeName
             // 
+            txtProductTypeName.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             txtProductTypeName.BorderStyle = BorderStyle.FixedSingle;
             txtProductTypeName.Enabled = false;
-            txtProductTypeName.Location = new Point(336, 109);
+            txtProductTypeName.Location = new Point(381, 10);
             txtProductTypeName.Name = "txtProductTypeName";
             txtProductTypeName.ReadOnly = true;
             txtProductTypeName.RightToLeft = RightToLeft.Yes;
@@ -149,127 +110,112 @@
             // lkSelectProductType
             // 
             lkSelectProductType.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            lkSelectProductType.Location = new Point(305, 113);
+            lkSelectProductType.Location = new Point(323, 11);
             lkSelectProductType.Name = "lkSelectProductType";
             lkSelectProductType.RightToLeft = RightToLeft.Yes;
-            lkSelectProductType.Size = new Size(25, 13);
+            lkSelectProductType.Size = new Size(52, 20);
             lkSelectProductType.TabIndex = 0;
             lkSelectProductType.TabStop = true;
             lkSelectProductType.Text = "أختر";
+            lkSelectProductType.TextAlign = ContentAlignment.MiddleCenter;
             lkSelectProductType.LinkClicked += lkSelectProductType_LinkClicked;
             // 
-            // txtBuyingPrice
+            // dgvData
             // 
-            txtBuyingPrice.Location = new Point(12, 111);
-            txtBuyingPrice.Name = "txtBuyingPrice";
-            txtBuyingPrice.Size = new Size(94, 23);
-            txtBuyingPrice.TabIndex = 4;
+            dgvData.AllowUserToAddRows = false;
+            dgvData.AllowUserToDeleteRows = false;
+            dgvData.AllowUserToResizeColumns = false;
+            dgvData.AllowUserToResizeRows = false;
+            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvData.Dock = DockStyle.Fill;
+            dgvData.Location = new Point(0, 98);
+            dgvData.Name = "dgvData";
+            dgvData.RightToLeft = RightToLeft.Yes;
+            dgvData.RowHeadersVisible = false;
+            dgvData.Size = new Size(771, 273);
+            dgvData.TabIndex = 43;
+            dgvData.DataError += dgvData_DataError;
             // 
-            // label4
+            // panel1
             // 
-            label4.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            label4.Location = new Point(123, 108);
-            label4.Name = "label4";
-            label4.RightToLeft = RightToLeft.Yes;
-            label4.Size = new Size(110, 25);
-            label4.TabIndex = 45;
-            label4.Text = "سعر الشراء : ";
+            panel1.Controls.Add(btnSave);
+            panel1.Controls.Add(btnCancel);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 371);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(771, 42);
+            panel1.TabIndex = 44;
             // 
-            // txtSellingPrice
+            // panel2
             // 
-            txtSellingPrice.Location = new Point(12, 148);
-            txtSellingPrice.Name = "txtSellingPrice";
-            txtSellingPrice.Size = new Size(94, 23);
-            txtSellingPrice.TabIndex = 5;
+            panel2.Controls.Add(btnAddProduct);
+            panel2.Controls.Add(btnDelete);
+            panel2.Controls.Add(txtProductTypeName);
+            panel2.Controls.Add(label2);
+            panel2.Controls.Add(lkSelectProductType);
+            panel2.Dock = DockStyle.Top;
+            panel2.Location = new Point(0, 62);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(771, 36);
+            panel2.TabIndex = 45;
             // 
-            // label5
+            // btnAddProduct
             // 
-            label5.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            label5.Location = new Point(133, 143);
-            label5.Name = "label5";
-            label5.RightToLeft = RightToLeft.Yes;
-            label5.Size = new Size(100, 25);
-            label5.TabIndex = 47;
-            label5.Text = "سعر البيع : ";
+            btnAddProduct.BackgroundImage = Properties.Resources.addIcon;
+            btnAddProduct.BackgroundImageLayout = ImageLayout.Stretch;
+            btnAddProduct.Location = new Point(3, 3);
+            btnAddProduct.Name = "btnAddProduct";
+            btnAddProduct.Size = new Size(30, 30);
+            btnAddProduct.TabIndex = 56;
+            btnAddProduct.TabStop = false;
+            btnAddProduct.UseVisualStyleBackColor = true;
+            btnAddProduct.Click += btnAddProduct_Click;
             // 
-            // chkAvilable
+            // btnDelete
             // 
-            chkAvilable.Checked = true;
-            chkAvilable.CheckState = CheckState.Checked;
-            chkAvilable.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            chkAvilable.Location = new Point(23, 222);
-            chkAvilable.Name = "chkAvilable";
-            chkAvilable.Size = new Size(64, 29);
-            chkAvilable.TabIndex = 7;
-            chkAvilable.Text = "متاح";
-            chkAvilable.UseVisualStyleBackColor = true;
+            btnDelete.BackgroundImage = Properties.Resources.DeleteIcon;
+            btnDelete.BackgroundImageLayout = ImageLayout.Stretch;
+            btnDelete.Location = new Point(35, 3);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(30, 30);
+            btnDelete.TabIndex = 55;
+            btnDelete.TabStop = false;
+            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
             // 
-            // txtQuantity
-            // 
-            txtQuantity.Location = new Point(12, 186);
-            txtQuantity.Name = "txtQuantity";
-            txtQuantity.Size = new Size(94, 23);
-            txtQuantity.TabIndex = 6;
-            // 
-            // lbStorageQuantity
-            // 
-            lbStorageQuantity.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            lbStorageQuantity.Location = new Point(106, 181);
-            lbStorageQuantity.Name = "lbStorageQuantity";
-            lbStorageQuantity.RightToLeft = RightToLeft.Yes;
-            lbStorageQuantity.Size = new Size(127, 25);
-            lbStorageQuantity.TabIndex = 50;
-            lbStorageQuantity.Text = "كمية المخزون : ";
-            // 
-            // frmUpdateProduct
+            // frmAddUpdateProduct
             // 
             AcceptButton = btnSave;
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
-            ClientSize = new Size(724, 263);
-            Controls.Add(txtQuantity);
-            Controls.Add(lbStorageQuantity);
-            Controls.Add(chkAvilable);
-            Controls.Add(txtSellingPrice);
-            Controls.Add(label5);
-            Controls.Add(txtBuyingPrice);
-            Controls.Add(label4);
-            Controls.Add(lkSelectProductType);
-            Controls.Add(txtProductTypeName);
-            Controls.Add(label2);
-            Controls.Add(txtProductName);
-            Controls.Add(label1);
+            ClientSize = new Size(771, 413);
+            Controls.Add(dgvData);
+            Controls.Add(panel2);
+            Controls.Add(panel1);
             Controls.Add(lbTitle);
-            Controls.Add(lbId);
-            Controls.Add(label9);
-            Controls.Add(btnCancel);
-            Controls.Add(btnSave);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
-            Name = "frmUpdateProduct";
+            Name = "frmAddUpdateProduct";
+            ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
+            panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private Button btnCancel;
         private Button btnSave;
-        private Label lbId;
-        private Label label9;
         private Label lbTitle;
-        private Label label1;
-        private TextBox txtProductName;
         private Label label2;
         private TextBox txtProductTypeName;
         private LinkLabel lkSelectProductType;
-        private TextBox txtBuyingPrice;
-        private Label label4;
-        private TextBox txtSellingPrice;
-        private Label label5;
-        private CheckBox chkAvilable;
-        private TextBox txtQuantity;
-        private Label lbStorageQuantity;
+        private DataGridView dgvData;
+        private Panel panel1;
+        private Panel panel2;
+        private Button btnAddProduct;
+        private Button btnDelete;
     }
 }

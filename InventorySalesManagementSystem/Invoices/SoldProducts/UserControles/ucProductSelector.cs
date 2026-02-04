@@ -418,7 +418,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         private async Task PerformAddProduct()
         {
-            var frm = await frmUpdateProduct.CreateForAdd(_serviceProvider);
+            var frm = await frmAddUpdateProduct.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();

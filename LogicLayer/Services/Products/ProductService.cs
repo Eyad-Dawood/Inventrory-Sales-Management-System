@@ -59,7 +59,6 @@ namespace LogicLayer.Services.Products
             product.SellingPrice = DTO.SellingPrice;
             product.BuyingPrice = DTO.BuyingPrice;
             product.ProductName = DTO.ProductName;
-            product.IsAvailable = DTO.IsAvilable;
         }
         private ProductReadDto MapProduct_ReadDto(Product product)
         {
@@ -85,12 +84,25 @@ namespace LogicLayer.Services.Products
                 ProductId = product.ProductId,
                 QuantityInStorage = product.QuantityInStorage,
                 ProductName = product.ProductName,
-                ProductTypeName = product.ProductType.ProductTypeName
+                ProductTypeName = product.ProductType.ProductTypeName,
+                ProductTypeId = product.ProductTypeId,
             };
         }
 
         private ProductUpdateDto MapProduct_UpdateDto(Product product)
         {
+            var productRead = new ProductReadDto()
+            {
+                BuyingPrice = product.BuyingPrice,
+                IsAvailable = product.IsAvailable,
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                QuantityInStorage = product.QuantityInStorage,
+                SellingPrice = product.SellingPrice,
+                TotalQuantitySold = 0,
+                ProductTypeName = string.Empty,
+            };
+
             return new ProductUpdateDto()
             {
                 BuyingPrice = product.BuyingPrice,
@@ -98,6 +110,7 @@ namespace LogicLayer.Services.Products
                 ProductId = product.ProductId,
                 ProductName = product.ProductName,
                 SellingPrice = product.SellingPrice,
+                Quantity = product.QuantityInStorage
             };
         }
         private ProductPriceLogAddDto MapProduct_PriceLogDto(
@@ -146,32 +159,48 @@ namespace LogicLayer.Services.Products
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails.
         /// </exception>
-        public async Task AddProductAsync(ProductAddDto DTO,int UserId)
+        public async Task AddProductAggregateAsync(List<ProductAddDto> DTOs,int UserId)
         {
-            Product Product = MapProduct_AddDto(DTO);
+            List<Product>products = new List<Product>();
 
-            ValidationHelper.ValidateEntity(Product);
+            if (DTOs == null || DTOs.Count == 0)
+                throw new OperationFailedException("لا توجد منتجات لإضافتها");
+
+            foreach (ProductAddDto dto in DTOs)
+            {
+                var product = MapProduct_AddDto(dto);
+                ValidationHelper.ValidateEntity(product);
+                products.Add(product);
+            }
+
 
             using (var Transaction = await _unitOfWork.BeginTransactionAsync())
             {
 
                 try
                 {
-                    await _productRepo.AddAsync(Product);
-
-                    //To Get Id 
+                    await _productRepo.AddRangeAsync(products);
+                    //To Get Ids
                     await _unitOfWork.SaveAsync();
 
 
                     //Log
-                    var logDto = MapProduct_StockMovementLogDto(
-                                Product,
+                    List<ProductStockMovementLogAddDto> logDtos = new List<ProductStockMovementLogAddDto>();
+
+                    foreach(Product product in products)
+                    {
+                        var logDto = MapProduct_StockMovementLogDto(
+                                product,
                                 UserId,
                                 StockMovementReason.InitialStock,
                                 0,
                                 "كمية افتتاحية عند إضافة المنتج لأول مرة");
 
-                   await _stockMovementService.AddProductStockMovementLogAsync(logDto);
+                        logDtos.Add(logDto);
+                    }
+                    
+
+                   await _stockMovementService.AddProductStockMovementLogAggregateAsync(logDtos);
 
 
                     await _unitOfWork.SaveAsync();
@@ -180,16 +209,12 @@ namespace LogicLayer.Services.Products
                 catch (Exception ex)
                 {
                     _logger.LogError(ex,
-                        "Failed to add product {ProductName}",
-                        DTO.ProductName);
+                        "Failed to add products"
+                        );
 
                     _logger.LogError(ex,
-                       "Failed to change product {ProductId} quantity from {OldQuantity} by {QuantityChange} by user {UserId} for reason {Reason}",
-                       Product.ProductId,
-                       0,
-                       Product.QuantityInStorage,
-                       UserId,
-                       StockMovementReason.InitialStock);
+                       "Failed to change products quantitys from  by user {UserId}",
+                       UserId);
 
                     await Transaction.RollbackAsync();
                     throw new OperationFailedException(ex);
@@ -199,33 +224,35 @@ namespace LogicLayer.Services.Products
 
 
 
-        /// <exception cref="NotFoundException">
-        /// Thrown when the provided entity is null.
-        /// </exception>
         /// <exception cref="ValidationException">
         /// Thrown when the entity fails validation rules.
         /// </exception>
         /// <exception cref="OperationFailedException">
         /// Thrown when the Operation fails
         /// </exception>
-        public async Task UpdateProductAsync(ProductUpdateDto dto, int userId)
+        public async Task UpdateProductAggregateAsync(List<ProductUpdateDto> dtos,int userId)
         {
-            var product = await _productRepo.GetByIdAsync(dto.ProductId);
+            var products = await _productRepo.GetProductsByIdsAsync(dtos.Select(d=>d.ProductId).ToList());
 
-            if (product == null)
+            if (products == null || products.Count == 0)
                 throw new NotFoundException(typeof(Product));
-
-            var oldBuyingPrice = product.BuyingPrice;
-            var oldSellingPrice = product.SellingPrice;
-
-            ApplyProductUpdate(product, dto);
-            ValidationHelper.ValidateEntity(product);
-
 
             using (var Transaction = await _unitOfWork.BeginTransactionAsync())
             {
                 try
                 {
+                    var productDict = products.ToDictionary(p => p.ProductId);
+
+                    foreach (var dto in dtos.GroupBy(d => d.ProductId).Select(g => g.Last())) // Dublication Problem
+                    {
+                        if (!productDict.TryGetValue(dto.ProductId, out var product))
+                            throw new NotFoundException(typeof(Product));
+
+                        var oldBuyingPrice = product.BuyingPrice;
+                    var oldSellingPrice = product.SellingPrice;
+
+                    ApplyProductUpdate(product, dto);
+                    ValidationHelper.ValidateEntity(product);
 
                     if (oldBuyingPrice != product.BuyingPrice ||
                         oldSellingPrice != product.SellingPrice)
@@ -237,9 +264,11 @@ namespace LogicLayer.Services.Products
                         oldSellingPrice,
                         userId);
 
-                       await _pricelogService.AddProductPriceLogAsync(logDto);
+                        await _pricelogService.AddProductPriceLogAsync(logDto);
                     }
-
+                }
+                
+                
                     await _unitOfWork.SaveAsync();
 
                     await Transaction.CommitAsync();
@@ -247,8 +276,7 @@ namespace LogicLayer.Services.Products
                 catch (Exception ex)
                 {
                     _logger.LogError(ex,
-                        "Failed to update product {ProductId} by user {UserId}",
-                        dto.ProductId,
+                        "Failed to update products by user {UserId}",
                         userId);
 
                     await Transaction.RollbackAsync();
@@ -466,17 +494,13 @@ namespace LogicLayer.Services.Products
          
 
 
-        /// <exception cref="NotFoundException">
-        /// Thrown when the provided entity is null.
-        /// </exception>
-        public async Task<ProductUpdateDto> GetProductForUpdateAsync(int ProductId)
+        
+        public async Task<List<ProductUpdateDto>> GetProductsForUpdateAggregateByTypeIdAsync(int TypeId)
         {
-            Product? product = await _productRepo.GetByIdAsync(ProductId);
-            if (product == null)
-            {
-                throw new NotFoundException(typeof(Product));
-            }
-            return MapProduct_UpdateDto(product);
+            var products
+                = await _productRepo.GetProductsForUpdateAggregateByTypeIdAsync(TypeId);
+           
+            return products.Select( p => MapProduct_UpdateDto(p)).ToList();
         }
 
 
