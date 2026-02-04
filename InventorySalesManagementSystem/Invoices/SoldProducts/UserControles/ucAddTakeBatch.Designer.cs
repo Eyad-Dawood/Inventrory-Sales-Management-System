@@ -33,11 +33,14 @@
             txtNote = new TextBox();
             label3 = new Label();
             ucProductSelector1 = new ucProductSelector();
+            panel1 = new Panel();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // txtReciver
             // 
-            txtReciver.Location = new Point(763, 13);
+            txtReciver.Anchor = AnchorStyles.Right;
+            txtReciver.Location = new Point(769, 10);
             txtReciver.Name = "txtReciver";
             txtReciver.RightToLeft = RightToLeft.Yes;
             txtReciver.Size = new Size(528, 23);
@@ -45,8 +48,9 @@
             // 
             // lbTakeNameLable
             // 
+            lbTakeNameLable.Anchor = AnchorStyles.Right;
             lbTakeNameLable.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lbTakeNameLable.Location = new Point(1297, 10);
+            lbTakeNameLable.Location = new Point(1303, 7);
             lbTakeNameLable.Name = "lbTakeNameLable";
             lbTakeNameLable.RightToLeft = RightToLeft.Yes;
             lbTakeNameLable.Size = new Size(102, 30);
@@ -55,7 +59,8 @@
             // 
             // txtNote
             // 
-            txtNote.Location = new Point(763, 61);
+            txtNote.Anchor = AnchorStyles.Right;
+            txtNote.Location = new Point(769, 58);
             txtNote.Multiline = true;
             txtNote.Name = "txtNote";
             txtNote.RightToLeft = RightToLeft.Yes;
@@ -64,9 +69,10 @@
             // 
             // label3
             // 
+            label3.Anchor = AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label3.Location = new Point(1294, 61);
+            label3.Location = new Point(1300, 58);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.RightToLeft = RightToLeft.Yes;
@@ -76,26 +82,37 @@
             // 
             // ucProductSelector1
             // 
+            ucProductSelector1.Dock = DockStyle.Fill;
             ucProductSelector1.Enabled = false;
-            ucProductSelector1.Location = new Point(3, 129);
+            ucProductSelector1.Location = new Point(0, 123);
             ucProductSelector1.Name = "ucProductSelector1";
-            ucProductSelector1.Size = new Size(1396, 391);
+            ucProductSelector1.Size = new Size(1407, 397);
             ucProductSelector1.TabIndex = 47;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(lbTakeNameLable);
+            panel1.Controls.Add(txtNote);
+            panel1.Controls.Add(txtReciver);
+            panel1.Controls.Add(label3);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(1407, 123);
+            panel1.TabIndex = 48;
             // 
             // ucAddTakeBatch
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(ucProductSelector1);
-            Controls.Add(txtNote);
-            Controls.Add(label3);
-            Controls.Add(txtReciver);
-            Controls.Add(lbTakeNameLable);
+            Controls.Add(panel1);
             Enabled = false;
             Name = "ucAddTakeBatch";
-            Size = new Size(1402, 520);
+            Size = new Size(1407, 520);
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -104,5 +121,6 @@
         private TextBox txtNote;
         private Label label3;
         private ucProductSelector ucProductSelector1;
+        private Panel panel1;
     }
 }

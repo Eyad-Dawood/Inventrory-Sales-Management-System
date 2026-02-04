@@ -16,8 +16,9 @@ namespace LogicLayer.DTOs.InvoiceDTO
 
 
         public string CustomerName { get; set; }
+        public string? CustomerPhoneNumber { get; set; }
         public string? WorkerName { get; set; }
-
+        public string Town { get; set; }
 
         public decimal TotalBuyingPrice { get; set; }
         public decimal TotalSellingPrice { get; set; }

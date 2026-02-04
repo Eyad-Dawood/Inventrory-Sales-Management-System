@@ -19,11 +19,18 @@ namespace DataAccessLayer.Abstractions.Invoices
         public Task<List<Invoice>> GetAllWithDetailsByWorkerIdAsync(int PageNumber, int RowsPerPage, int WorkerId, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
         public Task<List<Invoice>> GetAllWithDetailsByCustomerNameAsync(int PageNumber, int RowsPerPage, string CustomerName, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
         public Task<List<Invoice>> GetAllWithDetailsByWorkerNameAsync(int PageNumber, int RowsPerPage, string WorkerName, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
+        public Task<List<Invoice>> GetAllWithDetailsByTownNameAsync(int PageNumber, int RowsPerPage, string TownName, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
+        public Task<List<Invoice>> GetAllWithDetailsByPhoneNumberAsync(int PageNumber, int RowsPerPage, string PhoneNumber, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
+
+
 
         public Task<int> GetTotalPagesByCustomerIdAsync(int CustomerId,int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
         public Task<int> GetTotalPagesByWorkerIdAsync(int WorkerId, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
         public Task<int> GetTotalPageByWorkerNameAsync(string WorkerName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
         public Task<int> GetTotalPageByCustomerNameAsync(string CustomerName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
+        public Task<int> GetTotalPageByTownNameAsync(string TownName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
+        public Task<int> GetTotalPageByPhoneNumberAsync(string PhoneNumber, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState);
+
 
         public Task<List<InvoiceProductSummary>> GetInvoiceProductSummaryAsync(int invoiceId);
         public Task<List<SoldProductRefundSummary>> GetInvoiceRefundProductSummaryAsync(int invoiceId);

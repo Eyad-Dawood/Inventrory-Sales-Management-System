@@ -135,7 +135,9 @@ namespace LogicLayer.Services.Invoices
                 InvoiceStateEn = invoice.InvoiceState,
                 InvoiceTypeEn = invoice.InvoiceType,
                 CustomerName = invoice.Customer.Person.FullName,
+                CustomerPhoneNumber = invoice.Customer.Person.PhoneNumber,
                 WorkerName = invoice.Worker != null ? invoice.Worker.Person.FullName : string.Empty,
+                Town = invoice.Customer.Person.Town.TownName,
                 TotalSellingPrice = invoice.TotalSellingPrice,
                 TotalPaid = invoice.TotalPaid,
                 Discount = invoice.Discount,
@@ -419,12 +421,46 @@ namespace LogicLayer.Services.Invoices
         }
 
 
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<InvoiceListDto>> GetAllByTownNameAsync(string Name, int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _invoiceRepo
+                .GetAllWithDetailsByTownNameAsync(PageNumber, RowsPerPage, Name, invoiceTypes, invoiceStates))
+                .Select(i => MapInvoice_ListDto(i)
+                ).ToList();
+        }
+
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<List<InvoiceListDto>> GetAllByPhoneNumberAsync(string Number, int PageNumber, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidatePageginArguments(PageNumber, RowsPerPage);
+
+
+            return
+                (await _invoiceRepo
+                .GetAllWithDetailsByPhoneNumberAsync(PageNumber, RowsPerPage, Number, invoiceTypes, invoiceStates))
+                .Select(i => MapInvoice_ListDto(i)
+                ).ToList();
+        }
+
+
         public async Task<List<InvoiceProductSummaryDto>> GetInvoiceProductSummaryAsync(int invoiceId)
         {
             return (await _invoiceRepo.GetInvoiceProductSummaryAsync(invoiceId))
                 .Select(c => MapInvoiceProductSummary_Dto(c))
                 .ToList();
         }
+
+
 
         public async Task<List<InvoiceProductRefundSummaryListDto>> GetInvoiceRefundProductSummaryAsync(int invoiceId)
         {
@@ -469,6 +505,25 @@ namespace LogicLayer.Services.Invoices
             return await _invoiceRepo.GetTotalPageByCustomerNameAsync(Name, RowsPerPage, invoiceTypes, invoiceStates);
         }
 
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPageByTownNameAsync(string Name, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _invoiceRepo.GetTotalPageByTownNameAsync(Name, RowsPerPage, invoiceTypes, invoiceStates);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the provided Values out Of Range
+        /// </exception>
+        public async Task<int> GetTotalPageByPhoneuNmberAsync(string Number, int RowsPerPage, List<InvoiceType> invoiceTypes, List<InvoiceState> invoiceStates)
+        {
+            Validation.ValidationHelper.ValidateRowsPerPage(RowsPerPage);
+
+            return await _invoiceRepo.GetTotalPageByPhoneNumberAsync(Number, RowsPerPage, invoiceTypes, invoiceStates);
+        }
 
         #endregion
 

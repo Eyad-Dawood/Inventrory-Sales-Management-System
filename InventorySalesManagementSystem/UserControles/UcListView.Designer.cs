@@ -207,10 +207,10 @@
             tlpUpper.ColumnCount = 10;
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 141F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 159F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 159F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 41F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 43F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 40F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 25F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 33F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 222F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 225F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 229F));
@@ -272,7 +272,7 @@
             btnSearch.Anchor = AnchorStyles.Right;
             btnSearch.BackgroundImage = Properties.Resources.SearchIcon;
             btnSearch.BackgroundImageLayout = ImageLayout.Stretch;
-            btnSearch.Location = new Point(469, 4);
+            btnSearch.Location = new Point(458, 4);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(30, 30);
             btnSearch.TabIndex = 11;
@@ -296,9 +296,9 @@
             // 
             chkUseDateFilter.Dock = DockStyle.Fill;
             chkUseDateFilter.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
-            chkUseDateFilter.Location = new Point(545, 3);
+            chkUseDateFilter.Location = new Point(537, 3);
             chkUseDateFilter.Name = "chkUseDateFilter";
-            chkUseDateFilter.Size = new Size(19, 33);
+            chkUseDateFilter.Size = new Size(27, 33);
             chkUseDateFilter.TabIndex = 10;
             chkUseDateFilter.UseVisualStyleBackColor = true;
             chkUseDateFilter.Visible = false;
@@ -308,7 +308,7 @@
             btnCancelFilter.Anchor = AnchorStyles.Right;
             btnCancelFilter.BackgroundImage = Properties.Resources.CancelIcon;
             btnCancelFilter.BackgroundImageLayout = ImageLayout.Stretch;
-            btnCancelFilter.Location = new Point(509, 4);
+            btnCancelFilter.Location = new Point(501, 4);
             btnCancelFilter.Name = "btnCancelFilter";
             btnCancelFilter.Size = new Size(30, 30);
             btnCancelFilter.TabIndex = 6;
@@ -355,7 +355,7 @@
             gpPaymentType.Location = new Point(303, 3);
             gpPaymentType.Name = "gpPaymentType";
             gpPaymentType.RightToLeft = RightToLeft.Yes;
-            gpPaymentType.Size = new Size(153, 33);
+            gpPaymentType.Size = new Size(144, 33);
             gpPaymentType.TabIndex = 43;
             gpPaymentType.TabStop = false;
             // 
@@ -398,7 +398,7 @@
             // 
             chkOpen.Checked = true;
             chkOpen.CheckState = CheckState.Checked;
-            chkOpen.Location = new Point(73, 5);
+            chkOpen.Location = new Point(70, 5);
             chkOpen.Name = "chkOpen";
             chkOpen.Size = new Size(64, 23);
             chkOpen.TabIndex = 1;

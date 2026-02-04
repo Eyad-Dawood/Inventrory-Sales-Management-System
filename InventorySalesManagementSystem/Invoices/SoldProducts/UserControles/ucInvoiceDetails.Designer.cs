@@ -75,27 +75,33 @@
             lkInvoiceSummary = new LinkLabel();
             linkLabel1 = new LinkLabel();
             lkPayments = new LinkLabel();
+            panel4 = new Panel();
+            panel5 = new Panel();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
+            panel4.SuspendLayout();
+            panel5.SuspendLayout();
             SuspendLayout();
             // 
             // lbCustomer
             // 
+            lbCustomer.Anchor = AnchorStyles.Right;
             lbCustomer.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbCustomer.Location = new Point(107, 5);
+            lbCustomer.Location = new Point(46, 5);
             lbCustomer.Margin = new Padding(4, 0, 4, 0);
             lbCustomer.Name = "lbCustomer";
             lbCustomer.RightToLeft = RightToLeft.Yes;
-            lbCustomer.Size = new Size(470, 28);
+            lbCustomer.Size = new Size(449, 28);
             lbCustomer.TabIndex = 58;
             lbCustomer.Text = "----";
             // 
             // lbID
             // 
+            lbID.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lbID.Font = new Font("Calibri", 15F, FontStyle.Bold);
             lbID.ForeColor = Color.Red;
-            lbID.Location = new Point(496, 10);
+            lbID.Location = new Point(391, 5);
             lbID.Name = "lbID";
             lbID.RightToLeft = RightToLeft.Yes;
             lbID.Size = new Size(95, 25);
@@ -104,10 +110,10 @@
             // 
             // label9
             // 
-            label9.AutoSize = true;
+            label9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label9.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             label9.ForeColor = Color.Red;
-            label9.Location = new Point(606, 12);
+            label9.Location = new Point(501, 7);
             label9.Name = "label9";
             label9.RightToLeft = RightToLeft.Yes;
             label9.Size = new Size(114, 21);
@@ -116,9 +122,9 @@
             // 
             // label1
             // 
-            label1.AutoSize = true;
+            label1.Anchor = AnchorStyles.Right;
             label1.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(569, 5);
+            label1.Location = new Point(493, 4);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.RightToLeft = RightToLeft.Yes;
@@ -128,20 +134,21 @@
             // 
             // lbWorker
             // 
+            lbWorker.Anchor = AnchorStyles.Right;
             lbWorker.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbWorker.Location = new Point(107, 36);
+            lbWorker.Location = new Point(46, 36);
             lbWorker.Margin = new Padding(4, 0, 4, 0);
             lbWorker.Name = "lbWorker";
             lbWorker.RightToLeft = RightToLeft.Yes;
-            lbWorker.Size = new Size(470, 28);
+            lbWorker.Size = new Size(449, 28);
             lbWorker.TabIndex = 60;
             lbWorker.Text = "----";
             // 
             // label3
             // 
-            label3.AutoSize = true;
+            label3.Anchor = AnchorStyles.Right;
             label3.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(569, 36);
+            label3.Location = new Point(493, 35);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.RightToLeft = RightToLeft.Yes;
@@ -151,9 +158,9 @@
             // 
             // lbTotalBuyingPrice
             // 
-            lbTotalBuyingPrice.Anchor = AnchorStyles.None;
+            lbTotalBuyingPrice.Anchor = AnchorStyles.Right;
             lbTotalBuyingPrice.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbTotalBuyingPrice.Location = new Point(370, 5);
+            lbTotalBuyingPrice.Location = new Point(288, 19);
             lbTotalBuyingPrice.Margin = new Padding(4, 0, 4, 0);
             lbTotalBuyingPrice.Name = "lbTotalBuyingPrice";
             lbTotalBuyingPrice.RightToLeft = RightToLeft.Yes;
@@ -163,10 +170,9 @@
             // 
             // label5
             // 
-            label5.Anchor = AnchorStyles.None;
-            label5.AutoSize = true;
+            label5.Anchor = AnchorStyles.Right;
             label5.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.Location = new Point(531, 5);
+            label5.Location = new Point(449, 19);
             label5.Margin = new Padding(4, 0, 4, 0);
             label5.Name = "label5";
             label5.RightToLeft = RightToLeft.Yes;
@@ -176,22 +182,21 @@
             // 
             // lbTotalSellingPrice
             // 
-            lbTotalSellingPrice.Anchor = AnchorStyles.None;
+            lbTotalSellingPrice.Anchor = AnchorStyles.Right;
             lbTotalSellingPrice.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbTotalSellingPrice.Location = new Point(30, 5);
+            lbTotalSellingPrice.Location = new Point(14, 16);
             lbTotalSellingPrice.Margin = new Padding(4, 0, 4, 0);
             lbTotalSellingPrice.Name = "lbTotalSellingPrice";
             lbTotalSellingPrice.RightToLeft = RightToLeft.Yes;
-            lbTotalSellingPrice.Size = new Size(169, 28);
+            lbTotalSellingPrice.Size = new Size(117, 28);
             lbTotalSellingPrice.TabIndex = 64;
             lbTotalSellingPrice.Text = "----";
             // 
             // label7
             // 
-            label7.Anchor = AnchorStyles.None;
-            label7.AutoSize = true;
+            label7.Anchor = AnchorStyles.Right;
             label7.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label7.Location = new Point(191, 5);
+            label7.Location = new Point(123, 19);
             label7.Margin = new Padding(4, 0, 4, 0);
             label7.Name = "label7";
             label7.RightToLeft = RightToLeft.Yes;
@@ -201,22 +206,21 @@
             // 
             // lbTotalRefundSellingPrice
             // 
-            lbTotalRefundSellingPrice.Anchor = AnchorStyles.None;
+            lbTotalRefundSellingPrice.Anchor = AnchorStyles.Right;
             lbTotalRefundSellingPrice.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbTotalRefundSellingPrice.Location = new Point(30, 37);
+            lbTotalRefundSellingPrice.Location = new Point(10, 48);
             lbTotalRefundSellingPrice.Margin = new Padding(4, 0, 4, 0);
             lbTotalRefundSellingPrice.Name = "lbTotalRefundSellingPrice";
             lbTotalRefundSellingPrice.RightToLeft = RightToLeft.Yes;
-            lbTotalRefundSellingPrice.Size = new Size(169, 28);
+            lbTotalRefundSellingPrice.Size = new Size(121, 28);
             lbTotalRefundSellingPrice.TabIndex = 66;
             lbTotalRefundSellingPrice.Text = "----";
             // 
             // label10
             // 
-            label10.Anchor = AnchorStyles.None;
-            label10.AutoSize = true;
+            label10.Anchor = AnchorStyles.Right;
             label10.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label10.Location = new Point(191, 37);
+            label10.Location = new Point(123, 51);
             label10.Margin = new Padding(4, 0, 4, 0);
             label10.Name = "label10";
             label10.RightToLeft = RightToLeft.Yes;
@@ -226,9 +230,9 @@
             // 
             // lbTotalBuyingRefundPrice
             // 
-            lbTotalBuyingRefundPrice.Anchor = AnchorStyles.None;
+            lbTotalBuyingRefundPrice.Anchor = AnchorStyles.Right;
             lbTotalBuyingRefundPrice.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbTotalBuyingRefundPrice.Location = new Point(370, 38);
+            lbTotalBuyingRefundPrice.Location = new Point(288, 52);
             lbTotalBuyingRefundPrice.Margin = new Padding(4, 0, 4, 0);
             lbTotalBuyingRefundPrice.Name = "lbTotalBuyingRefundPrice";
             lbTotalBuyingRefundPrice.RightToLeft = RightToLeft.Yes;
@@ -238,10 +242,9 @@
             // 
             // label12
             // 
-            label12.Anchor = AnchorStyles.None;
-            label12.AutoSize = true;
+            label12.Anchor = AnchorStyles.Right;
             label12.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label12.Location = new Point(531, 38);
+            label12.Location = new Point(449, 52);
             label12.Margin = new Padding(4, 0, 4, 0);
             label12.Name = "label12";
             label12.RightToLeft = RightToLeft.Yes;
@@ -251,8 +254,9 @@
             // 
             // lbPaied
             // 
+            lbPaied.Anchor = AnchorStyles.Right;
             lbPaied.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbPaied.Location = new Point(384, 40);
+            lbPaied.Location = new Point(300, 40);
             lbPaied.Margin = new Padding(4, 0, 4, 0);
             lbPaied.Name = "lbPaied";
             lbPaied.RightToLeft = RightToLeft.Yes;
@@ -262,9 +266,9 @@
             // 
             // label14
             // 
-            label14.AutoSize = true;
+            label14.Anchor = AnchorStyles.Right;
             label14.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label14.Location = new Point(600, 40);
+            label14.Location = new Point(516, 40);
             label14.Margin = new Padding(4, 0, 4, 0);
             label14.Name = "label14";
             label14.RightToLeft = RightToLeft.Yes;
@@ -274,20 +278,21 @@
             // 
             // lbDiscount
             // 
+            lbDiscount.Anchor = AnchorStyles.Right;
             lbDiscount.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbDiscount.Location = new Point(5, 12);
+            lbDiscount.Location = new Point(46, 10);
             lbDiscount.Margin = new Padding(4, 0, 4, 0);
             lbDiscount.Name = "lbDiscount";
             lbDiscount.RightToLeft = RightToLeft.Yes;
-            lbDiscount.Size = new Size(242, 28);
+            lbDiscount.Size = new Size(180, 28);
             lbDiscount.TabIndex = 74;
             lbDiscount.Text = "----";
             // 
             // label18
             // 
-            label18.AutoSize = true;
+            label18.Anchor = AnchorStyles.Right;
             label18.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label18.Location = new Point(272, 12);
+            label18.Location = new Point(218, 12);
             label18.Margin = new Padding(4, 0, 4, 0);
             label18.Name = "label18";
             label18.RightToLeft = RightToLeft.Yes;
@@ -297,9 +302,9 @@
             // 
             // label19
             // 
-            label19.AutoSize = true;
+            label19.Anchor = AnchorStyles.Right;
             label19.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label19.Location = new Point(248, 46);
+            label19.Location = new Point(194, 46);
             label19.Margin = new Padding(4, 0, 4, 0);
             label19.Name = "label19";
             label19.RightToLeft = RightToLeft.Yes;
@@ -309,32 +314,33 @@
             // 
             // txtNotes
             // 
-            txtNotes.Location = new Point(5, 49);
+            txtNotes.Anchor = AnchorStyles.Right;
+            txtNotes.Location = new Point(5, 44);
             txtNotes.Multiline = true;
             txtNotes.Name = "txtNotes";
             txtNotes.ReadOnly = true;
             txtNotes.RightToLeft = RightToLeft.Yes;
-            txtNotes.Size = new Size(242, 80);
+            txtNotes.ScrollBars = ScrollBars.Both;
+            txtNotes.Size = new Size(192, 80);
             txtNotes.TabIndex = 76;
             // 
             // lbNetSale
             // 
-            lbNetSale.Anchor = AnchorStyles.None;
+            lbNetSale.Anchor = AnchorStyles.Right;
             lbNetSale.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbNetSale.Location = new Point(30, 71);
+            lbNetSale.Location = new Point(10, 83);
             lbNetSale.Margin = new Padding(4, 0, 4, 0);
             lbNetSale.Name = "lbNetSale";
             lbNetSale.RightToLeft = RightToLeft.Yes;
-            lbNetSale.Size = new Size(169, 28);
+            lbNetSale.Size = new Size(121, 28);
             lbNetSale.TabIndex = 78;
             lbNetSale.Text = "----";
             // 
             // label21
             // 
-            label21.Anchor = AnchorStyles.None;
-            label21.AutoSize = true;
+            label21.Anchor = AnchorStyles.Right;
             label21.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label21.Location = new Point(224, 71);
+            label21.Location = new Point(156, 85);
             label21.Margin = new Padding(4, 0, 4, 0);
             label21.Name = "label21";
             label21.RightToLeft = RightToLeft.Yes;
@@ -344,9 +350,9 @@
             // 
             // lbNetBuying
             // 
-            lbNetBuying.Anchor = AnchorStyles.None;
+            lbNetBuying.Anchor = AnchorStyles.Right;
             lbNetBuying.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbNetBuying.Location = new Point(372, 69);
+            lbNetBuying.Location = new Point(290, 83);
             lbNetBuying.Margin = new Padding(4, 0, 4, 0);
             lbNetBuying.Name = "lbNetBuying";
             lbNetBuying.RightToLeft = RightToLeft.Yes;
@@ -356,10 +362,9 @@
             // 
             // label23
             // 
-            label23.Anchor = AnchorStyles.None;
-            label23.AutoSize = true;
+            label23.Anchor = AnchorStyles.Right;
             label23.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label23.Location = new Point(564, 69);
+            label23.Location = new Point(482, 83);
             label23.Margin = new Padding(4, 0, 4, 0);
             label23.Name = "label23";
             label23.RightToLeft = RightToLeft.Yes;
@@ -369,8 +374,9 @@
             // 
             // lbNetProfit
             // 
+            lbNetProfit.Anchor = AnchorStyles.Right;
             lbNetProfit.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbNetProfit.Location = new Point(384, 104);
+            lbNetProfit.Location = new Point(300, 104);
             lbNetProfit.Margin = new Padding(4, 0, 4, 0);
             lbNetProfit.Name = "lbNetProfit";
             lbNetProfit.RightToLeft = RightToLeft.Yes;
@@ -380,9 +386,9 @@
             // 
             // label25
             // 
-            label25.AutoSize = true;
+            label25.Anchor = AnchorStyles.Right;
             label25.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label25.Location = new Point(628, 104);
+            label25.Location = new Point(544, 104);
             label25.Margin = new Padding(4, 0, 4, 0);
             label25.Name = "label25";
             label25.RightToLeft = RightToLeft.Yes;
@@ -392,8 +398,9 @@
             // 
             // lbRemaining
             // 
+            lbRemaining.Anchor = AnchorStyles.Right;
             lbRemaining.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbRemaining.Location = new Point(384, 73);
+            lbRemaining.Location = new Point(300, 73);
             lbRemaining.Margin = new Padding(4, 0, 4, 0);
             lbRemaining.Name = "lbRemaining";
             lbRemaining.RightToLeft = RightToLeft.Yes;
@@ -403,9 +410,9 @@
             // 
             // label27
             // 
-            label27.AutoSize = true;
+            label27.Anchor = AnchorStyles.Right;
             label27.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label27.Location = new Point(570, 73);
+            label27.Location = new Point(486, 73);
             label27.Margin = new Padding(4, 0, 4, 0);
             label27.Name = "label27";
             label27.RightToLeft = RightToLeft.Yes;
@@ -415,8 +422,9 @@
             // 
             // lbDueAmount
             // 
+            lbDueAmount.Anchor = AnchorStyles.Right;
             lbDueAmount.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbDueAmount.Location = new Point(384, 9);
+            lbDueAmount.Location = new Point(300, 9);
             lbDueAmount.Margin = new Padding(4, 0, 4, 0);
             lbDueAmount.Name = "lbDueAmount";
             lbDueAmount.RightToLeft = RightToLeft.Yes;
@@ -426,9 +434,9 @@
             // 
             // label29
             // 
-            label29.AutoSize = true;
+            label29.Anchor = AnchorStyles.Right;
             label29.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label29.Location = new Point(545, 9);
+            label29.Location = new Point(461, 9);
             label29.Margin = new Padding(4, 0, 4, 0);
             label29.Name = "label29";
             label29.RightToLeft = RightToLeft.Yes;
@@ -438,20 +446,22 @@
             // 
             // lbInvoicetype
             // 
+            lbInvoicetype.Anchor = AnchorStyles.Right;
             lbInvoicetype.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbInvoicetype.Location = new Point(408, 65);
+            lbInvoicetype.Location = new Point(326, 65);
             lbInvoicetype.Margin = new Padding(4, 0, 4, 0);
             lbInvoicetype.Name = "lbInvoicetype";
             lbInvoicetype.RightToLeft = RightToLeft.Yes;
             lbInvoicetype.Size = new Size(169, 28);
             lbInvoicetype.TabIndex = 88;
             lbInvoicetype.Text = "----";
+            lbInvoicetype.Click += lbInvoicetype_Click;
             // 
             // label31
             // 
-            label31.AutoSize = true;
+            label31.Anchor = AnchorStyles.Right;
             label31.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label31.Location = new Point(569, 65);
+            label31.Location = new Point(493, 64);
             label31.Margin = new Padding(4, 0, 4, 0);
             label31.Name = "label31";
             label31.RightToLeft = RightToLeft.Yes;
@@ -461,8 +471,9 @@
             // 
             // lbInvoiceState
             // 
+            lbInvoiceState.Anchor = AnchorStyles.Right;
             lbInvoiceState.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbInvoiceState.Location = new Point(412, 97);
+            lbInvoiceState.Location = new Point(330, 97);
             lbInvoiceState.Margin = new Padding(4, 0, 4, 0);
             lbInvoiceState.Name = "lbInvoiceState";
             lbInvoiceState.RightToLeft = RightToLeft.Yes;
@@ -472,9 +483,9 @@
             // 
             // label33
             // 
-            label33.AutoSize = true;
+            label33.Anchor = AnchorStyles.Right;
             label33.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label33.Location = new Point(573, 97);
+            label33.Location = new Point(490, 96);
             label33.Margin = new Padding(4, 0, 4, 0);
             label33.Name = "label33";
             label33.RightToLeft = RightToLeft.Yes;
@@ -484,20 +495,21 @@
             // 
             // lbOpenDate
             // 
+            lbOpenDate.Anchor = AnchorStyles.Right;
             lbOpenDate.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbOpenDate.Location = new Point(4, 64);
+            lbOpenDate.Location = new Point(-26, 64);
             lbOpenDate.Margin = new Padding(4, 0, 4, 0);
             lbOpenDate.Name = "lbOpenDate";
             lbOpenDate.RightToLeft = RightToLeft.Yes;
-            lbOpenDate.Size = new Size(244, 28);
+            lbOpenDate.Size = new Size(169, 28);
             lbOpenDate.TabIndex = 92;
             lbOpenDate.Text = "----";
             // 
             // label35
             // 
-            label35.AutoSize = true;
+            label35.Anchor = AnchorStyles.Right;
             label35.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label35.Location = new Point(240, 64);
+            label35.Location = new Point(137, 64);
             label35.Margin = new Padding(4, 0, 4, 0);
             label35.Name = "label35";
             label35.RightToLeft = RightToLeft.Yes;
@@ -507,8 +519,9 @@
             // 
             // lbCloseDate
             // 
+            lbCloseDate.Anchor = AnchorStyles.Right;
             lbCloseDate.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbCloseDate.Location = new Point(4, 96);
+            lbCloseDate.Location = new Point(-99, 96);
             lbCloseDate.Margin = new Padding(4, 0, 4, 0);
             lbCloseDate.Name = "lbCloseDate";
             lbCloseDate.RightToLeft = RightToLeft.Yes;
@@ -518,9 +531,9 @@
             // 
             // label37
             // 
-            label37.AutoSize = true;
+            label37.Anchor = AnchorStyles.Right;
             label37.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label37.Location = new Point(242, 96);
+            label37.Location = new Point(139, 96);
             label37.Margin = new Padding(4, 0, 4, 0);
             label37.Name = "label37";
             label37.RightToLeft = RightToLeft.Yes;
@@ -543,37 +556,41 @@
             panel1.Controls.Add(label12);
             panel1.Controls.Add(label21);
             panel1.Controls.Add(label23);
-            panel1.Location = new Point(15, 47);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(0, 170);
             panel1.Name = "panel1";
-            panel1.Size = new Size(705, 108);
+            panel1.Size = new Size(617, 137);
             panel1.TabIndex = 95;
             // 
             // panel2
             // 
             panel2.BorderStyle = BorderStyle.FixedSingle;
-            panel2.Controls.Add(lbCloseDate);
-            panel2.Controls.Add(lbCustomer);
-            panel2.Controls.Add(lbOpenDate);
             panel2.Controls.Add(lbWorker);
             panel2.Controls.Add(lbInvoicetype);
             panel2.Controls.Add(lbInvoiceState);
+            panel2.Controls.Add(lbCustomer);
+            panel2.Controls.Add(lbCloseDate);
+            panel2.Controls.Add(lbOpenDate);
             panel2.Controls.Add(lkShowWorker);
             panel2.Controls.Add(lkshowCustomer);
-            panel2.Controls.Add(label1);
             panel2.Controls.Add(label37);
-            panel2.Controls.Add(label3);
             panel2.Controls.Add(label35);
             panel2.Controls.Add(label31);
             panel2.Controls.Add(label33);
-            panel2.Location = new Point(15, 161);
+            panel2.Controls.Add(label1);
+            panel2.Controls.Add(label3);
+            panel2.Dock = DockStyle.Top;
+            panel2.Location = new Point(0, 45);
             panel2.Name = "panel2";
-            panel2.Size = new Size(705, 129);
+            panel2.Size = new Size(617, 125);
             panel2.TabIndex = 96;
+            panel2.Paint += panel2_Paint;
             // 
             // lkShowWorker
             // 
+            lkShowWorker.Anchor = AnchorStyles.Right;
             lkShowWorker.AutoSize = true;
-            lkShowWorker.Location = new Point(66, 43);
+            lkShowWorker.Location = new Point(5, 43);
             lkShowWorker.Name = "lkShowWorker";
             lkShowWorker.Size = new Size(34, 15);
             lkShowWorker.TabIndex = 92;
@@ -583,8 +600,9 @@
             // 
             // lkshowCustomer
             // 
+            lkshowCustomer.Anchor = AnchorStyles.Right;
             lkshowCustomer.AutoSize = true;
-            lkshowCustomer.Location = new Point(66, 12);
+            lkshowCustomer.Location = new Point(5, 12);
             lkshowCustomer.Name = "lkshowCustomer";
             lkshowCustomer.Size = new Size(34, 15);
             lkshowCustomer.TabIndex = 91;
@@ -595,10 +613,10 @@
             // panel3
             // 
             panel3.BorderStyle = BorderStyle.FixedSingle;
+            panel3.Controls.Add(lbDiscount);
             panel3.Controls.Add(lbPaied);
             panel3.Controls.Add(txtNotes);
             panel3.Controls.Add(lbDueAmount);
-            panel3.Controls.Add(lbDiscount);
             panel3.Controls.Add(lbNetProfit);
             panel3.Controls.Add(lbRemaining);
             panel3.Controls.Add(label29);
@@ -607,24 +625,25 @@
             panel3.Controls.Add(label25);
             panel3.Controls.Add(label18);
             panel3.Controls.Add(label27);
-            panel3.Location = new Point(15, 296);
+            panel3.Dock = DockStyle.Bottom;
+            panel3.Location = new Point(0, 307);
             panel3.Name = "panel3";
-            panel3.Size = new Size(705, 136);
+            panel3.Size = new Size(617, 136);
             panel3.TabIndex = 97;
             // 
             // ucListView1
             // 
             ucListView1.AllowCancelButton = false;
             ucListView1.AllowFilter = false;
-            ucListView1.Location = new Point(726, 12);
+            ucListView1.Dock = DockStyle.Fill;
+            ucListView1.Location = new Point(617, 0);
             ucListView1.Name = "ucListView1";
-            ucListView1.Size = new Size(792, 420);
+            ucListView1.Size = new Size(658, 443);
             ucListView1.TabIndex = 98;
             // 
             // lkInvoiceSummary
             // 
-            lkInvoiceSummary.AutoSize = true;
-            lkInvoiceSummary.Location = new Point(20, 29);
+            lkInvoiceSummary.Location = new Point(18, 24);
             lkInvoiceSummary.Name = "lkInvoiceSummary";
             lkInvoiceSummary.Size = new Size(48, 15);
             lkInvoiceSummary.TabIndex = 99;
@@ -634,8 +653,7 @@
             // 
             // linkLabel1
             // 
-            linkLabel1.AutoSize = true;
-            linkLabel1.Location = new Point(77, 29);
+            linkLabel1.Location = new Point(75, 24);
             linkLabel1.Name = "linkLabel1";
             linkLabel1.Size = new Size(57, 15);
             linkLabel1.TabIndex = 100;
@@ -645,8 +663,7 @@
             // 
             // lkPayments
             // 
-            lkPayments.AutoSize = true;
-            lkPayments.Location = new Point(140, 29);
+            lkPayments.Location = new Point(138, 24);
             lkPayments.Name = "lkPayments";
             lkPayments.Size = new Size(60, 15);
             lkPayments.TabIndex = 101;
@@ -654,30 +671,48 @@
             lkPayments.Text = "المدفوعات";
             lkPayments.LinkClicked += lkPayments_LinkClicked;
             // 
+            // panel4
+            // 
+            panel4.Controls.Add(panel1);
+            panel4.Controls.Add(panel2);
+            panel4.Controls.Add(panel5);
+            panel4.Controls.Add(panel3);
+            panel4.Dock = DockStyle.Left;
+            panel4.Location = new Point(0, 0);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(617, 443);
+            panel4.TabIndex = 102;
+            // 
+            // panel5
+            // 
+            panel5.Controls.Add(lkPayments);
+            panel5.Controls.Add(lkInvoiceSummary);
+            panel5.Controls.Add(lbID);
+            panel5.Controls.Add(linkLabel1);
+            panel5.Controls.Add(label9);
+            panel5.Dock = DockStyle.Top;
+            panel5.Location = new Point(0, 0);
+            panel5.Name = "panel5";
+            panel5.Size = new Size(617, 45);
+            panel5.TabIndex = 102;
+            // 
             // ucInvoiceDetails
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(lkPayments);
-            Controls.Add(linkLabel1);
-            Controls.Add(lkInvoiceSummary);
+            AutoScaleDimensions = new SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
             Controls.Add(ucListView1);
-            Controls.Add(panel3);
-            Controls.Add(panel2);
-            Controls.Add(panel1);
-            Controls.Add(lbID);
-            Controls.Add(label9);
+            Controls.Add(panel4);
             Enabled = false;
             Name = "ucInvoiceDetails";
-            Size = new Size(1528, 443);
+            Size = new Size(1275, 443);
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            panel4.ResumeLayout(false);
+            panel5.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -729,5 +764,7 @@
         private LinkLabel lkInvoiceSummary;
         private LinkLabel linkLabel1;
         private LinkLabel lkPayments;
+        private Panel panel4;
+        private Panel panel5;
     }
 }

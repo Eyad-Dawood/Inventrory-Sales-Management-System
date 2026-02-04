@@ -35,6 +35,8 @@
             Customers = new ToolStripMenuItem();
             Products = new ToolStripMenuItem();
             Invoices = new ToolStripMenuItem();
+            QuickInvoiceToolStripMenuItem = new ToolStripMenuItem();
+            InvoiceManagementToolStripMenuItem = new ToolStripMenuItem();
             Payments = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             PriceLogs = new ToolStripMenuItem();
@@ -66,7 +68,7 @@
             // 
             Workers.Image = Properties.Resources.workers__1_;
             Workers.Name = "Workers";
-            Workers.Size = new Size(203, 50);
+            Workers.Size = new Size(189, 50);
             Workers.Text = "العمال";
             Workers.Click += Workers_Click;
             // 
@@ -74,7 +76,7 @@
             // 
             Customers.Image = Properties.Resources.customer__1_;
             Customers.Name = "Customers";
-            Customers.Size = new Size(203, 50);
+            Customers.Size = new Size(189, 50);
             Customers.Text = "العملاء";
             Customers.Click += Customers_Click;
             // 
@@ -89,12 +91,26 @@
             // 
             // Invoices
             // 
+            Invoices.DropDownItems.AddRange(new ToolStripItem[] { QuickInvoiceToolStripMenuItem, InvoiceManagementToolStripMenuItem });
             Invoices.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
             Invoices.Image = Properties.Resources.invoice__1___1_;
             Invoices.Name = "Invoices";
             Invoices.Size = new Size(156, 49);
             Invoices.Text = "الفواتير";
-            Invoices.Click += Invoices_Click;
+            // 
+            // QuickInvoiceToolStripMenuItem
+            // 
+            QuickInvoiceToolStripMenuItem.Name = "QuickInvoiceToolStripMenuItem";
+            QuickInvoiceToolStripMenuItem.Size = new Size(295, 50);
+            QuickInvoiceToolStripMenuItem.Text = "ملخص الفواتير";
+            QuickInvoiceToolStripMenuItem.Click += QuickInvoiceToolStripMenuItem_Click;
+            // 
+            // InvoiceManagementToolStripMenuItem
+            // 
+            InvoiceManagementToolStripMenuItem.Name = "InvoiceManagementToolStripMenuItem";
+            InvoiceManagementToolStripMenuItem.Size = new Size(295, 50);
+            InvoiceManagementToolStripMenuItem.Text = "إدارة الفواتير";
+            InvoiceManagementToolStripMenuItem.Click += InvoiceManagementToolStripMenuItem_Click;
             // 
             // Payments
             // 
@@ -167,5 +183,7 @@
         private ToolStripMenuItem PriceLogs;
         private ToolStripMenuItem StorageLog;
         private Panel pnMain;
+        private ToolStripMenuItem QuickInvoiceToolStripMenuItem;
+        private ToolStripMenuItem InvoiceManagementToolStripMenuItem;
     }
 }

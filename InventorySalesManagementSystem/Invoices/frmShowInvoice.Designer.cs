@@ -38,7 +38,7 @@
             ucInvoiceDetails1.Enabled = false;
             ucInvoiceDetails1.Location = new Point(0, 65);
             ucInvoiceDetails1.Name = "ucInvoiceDetails1";
-            ucInvoiceDetails1.Size = new Size(1544, 467);
+            ucInvoiceDetails1.Size = new Size(1191, 467);
             ucInvoiceDetails1.TabIndex = 0;
             // 
             // lbTitle
@@ -49,7 +49,7 @@
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(1544, 65);
+            lbTitle.Size = new Size(1191, 65);
             lbTitle.TabIndex = 50;
             lbTitle.Text = "بيانات الفاتورة";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -58,7 +58,7 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(1544, 532);
+            ClientSize = new Size(1191, 532);
             Controls.Add(ucInvoiceDetails1);
             Controls.Add(lbTitle);
             FormBorderStyle = FormBorderStyle.FixedDialog;

@@ -20,6 +20,7 @@ namespace DataAccessLayer.Repos.Invoices
                 .AsNoTracking()
                 .Include(i => i.Customer)
                     .ThenInclude(c => c.Person)
+                    .ThenInclude(p=>p.Town)
                 .Include(i => i.Worker)
                     .ThenInclude(w => w.Person)
                 .Include(i => i.OpenUser)
@@ -294,6 +295,69 @@ namespace DataAccessLayer.Repos.Invoices
                 .ToListAsync();
         }
 
+        public async Task<List<Invoice>> GetAllWithDetailsByTownNameAsync(int PageNumber, int RowsPerPage, string TownName, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
+        {
+            IQueryable<Invoice> query = InvoiceWithDetails();
 
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
+
+            return
+                await query
+                .Where(i => i.Customer.Person.Town.TownName.StartsWith(TownName))
+                .OrderByDescending(i => i.OpenDate) //Latest
+                .Skip((PageNumber - 1) * RowsPerPage)
+                .Take(RowsPerPage)
+                .ToListAsync();
+        }
+
+        public async Task<List<Invoice>> GetAllWithDetailsByPhoneNumberAsync(int PageNumber, int RowsPerPage, string PhoneNumber, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
+        {
+            IQueryable<Invoice> query = InvoiceWithDetails();
+
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
+
+            return
+                await query
+                .Where(i => i.Customer.Person.PhoneNumber.StartsWith(PhoneNumber))
+                .OrderByDescending(i => i.OpenDate) //Latest
+                .Skip((PageNumber - 1) * RowsPerPage)
+                .Take(RowsPerPage)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetTotalPageByTownNameAsync(string TownName, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
+        {
+            IQueryable<Invoice> query = _context.Invoices
+                           .AsNoTracking()
+                .Where(i =>
+                    i.Customer != null &&
+                    i.Customer.Person.Town.TownName.StartsWith(TownName));
+
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
+
+            int totalCount =
+                await query
+                .CountAsync();
+
+            return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
+        }
+
+        public async Task<int> GetTotalPageByPhoneNumberAsync(string PhoneNumber, int RowsPerPage, List<InvoiceType> InvoiceType, List<InvoiceState> InvoiceState)
+        {
+            IQueryable<Invoice> query = _context.Invoices
+                           .AsNoTracking()
+                .Where(i =>
+                    i.Customer != null &&
+                    i.Customer.Person.PhoneNumber != null &&
+                    i.Customer.Person.PhoneNumber.StartsWith(PhoneNumber));
+
+            query = ApplyFilter(query, InvoiceType, InvoiceState);
+
+            int totalCount =
+                await query
+                .CountAsync();
+
+            return (int)Math.Ceiling(totalCount / (double)RowsPerPage);
+        }
     }
 }

@@ -37,41 +37,41 @@
             // 
             // ucInvoiceDetails1
             // 
-            ucInvoiceDetails1.Anchor = AnchorStyles.Left;
+            ucInvoiceDetails1.Dock = DockStyle.Top;
             ucInvoiceDetails1.Enabled = false;
-            ucInvoiceDetails1.Location = new Point(75, 61);
+            ucInvoiceDetails1.Location = new Point(0, 49);
             ucInvoiceDetails1.Name = "ucInvoiceDetails1";
-            ucInvoiceDetails1.Size = new Size(1528, 443);
+            ucInvoiceDetails1.Size = new Size(1459, 443);
             ucInvoiceDetails1.TabIndex = 5;
             // 
             // lbTitle
             // 
-            lbTitle.Anchor = AnchorStyles.Left;
+            lbTitle.Dock = DockStyle.Top;
             lbTitle.Font = new Font("Calibri", 30F, FontStyle.Bold);
-            lbTitle.Location = new Point(544, 7);
+            lbTitle.Location = new Point(0, 0);
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(590, 49);
+            lbTitle.Size = new Size(1459, 49);
             lbTitle.TabIndex = 50;
             lbTitle.Text = "إضافة عملية شراء";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // ucAddTakeBatch1
             // 
-            ucAddTakeBatch1.Anchor = AnchorStyles.Left;
+            ucAddTakeBatch1.Dock = DockStyle.Fill;
             ucAddTakeBatch1.Enabled = false;
-            ucAddTakeBatch1.Location = new Point(138, 510);
+            ucAddTakeBatch1.Location = new Point(0, 492);
             ucAddTakeBatch1.Name = "ucAddTakeBatch1";
-            ucAddTakeBatch1.Size = new Size(1402, 520);
+            ucAddTakeBatch1.Size = new Size(1459, 553);
             ucAddTakeBatch1.TabIndex = 1;
             // 
             // btnCancel
             // 
-            btnCancel.Anchor = AnchorStyles.Left;
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnCancel.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnCancel.ForeColor = Color.Red;
-            btnCancel.Location = new Point(1630, 1012);
+            btnCancel.Location = new Point(710, 582);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(96, 30);
             btnCancel.TabIndex = 3;
@@ -81,10 +81,10 @@
             // 
             // btnSaveBatch
             // 
-            btnSaveBatch.Anchor = AnchorStyles.Left;
+            btnSaveBatch.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnSaveBatch.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnSaveBatch.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSaveBatch.Location = new Point(1630, 976);
+            btnSaveBatch.Location = new Point(710, 546);
             btnSaveBatch.Name = "btnSaveBatch";
             btnSaveBatch.Size = new Size(96, 30);
             btnSaveBatch.TabIndex = 2;
@@ -96,12 +96,12 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(1738, 1045);
+            ClientSize = new Size(1459, 1045);
             Controls.Add(btnCancel);
             Controls.Add(btnSaveBatch);
-            Controls.Add(lbTitle);
-            Controls.Add(ucInvoiceDetails1);
             Controls.Add(ucAddTakeBatch1);
+            Controls.Add(ucInvoiceDetails1);
+            Controls.Add(lbTitle);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "frmAddBatchToInvoice";

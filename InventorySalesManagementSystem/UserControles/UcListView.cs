@@ -171,7 +171,7 @@ namespace InventorySalesManagementSystem.UserControles
             _dateColWidth = tlpUpper.ColumnStyles[_DateTimePicerIndex].Width;
             _txt2ColWidth = tlpUpper.ColumnStyles[_secondtxtSearchIndex].Width;
             _btnCancelFilterWidth = tlpUpper.ColumnStyles[_CancelFilterIndex].Width;
-            _chkUseDateWidth = tlpUpper.ColumnStyles[_CancelFilterIndex].Width;
+            _chkUseDateWidth = tlpUpper.ColumnStyles[_datecheckBoxIndex].Width;
             _InvoiceTypeWidth = tlpUpper.ColumnStyles[_InvoiceTypeIndex].Width;
             _InvoiceStateWidth = tlpUpper.ColumnStyles[_InvoiceStateIndex].Width;
             _PaymentReasonWidth = tlpUpper.ColumnStyles[_PaymentReasonIndex].Width;
@@ -203,6 +203,10 @@ namespace InventorySalesManagementSystem.UserControles
 
             dgvData.ColumnHeadersDefaultCellStyle.Alignment =
                 DataGridViewContentAlignment.MiddleCenter;
+
+            dgvData.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
 
             dgvData.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;

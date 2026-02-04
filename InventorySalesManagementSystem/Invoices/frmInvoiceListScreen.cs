@@ -37,12 +37,18 @@ namespace InventorySalesManagementSystem.Invoices
         protected override ContextMenuStrip GridContextMenu => cms;
         private const string WorkerFilter = nameof(Worker) + nameof(Worker.Person.FullName);
         private const string CustomerFilter = nameof(Customer) + nameof(Customer.Person.FullName);
+        private const string TownFilter = nameof(Town);
+        private const string PhoneNumberFilter = nameof(Person.PhoneNumber);
 
-        public frmInvoiceListScreen(IServiceProvider serviceProvider, bool selectButton)
+
+        private bool SummaryMode = false;
+
+        public frmInvoiceListScreen(IServiceProvider serviceProvider, bool selectButton , bool summaryMode)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
             SelectButton = selectButton;
+            SummaryMode = summaryMode;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -59,7 +65,11 @@ namespace InventorySalesManagementSystem.Invoices
                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicEntityName(typeof(Customer)),
                                                  Value = CustomerFilter},
                      new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicEntityName(typeof(Worker)),
-                                                 Value = WorkerFilter}
+                                                 Value = WorkerFilter},
+                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicEntityName(typeof(Town)),
+                                                 Value = TownFilter},
+                     new UcListView.FilterItems(){DisplayName = LogicLayer.Utilities.NamesManager.GetArabicPropertyName(typeof(Person),nameof(Person.PhoneNumber)),
+                                                 Value = PhoneNumberFilter}
                 };
         }
         protected override void ConfigureGrid(DataGridView dgv)
@@ -85,6 +95,24 @@ namespace InventorySalesManagementSystem.Invoices
                 FillWeight = 40
             });
 
+            // ===== CustomerPhoneNumber =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(InvoiceListDto.CustomerPhoneNumber),
+                DataPropertyName = nameof(InvoiceListDto.CustomerPhoneNumber),
+                HeaderText = "رقم الهاتف",
+                FillWeight = 20
+            });
+
+            // ===== CustomerPhoneNumber =====
+            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(InvoiceListDto.Town),
+                DataPropertyName = nameof(InvoiceListDto.Town),
+                HeaderText = "البلد",
+                FillWeight = 20
+            });
+
             // ===== WorkerName =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
@@ -95,83 +123,103 @@ namespace InventorySalesManagementSystem.Invoices
             });
 
 
-            // ===== TotalBuyingPrice =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
+            if(!SummaryMode)
             {
-                Name = nameof(InvoiceListDto.TotalBuyingPrice),
-                DataPropertyName = nameof(InvoiceListDto.TotalBuyingPrice),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                    .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalBuyingPrice)),
-                FillWeight = 20
-                ,
-                DefaultCellStyle = new DataGridViewCellStyle
+                // ===== TotalSellingPrice =====
+                dgv.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
-                    Format = "N2"
-                }
-            });
+                    Name = nameof(InvoiceListDto.TotalSellingPrice),
+                    DataPropertyName = nameof(InvoiceListDto.TotalSellingPrice),
+                    HeaderText = LogicLayer.Utilities.NamesManager
+                        .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalSellingPrice)),
+                    FillWeight = 20,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Format = "N2"
+                    }
+                });
 
-            // ===== TotalSellingPrice =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(InvoiceListDto.TotalSellingPrice),
-                DataPropertyName = nameof(InvoiceListDto.TotalSellingPrice),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                    .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalSellingPrice)),
-                FillWeight = 20,
-                DefaultCellStyle = new DataGridViewCellStyle
+                // ===== TotalBuyingPrice =====
+                dgv.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
-                    Format = "N2"
-                }
-            });
+                    Name = nameof(InvoiceListDto.TotalBuyingPrice),
+                    DataPropertyName = nameof(InvoiceListDto.TotalBuyingPrice),
+                    HeaderText = LogicLayer.Utilities.NamesManager
+                            .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalBuyingPrice)),
+                    FillWeight = 20
+                        ,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Format = "N2"
+                    }
+                });
 
-
-            // ===== TotalRefundBuyingPrice =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(InvoiceListDto.TotalRefundBuyingPrice),
-                DataPropertyName = nameof(InvoiceListDto.TotalRefundBuyingPrice),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                    .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalRefundBuyingPrice)),
-                FillWeight = 20,
-                DefaultCellStyle = new DataGridViewCellStyle
+                // ===== TotalRefundBuyingPrice =====
+                dgv.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
-                    Format = "N2"
-                }
-            });
+                    Name = nameof(InvoiceListDto.TotalRefundBuyingPrice),
+                    DataPropertyName = nameof(InvoiceListDto.TotalRefundBuyingPrice),
+                    HeaderText = LogicLayer.Utilities.NamesManager
+                        .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalRefundBuyingPrice)),
+                    FillWeight = 20,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Format = "N2"
+                    }
+                });
 
-            // ===== TotalRefundSellingPrice =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(InvoiceListDto.TotalRefundSellingPrice),
-                DataPropertyName = nameof(InvoiceListDto.TotalRefundSellingPrice),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                    .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalRefundSellingPrice)),
-                FillWeight = 20,
-                DefaultCellStyle = new DataGridViewCellStyle
+                // ===== TotalRefundSellingPrice =====
+                dgv.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
-                    Format = "N2"
-                }
-            });
+                    Name = nameof(InvoiceListDto.TotalRefundSellingPrice),
+                    DataPropertyName = nameof(InvoiceListDto.TotalRefundSellingPrice),
+                    HeaderText = LogicLayer.Utilities.NamesManager
+                        .GetArabicPropertyName(typeof(Invoice), nameof(Invoice.TotalRefundSellingPrice)),
+                    FillWeight = 20,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Format = "N2"
+                    }
+                });
 
 
-            // ===== NetBuying =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(InvoiceListDto.NetBuying),
-                DataPropertyName = nameof(InvoiceListDto.NetBuying),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                    .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.NetBuying)),
-                FillWeight = 20,
-                DefaultCellStyle = new DataGridViewCellStyle
+
+
+               
+
+
+                // ===== NetProfit =====
+                dgv.Columns.Add(new DataGridViewTextBoxColumn
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
-                    Format = "N2"
-                }
-            });
+                    Name = nameof(InvoiceListDto.NetProfit),
+                    DataPropertyName = nameof(InvoiceListDto.NetProfit),
+                    HeaderText = LogicLayer.Utilities.NamesManager
+            .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.NetProfit)),
+                    FillWeight = 20,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                         
+                        Format = "N2"
+                    }
+                });
+
+                // ===== NetBuying =====
+                dgv.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    Name = nameof(InvoiceListDto.NetBuying),
+                    DataPropertyName = nameof(InvoiceListDto.NetBuying),
+                    HeaderText = LogicLayer.Utilities.NamesManager
+                        .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.NetBuying)),
+                    FillWeight = 20,
+                    DefaultCellStyle = new DataGridViewCellStyle
+                    {
+                        Format = "N2"
+                    }
+                });
+            }
+
+
+
 
             // ===== NetSale =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -183,14 +231,11 @@ namespace InventorySalesManagementSystem.Invoices
                 FillWeight = 20,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
                     Format = "N2"
                 }
             });
 
-
-
-            // ===== Additional =====
+            // ===== Discount =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = nameof(InvoiceListDto.Discount),
@@ -200,23 +245,6 @@ namespace InventorySalesManagementSystem.Invoices
                 FillWeight = 20,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
-                    Format = "N2"
-                }
-            });
-
-
-            // ===== NetProfit =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(InvoiceListDto.NetProfit),
-                DataPropertyName = nameof(InvoiceListDto.NetProfit),
-                HeaderText = LogicLayer.Utilities.NamesManager
-        .GetArabicPropertyName(typeof(InvoiceListDto), nameof(InvoiceListDto.NetProfit)),
-                FillWeight = 20,
-                DefaultCellStyle = new DataGridViewCellStyle
-                {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
                     Format = "N2"
                 }
             });
@@ -231,11 +259,9 @@ namespace InventorySalesManagementSystem.Invoices
                 FillWeight = 20,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
                     Format = "N2"
                 }
             });
-
 
             // ===== TotalPaid =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -247,11 +273,9 @@ namespace InventorySalesManagementSystem.Invoices
                 FillWeight = 20,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
                     Format = "N2"
                 }
             });
-
 
             // ===== Remaining =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -263,14 +287,9 @@ namespace InventorySalesManagementSystem.Invoices
                 FillWeight = 20,
                 DefaultCellStyle = new DataGridViewCellStyle
                 {
-                    Alignment = DataGridViewContentAlignment.MiddleRight,
                     Format = "N2"
                 }
             });
-
-
-
-
 
             // ===== InvoiceType =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -370,6 +389,10 @@ namespace InventorySalesManagementSystem.Invoices
                    
                     CustomerFilter
                         => await service.GetTotalPageByCustomerNameAsync(filter.Text1Value, RowsPerPage, types, states),
+                    TownFilter
+                        => await service.GetTotalPageByTownNameAsync(filter.Text1Value, RowsPerPage, types, states),
+                    PhoneNumberFilter
+                        => await service.GetTotalPageByPhoneuNmberAsync(filter.Text1Value, RowsPerPage, types, states),
 
                     _ => 0
                 };
@@ -391,6 +414,11 @@ namespace InventorySalesManagementSystem.Invoices
 
                     CustomerFilter
                         => await service.GetAllByCustomerNameAsync(filter.Text1Value, page, RowsPerPage, types, states),
+
+                    TownFilter
+                        => await service.GetAllByTownNameAsync(filter.Text1Value,page, RowsPerPage, types, states),
+                    PhoneNumberFilter
+                        => await service.GetAllByPhoneNumberAsync(filter.Text1Value,page, RowsPerPage, types, states),
 
                     _ => new List<InvoiceListDto>()
                 };

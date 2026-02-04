@@ -31,10 +31,8 @@
             components = new System.ComponentModel.Container();
             ucListView1 = new InventorySalesManagementSystem.UserControles.UcListView();
             txtSearchValue1 = new TextBox();
-            btnSelect = new Button();
             txtSearchValue2 = new TextBox();
             timer1 = new System.Windows.Forms.Timer(components);
-            label2 = new Label();
             lbTotal = new Label();
             pnBottom = new Panel();
             btnAddProduct = new Button();
@@ -57,34 +55,21 @@
             // txtSearchValue1
             // 
             txtSearchValue1.Anchor = AnchorStyles.Right;
-            txtSearchValue1.Location = new Point(618, 7);
+            txtSearchValue1.Location = new Point(687, 7);
             txtSearchValue1.Name = "txtSearchValue1";
             txtSearchValue1.RightToLeft = RightToLeft.Yes;
-            txtSearchValue1.Size = new Size(372, 23);
+            txtSearchValue1.Size = new Size(226, 23);
             txtSearchValue1.TabIndex = 0;
             txtSearchValue1.TextChanged += txtSearchValue1_TextChanged;
             txtSearchValue1.KeyDown += txtSearchValue1_KeyDown;
             // 
-            // btnSelect
-            // 
-            btnSelect.Anchor = AnchorStyles.Right;
-            btnSelect.BackgroundImage = Properties.Resources.CheckIcon;
-            btnSelect.BackgroundImageLayout = ImageLayout.Stretch;
-            btnSelect.Location = new Point(343, 5);
-            btnSelect.Name = "btnSelect";
-            btnSelect.Size = new Size(30, 30);
-            btnSelect.TabIndex = 4;
-            btnSelect.TabStop = false;
-            btnSelect.UseVisualStyleBackColor = true;
-            btnSelect.Click += btnAdd_Click;
-            // 
             // txtSearchValue2
             // 
             txtSearchValue2.Anchor = AnchorStyles.Right;
-            txtSearchValue2.Location = new Point(379, 7);
+            txtSearchValue2.Location = new Point(463, 7);
             txtSearchValue2.Name = "txtSearchValue2";
             txtSearchValue2.RightToLeft = RightToLeft.Yes;
-            txtSearchValue2.Size = new Size(233, 23);
+            txtSearchValue2.Size = new Size(218, 23);
             txtSearchValue2.TabIndex = 1;
             txtSearchValue2.TextChanged += txtSearchValue2_TextChanged;
             txtSearchValue2.KeyDown += txtSearchValue2_KeyDown;
@@ -94,24 +79,14 @@
             timer1.Interval = 250;
             timer1.Tick += timer1_Tick;
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label2.Location = new Point(221, 3);
-            label2.Name = "label2";
-            label2.RightToLeft = RightToLeft.Yes;
-            label2.Size = new Size(107, 30);
-            label2.TabIndex = 51;
-            label2.Text = "الإجمالي : ";
-            // 
             // lbTotal
             // 
+            lbTotal.Anchor = AnchorStyles.Right;
             lbTotal.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lbTotal.Location = new Point(87, 5);
+            lbTotal.Location = new Point(347, 5);
             lbTotal.Name = "lbTotal";
             lbTotal.RightToLeft = RightToLeft.Yes;
-            lbTotal.Size = new Size(141, 30);
+            lbTotal.Size = new Size(110, 30);
             lbTotal.TabIndex = 52;
             lbTotal.Text = "0.00";
             // 
@@ -120,14 +95,12 @@
             pnBottom.Controls.Add(btnAddProduct);
             pnBottom.Controls.Add(btnClearZeros);
             pnBottom.Controls.Add(lbTotal);
-            pnBottom.Controls.Add(label2);
             pnBottom.Controls.Add(txtSearchValue1);
             pnBottom.Controls.Add(txtSearchValue2);
-            pnBottom.Controls.Add(btnSelect);
             pnBottom.Dock = DockStyle.Bottom;
             pnBottom.Location = new Point(0, 356);
             pnBottom.Name = "pnBottom";
-            pnBottom.Size = new Size(993, 35);
+            pnBottom.Size = new Size(916, 35);
             pnBottom.TabIndex = 53;
             // 
             // btnAddProduct
@@ -135,7 +108,7 @@
             btnAddProduct.Anchor = AnchorStyles.Left;
             btnAddProduct.BackgroundImage = Properties.Resources.addIcon;
             btnAddProduct.BackgroundImageLayout = ImageLayout.Stretch;
-            btnAddProduct.Location = new Point(6, 3);
+            btnAddProduct.Location = new Point(2, 3);
             btnAddProduct.Name = "btnAddProduct";
             btnAddProduct.Size = new Size(30, 30);
             btnAddProduct.TabIndex = 54;
@@ -148,7 +121,7 @@
             btnClearZeros.Anchor = AnchorStyles.Left;
             btnClearZeros.BackgroundImage = Properties.Resources.clean;
             btnClearZeros.BackgroundImageLayout = ImageLayout.Stretch;
-            btnClearZeros.Location = new Point(42, 3);
+            btnClearZeros.Location = new Point(34, 3);
             btnClearZeros.Name = "btnClearZeros";
             btnClearZeros.Size = new Size(30, 30);
             btnClearZeros.TabIndex = 53;
@@ -163,7 +136,7 @@
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(403, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(993, 391);
+            panel2.Size = new Size(916, 391);
             panel2.TabIndex = 54;
             // 
             // flwpSoldProducts
@@ -174,7 +147,7 @@
             flwpSoldProducts.FlowDirection = FlowDirection.TopDown;
             flwpSoldProducts.Location = new Point(0, 0);
             flwpSoldProducts.Name = "flwpSoldProducts";
-            flwpSoldProducts.Size = new Size(993, 356);
+            flwpSoldProducts.Size = new Size(916, 356);
             flwpSoldProducts.TabIndex = 0;
             flwpSoldProducts.WrapContents = false;
             // 
@@ -186,7 +159,7 @@
             Controls.Add(ucListView1);
             Enabled = false;
             Name = "ucProductSelector";
-            Size = new Size(1396, 391);
+            Size = new Size(1319, 391);
             pnBottom.ResumeLayout(false);
             pnBottom.PerformLayout();
             panel2.ResumeLayout(false);
@@ -196,10 +169,8 @@
         #endregion
         private InventorySalesManagementSystem.UserControles.UcListView ucListView1;
         private TextBox txtSearchValue1;
-        private Button btnSelect;
         private TextBox txtSearchValue2;
         private System.Windows.Forms.Timer timer1;
-        private Label label2;
         private Label lbTotal;
         private Panel pnBottom;
         private Panel panel2;

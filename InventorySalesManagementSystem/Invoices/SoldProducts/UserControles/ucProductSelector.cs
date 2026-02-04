@@ -45,7 +45,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
             txtSearchValue1.Enabled = !Allow;
             txtSearchValue2.Enabled = !Allow;
-            btnSelect.Enabled = !Allow;
             btnAddProduct.Enabled = !Allow;
         }
 
@@ -61,7 +60,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         {
             if (e.KeyCode == Keys.Enter)
             {
-                btnSelect.PerformClick();
+                SelectProduct();
                 e.SuppressKeyPress = true; // Stop the beeb sound
             }
         }
@@ -347,7 +346,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
 
 
-        private void btnAdd_Click(object sender, EventArgs e)
+        private void SelectProduct()
         {
             var selectedProduct = ucListView1.GetSelectedItem<ProductListDto>();
 
@@ -377,7 +376,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         {
             if (e.KeyCode == Keys.Enter)
             {
-                btnSelect.PerformClick();
+                SelectProduct();
                 e.SuppressKeyPress = true; // Stop the beeb sound
             }
         }

@@ -18,7 +18,8 @@ namespace InventorySalesManagementSystem.General
         static public frmCustomerListScreen? frmCustomerListScreen = null;
         static public frmWorkerListScreen? frmWorkerListScreen = null;
         static public frmProductListScreen? frmProductListScreen = null;
-        static public frmInvoiceListScreen? frmInvoiceListScreen = null;
+        static public frmInvoiceListScreen? frmInvoiceSummaryListScreen = null;
+        static public frmInvoiceListScreen? frmInvoiceManagementListScreen = null;
         static public frmPriceLogListScreen? frmPriceLogListScreen = null;
         static public FrmStockMovementLogListScreen? frmStockMovementLogListScreen = null;
         static public frmPaymentsListScreen? frmPaymentsListScreen = null;

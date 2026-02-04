@@ -36,7 +36,7 @@ namespace InventorySalesManagementSystem
             frm.TopLevel = false;
             frm.FormBorderStyle = FormBorderStyle.None;
             frm.Dock = DockStyle.Fill;
-            
+
             pnMain.Controls.Add(frm);
 
             setReference(frm);
@@ -49,7 +49,7 @@ namespace InventorySalesManagementSystem
             frm.Show();
             frm.BringToFront();
         }
-       
+
         private void Workers_Click(object sender, EventArgs e)
         {
             try
@@ -60,7 +60,7 @@ namespace InventorySalesManagementSystem
                 f => MainFormsContainer.frmWorkerListScreen = f
                 );
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -132,18 +132,7 @@ namespace InventorySalesManagementSystem
 
         private void Invoices_Click(object sender, EventArgs e)
         {
-            try
-            {
-                OpenForm(
-               MainFormsContainer.frmInvoiceListScreen,
-               () => new frmInvoiceListScreen(_serviceProvider, selectButton: false),
-               f => MainFormsContainer.frmInvoiceListScreen = f
-               );
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+
         }
 
         private void Payments_Click(object sender, EventArgs e)
@@ -154,6 +143,38 @@ namespace InventorySalesManagementSystem
                MainFormsContainer.frmPaymentsListScreen,
                () => new frmPaymentsListScreen(_serviceProvider),
                f => MainFormsContainer.frmPaymentsListScreen = f
+               );
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void QuickInvoiceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenForm(
+               MainFormsContainer.frmInvoiceSummaryListScreen,
+               () => new frmInvoiceListScreen(_serviceProvider, selectButton: false , summaryMode: true),
+               f => MainFormsContainer.frmInvoiceSummaryListScreen = f
+               );
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void InvoiceManagementToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenForm(
+               MainFormsContainer.frmInvoiceManagementListScreen,
+               () => new frmInvoiceListScreen(_serviceProvider, selectButton: false ,summaryMode : false),
+               f => MainFormsContainer.frmInvoiceManagementListScreen = f
                );
             }
             catch (Exception ex)

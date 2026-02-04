@@ -365,5 +365,15 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             var frm = new frmInvoicePaymentSummary(_serviceProvider, InvoiceId);
             frm.ShowDialog();
         }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void lbInvoicetype_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
