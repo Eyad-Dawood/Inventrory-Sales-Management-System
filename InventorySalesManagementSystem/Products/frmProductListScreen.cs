@@ -92,17 +92,6 @@ namespace InventorySalesManagementSystem.Products
             });
 
 
-            // ===== MasurementUnitName =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(ProductListDto.MesurementUnitName),
-                DataPropertyName = nameof(ProductListDto.MesurementUnitName),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(MasurementUnit), nameof(MasurementUnit.UnitName)),
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-            });
-
-
             // ===== BuyingPrice =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
@@ -233,7 +222,7 @@ namespace InventorySalesManagementSystem.Products
         #region Buttons Event
         protected async override Task HandleAddButtonClicked()
         {
-            var frm = await frmAddUpdateProduct.CreateForAdd(_serviceProvider);
+            var frm = await frmUpdateProduct.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();
@@ -254,7 +243,7 @@ namespace InventorySalesManagementSystem.Products
 
             try
             {
-                var frm = await frmAddUpdateProduct.CreateForUpdate(_serviceProvider, item.ProductId);
+                var frm = await frmUpdateProduct.CreateForUpdate(_serviceProvider, item.ProductId);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)
@@ -427,7 +416,7 @@ namespace InventorySalesManagementSystem.Products
                         if(frm.ShowDialog() == DialogResult.OK)
                         {
                            await service.AddQuantityAsync(item.ProductId,frm.Quantity, userid , frm.Reason, frm.Notes);
-                            MessageBox.Show($"تم إضافة كمية \n مقدارها : {frm.Quantity} [{item.MesurementUnitName}] \n  للمنتج : ({$"{item.ProductTypeName} [{item.ProductName}]"})");
+                            MessageBox.Show($"تم إضافة كمية \n مقدارها : {frm.Quantity} \n  للمنتج : ({$"{item.ProductTypeName} [{item.ProductName}]"})");
                         }
                     }
                 }
@@ -480,7 +469,7 @@ namespace InventorySalesManagementSystem.Products
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
                            await service.RemoveQuantityAsync(item.ProductId, frm.Quantity, userid, frm.Reason,frm.Notes);
-                            MessageBox.Show($"تم سحب كمية \n مقدارها : {frm.Quantity} [{item.MesurementUnitName}] \n  من المنتج : ({$"{item.ProductTypeName} [{item.ProductName}]"})");
+                            MessageBox.Show($"تم سحب كمية \n مقدارها : {frm.Quantity} \n  للمنتج : ({$"{item.ProductTypeName} [{item.ProductName}]"})");
                         }
                     }
                 }

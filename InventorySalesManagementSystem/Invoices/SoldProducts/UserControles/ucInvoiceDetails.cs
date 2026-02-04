@@ -83,15 +83,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 }
             });
 
-            // ===== UnitName =====
-            dgv.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(SoldProductListDto.UnitName),
-                DataPropertyName = nameof(SoldProductListDto.UnitName),
-                HeaderText = LogicLayer.Utilities
-                .NamesManager.GetArabicPropertyName(typeof(SoldProductListDto), nameof(SoldProductListDto.UnitName)),
-                FillWeight = 20
-            });
 
             // ===== ProductFullName =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
@@ -148,7 +139,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 }
             });
 
-            // ===== UnitName =====
+            // ===== Reciver =====
             dgv.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = nameof(SoldProductListDto.Reciver),

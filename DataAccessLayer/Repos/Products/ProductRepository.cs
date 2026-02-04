@@ -25,7 +25,6 @@ namespace DataAccessLayer.Repos.Products
                 .Products
                 .Where(p => p.ProductId == ProductId)
                 .Include(p=>p.ProductType)
-                .Include(p=>p.MasurementUnit)
                 .FirstOrDefaultAsync();
         }
 
@@ -36,7 +35,6 @@ namespace DataAccessLayer.Repos.Products
                 _context
                 .Products
                 .Include(p => p.ProductType)
-                .Include(p => p.MasurementUnit)
                 .OrderBy(p => p.ProductId)
                 .Skip((PageNumber - 1) * RowsPerPage)
                 .Take(RowsPerPage)
@@ -57,7 +55,6 @@ namespace DataAccessLayer.Repos.Products
                 await _context.Products
                     .AsNoTracking()
                     .Include(p => p.ProductType)
-                    .Include(p => p.MasurementUnit)
                     .Where(p =>
                         EF.Functions.Like(
                             p.ProductType.ProductTypeName,
@@ -89,7 +86,6 @@ namespace DataAccessLayer.Repos.Products
                 _context.Products
                 .AsNoTracking()
                 .Include(p => p.ProductType)
-                 .Include(p=>p.MasurementUnit)
                 .Where(p => p.ProductType.ProductTypeName.
                 StartsWith(ProductTypeName)
                 &&
@@ -147,7 +143,6 @@ namespace DataAccessLayer.Repos.Products
         public async Task<List<Product>> GetProductsByIdsAsync(List<int> Ids)
         {
             return await _context.Products
-                .Include(p=>p.MasurementUnit)
                 .Include(p=>p.ProductType)
                 .Where(p => Ids.Contains(p.ProductId))
                 .ToListAsync();
@@ -173,7 +168,6 @@ namespace DataAccessLayer.Repos.Products
                _context.Products
                .AsNoTracking()
                .Include(p => p.ProductType)
-                .Include(p => p.MasurementUnit)
                .Where(p=>
                 (ActivationState == null || p.IsAvailable == ActivationState))
                .OrderBy(c => c.ProductId)

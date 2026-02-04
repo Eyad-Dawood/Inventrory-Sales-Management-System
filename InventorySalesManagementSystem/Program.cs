@@ -41,7 +41,6 @@ namespace InventorySalesManagementSystem
 
 
 
-
             //Logger Creation
             Serilog.Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
@@ -70,15 +69,15 @@ namespace InventorySalesManagementSystem
 
             // ===== Migrations =====
             .WriteTo.Logger(lc => lc
-                .Filter.ByIncludingOnly(
-                    Matching.FromSource("Microsoft.EntityFrameworkCore.Migrations"))
-                .WriteTo.File(
-                    path: Path.Combine(logsFolder, "migration-.log"),
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: 30,
-                    shared: true))
-
-            .CreateLogger();
+            .MinimumLevel.Warning() //to avoid PRAGMA warning , EF conflict
+            .Filter.ByIncludingOnly(
+             Matching.FromSource("Microsoft.EntityFrameworkCore.Migrations"))
+            .WriteTo.File(
+             path: Path.Combine(logsFolder, "migration-.log"),
+             rollingInterval: RollingInterval.Day,
+             retainedFileCountLimit: 30,
+             shared: true))
+             .CreateLogger();
 
 
             //Service Config
@@ -129,7 +128,6 @@ namespace InventorySalesManagementSystem
             services.AddScoped<ProductStockMovementLogService>();
             services.AddScoped<ProductTypeService>();
             services.AddScoped<CustomerService>();
-            services.AddScoped<MasurementUnitService>();
             services.AddScoped<PersonService>();
             services.AddScoped<TownService>();
             services.AddScoped<UserService>();

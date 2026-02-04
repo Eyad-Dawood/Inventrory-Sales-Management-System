@@ -36,7 +36,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
 
         public bool IsAvailable { get;private set; } = true;
-        private string _UnitName { get; set; }
 
 
         [Browsable(false)]
@@ -180,7 +179,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 FontStyle.Regular
             );
 
-            rtbPricePerUnit.AppendText($"[{_UnitName}]");
+            rtbPricePerUnit.AppendText($"[للوحدة]");
             #endregion
         }
 
@@ -197,14 +196,13 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 .ToString("N2");
         }
 
-        private void FillData(string productTypeName, string productName, int productId, decimal quantityInStorage, decimal pricePerUnit, string unitName)
+        private void FillData(string productTypeName, string productName, int productId, decimal quantityInStorage, decimal pricePerUnit)
         {
             _ProductTypeName = productTypeName;
             _ProductName = productName;
             _QuantityInStorage = quantityInStorage;
             ProductId = productId;
             _PricePerUnit = pricePerUnit;
-            _UnitName = unitName;
 
             //Validation Conditions
             numericUpDown1.Maximum = quantityInStorage;
@@ -214,17 +212,17 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             //New Card Added
             OnQuantityChanged?.Invoke();
         }
-        public void LoadData(string productTypeName, string productName, int productId, decimal quantityInStorage , decimal pricePerUnit , string unitName)
+        public void LoadData(string productTypeName, string productName, int productId, decimal quantityInStorage , decimal pricePerUnit )
         {
             
-            FillData(productTypeName, productName, productId, quantityInStorage, pricePerUnit, unitName);
+            FillData(productTypeName, productName, productId, quantityInStorage, pricePerUnit);
 
             //Update UI
             UpdateUI();
         }
-        public void LoadData(string productTypeName, string productName, int productId, decimal quantityInStorage, decimal pricePerUnit, string unitName , decimal Quantity , bool IsAvilable)
+        public void LoadData(string productTypeName, string productName, int productId, decimal quantityInStorage, decimal pricePerUnit, decimal Quantity , bool IsAvilable)
         {
-            FillData(productTypeName, productName, productId, quantityInStorage, pricePerUnit, unitName);
+            FillData(productTypeName, productName, productId, quantityInStorage, pricePerUnit);
 
             numericUpDown1.Value = Quantity;
             IsAvailable = IsAvilable;

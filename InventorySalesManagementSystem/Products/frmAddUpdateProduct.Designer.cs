@@ -1,6 +1,6 @@
 ﻿namespace InventorySalesManagementSystem.Products
 {
-    partial class frmAddUpdateProduct
+    partial class frmUpdateProduct
     {
         /// <summary>
         /// Required designer variable.
@@ -36,15 +36,12 @@
             label1 = new Label();
             txtProductName = new TextBox();
             label2 = new Label();
-            cmpUnit = new ComboBox();
             txtProductTypeName = new TextBox();
             lkSelectProductType = new LinkLabel();
-            label3 = new Label();
             txtBuyingPrice = new TextBox();
             label4 = new Label();
             txtSellingPrice = new TextBox();
             label5 = new Label();
-            lkAddUnit = new LinkLabel();
             chkAvilable = new CheckBox();
             txtQuantity = new TextBox();
             lbStorageQuantity = new Label();
@@ -137,16 +134,6 @@
             label2.TabIndex = 39;
             label2.Text = "الموديل : ";
             // 
-            // cmpUnit
-            // 
-            cmpUnit.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmpUnit.FormattingEnabled = true;
-            cmpUnit.Location = new Point(394, 184);
-            cmpUnit.Name = "cmpUnit";
-            cmpUnit.RightToLeft = RightToLeft.Yes;
-            cmpUnit.Size = new Size(203, 23);
-            cmpUnit.TabIndex = 2;
-            // 
             // txtProductTypeName
             // 
             txtProductTypeName.BorderStyle = BorderStyle.FixedSingle;
@@ -170,16 +157,6 @@
             lkSelectProductType.TabStop = true;
             lkSelectProductType.Text = "أختر";
             lkSelectProductType.LinkClicked += lkSelectProductType_LinkClicked;
-            // 
-            // label3
-            // 
-            label3.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            label3.Location = new Point(603, 181);
-            label3.Name = "label3";
-            label3.RightToLeft = RightToLeft.Yes;
-            label3.Size = new Size(122, 25);
-            label3.TabIndex = 44;
-            label3.Text = "وحدة القياس : ";
             // 
             // txtBuyingPrice
             // 
@@ -215,18 +192,6 @@
             label5.TabIndex = 47;
             label5.Text = "سعر البيع : ";
             // 
-            // lkAddUnit
-            // 
-            lkAddUnit.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            lkAddUnit.Location = new Point(352, 188);
-            lkAddUnit.Name = "lkAddUnit";
-            lkAddUnit.RightToLeft = RightToLeft.Yes;
-            lkAddUnit.Size = new Size(36, 13);
-            lkAddUnit.TabIndex = 3;
-            lkAddUnit.TabStop = true;
-            lkAddUnit.Text = "إضافة";
-            lkAddUnit.LinkClicked += lkAddUnit_LinkClicked;
-            // 
             // chkAvilable
             // 
             chkAvilable.Checked = true;
@@ -256,7 +221,7 @@
             lbStorageQuantity.TabIndex = 50;
             lbStorageQuantity.Text = "كمية المخزون : ";
             // 
-            // frmAddUpdateProduct
+            // frmUpdateProduct
             // 
             AcceptButton = btnSave;
             AutoScaleDimensions = new SizeF(96F, 96F);
@@ -270,11 +235,8 @@
             Controls.Add(label5);
             Controls.Add(txtBuyingPrice);
             Controls.Add(label4);
-            Controls.Add(label3);
             Controls.Add(lkSelectProductType);
             Controls.Add(txtProductTypeName);
-            Controls.Add(lkAddUnit);
-            Controls.Add(cmpUnit);
             Controls.Add(label2);
             Controls.Add(txtProductName);
             Controls.Add(label1);
@@ -285,7 +247,7 @@
             Controls.Add(btnSave);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;
-            Name = "frmAddUpdateProduct";
+            Name = "frmUpdateProduct";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -300,15 +262,12 @@
         private Label label1;
         private TextBox txtProductName;
         private Label label2;
-        private ComboBox cmpUnit;
         private TextBox txtProductTypeName;
         private LinkLabel lkSelectProductType;
-        private Label label3;
         private TextBox txtBuyingPrice;
         private Label label4;
         private TextBox txtSellingPrice;
         private Label label5;
-        private LinkLabel lkAddUnit;
         private CheckBox chkAvilable;
         private TextBox txtQuantity;
         private Label lbStorageQuantity;

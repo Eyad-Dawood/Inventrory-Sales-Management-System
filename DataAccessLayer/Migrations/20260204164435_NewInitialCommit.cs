@@ -6,24 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccessLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCommit : Migration
+    public partial class NewInitialCommit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "MasurementUnits",
-                columns: table => new
-                {
-                    MasurementUnitId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UnitName = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MasurementUnits", x => x.MasurementUnitId);
-                });
-
             migrationBuilder.CreateTable(
                 name: "ProductTypes",
                 columns: table => new
@@ -77,18 +64,11 @@ namespace DataAccessLayer.Migrations
                     QuantityInStorage = table.Column<decimal>(type: "decimal(10,4)", nullable: false),
                     ProductName = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false),
                     IsAvailable = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ProductTypeId = table.Column<int>(type: "INTEGER", nullable: false),
-                    MasurementUnitId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ProductTypeId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.ProductId);
-                    table.ForeignKey(
-                        name: "FK_Products_MasurementUnits_MasurementUnitId",
-                        column: x => x.MasurementUnitId,
-                        principalTable: "MasurementUnits",
-                        principalColumn: "MasurementUnitId",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Products_ProductTypes_ProductTypeId",
                         column: x => x.ProductTypeId,
@@ -291,7 +271,7 @@ namespace DataAccessLayer.Migrations
                     PaidBy = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     RecivedBy = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    InvoiceId = table.Column<int>(type: "INTEGER", nullable: true),
+                    InvoiceId = table.Column<int>(type: "INTEGER", nullable: false),
                     CustomerId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -402,12 +382,6 @@ namespace DataAccessLayer.Migrations
                 column: "WorkerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MasurementUnits_UnitName",
-                table: "MasurementUnits",
-                column: "UnitName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Payments_CustomerId",
                 table: "Payments",
                 column: "CustomerId");
@@ -446,11 +420,6 @@ namespace DataAccessLayer.Migrations
                 name: "IX_ProductPricesLog_ProductId",
                 table: "ProductPricesLog",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_MasurementUnitId",
-                table: "Products",
-                column: "MasurementUnitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_ProductName",
@@ -535,9 +504,6 @@ namespace DataAccessLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "TakeBatches");
-
-            migrationBuilder.DropTable(
-                name: "MasurementUnits");
 
             migrationBuilder.DropTable(
                 name: "ProductTypes");

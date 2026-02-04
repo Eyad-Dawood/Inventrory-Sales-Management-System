@@ -37,8 +37,6 @@
             lbBuyingPrice = new Label();
             label3 = new Label();
             label6 = new Label();
-            lbUnit = new Label();
-            label8 = new Label();
             lbProfit = new Label();
             label4 = new Label();
             lbTotalSales = new Label();
@@ -152,28 +150,6 @@
             label6.TabIndex = 56;
             label6.Text = "الكمية : ";
             // 
-            // lbUnit
-            // 
-            lbUnit.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbUnit.Location = new Point(242, 68);
-            lbUnit.Margin = new Padding(4, 0, 4, 0);
-            lbUnit.Name = "lbUnit";
-            lbUnit.RightToLeft = RightToLeft.Yes;
-            lbUnit.Size = new Size(481, 28);
-            lbUnit.TabIndex = 59;
-            lbUnit.Text = "----";
-            // 
-            // label8
-            // 
-            label8.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label8.Location = new Point(714, 66);
-            label8.Margin = new Padding(4, 0, 4, 0);
-            label8.Name = "label8";
-            label8.RightToLeft = RightToLeft.Yes;
-            label8.Size = new Size(127, 25);
-            label8.TabIndex = 58;
-            label8.Text = "وحدة القياس : ";
-            // 
             // lbProfit
             // 
             lbProfit.Font = new Font("Calibri", 15F, FontStyle.Bold);
@@ -199,7 +175,7 @@
             // lbTotalSales
             // 
             lbTotalSales.Font = new Font("Calibri", 15F, FontStyle.Bold);
-            lbTotalSales.Location = new Point(242, 97);
+            lbTotalSales.Location = new Point(242, 69);
             lbTotalSales.Margin = new Padding(4, 0, 4, 0);
             lbTotalSales.Name = "lbTotalSales";
             lbTotalSales.RightToLeft = RightToLeft.Yes;
@@ -210,7 +186,7 @@
             // label11
             // 
             label11.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label11.Location = new Point(722, 95);
+            label11.Location = new Point(722, 67);
             label11.Margin = new Padding(4, 0, 4, 0);
             label11.Name = "label11";
             label11.RightToLeft = RightToLeft.Yes;
@@ -272,8 +248,6 @@
             Controls.Add(label11);
             Controls.Add(lbProfit);
             Controls.Add(label4);
-            Controls.Add(lbUnit);
-            Controls.Add(label8);
             Controls.Add(label6);
             Controls.Add(lbBuyingPrice);
             Controls.Add(label3);
@@ -302,8 +276,6 @@
         private Label lbBuyingPrice;
         private Label label3;
         private Label label6;
-        private Label lbUnit;
-        private Label label8;
         private Label lbProfit;
         private Label label4;
         private Label lbTotalSales;

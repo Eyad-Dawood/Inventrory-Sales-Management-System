@@ -38,8 +38,7 @@ namespace DataAccessLayer.Repos.Invoices
                 .AsNoTracking()
                 .Include(b => b.Product)
                 .ThenInclude(p => p.ProductType)
-                .Include(b => b.Product)
-                .ThenInclude(p => p.MasurementUnit);
+                .Include(b => b.Product);
 
             query = ApplyFilter(query, takeBatchTypes);
 
@@ -60,7 +59,6 @@ namespace DataAccessLayer.Repos.Invoices
                 .Include(b => b.Product)
                 .ThenInclude(p => p.ProductType)
                 .Include(b => b.Product)
-                .ThenInclude(p => p.MasurementUnit)
                 .Include(b => b.TakeBatch);
 
             query = ApplyFilter(query, takeBatchTypes);
@@ -82,7 +80,6 @@ namespace DataAccessLayer.Repos.Invoices
                .Include(b => b.Product)
                .ThenInclude(p => p.ProductType)
                .Include(b => b.Product)
-               .ThenInclude(p => p.MasurementUnit)
                .Include(b => b.TakeBatch);
 
             query = ApplyFilter(query, takeBatchTypes);
@@ -206,7 +203,6 @@ namespace DataAccessLayer.Repos.Invoices
                     sp.Product.ProductName,
                     sp.Product.ProductType.ProductTypeName,
                     sp.Product.IsAvailable,
-                    sp.Product.MasurementUnit.UnitName
                 })
                 .Select(g => new SoldProductForRefund
                 {
@@ -224,7 +220,6 @@ namespace DataAccessLayer.Repos.Invoices
                     SellingPricePerUnit = g.Where(x => x.TakeBatch.TakeBatchType == TakeBatchType.Invoice) // setting the price based on the buying price
                                    .Select(x => x.SellingPricePerUnit) 
                                    .FirstOrDefault(),
-                    UnitName = g.Key.UnitName                    
                 })
                .Where(x => x.QuantityInStorage > 0)
                 .ToListAsync();

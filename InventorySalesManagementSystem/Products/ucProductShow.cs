@@ -69,11 +69,6 @@ namespace InventorySalesManagementSystem.Products
 
 
 
-
-            lbUnit.Text = dto.MesurementUnitName;
-
-
-
             lbSellingPrice.Text = $"{dto.SellingPrice.ToString("N2")}";
             lbBuyingPrice.Text = $"{dto.BuyingPrice.ToString("N2")}";
             lbProfit.Text = $"{dto.Profit.ToString("N2")}";

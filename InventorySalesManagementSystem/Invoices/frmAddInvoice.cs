@@ -139,7 +139,6 @@ namespace InventorySalesManagementSystem.Invoices
                             QuantityInStorage = p.QuantityInStorage,
                             SellingPricePerUnit = p.SellingPricePerUnit,
                             SoldProductId = p.ProductId,
-                            UnitName = p.UnitName
                         };
                     })
                     .ToList();

@@ -48,7 +48,6 @@ namespace LogicLayer.Services.Products
             {
                 BuyingPrice = DTO.BuyingPrice,
                 SellingPrice = DTO.SellingPrice,
-                MasurementUnitId = DTO.MasurementUnitId,
                 ProductName = DTO.ProductName,
                 ProductTypeId = DTO.ProductTypeId,
                 QuantityInStorage = DTO.QuantityInStorage,
@@ -67,7 +66,6 @@ namespace LogicLayer.Services.Products
             return new ProductReadDto()
             {
                 BuyingPrice = product.BuyingPrice,
-                MesurementUnitName = product.MasurementUnit.UnitName,
                 SellingPrice = product.SellingPrice,
                 ProductId = product.ProductId,
                 ProductName = product.ProductName,
@@ -84,7 +82,6 @@ namespace LogicLayer.Services.Products
                 SellingPrice = product.SellingPrice,
                 IsAvilable = product.IsAvailable,
                 BuyingPrice = product.BuyingPrice,
-                MesurementUnitName = product.MasurementUnit.UnitName,
                 ProductId = product.ProductId,
                 QuantityInStorage = product.QuantityInStorage,
                 ProductName = product.ProductName,

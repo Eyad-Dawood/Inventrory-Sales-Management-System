@@ -85,7 +85,7 @@ namespace LogicLayer.Services.Payments
                 Amount = payment.Amount,
                 CustomerId = payment.CustomerId,
                 CustomerName = payment.Customer.Person.FullName,
-                InvoiceId = payment.InvoiceId,
+                InvoiceId = (int)payment.InvoiceId,
                 PaymentId = payment.PaymentId,
                 PaymentReason = payment.PaymentReason.GetDisplayName(),
                 PaidBy = payment.PaidBy,
@@ -212,7 +212,7 @@ namespace LogicLayer.Services.Payments
                     await _paymentRepository.AddAsync(Payment);
 
                     //Validation In Here
-                    await _invoiceService.Pay(Payment.InvoiceId, Payment.Amount);
+                    await _invoiceService.Pay((int)Payment.InvoiceId, Payment.Amount);
 
 
                     await _unitOfWork.SaveAsync();
@@ -261,7 +261,7 @@ namespace LogicLayer.Services.Payments
                     await _paymentRepository.AddAsync(Payment);
 
                     //Validation Inside
-                    decimal RefundAmount = await _invoiceService.Refund(Payment.InvoiceId);
+                    decimal RefundAmount = await _invoiceService.Refund((int)Payment.InvoiceId);
 
                     await _unitOfWork.SaveAsync();
 

@@ -8,7 +8,12 @@ public class InventoryDbContextFactory : IDesignTimeDbContextFactory<InventoryDb
     {
         var optionsBuilder = new DbContextOptionsBuilder<InventoryDbContext>();
 
-        optionsBuilder.UseSqlite("Data Source=inventory.db");
+        var dbFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                "InventorySales");
+        var dbPath = Path.Combine(dbFolder, "inventory.db");
+
+        optionsBuilder.UseSqlite($"Data Source={dbPath}");
 
         return new InventoryDbContext(optionsBuilder.Options);
     }

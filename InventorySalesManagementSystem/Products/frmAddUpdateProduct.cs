@@ -1,34 +1,16 @@
-﻿using DataAccessLayer.Entities;
-using DataAccessLayer.Entities.Products;
-using InventorySalesManagementSystem.Customers;
+﻿using DataAccessLayer.Entities.Products;
 using InventorySalesManagementSystem.General;
-using InventorySalesManagementSystem.MasurementUnits;
-using InventorySalesManagementSystem.People;
 using InventorySalesManagementSystem.Products.ProductsTypes;
-using LogicLayer.DTOs.CustomerDTO;
-using LogicLayer.DTOs.MasurementUnitDTO;
 using LogicLayer.DTOs.ProductDTO;
-using LogicLayer.DTOs.ProductTypeDTO;
 using LogicLayer.Global.Users;
-using LogicLayer.Services;
 using LogicLayer.Services.Products;
-using LogicLayer.Utilities;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace InventorySalesManagementSystem.Products
 {
-    public partial class frmAddUpdateProduct : Form
+    public partial class frmUpdateProduct : Form
     {
         int ProductTypeId = -1;
 
@@ -39,24 +21,12 @@ namespace InventorySalesManagementSystem.Products
 
         private IServiceProvider _serviceProvider { set; get; }
 
-        private frmAddUpdateProduct(IServiceProvider serviceProvider)
+        private frmUpdateProduct(IServiceProvider serviceProvider)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
         }
 
-        private async Task FillUnitsComboBox()
-        {
-            using (var scope = _serviceProvider.CreateAsyncScope())
-            {
-                var service = scope.ServiceProvider.GetRequiredService<MasurementUnitService>();
-                var units = await service.GetAllMasurementUnitAsync();
-
-                cmpUnit.DataSource = units;
-                cmpUnit.DisplayMember = nameof(MasurementUnitListDto.UnitName);
-                cmpUnit.ValueMember = nameof(MasurementUnitListDto.MasurementUnitId);
-            }
-        }
 
         private async Task SetupAdd()
         {
@@ -66,9 +36,6 @@ namespace InventorySalesManagementSystem.Products
             lbId.Text = "---";
 
             _productAdd = new ProductAddDto();
-
-
-            await FillUnitsComboBox();
         }
 
         private void SetupUpdate(ProductUpdateDto dto, ProductReadDto productReadDto)
@@ -81,13 +48,11 @@ namespace InventorySalesManagementSystem.Products
 
 
             chkAvilable.Enabled = false;
-            cmpUnit.Enabled = false;
             txtQuantity.Enabled = false;
             txtProductTypeName.Enabled = false;
 
 
             lkSelectProductType.Enabled = false;
-            lkAddUnit.Enabled = false;
 
             LoadUpdateData(productReadDto);
         }
@@ -100,22 +65,19 @@ namespace InventorySalesManagementSystem.Products
             txtProductTypeName.Text = productReadDto.ProductTypeName;
             chkAvilable.Checked = productReadDto.IsAvailable;
 
-            cmpUnit.Items.Add(productReadDto.MesurementUnitName);
-            cmpUnit.SelectedItem = productReadDto.MesurementUnitName;
-
             txtProductName.Text = _productUpdate.ProductName.ToString();
             txtBuyingPrice.Text = _productUpdate.BuyingPrice.ToString();
             txtSellingPrice.Text = _productUpdate.SellingPrice.ToString();
             chkAvilable.Checked = _productUpdate.IsAvilable;
         }
 
-        public static async Task<frmAddUpdateProduct> CreateForAdd(IServiceProvider serviceProvider)
+        public static async Task<frmUpdateProduct> CreateForAdd(IServiceProvider serviceProvider)
         {
-            var form = new frmAddUpdateProduct(serviceProvider);
+            var form = new frmUpdateProduct(serviceProvider);
             await form.SetupAdd();
             return form;
         }
-        public static async Task<frmAddUpdateProduct> CreateForUpdate(IServiceProvider serviceProvider, int ProductId)
+        public static async Task<frmUpdateProduct> CreateForUpdate(IServiceProvider serviceProvider, int ProductId)
         {
             using (var scope = serviceProvider.CreateAsyncScope())
             {
@@ -125,7 +87,7 @@ namespace InventorySalesManagementSystem.Products
 
                 var productRead = await service.GetProductByIdAsync(ProductId); // To Get The Un Editable Data
 
-                frmAddUpdateProduct frm = new frmAddUpdateProduct(serviceProvider);
+                frmUpdateProduct frm = new frmUpdateProduct(serviceProvider);
                 frm.SetupUpdate(dto, productRead);
                 return frm;
             }
@@ -139,10 +101,7 @@ namespace InventorySalesManagementSystem.Products
             _productAdd.SellingPrice = Convert.ToDecimal(txtSellingPrice.Text);
             _productAdd.ProductTypeId = ProductTypeId;
             _productAdd.IsAvailable = chkAvilable.Checked;
-            if (cmpUnit.SelectedValue != null)
-            {
-                _productAdd.MasurementUnitId = (int)cmpUnit.SelectedValue;
-            }
+      
         }
         private void FillProductUpdate()
         {
@@ -211,15 +170,6 @@ namespace InventorySalesManagementSystem.Products
         }
         private async Task AddProduct(ProductService ProductService, int userId)
         {
-            //Validate Cmp Units
-            if (cmpUnit.SelectedValue == null)
-            {
-                string arabicEntityName = LogicLayer.Utilities.NamesManager.GetArabicEntityName(typeof(MasurementUnit));
-                throw new ValidationException(new List<string>()
-                {
-                    {$"يجب إختيار {arabicEntityName}"}
-                });
-            }
 
             //Validate Model
             if (ProductTypeId <= 0)
@@ -327,15 +277,6 @@ namespace InventorySalesManagementSystem.Products
                     this.txtProductTypeName.Text = "";
                 }
             }
-        }
-
-        private async void lkAddUnit_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            var frm = frmAddUpdateMasurementUnit.CreateForAdd(_serviceProvider);
-            frm.ShowDialog();
-
-            //Reload Units
-            await FillUnitsComboBox();
         }
 
         private void txtProductTypeName_TextChanged(object sender, EventArgs e)

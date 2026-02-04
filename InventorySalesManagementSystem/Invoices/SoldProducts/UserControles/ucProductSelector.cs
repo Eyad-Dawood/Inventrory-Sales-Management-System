@@ -113,12 +113,12 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         private void AddSoldProductCard(ProductListDto product)
         {
             ucSoldProductCard ucSoldProductCard = AddCard();
-            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPrice, product.MesurementUnitName);
+            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPrice);
         }
         private void AddSoldProductCard(SoldProductSaleDetailsListDto product)
         {
             ucSoldProductCard ucSoldProductCard = AddCard();
-            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPricePerUnit, product.UnitName, product.Quantity, product.IsAvilable);
+            ucSoldProductCard.LoadData(product.ProductTypeName, product.ProductName, product.ProductId, product.QuantityInStorage, product.SellingPricePerUnit, product.Quantity, product.IsAvilable);
         }
 
 
@@ -418,7 +418,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         private async Task PerformAddProduct()
         {
-            var frm = await frmAddUpdateProduct.CreateForAdd(_serviceProvider);
+            var frm = await frmUpdateProduct.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
 
             ucListView1.RefreshAfterOperation();

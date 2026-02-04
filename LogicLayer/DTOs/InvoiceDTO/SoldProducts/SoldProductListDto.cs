@@ -17,7 +17,6 @@ namespace LogicLayer.DTOs.InvoiceDTO.SoldProducts
         public int ProductId { get; set; }
         public decimal QuantityInStorage { get; set; }
         public decimal SellingPricePerUnit { get; set; }
-        public string UnitName { get; set; }
         public decimal Quantity { get; set; }
         public bool IsAvilable { get; set; }
     }
@@ -49,8 +48,6 @@ namespace LogicLayer.DTOs.InvoiceDTO.SoldProducts
         public decimal TotalSellingPrice { get; set; }
         [Display(Name = "الكمية")]
         public decimal Quantity { get; set; }
-        [Display(Name = "الوحدة")]
-        public string UnitName { get; set; }
         [Display(Name = "التاريخ")]
         public DateTime TakeDate { get; set; }
         [Display(Name = "المستلم")]

@@ -12,15 +12,6 @@ namespace DataAccessLayer.DesignTimeOnly
         public static void Seed(InventoryDbContext db)
         {
 
-            if (!db.MasurementUnits.Any())
-            {
-                db.MasurementUnits.AddRange(
-                    new MasurementUnit { UnitName = "قطعة" },
-                    new MasurementUnit { UnitName = "كجم" },
-                    new MasurementUnit { UnitName = "متر" },
-                    new MasurementUnit { UnitName = "لتر" }
-                );
-            }
 
             if (!db.Towns.Any())
             {

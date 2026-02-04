@@ -1,11 +1,4 @@
-﻿using DataAccessLayer.Entities.Products;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LogicLayer.DTOs.ProductDTO
+﻿namespace LogicLayer.DTOs.ProductDTO
 {
     public class ProductAddDto
     {
@@ -16,6 +9,5 @@ namespace LogicLayer.DTOs.ProductDTO
         public string ProductName { get; set; }
         public bool IsAvailable { get; set; }
         public int ProductTypeId { get; set; }
-        public int MasurementUnitId { get; set; }
     }
 }

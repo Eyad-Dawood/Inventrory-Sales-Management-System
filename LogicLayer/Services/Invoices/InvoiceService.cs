@@ -93,7 +93,7 @@ namespace LogicLayer.Services.Invoices
 
             return new InvoiceReadDto()
             {
-                InvoiceId = Invoice.InvoiceId,
+                InvoiceId = (int)Invoice.InvoiceId,
                 OpenDate = Invoice.OpenDate,
                 CloseDate = Invoice.CloseDate,
                 InvoiceType = Invoice.InvoiceType.GetDisplayName(),
@@ -127,7 +127,7 @@ namespace LogicLayer.Services.Invoices
 
             return new InvoiceListDto()
             {
-                InvoiceId = invoice.InvoiceId,
+                InvoiceId = (int)invoice.InvoiceId,
                 OpenDate = invoice.OpenDate,
                 CloseDate = invoice.CloseDate,
                 InvoiceType = invoice.InvoiceType.GetDisplayName(),

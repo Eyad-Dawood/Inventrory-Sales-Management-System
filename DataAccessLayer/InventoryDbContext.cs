@@ -14,7 +14,6 @@ namespace DataAccessLayer
         public DbSet<Customer>Customers { get; set; }
         public DbSet<Worker>Workers { get; set; }
         public DbSet<User>Users { get; set; }
-        public DbSet<MasurementUnit> MasurementUnits { get; set; }
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductPriceLog> ProductPricesLog { get; set; }
@@ -55,11 +54,6 @@ namespace DataAccessLayer
             //Town
             modelBuilder.Entity<Town>()
                 .HasIndex(u => u.TownName)
-                .IsUnique();
-
-            //MasurementUnit
-            modelBuilder.Entity<MasurementUnit>()
-                .HasIndex(u=>u.UnitName)
                 .IsUnique();
 
             //Product Type

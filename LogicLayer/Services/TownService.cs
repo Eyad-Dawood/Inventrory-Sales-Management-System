@@ -1,17 +1,9 @@
 ﻿using DataAccessLayer.Abstractions;
 using DataAccessLayer.Entities;
-using DataAccessLayer.Entities.Products;
-using DataAccessLayer.Repos;
-using LogicLayer.DTOs.MasurementUnitDTO;
 using LogicLayer.DTOs.TownDTO;
 using LogicLayer.Validation;
 using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LogicLayer.Services
 {

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260201131134_InitialCommit")]
-    partial class InitialCommit
+    [Migration("20260204164435_NewInitialCommit")]
+    partial class NewInitialCommit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,25 +178,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("TakeBatches");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Entities.MasurementUnit", b =>
-                {
-                    b.Property<int>("MasurementUnitId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UnitName")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("MasurementUnitId");
-
-                    b.HasIndex("UnitName")
-                        .IsUnique();
-
-                    b.ToTable("MasurementUnits");
-                });
-
             modelBuilder.Entity("DataAccessLayer.Entities.Payments.Payment", b =>
                 {
                     b.Property<int>("PaymentId")
@@ -212,7 +193,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("InvoiceId")
+                    b.Property<int>("InvoiceId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
@@ -310,9 +291,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("MasurementUnitId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -328,8 +306,6 @@ namespace DataAccessLayer.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.HasKey("ProductId");
-
-                    b.HasIndex("MasurementUnitId");
 
                     b.HasIndex("ProductName");
 
@@ -593,7 +569,8 @@ namespace DataAccessLayer.Migrations
                     b.HasOne("DataAccessLayer.Entities.Invoices.Invoice", "Invoice")
                         .WithMany()
                         .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("DataAccessLayer.Entities.User", "User")
                         .WithMany()
@@ -621,19 +598,11 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("DataAccessLayer.Entities.Products.Product", b =>
                 {
-                    b.HasOne("DataAccessLayer.Entities.MasurementUnit", "MasurementUnit")
-                        .WithMany()
-                        .HasForeignKey("MasurementUnitId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DataAccessLayer.Entities.Products.ProductType", "ProductType")
                         .WithMany()
                         .HasForeignKey("ProductTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("MasurementUnit");
 
                     b.Navigation("ProductType");
                 });

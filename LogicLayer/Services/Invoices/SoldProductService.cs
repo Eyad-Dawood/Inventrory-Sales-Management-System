@@ -39,7 +39,6 @@ namespace LogicLayer.Services.Invoices
                 BatchId = soldProduct.TakeBatchId,
                 ProductFullName = $"{soldProduct.Product.ProductType.ProductTypeName}[{soldProduct.Product.ProductName}]",
                 Quantity = soldProduct.Quantity,
-                UnitName = soldProduct.Product.MasurementUnit.UnitName,
                 SellingPricePerUnit = soldProduct.SellingPricePerUnit,
                 TotalSellingPrice = soldProduct.SellingPricePerUnit * soldProduct.Quantity,
                 Reciver = soldProduct.TakeBatch.TakeName
@@ -58,7 +57,6 @@ namespace LogicLayer.Services.Invoices
                 IsAvilable = soldProduct.Product.IsAvailable,
                 QuantityInStorage = soldProduct.Product.QuantityInStorage,
                 SellingPricePerUnit = soldProduct.SellingPricePerUnit,
-                UnitName = soldProduct.Product.MasurementUnit.UnitName
             };
         }
         private SoldProductSaleDetailsListDto MapSoldProduct_WithProductListDto(SoldProductForRefund soldProduct)
@@ -72,7 +70,6 @@ namespace LogicLayer.Services.Invoices
                 IsAvilable = soldProduct.IsAvilable,
                 QuantityInStorage = soldProduct.QuantityInStorage,
                 SellingPricePerUnit = soldProduct.SellingPricePerUnit,
-                UnitName = soldProduct.UnitName
             };
         }
 

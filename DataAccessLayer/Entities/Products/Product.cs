@@ -46,11 +46,6 @@ namespace DataAccessLayer.Entities.Products
 
 
 
-        [ForeignKey(nameof(MasurementUnit))]
-        public int MasurementUnitId { get; set; }
-        public MasurementUnit MasurementUnit { get; set; }
-
-
         public bool Validate(List<ValidationError>errors)
         {
             //Validate Name
@@ -86,18 +81,6 @@ namespace DataAccessLayer.Entities.Products
                     {
                         ObjectType = typeof(Product),
                         PropertyName = nameof(ProductType),
-                        Code = ValidationErrorCode.RequiredFieldMissing
-                    });
-            }
-
-            //Validate Unit
-            if (MasurementUnitId <= 0)
-            {
-                errors.Add(
-                    new ValidationError
-                    {
-                        ObjectType = typeof(Product),
-                        PropertyName = nameof(MasurementUnit),
                         Code = ValidationErrorCode.RequiredFieldMissing
                     });
             }
