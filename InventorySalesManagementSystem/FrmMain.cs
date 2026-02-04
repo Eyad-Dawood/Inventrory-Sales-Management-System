@@ -1,29 +1,11 @@
-﻿using DataAccessLayer;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Entities.Invoices;
-using DataAccessLayer.Entities.Products;
-using DataAccessLayer.Repos;
-using InventorySalesManagementSystem.Customers;
-using InventorySalesManagementSystem.General.General_Forms;
+﻿using InventorySalesManagementSystem.Customers;
+using InventorySalesManagementSystem.General;
 using InventorySalesManagementSystem.Invoices;
 using InventorySalesManagementSystem.Payments;
 using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.Products.PricesLog;
-using InventorySalesManagementSystem.Products.ProductsTypes;
 using InventorySalesManagementSystem.Products.StockMovementLog;
 using InventorySalesManagementSystem.Workers;
-using LogicLayer.DTOs.CustomerDTO;
-using LogicLayer.DTOs.InvoiceDTO;
-using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
-using LogicLayer.Global.Users;
-using LogicLayer.Services;
-using LogicLayer.Services.Invoices;
-using LogicLayer.Validation.Exceptions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
 
 namespace InventorySalesManagementSystem
 {
@@ -37,14 +19,46 @@ namespace InventorySalesManagementSystem
             _serviceProvider = serviceProvider;
         }
 
+        private void OpenForm<T>(
+            T current,
+            Func<T> factory,
+            Action<T> setReference
+        ) where T : Form
+        {
+            if (current != null && !current.IsDisposed)
+            {
+                current.BringToFront();
+                return;
+            }
 
+            var frm = factory();
 
+            frm.TopLevel = false;
+            frm.FormBorderStyle = FormBorderStyle.None;
+            frm.Dock = DockStyle.Fill;
+            
+            pnMain.Controls.Add(frm);
+
+            setReference(frm);
+
+            frm.FormClosed += (s, e) =>
+            {
+                setReference(null);
+            };
+
+            frm.Show();
+            frm.BringToFront();
+        }
+       
         private void Workers_Click(object sender, EventArgs e)
         {
             try
             {
-                var frm = new frmWorkerListScreen(_serviceProvider, selectButton: false);
-                frm.ShowDialog();
+                OpenForm(
+                MainFormsContainer.frmWorkerListScreen,
+                () => new frmWorkerListScreen(_serviceProvider, false),
+                f => MainFormsContainer.frmWorkerListScreen = f
+                );
             }
             catch(Exception ex)
             {
@@ -56,8 +70,11 @@ namespace InventorySalesManagementSystem
         {
             try
             {
-                var frm = new frmCustomerListScreen(_serviceProvider, selectButton: false);
-                frm.ShowDialog();
+                OpenForm(
+                MainFormsContainer.frmCustomerListScreen,
+                () => new frmCustomerListScreen(_serviceProvider, false),
+                f => MainFormsContainer.frmCustomerListScreen = f
+                );
             }
             catch (Exception ex)
             {
@@ -69,8 +86,11 @@ namespace InventorySalesManagementSystem
         {
             try
             {
-                var frm = new frmProductListScreen(_serviceProvider);
-                frm.ShowDialog();
+                OpenForm(
+                MainFormsContainer.frmProductListScreen,
+                () => new frmProductListScreen(_serviceProvider),
+                f => MainFormsContainer.frmProductListScreen = f
+                );
             }
             catch (Exception ex)
             {
@@ -82,8 +102,11 @@ namespace InventorySalesManagementSystem
         {
             try
             {
-                var frm = new frmPriceLogListScreen(_serviceProvider);
-                frm.ShowDialog();
+                OpenForm(
+                MainFormsContainer.frmPriceLogListScreen,
+                () => new frmPriceLogListScreen(_serviceProvider),
+                f => MainFormsContainer.frmPriceLogListScreen = f
+                );
             }
             catch (Exception ex)
             {
@@ -95,8 +118,11 @@ namespace InventorySalesManagementSystem
         {
             try
             {
-                var frm = new FrmStockMovementLogListScreen(_serviceProvider);
-                frm.ShowDialog();
+                OpenForm(
+                MainFormsContainer.frmStockMovementLogListScreen,
+                () => new FrmStockMovementLogListScreen(_serviceProvider),
+                f => MainFormsContainer.frmStockMovementLogListScreen = f
+                );
             }
             catch (Exception ex)
             {
@@ -108,8 +134,11 @@ namespace InventorySalesManagementSystem
         {
             try
             {
-                var frm = new frmInvoiceListScreen(_serviceProvider, selectButton: false);
-                frm.ShowDialog();
+                OpenForm(
+               MainFormsContainer.frmInvoiceListScreen,
+               () => new frmInvoiceListScreen(_serviceProvider, selectButton: false),
+               f => MainFormsContainer.frmInvoiceListScreen = f
+               );
             }
             catch (Exception ex)
             {
@@ -121,8 +150,11 @@ namespace InventorySalesManagementSystem
         {
             try
             {
-                frmPaymentsListScreen frm = new frmPaymentsListScreen(_serviceProvider);
-                frm.ShowDialog();
+                OpenForm(
+               MainFormsContainer.frmPaymentsListScreen,
+               () => new frmPaymentsListScreen(_serviceProvider),
+               f => MainFormsContainer.frmPaymentsListScreen = f
+               );
             }
             catch (Exception ex)
             {

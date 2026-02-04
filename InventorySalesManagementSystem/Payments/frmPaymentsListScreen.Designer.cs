@@ -41,9 +41,9 @@
             // 
             // ucListView1
             // 
-            ucListView1.AllowCancelButton = false;
             ucListView1.AllowDatePic = true;
             ucListView1.AllowEmptyFilter = true;
+            ucListView1.Size = new Size(1214, 576);
             // 
             // btnSelect
             // 
@@ -88,7 +88,7 @@
             groupBox1.Controls.Add(chkInvoice);
             groupBox1.Controls.Add(chkRefund);
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(372, 129);
+            groupBox1.Location = new Point(338, 129);
             groupBox1.Name = "groupBox1";
             groupBox1.RightToLeft = RightToLeft.Yes;
             groupBox1.Size = new Size(138, 40);
@@ -119,10 +119,11 @@
             // 
             // frmPaymentsListScreen
             // 
-            AutoScaleDimensions = new SizeF(96F, 96F);
-            AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(1214, 661);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1214, 711);
             Controls.Add(groupBox1);
+            MinimumSize = new Size(900, 700);
             Name = "frmPaymentsListScreen";
             Controls.SetChildIndex(ucListView1, 0);
             Controls.SetChildIndex(groupBox1, 0);

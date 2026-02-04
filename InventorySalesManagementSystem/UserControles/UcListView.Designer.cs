@@ -40,6 +40,7 @@
             lbrowsCount = new Label();
             pnUpperBar = new Panel();
             tlpUpper = new TableLayoutPanel();
+            btnSearch = new Button();
             dtpLogDate = new DateTimePicker();
             chkUseDateFilter = new CheckBox();
             btnCancelFilter = new Button();
@@ -47,7 +48,6 @@
             cmpSearchBy = new ComboBox();
             txtSearchValue2 = new TextBox();
             timer1 = new System.Windows.Forms.Timer(components);
-            btnSearch = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             pnBottomBar.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -216,6 +216,18 @@
             tlpUpper.Size = new Size(957, 39);
             tlpUpper.TabIndex = 11;
             // 
+            // btnSearch
+            // 
+            btnSearch.Anchor = AnchorStyles.Right;
+            btnSearch.BackgroundImage = Properties.Resources.SearchIcon;
+            btnSearch.BackgroundImageLayout = ImageLayout.Stretch;
+            btnSearch.Location = new Point(3, 4);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new Size(30, 30);
+            btnSearch.TabIndex = 11;
+            btnSearch.UseVisualStyleBackColor = true;
+            btnSearch.Click += btnSearch_Click;
+            // 
             // dtpLogDate
             // 
             dtpLogDate.Anchor = AnchorStyles.Right;
@@ -231,8 +243,6 @@
             // 
             // chkUseDateFilter
             // 
-            chkUseDateFilter.Checked = true;
-            chkUseDateFilter.CheckState = CheckState.Checked;
             chkUseDateFilter.Dock = DockStyle.Fill;
             chkUseDateFilter.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold);
             chkUseDateFilter.Location = new Point(75, 3);
@@ -290,18 +300,6 @@
             // 
             timer1.Interval = 250;
             timer1.Tick += timer1_Tick;
-            // 
-            // btnSearch
-            // 
-            btnSearch.Anchor = AnchorStyles.Right;
-            btnSearch.BackgroundImage = Properties.Resources.SearchIcon;
-            btnSearch.BackgroundImageLayout = ImageLayout.Stretch;
-            btnSearch.Location = new Point(3, 4);
-            btnSearch.Name = "btnSearch";
-            btnSearch.Size = new Size(30, 30);
-            btnSearch.TabIndex = 11;
-            btnSearch.UseVisualStyleBackColor = true;
-            btnSearch.Click += btnSearch_Click;
             // 
             // UcListView
             // 

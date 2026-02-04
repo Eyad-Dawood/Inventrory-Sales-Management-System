@@ -166,7 +166,7 @@ namespace InventorySalesManagementSystem.Payments
             {
 
                 Cursor.Current = Cursors.WaitCursor;
-                btnSave.Enabled = false;
+                btnSavePayment.Enabled = false;
 
 
                 ValidateAmounts();
@@ -207,7 +207,7 @@ namespace InventorySalesManagementSystem.Payments
             finally
             {
                 Cursor.Current = Cursors.Default;
-                btnSave.Enabled = true;
+                btnSavePayment.Enabled = true;
             }
 
 

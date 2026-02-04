@@ -39,9 +39,8 @@
             toolStripMenuItem2 = new ToolStripMenuItem();
             PriceLogs = new ToolStripMenuItem();
             StorageLog = new ToolStripMenuItem();
-            pictureBox1 = new PictureBox();
+            pnMain = new Panel();
             menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -67,7 +66,7 @@
             // 
             Workers.Image = Properties.Resources.workers__1_;
             Workers.Name = "Workers";
-            Workers.Size = new Size(189, 50);
+            Workers.Size = new Size(203, 50);
             Workers.Text = "العمال";
             Workers.Click += Workers_Click;
             // 
@@ -75,7 +74,7 @@
             // 
             Customers.Image = Properties.Resources.customer__1_;
             Customers.Name = "Customers";
-            Customers.Size = new Size(189, 50);
+            Customers.Size = new Size(203, 50);
             Customers.Text = "العملاء";
             Customers.Click += Customers_Click;
             // 
@@ -131,23 +130,20 @@
             StorageLog.Text = "المخزون";
             StorageLog.Click += StorageLog_Click;
             // 
-            // pictureBox1
+            // pnMain
             // 
-            pictureBox1.BackgroundImage = Properties.Resources.BackGround;
-            pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Location = new Point(0, 53);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1401, 715);
-            pictureBox1.TabIndex = 15;
-            pictureBox1.TabStop = false;
+            pnMain.Dock = DockStyle.Fill;
+            pnMain.Location = new Point(0, 53);
+            pnMain.Name = "pnMain";
+            pnMain.Size = new Size(1401, 715);
+            pnMain.TabIndex = 15;
             // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1401, 768);
-            Controls.Add(pictureBox1);
+            Controls.Add(pnMain);
             Controls.Add(menuStrip1);
             Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip1;
@@ -155,7 +151,6 @@
             Name = "FrmMain";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -163,7 +158,6 @@
         #endregion
         private MenuStrip menuStrip1;
         private ToolStripMenuItem toolStripMenuItem1;
-        private PictureBox pictureBox1;
         private ToolStripMenuItem Products;
         private ToolStripMenuItem toolStripMenuItem2;
         private ToolStripMenuItem Payments;
@@ -172,5 +166,6 @@
         private ToolStripMenuItem Customers;
         private ToolStripMenuItem PriceLogs;
         private ToolStripMenuItem StorageLog;
+        private Panel pnMain;
     }
 }

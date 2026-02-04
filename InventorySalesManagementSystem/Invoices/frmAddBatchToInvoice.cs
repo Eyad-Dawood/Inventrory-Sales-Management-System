@@ -97,7 +97,7 @@ namespace InventorySalesManagementSystem.Invoices
         {
             try
             {
-                btnSave.Enabled = false;
+                btnSaveBatch.Enabled = false;
                 Cursor = Cursors.WaitCursor;
 
                 var takeBatch = ucAddTakeBatch1.GetTakeBatch();
@@ -115,7 +115,7 @@ namespace InventorySalesManagementSystem.Invoices
             finally
             {
                 Cursor = Cursors.Default;
-                btnSave.Enabled = true;
+                btnSaveBatch.Enabled = true;
             }
         }
 

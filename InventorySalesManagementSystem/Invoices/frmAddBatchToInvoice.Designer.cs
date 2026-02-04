@@ -32,7 +32,7 @@
             lbTitle = new Label();
             ucAddTakeBatch1 = new InventorySalesManagementSystem.Invoices.SoldProducts.UserControles.ucAddTakeBatch();
             btnCancel = new Button();
-            btnSave = new Button();
+            btnSaveBatch = new Button();
             SuspendLayout();
             // 
             // ucInvoiceDetails1
@@ -79,18 +79,18 @@
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
             // 
-            // btnSave
+            // btnSaveBatch
             // 
-            btnSave.Anchor = AnchorStyles.Left;
-            btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            btnSave.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSave.Location = new Point(1630, 976);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(96, 30);
-            btnSave.TabIndex = 2;
-            btnSave.Text = "حفظ";
-            btnSave.UseVisualStyleBackColor = true;
-            btnSave.Click += btnSave_Click;
+            btnSaveBatch.Anchor = AnchorStyles.Left;
+            btnSaveBatch.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            btnSaveBatch.ForeColor = Color.FromArgb(0, 192, 0);
+            btnSaveBatch.Location = new Point(1630, 976);
+            btnSaveBatch.Name = "btnSaveBatch";
+            btnSaveBatch.Size = new Size(96, 30);
+            btnSaveBatch.TabIndex = 2;
+            btnSaveBatch.Text = "حفظ";
+            btnSaveBatch.UseVisualStyleBackColor = true;
+            btnSaveBatch.Click += btnSave_Click;
             // 
             // frmAddBatchToInvoice
             // 
@@ -98,7 +98,7 @@
             AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new Size(1738, 1045);
             Controls.Add(btnCancel);
-            Controls.Add(btnSave);
+            Controls.Add(btnSaveBatch);
             Controls.Add(lbTitle);
             Controls.Add(ucInvoiceDetails1);
             Controls.Add(ucAddTakeBatch1);
@@ -115,6 +115,6 @@
         private Label lbTitle;
         private SoldProducts.UserControles.ucAddTakeBatch ucAddTakeBatch1;
         private Button btnCancel;
-        private Button btnSave;
+        private Button btnSaveBatch;
     }
 }

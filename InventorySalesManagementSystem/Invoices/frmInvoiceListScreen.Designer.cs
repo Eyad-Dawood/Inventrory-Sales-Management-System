@@ -55,7 +55,6 @@
             // 
             // ucListView1
             // 
-            ucListView1.AllowCancelButton = false;
             ucListView1.AllowEmptyFilter = true;
             ucListView1.Size = new Size(1262, 526);
             // 
@@ -188,7 +187,7 @@
             gpCraft.Controls.Add(chkOpen);
             gpCraft.Controls.Add(chkClose);
             gpCraft.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            gpCraft.Location = new Point(639, 130);
+            gpCraft.Location = new Point(601, 130);
             gpCraft.Name = "gpCraft";
             gpCraft.RightToLeft = RightToLeft.Yes;
             gpCraft.Size = new Size(143, 40);
@@ -221,7 +220,7 @@
             groupBox1.Controls.Add(chkSell);
             groupBox1.Controls.Add(chkEvaluation);
             groupBox1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            groupBox1.Location = new Point(501, 130);
+            groupBox1.Location = new Point(463, 130);
             groupBox1.Name = "groupBox1";
             groupBox1.RightToLeft = RightToLeft.Yes;
             groupBox1.Size = new Size(132, 40);
@@ -250,12 +249,12 @@
             // 
             // frmInvoiceListScreen
             // 
-            AutoScaleDimensions = new SizeF(96F, 96F);
-            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1262, 661);
             Controls.Add(groupBox1);
             Controls.Add(gpCraft);
-            MinimumSize = new Size(1278, 700);
+            MinimumSize = new Size(900, 700);
             Name = "frmInvoiceListScreen";
             Controls.SetChildIndex(ucListView1, 0);
             Controls.SetChildIndex(gpCraft, 0);
