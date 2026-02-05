@@ -215,12 +215,7 @@ namespace LogicLayer.Services.Invoices
                 //Allow Refund
                 throw new OperationFailedException("لا يمكن التعديل على فاتورة مغلقة");
             }
-            
-            decimal Requierd = Invoice.TotalSellingPrice - Invoice.TotalRefundSellingPrice;
-            if (Invoice.Discount>Requierd)
-            {
-                throw new OperationFailedException("لا يمكن أن يكون الخصم أكبر من المبلغ المطلوب");
-            }
+                        
         }
 
         private void ValidateMainDiscountLogic(Invoice invoice,decimal discount)

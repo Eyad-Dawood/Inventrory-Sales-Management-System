@@ -12,7 +12,7 @@
         #region Show Only
         public decimal PricePerUnit { get; set; }
         public decimal QuantityInStorage { get; set; }
-
+        public bool IsAvilable { get; set; }
         public decimal Total { get { return Quantity * PricePerUnit; } }
         #endregion
 

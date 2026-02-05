@@ -42,7 +42,7 @@ namespace InventorySalesManagementSystem.Invoices
             _serviceProvider = serviceProvider;
             _IsEvaluationToSaleMode = false;
         }
-        public frmAddInvoice(IServiceProvider serviceProvider, int CustomerId,int? WorkerId,List<SoldProductSaleDetailsListDto> products)
+        public frmAddInvoice(IServiceProvider serviceProvider, int CustomerId, int? WorkerId, List<SoldProductSaleDetailsListDto> products)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
@@ -158,14 +158,14 @@ namespace InventorySalesManagementSystem.Invoices
                     }
                     SetEntityDisplay(rtbCustomer, customer.FullName, customer.CustomerId);
 
-                    if(_SelectedWorkerId == null)
+                    if (_SelectedWorkerId == null)
                     {
                         rtbWorker.Clear();
                         rtbWorker.Text = "----";
                         return;
                     }
-                    
-                        var workerService = scope.ServiceProvider.GetRequiredService<WorkerService>();
+
+                    var workerService = scope.ServiceProvider.GetRequiredService<WorkerService>();
                     var worker = await workerService.GetWorkerByIdAsync((int)_SelectedWorkerId);
                     if (worker == null)
                     {
@@ -236,7 +236,7 @@ namespace InventorySalesManagementSystem.Invoices
             {
                 await SaveInvoiceAsync();
             }
-            
+
             catch (LogicLayer.Validation.Exceptions.ValidationException ex)
             {
                 MessageBox.Show(string.Join("\n", ex.Errors), ex.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -300,7 +300,30 @@ namespace InventorySalesManagementSystem.Invoices
 
         private void rdEvaluation_CheckedChanged(object sender, EventArgs e)
         {
-                ucAddTakeBatch1.AllowBathcData = !rdEvaluation.Checked;
+            ucAddTakeBatch1.AllowBathcData = !rdEvaluation.Checked;
+        }
+
+        private void txtAdditional_Leave(object sender, EventArgs e)
+        {
+            decimal.TryParse(txtAdditional.Text, out decimal discount);
+
+            try
+            {
+                ucAddTakeBatch1.GetProductSelector.UpdateTotal(discount);
+            }
+            catch(OperationFailedException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message);
+
+                txtAdditional.Focus();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "حدث خطأ");
+
+                txtAdditional.Focus();
+            }
+
         }
     }
 }

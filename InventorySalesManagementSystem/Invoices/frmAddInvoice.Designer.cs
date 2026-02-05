@@ -67,7 +67,7 @@
             gpCraft.Controls.Add(rdEvaluation);
             gpCraft.Controls.Add(rdSale);
             gpCraft.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            gpCraft.Location = new Point(738, 13);
+            gpCraft.Location = new Point(736, 7);
             gpCraft.Name = "gpCraft";
             gpCraft.RightToLeft = RightToLeft.Yes;
             gpCraft.Size = new Size(148, 72);
@@ -115,10 +115,10 @@
             panel3.Controls.Add(panel1);
             panel3.Controls.Add(panel2);
             panel3.Controls.Add(ucAddTakeBatch1);
-            panel3.Dock = DockStyle.Top;
+            panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 66);
             panel3.Name = "panel3";
-            panel3.Size = new Size(993, 537);
+            panel3.Size = new Size(993, 466);
             panel3.TabIndex = 55;
             // 
             // panel1
@@ -257,7 +257,7 @@
             ucAddTakeBatch1.Enabled = false;
             ucAddTakeBatch1.Location = new Point(0, 0);
             ucAddTakeBatch1.Name = "ucAddTakeBatch1";
-            ucAddTakeBatch1.Size = new Size(993, 537);
+            ucAddTakeBatch1.Size = new Size(993, 466);
             ucAddTakeBatch1.TabIndex = 55;
             // 
             // btnCancel
@@ -265,7 +265,7 @@
             btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnCancel.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnCancel.ForeColor = Color.Red;
-            btnCancel.Location = new Point(892, 55);
+            btnCancel.Location = new Point(890, 49);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(96, 30);
             btnCancel.TabIndex = 57;
@@ -278,7 +278,7 @@
             btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnSave.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSave.Location = new Point(892, 19);
+            btnSave.Location = new Point(890, 13);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(96, 30);
             btnSave.TabIndex = 56;
@@ -289,16 +289,17 @@
             // txtAdditional
             // 
             txtAdditional.Anchor = AnchorStyles.Right;
-            txtAdditional.Location = new Point(507, 21);
+            txtAdditional.Location = new Point(504, 15);
             txtAdditional.Name = "txtAdditional";
             txtAdditional.Size = new Size(94, 23);
             txtAdditional.TabIndex = 58;
+            txtAdditional.Leave += txtAdditional_Leave;
             // 
             // label4
             // 
             label4.Anchor = AnchorStyles.Right;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            label4.Location = new Point(607, 21);
+            label4.Location = new Point(604, 15);
             label4.Name = "label4";
             label4.RightToLeft = RightToLeft.Yes;
             label4.Size = new Size(56, 21);
@@ -308,7 +309,7 @@
             // txtAdditionalNotes
             // 
             txtAdditionalNotes.Anchor = AnchorStyles.Right;
-            txtAdditionalNotes.Location = new Point(298, 49);
+            txtAdditionalNotes.Location = new Point(295, 43);
             txtAdditionalNotes.Multiline = true;
             txtAdditionalNotes.Name = "txtAdditionalNotes";
             txtAdditionalNotes.RightToLeft = RightToLeft.Yes;
@@ -319,7 +320,7 @@
             // 
             label3.Anchor = AnchorStyles.Right;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label3.Location = new Point(618, 50);
+            label3.Location = new Point(615, 44);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.RightToLeft = RightToLeft.Yes;
@@ -337,9 +338,9 @@
             panel6.Controls.Add(btnCancel);
             panel6.Controls.Add(label4);
             panel6.Dock = DockStyle.Bottom;
-            panel6.Location = new Point(0, 609);
+            panel6.Location = new Point(0, 532);
             panel6.Name = "panel6";
-            panel6.Size = new Size(993, 97);
+            panel6.Size = new Size(993, 88);
             panel6.TabIndex = 62;
             // 
             // frmAddInvoice
@@ -347,7 +348,7 @@
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
-            ClientSize = new Size(993, 706);
+            ClientSize = new Size(993, 620);
             Controls.Add(panel3);
             Controls.Add(lbTitle);
             Controls.Add(panel6);

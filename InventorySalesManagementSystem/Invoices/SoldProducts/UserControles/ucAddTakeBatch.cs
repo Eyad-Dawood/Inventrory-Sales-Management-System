@@ -16,7 +16,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
     public partial class ucAddTakeBatch : UserControl
     {
         public IServiceProvider _serviceProvider { get; private set; }
-
+        public ucProductSelector GetProductSelector { get { return ucProductSelector1; } }
 
         private TakeBatchType _takeBatchType = TakeBatchType.Invoice;
         [Browsable(true)]
@@ -91,7 +91,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             this.Enabled = true;
         }
 
-        public void Initialize(IServiceProvider serviceProvider,List<SoldProductSaleDetailsListDto>products)
+        public void Initialize(IServiceProvider serviceProvider,List<SoldProductSaleDetailsListDto> products)
         {
             _serviceProvider = serviceProvider;
             ucProductSelector1.Initialize(_serviceProvider,products);

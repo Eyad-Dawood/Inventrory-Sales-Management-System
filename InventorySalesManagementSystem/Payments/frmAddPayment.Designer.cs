@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSavePayment = new Button();
             txtAdditionalNotes = new TextBox();
             label3 = new Label();
             btnCancel = new Button();
@@ -53,19 +52,8 @@
             label14 = new Label();
             label18 = new Label();
             label27 = new Label();
+            btnSave = new Button();
             SuspendLayout();
-            // 
-            // btnSavePayment
-            // 
-            btnSavePayment.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            btnSavePayment.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSavePayment.Location = new Point(689, 353);
-            btnSavePayment.Name = "btnSavePayment";
-            btnSavePayment.Size = new Size(96, 30);
-            btnSavePayment.TabIndex = 65;
-            btnSavePayment.Text = "حفظ";
-            btnSavePayment.UseVisualStyleBackColor = true;
-            btnSavePayment.Click += btnSave_Click;
             // 
             // txtAdditionalNotes
             // 
@@ -320,12 +308,25 @@
             label27.TabIndex = 106;
             label27.Text = "باقي السداد : ";
             // 
+            // btnSave
+            // 
+            btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            btnSave.ForeColor = Color.ForestGreen;
+            btnSave.Location = new Point(689, 353);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(92, 30);
+            btnSave.TabIndex = 110;
+            btnSave.Text = "حفظ";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click_1;
+            // 
             // frmAddPayment
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(792, 395);
+            Controls.Add(btnSave);
             Controls.Add(lbPaied);
             Controls.Add(lbDueAmount);
             Controls.Add(lbDiscount);
@@ -348,7 +349,6 @@
             Controls.Add(txtAdditionalNotes);
             Controls.Add(label3);
             Controls.Add(btnCancel);
-            Controls.Add(btnSavePayment);
             Controls.Add(txtamount);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -364,7 +364,6 @@
         private TextBox txtAdditionalNotes;
         private Label label3;
         private Button btnCancel;
-        private Button btnSavePayment;
         private TextBox txtamount;
         private Label label1;
         private Label lbTitle;
@@ -386,5 +385,6 @@
         private Label label14;
         private Label label18;
         private Label label27;
+        private Button btnSave;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Entities;
 using DataAccessLayer.Entities.Invoices;
 using DataAccessLayer.Entities.Products;
+using InventorySalesManagementSystem.Invoices.SoldProducts.UserControles.helpers;
 using InventorySalesManagementSystem.Products;
 using InventorySalesManagementSystem.UserControles;
 using LogicLayer.DTOs.InvoiceDTO;
@@ -9,6 +10,7 @@ using LogicLayer.DTOs.InvoiceDTO.TakeBatches;
 using LogicLayer.DTOs.ProductDTO;
 using LogicLayer.DTOs.ProductTypeDTO;
 using LogicLayer.Services.Products;
+using LogicLayer.Validation.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -24,25 +26,23 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 {
     public partial class ucProductSelector : UserControl
     {
-        private bool _suppressComboEvents = false;
 
         private IServiceProvider _serviceProvider;
-        private int RowsPerPage => 15;
 
         private bool _IsRefundMode = false;
-
-
-        private string _previousSearch1 = "";
-        private string _previousSearch2 = "";
+        
 
         private BindingList<SoldProductAddDto> _SoldProductAdd;
+        private BindingList<SoldProductSaleDetailsListDto> _SoldProductRefund;
 
         public void RefundMode(bool Allow)
         {
             _IsRefundMode = Allow;
             btnAddProduct.Enabled = !Allow;
+            btnAddRecord.Enabled = !Allow;
         }
 
+        private PopupKeyFilter _popupKeyFilter;
 
         private void InitPopup()
         {
@@ -52,9 +52,20 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             popupList.KeyDown += popupList_KeyDown;
             popupList.DrawItem += popupList_DrawItem;
 
+
             this.Controls.Add(popupList);
             popupList.BringToFront();
+
+            _popupKeyFilter = new PopupKeyFilter(
+                popupList,
+                CommitSelectedModel,
+                () => popupList.Visible = false
+            );
+
+            Application.AddMessageFilter(_popupKeyFilter);
         }
+
+
         private void popupList_Click(object sender, EventArgs e)
         {
             CommitSelectedModel();
@@ -65,6 +76,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             {
                 CommitSelectedModel();
                 e.Handled = true;
+                e.SuppressKeyPress = true;
             }
             else if (e.KeyCode == Keys.Escape)
             {
@@ -73,28 +85,31 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 e.Handled = true;
             }
         }
+
         private async void CommitSelectedModel()
         {
             if (popupList.SelectedItem is not ProductTypeListDto selected)
                 return;
 
-            var row = dgvData.CurrentRow;
+            var cell = dgvData.CurrentCell;
 
-            // حط الاسم في الخلية
-            dgvData.CurrentCell.Value = selected.Name;
+            // 🔥 خزّن الاسم
+            cell.Tag = selected.Name;
 
-            // لو محتاج الـ ID لاحقًا
+            // اعرضه فورًا
+            cell.Value = selected.Name;
+
+            // خزّن الـ ID
             dgvData.CurrentRow.Tag = selected.ProductTypeId;
 
             popupList.Visible = false;
 
-            await LoadProductsForRow(row, selected.ProductTypeId);
+            await LoadProductsForRow(dgvData.CurrentRow, selected.ProductTypeId);
 
-            // انقل الفوكس لعمود المنتج
-            dgvData.CurrentCell = row.Cells[nameof(ProductNameAndIdListDto.ProductName)];
-
-
+            dgvData.BeginEdit(true);
         }
+
+
         private async Task LoadProductsForRow(DataGridViewRow row, int productTypeId)
         {
             List<ProductNameAndIdListDto> products;
@@ -128,7 +143,25 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         private void UpdateTotal()
         {
             //Update Total
-            lbTotal.Text = _SoldProductAdd.Sum(x => x.Total).ToString("N2");
+            if(_IsRefundMode)
+            {
+                lbTotal.Text = _SoldProductRefund.Sum(x => x.Total).ToString("N2");
+            }
+            else
+            {
+                lbTotal.Text = _SoldProductAdd.Sum(x => x.Total).ToString("N2");
+            }
+        }
+        public void UpdateTotal(decimal Discount)
+        {
+            decimal Requierd = _SoldProductAdd.Sum(x => x.Total);
+
+            if (Discount > Requierd)
+            {
+                throw new OperationFailedException("لا يمكن أن يكون الخصم أكبر من المبلغ المطلوب");
+            }
+
+            lbTotal.Text = (_SoldProductAdd.Sum(x => x.Total) - Discount).ToString("N2");
         }
 
         public ucProductSelector()
@@ -137,9 +170,25 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             InitPopup();
         }
 
-        public BindingList<SoldProductAddDto> GetSoldProducts()
+        public List<SoldProductAddDto> GetSoldProducts()
         {
-            return _SoldProductAdd;
+            if(_IsRefundMode)
+            {
+                return _SoldProductRefund.Select(p => new SoldProductAddDto()
+                {
+                    IsAvilable = p.IsAvilable,
+                    PricePerUnit = p.SellingPricePerUnit,
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity,
+                    QuantityInStorage = p.QuantityInStorage,
+                    TakeBatchId = 0 // to be set later
+                })
+                .ToList();
+            }
+            else
+            {
+                return _SoldProductAdd.ToList();
+            }
         }
 
 
@@ -159,9 +208,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             try
             {
                 Cursor = Cursors.WaitCursor;
-                Initialize(serviceProvider);
-
-
+                _serviceProvider = serviceProvider;
+                _SoldProductRefund = new BindingList<SoldProductSaleDetailsListDto>(products);
+                ConfigRefundMode();
+                this.Enabled = true;
             }
             finally
             {
@@ -297,7 +347,147 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 ReadOnly = true
             });
 
+            dgvData.Columns.Add(new DataGridViewCheckBoxColumn
+            {
+                Name = nameof(SoldProductAddDto.IsAvilable),
+                DataPropertyName = nameof(SoldProductAddDto.IsAvilable),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.IsAvailable)),
+                FillWeight = 15,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader,
+                ReadOnly = true
+            });
+
             dgvData.DataSource = this._SoldProductAdd;
+        }
+        private void ConfigRefundMode()
+        {
+            // Defualt Settings
+            dgvData.AutoGenerateColumns = false;
+            dgvData.Columns.Clear();
+
+
+            dgvData.AllowUserToAddRows = false;
+            dgvData.AllowUserToDeleteRows = false;
+            dgvData.ReadOnly = false;
+            dgvData.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dgvData.MultiSelect = false;
+
+            dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            dgvData.ColumnHeadersDefaultCellStyle.Font =
+                new Font(dgvData.Font, FontStyle.Bold);
+
+            dgvData.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvData.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+
+            dgvData.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
+            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+
+
+            // ===== First We Have The Model name to search with =====
+
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductSaleDetailsListDto.ProductTypeName),
+                DataPropertyName = nameof(SoldProductSaleDetailsListDto.ProductTypeName), // dont link it , its only for search
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(ProductType), nameof(ProductType.ProductTypeName)),
+                FillWeight = 30,
+                ReadOnly = true
+            });
+
+
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.ProductName)),
+                Name = nameof(SoldProductSaleDetailsListDto.ProductName),
+                DataPropertyName = nameof(SoldProductSaleDetailsListDto.ProductName), // dont bind it 
+                FillWeight = 25,
+                ReadOnly = true
+            });
+
+
+            // ===== Quantity =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductSaleDetailsListDto.Quantity),
+                DataPropertyName = nameof(SoldProductSaleDetailsListDto.Quantity),
+                HeaderText = "الكمية",
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                }
+            });
+
+
+
+            // ===== PricePerUnit =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductSaleDetailsListDto.SellingPricePerUnit),
+                DataPropertyName = nameof(SoldProductSaleDetailsListDto.SellingPricePerUnit),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.SellingPrice)),
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                },
+                ReadOnly = true
+            });
+
+
+
+
+            // ===== Quantity =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductSaleDetailsListDto.QuantityInStorage),
+                DataPropertyName = nameof(SoldProductSaleDetailsListDto.QuantityInStorage),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.QuantityInStorage)),
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                },
+                ReadOnly = true
+            });
+
+            // ===== Total =====
+            dgvData.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = nameof(SoldProductSaleDetailsListDto.Total),
+                DataPropertyName = nameof(SoldProductSaleDetailsListDto.Total),
+                HeaderText = "إجمالي",
+                FillWeight = 15,
+                DefaultCellStyle = new DataGridViewCellStyle
+                {
+                    Format = "N2",
+                },
+                ReadOnly = true
+            });
+
+            dgvData.Columns.Add(new DataGridViewCheckBoxColumn
+            {
+                Name = nameof(SoldProductSaleDetailsListDto.IsAvilable),
+                DataPropertyName = nameof(SoldProductSaleDetailsListDto.IsAvilable),
+                HeaderText = LogicLayer.Utilities.NamesManager
+                .GetArabicPropertyName(typeof(Product), nameof(Product.IsAvailable)),
+                FillWeight = 15,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader,
+                ReadOnly = true
+            });
+
+            dgvData.DataSource = this._SoldProductRefund;
         }
         #endregion
 
@@ -306,6 +496,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             var frm = await frmAddUpdateProduct.CreateForAdd(_serviceProvider);
             frm.ShowDialog();
         }
+        
         private async void btnAddProduct_Click(object sender, EventArgs e)
         {
             await PerformAddProduct();
@@ -318,12 +509,26 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            var item = dgvData.CurrentRow?.DataBoundItem as SoldProductAddDto;
-
-            if (item != null)
+            if (_IsRefundMode)
             {
-                _SoldProductAdd.Remove(item);
+                var item = dgvData.CurrentRow?.DataBoundItem as SoldProductSaleDetailsListDto;
+
+
+                if (item != null)
+                {
+                    _SoldProductRefund.Remove(item);
+                }
             }
+            else
+            {
+                var item = dgvData.CurrentRow?.DataBoundItem as SoldProductAddDto;
+
+                if (item != null)
+                {
+                    _SoldProductAdd.Remove(item);
+                }
+            }
+            
         }
 
         private void dgvData_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -345,7 +550,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 txt.KeyDown += ModelSearch_KeyDown;
             }
         }
-
         private async void ModelSearch_TextChanged(object sender, EventArgs e)
         {
             var txt = sender as TextBox;
@@ -395,13 +599,35 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         private void ModelSearch_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!popupList.Visible) return;
+            if (!popupList.Visible)
+                return;
 
             if (e.KeyCode == Keys.Down)
             {
                 popupList.Focus();
-                popupList.SelectedIndex = 0;
+                popupList.SelectedIndex = Math.Max(0, popupList.SelectedIndex);
                 e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Up)
+            {
+                popupList.Focus();
+                if (popupList.SelectedIndex > 0)
+                    popupList.SelectedIndex--;
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                CommitSelectedModel();
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                popupList.Visible = false;
+                e.Handled = true;
+                e.SuppressKeyPress = true;
             }
         }
 
@@ -484,6 +710,21 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
             item.Quantity = 1;
 
+        }
+
+        private void dgvData_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgvData.Columns[e.ColumnIndex].Name != nameof(ProductTypeListDto.Name))
+                return;
+
+            popupList.Visible = false;
+
+            var cell = dgvData.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+            if (cell.Tag is string cachedName)
+            {
+                cell.Value = cachedName;
+            }
         }
     }
 }

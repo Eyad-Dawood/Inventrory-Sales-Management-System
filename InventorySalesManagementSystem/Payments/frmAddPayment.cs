@@ -166,7 +166,7 @@ namespace InventorySalesManagementSystem.Payments
             {
 
                 Cursor.Current = Cursors.WaitCursor;
-                btnSavePayment.Enabled = false;
+                btnSave.Enabled = false;
 
 
                 ValidateAmounts();
@@ -207,14 +207,8 @@ namespace InventorySalesManagementSystem.Payments
             finally
             {
                 Cursor.Current = Cursors.Default;
-                btnSavePayment.Enabled = true;
+                btnSave.Enabled = true;
             }
-
-
-        }
-        private async void btnSave_Click(object sender, EventArgs e)
-        {
-            await SaveAsync();
         }
 
         private void lkshowCustomer_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -255,6 +249,11 @@ namespace InventorySalesManagementSystem.Payments
             {
                 MessageBox.Show("حدث خطأ");
             }
+        }
+
+        private async void btnSave_Click_1(object sender, EventArgs e)
+        {
+            await SaveAsync();
         }
     }
 }

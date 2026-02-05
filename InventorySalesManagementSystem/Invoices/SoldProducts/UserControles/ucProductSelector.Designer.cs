@@ -151,6 +151,7 @@
             dgvData.RowHeadersVisible = false;
             dgvData.Size = new Size(616, 356);
             dgvData.TabIndex = 54;
+            dgvData.CellEndEdit += dgvData_CellEndEdit;
             dgvData.CellEnter += dgvData_CellEnter;
             dgvData.CellValueChanged += dgvData_CellValueChanged;
             dgvData.DataError += dgvData_DataError;

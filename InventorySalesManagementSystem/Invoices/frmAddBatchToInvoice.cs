@@ -31,7 +31,7 @@ namespace InventorySalesManagementSystem.Invoices
             _invoiceId = invoiceId;
             ucAddTakeBatch1.takeBatchType = TakeBatchType.Invoice;
         }
-        public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId,List<SoldProductSaleDetailsListDto>products)
+        public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId, List<SoldProductSaleDetailsListDto> products)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
@@ -119,24 +119,45 @@ namespace InventorySalesManagementSystem.Invoices
             }
         }
 
-        private async void frmAddBatchToInvoice_Load(object sender, EventArgs e)
+        private void frmAddBatchToInvoice_Load(object sender, EventArgs e)
         {
-           await LoadFormAsync();
+             LoadFormAsync();
         }
-        
-        private async Task LoadFormAsync()
-        {
-            await ucInvoiceDetails1.ShowInvoice(_serviceProvider, _invoiceId);
 
+        private void LoadFormAsync()
+        {
             if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Invoice)
             {
                 ucAddTakeBatch1.Initialize(_serviceProvider);
             }
             else if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Refund)
             {
-                ucAddTakeBatch1.Initialize(_serviceProvider,_products);             
+                ucAddTakeBatch1.Initialize(_serviceProvider, _products);
             }
         }
-        
+
+        private void lkShowInvoice_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                lkShowInvoice.Enabled = false;
+                var frm = new frmShowInvoice(_serviceProvider, _invoiceId);
+                frm.FormClosed += Frm_FormClosed;
+                frm.Show();
+            }
+            catch (NotFoundException ex)
+            {
+                MessageBox.Show(ex.MainBody, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "حدث خطأ");
+            }
+        }
+
+        private void Frm_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            lkShowInvoice.Enabled = true;
+        }
     }
 }

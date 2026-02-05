@@ -85,7 +85,7 @@ namespace LogicLayer.Services.Invoices
         /// <exception cref="NotFoundException">
         /// Thrown when the provided entity is null.
         /// </exception>
-        private async Task<List<SoldProduct>> ProcessSoldProductsAsyncForCreate(List<SoldProductAddDto> SoldProductsDTO)
+        private async Task<List<SoldProduct>> ProcessSoldProductsAsyncForCreate(List<SoldProductAddDto> SoldProductsDTO,TakeBatchType takeBatchType)
         {
             List<SoldProduct> result = new List<SoldProduct>();
 
@@ -102,6 +102,10 @@ namespace LogicLayer.Services.Invoices
 
                 if (!product.IsAvailable)
                     throw new OperationFailedException("لا يمكن الشراء من متج موقوف/غير متاح");
+
+                if (takeBatchType == TakeBatchType.Refund && item.QuantityInStorage < item.Quantity)
+                    throw new OperationFailedException("لا يمكن إرجاع كمية أكبر من المأخوذة");
+
 
                 var SoldProduct = new SoldProduct()
                 {
@@ -142,11 +146,12 @@ namespace LogicLayer.Services.Invoices
                 .Select(g => new SoldProductAddDto
                 {
                     ProductId = g.Key,
-                    Quantity = g.Sum(x => x.Quantity)
+                    Quantity = g.Sum(x => x.Quantity),
+                    QuantityInStorage = g.First().QuantityInStorage,
                 })
                 .ToList();
 
-            var soldProducts = await ProcessSoldProductsAsyncForCreate(merged);
+            var soldProducts = await ProcessSoldProductsAsyncForCreate(merged,takeBatchType);
 
             //Withdraw
             
