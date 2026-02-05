@@ -31,31 +31,7 @@ namespace InventorySalesManagementSystem.Products
 
         private void ConfigAddMode()
         {
-            // Defualt Settings
-            dgvData.AutoGenerateColumns = false;
-            dgvData.Columns.Clear();
-
-
-            dgvData.AllowUserToAddRows = false;
-            dgvData.AllowUserToDeleteRows = false;
-            dgvData.ReadOnly = false;
-            dgvData.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            dgvData.MultiSelect = false;
-
-            dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            dgvData.ColumnHeadersDefaultCellStyle.Font =
-                new Font(dgvData.Font, FontStyle.Bold);
-
-            dgvData.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-            dgvData.DefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-
-            dgvData.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
-            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            UiFormat.DgvDefualt(dgvData);
 
             // ===== ProductName =====
             dgvData.Columns.Add(new DataGridViewTextBoxColumn
@@ -130,30 +106,7 @@ namespace InventorySalesManagementSystem.Products
 
         private void ConfigUpdateMode()
         {
-            // Defualt Settings
-            dgvData.AutoGenerateColumns = false;
-            dgvData.Columns.Clear();
-
-            dgvData.AllowUserToAddRows = true;
-            dgvData.AllowUserToDeleteRows = false;
-            dgvData.ReadOnly = false;
-            dgvData.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            dgvData.MultiSelect = false;
-
-            dgvData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            dgvData.ColumnHeadersDefaultCellStyle.Font =
-                new Font(dgvData.Font, FontStyle.Bold);
-
-            dgvData.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-            dgvData.DefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
-
-
-            dgvData.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
-            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            UiFormat.DgvDefualt(dgvData);
 
             // ===== ProductName =====
             dgvData.Columns.Add(new DataGridViewTextBoxColumn
