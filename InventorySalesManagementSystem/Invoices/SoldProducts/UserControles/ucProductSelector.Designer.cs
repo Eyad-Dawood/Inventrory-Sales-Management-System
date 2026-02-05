@@ -33,31 +33,33 @@
             btnDelete = new Button();
             btnAddRecord = new Button();
             btnAddProduct = new Button();
-            btnClearZeros = new Button();
             panel2 = new Panel();
+            panel1 = new Panel();
+            popupList = new ListBox();
             dgvData = new DataGridView();
             pnBottom.SuspendLayout();
             panel2.SuspendLayout();
+            panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             SuspendLayout();
             // 
             // lbTotal
             // 
-            lbTotal.Anchor = AnchorStyles.Right;
+            lbTotal.Dock = DockStyle.Right;
             lbTotal.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lbTotal.Location = new Point(503, 3);
+            lbTotal.Location = new Point(506, 0);
             lbTotal.Name = "lbTotal";
             lbTotal.RightToLeft = RightToLeft.Yes;
-            lbTotal.Size = new Size(110, 30);
+            lbTotal.Size = new Size(110, 35);
             lbTotal.TabIndex = 52;
             lbTotal.Text = "0.00";
+            lbTotal.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnBottom
             // 
             pnBottom.Controls.Add(btnDelete);
             pnBottom.Controls.Add(btnAddRecord);
             pnBottom.Controls.Add(btnAddProduct);
-            pnBottom.Controls.Add(btnClearZeros);
             pnBottom.Controls.Add(lbTotal);
             pnBottom.Dock = DockStyle.Bottom;
             pnBottom.Location = new Point(0, 356);
@@ -70,7 +72,7 @@
             btnDelete.Anchor = AnchorStyles.Left;
             btnDelete.BackgroundImage = Properties.Resources.DeleteIcon;
             btnDelete.BackgroundImageLayout = ImageLayout.Stretch;
-            btnDelete.Location = new Point(378, 3);
+            btnDelete.Location = new Point(434, 3);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(30, 30);
             btnDelete.TabIndex = 56;
@@ -83,7 +85,7 @@
             btnAddRecord.Anchor = AnchorStyles.Left;
             btnAddRecord.BackgroundImage = Properties.Resources.addIcon;
             btnAddRecord.BackgroundImageLayout = ImageLayout.Stretch;
-            btnAddRecord.Location = new Point(414, 2);
+            btnAddRecord.Location = new Point(470, 2);
             btnAddRecord.Name = "btnAddRecord";
             btnAddRecord.Size = new Size(30, 30);
             btnAddRecord.TabIndex = 55;
@@ -104,27 +106,36 @@
             btnAddProduct.UseVisualStyleBackColor = true;
             btnAddProduct.Click += btnAddProduct_Click;
             // 
-            // btnClearZeros
-            // 
-            btnClearZeros.Anchor = AnchorStyles.Left;
-            btnClearZeros.BackgroundImage = Properties.Resources.clean;
-            btnClearZeros.BackgroundImageLayout = ImageLayout.Stretch;
-            btnClearZeros.Location = new Point(34, 3);
-            btnClearZeros.Name = "btnClearZeros";
-            btnClearZeros.Size = new Size(30, 30);
-            btnClearZeros.TabIndex = 53;
-            btnClearZeros.TabStop = false;
-            btnClearZeros.UseVisualStyleBackColor = true;
-            // 
             // panel2
             // 
-            panel2.Controls.Add(dgvData);
+            panel2.Controls.Add(panel1);
             panel2.Controls.Add(pnBottom);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
             panel2.Size = new Size(616, 391);
             panel2.TabIndex = 54;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(popupList);
+            panel1.Controls.Add(dgvData);
+            panel1.Dock = DockStyle.Fill;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(616, 356);
+            panel1.TabIndex = 58;
+            // 
+            // popupList
+            // 
+            popupList.DrawMode = DrawMode.OwnerDrawFixed;
+            popupList.FormattingEnabled = true;
+            popupList.IntegralHeight = false;
+            popupList.ItemHeight = 24;
+            popupList.Location = new Point(203, 177);
+            popupList.Name = "popupList";
+            popupList.Size = new Size(120, 94);
+            popupList.TabIndex = 57;
             // 
             // dgvData
             // 
@@ -140,6 +151,8 @@
             dgvData.RowHeadersVisible = false;
             dgvData.Size = new Size(616, 356);
             dgvData.TabIndex = 54;
+            dgvData.CellEnter += dgvData_CellEnter;
+            dgvData.CellValueChanged += dgvData_CellValueChanged;
             dgvData.DataError += dgvData_DataError;
             dgvData.EditingControlShowing += dgvData_EditingControlShowing;
             // 
@@ -153,6 +166,7 @@
             Size = new Size(616, 391);
             pnBottom.ResumeLayout(false);
             panel2.ResumeLayout(false);
+            panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
             ResumeLayout(false);
         }
@@ -161,10 +175,11 @@
         private Label lbTotal;
         private Panel pnBottom;
         private Panel panel2;
-        private Button btnClearZeros;
         private Button btnAddProduct;
         private Button btnDelete;
         private Button btnAddRecord;
         private DataGridView dgvData;
+        private Panel panel1;
+        private ListBox popupList;
     }
 }

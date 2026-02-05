@@ -40,17 +40,17 @@
             // txtReciver
             // 
             txtReciver.Anchor = AnchorStyles.Right;
-            txtReciver.Location = new Point(769, 10);
+            txtReciver.Location = new Point(282, 10);
             txtReciver.Name = "txtReciver";
             txtReciver.RightToLeft = RightToLeft.Yes;
-            txtReciver.Size = new Size(528, 23);
+            txtReciver.Size = new Size(278, 23);
             txtReciver.TabIndex = 1;
             // 
             // lbTakeNameLable
             // 
             lbTakeNameLable.Anchor = AnchorStyles.Right;
             lbTakeNameLable.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lbTakeNameLable.Location = new Point(1303, 7);
+            lbTakeNameLable.Location = new Point(566, 7);
             lbTakeNameLable.Name = "lbTakeNameLable";
             lbTakeNameLable.RightToLeft = RightToLeft.Yes;
             lbTakeNameLable.Size = new Size(102, 30);
@@ -60,11 +60,11 @@
             // txtNote
             // 
             txtNote.Anchor = AnchorStyles.Right;
-            txtNote.Location = new Point(769, 58);
+            txtNote.Location = new Point(282, 58);
             txtNote.Multiline = true;
             txtNote.Name = "txtNote";
             txtNote.RightToLeft = RightToLeft.Yes;
-            txtNote.Size = new Size(535, 59);
+            txtNote.Size = new Size(285, 59);
             txtNote.TabIndex = 2;
             // 
             // label3
@@ -72,7 +72,7 @@
             label3.Anchor = AnchorStyles.Right;
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label3.Location = new Point(1300, 58);
+            label3.Location = new Point(563, 58);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.RightToLeft = RightToLeft.Yes;
@@ -86,7 +86,7 @@
             ucProductSelector1.Enabled = false;
             ucProductSelector1.Location = new Point(0, 123);
             ucProductSelector1.Name = "ucProductSelector1";
-            ucProductSelector1.Size = new Size(1407, 397);
+            ucProductSelector1.Size = new Size(670, 397);
             ucProductSelector1.TabIndex = 47;
             // 
             // panel1
@@ -98,7 +98,7 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1407, 123);
+            panel1.Size = new Size(670, 123);
             panel1.TabIndex = 48;
             // 
             // ucAddTakeBatch
@@ -109,7 +109,7 @@
             Controls.Add(panel1);
             Enabled = false;
             Name = "ucAddTakeBatch";
-            Size = new Size(1407, 520);
+            Size = new Size(670, 520);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

@@ -188,5 +188,17 @@ namespace DataAccessLayer.Repos.Products
                .OrderBy(c => c.ProductId)
                .ToListAsync();
         }
+
+        public async Task<List<Product>> GetProductsByTypeIdAsync(int ProudctTypeId)
+        {
+            return
+                await
+                _context.Products
+                .AsNoTracking()
+                .Where(p =>
+                 ProudctTypeId == p.ProductTypeId)
+                .OrderBy(c => c.ProductId)
+                .ToListAsync();
+        }
     }
 }

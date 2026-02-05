@@ -349,7 +349,18 @@ namespace LogicLayer.Services.Products
                 .Select(p => MapProduct_ListDto(p)).ToList();
         }
 
-
+        public async Task<List<ProductNameAndIdListDto>> GetProductsByTypeIdAsync(int ProductTypeId)
+        {
+            return
+                (await
+                _productRepo
+                .GetProductsByTypeIdAsync(ProductTypeId))
+                .Select(p=>new ProductNameAndIdListDto()
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                }).ToList();
+        }
 
 
         /// <exception cref="NotFoundException">

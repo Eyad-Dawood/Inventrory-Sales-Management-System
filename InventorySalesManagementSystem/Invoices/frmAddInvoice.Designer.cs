@@ -51,20 +51,23 @@
             label4 = new Label();
             txtAdditionalNotes = new TextBox();
             label3 = new Label();
+            panel6 = new Panel();
             gpCraft.SuspendLayout();
             panel3.SuspendLayout();
             panel1.SuspendLayout();
             panel4.SuspendLayout();
             panel2.SuspendLayout();
             panel5.SuspendLayout();
+            panel6.SuspendLayout();
             SuspendLayout();
             // 
             // gpCraft
             // 
+            gpCraft.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             gpCraft.Controls.Add(rdEvaluation);
             gpCraft.Controls.Add(rdSale);
             gpCraft.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            gpCraft.Location = new Point(1171, 606);
+            gpCraft.Location = new Point(738, 13);
             gpCraft.Name = "gpCraft";
             gpCraft.RightToLeft = RightToLeft.Yes;
             gpCraft.Size = new Size(148, 72);
@@ -102,7 +105,7 @@
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(1431, 66);
+            lbTitle.Size = new Size(993, 66);
             lbTitle.TabIndex = 49;
             lbTitle.Text = "إضافة فاتورة";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -112,9 +115,10 @@
             panel3.Controls.Add(panel1);
             panel3.Controls.Add(panel2);
             panel3.Controls.Add(ucAddTakeBatch1);
-            panel3.Location = new Point(12, 69);
+            panel3.Dock = DockStyle.Top;
+            panel3.Location = new Point(0, 66);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1413, 537);
+            panel3.Size = new Size(993, 537);
             panel3.TabIndex = 55;
             // 
             // panel1
@@ -124,7 +128,7 @@
             panel1.Controls.Add(label2);
             panel1.Location = new Point(17, 9);
             panel1.Name = "panel1";
-            panel1.Size = new Size(742, 36);
+            panel1.Size = new Size(569, 36);
             panel1.TabIndex = 53;
             // 
             // panel4
@@ -133,7 +137,7 @@
             panel4.Enabled = false;
             panel4.Location = new Point(32, 8);
             panel4.Name = "panel4";
-            panel4.Size = new Size(622, 23);
+            panel4.Size = new Size(440, 23);
             panel4.TabIndex = 65;
             // 
             // rtbCustomer
@@ -145,7 +149,7 @@
             rtbCustomer.Name = "rtbCustomer";
             rtbCustomer.ReadOnly = true;
             rtbCustomer.RightToLeft = RightToLeft.Yes;
-            rtbCustomer.Size = new Size(622, 23);
+            rtbCustomer.Size = new Size(440, 23);
             rtbCustomer.TabIndex = 65;
             rtbCustomer.Text = "----";
             // 
@@ -164,9 +168,10 @@
             // 
             // label2
             // 
+            label2.Anchor = AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label2.Location = new Point(647, 3);
+            label2.Location = new Point(474, 3);
             label2.Name = "label2";
             label2.RightToLeft = RightToLeft.Yes;
             label2.Size = new Size(92, 30);
@@ -181,7 +186,7 @@
             panel2.Controls.Add(label1);
             panel2.Location = new Point(17, 84);
             panel2.Name = "panel2";
-            panel2.Size = new Size(742, 36);
+            panel2.Size = new Size(569, 36);
             panel2.TabIndex = 54;
             // 
             // panel5
@@ -190,7 +195,7 @@
             panel5.Enabled = false;
             panel5.Location = new Point(84, 7);
             panel5.Name = "panel5";
-            panel5.Size = new Size(569, 23);
+            panel5.Size = new Size(388, 23);
             panel5.TabIndex = 66;
             // 
             // rtbWorker
@@ -202,7 +207,7 @@
             rtbWorker.Name = "rtbWorker";
             rtbWorker.ReadOnly = true;
             rtbWorker.RightToLeft = RightToLeft.Yes;
-            rtbWorker.Size = new Size(569, 23);
+            rtbWorker.Size = new Size(388, 23);
             rtbWorker.TabIndex = 65;
             rtbWorker.Text = "----";
             // 
@@ -236,9 +241,10 @@
             // 
             // label1
             // 
+            label1.Anchor = AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label1.Location = new Point(647, 2);
+            label1.Location = new Point(474, 2);
             label1.Name = "label1";
             label1.RightToLeft = RightToLeft.Yes;
             label1.Size = new Size(91, 30);
@@ -247,18 +253,19 @@
             // 
             // ucAddTakeBatch1
             // 
-            ucAddTakeBatch1.Anchor = AnchorStyles.Right;
+            ucAddTakeBatch1.Dock = DockStyle.Fill;
             ucAddTakeBatch1.Enabled = false;
-            ucAddTakeBatch1.Location = new Point(3, 3);
+            ucAddTakeBatch1.Location = new Point(0, 0);
             ucAddTakeBatch1.Name = "ucAddTakeBatch1";
-            ucAddTakeBatch1.Size = new Size(1406, 520);
+            ucAddTakeBatch1.Size = new Size(993, 537);
             ucAddTakeBatch1.TabIndex = 55;
             // 
             // btnCancel
             // 
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnCancel.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnCancel.ForeColor = Color.Red;
-            btnCancel.Location = new Point(1325, 648);
+            btnCancel.Location = new Point(892, 55);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(96, 30);
             btnCancel.TabIndex = 57;
@@ -268,9 +275,10 @@
             // 
             // btnSave
             // 
+            btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnSave.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSave.Location = new Point(1325, 612);
+            btnSave.Location = new Point(892, 19);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(96, 30);
             btnSave.TabIndex = 56;
@@ -281,7 +289,7 @@
             // txtAdditional
             // 
             txtAdditional.Anchor = AnchorStyles.Right;
-            txtAdditional.Location = new Point(944, 620);
+            txtAdditional.Location = new Point(507, 21);
             txtAdditional.Name = "txtAdditional";
             txtAdditional.Size = new Size(94, 23);
             txtAdditional.TabIndex = 58;
@@ -290,7 +298,7 @@
             // 
             label4.Anchor = AnchorStyles.Right;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            label4.Location = new Point(1044, 620);
+            label4.Location = new Point(607, 21);
             label4.Name = "label4";
             label4.RightToLeft = RightToLeft.Yes;
             label4.Size = new Size(56, 21);
@@ -300,7 +308,7 @@
             // txtAdditionalNotes
             // 
             txtAdditionalNotes.Anchor = AnchorStyles.Right;
-            txtAdditionalNotes.Location = new Point(735, 648);
+            txtAdditionalNotes.Location = new Point(298, 49);
             txtAdditionalNotes.Multiline = true;
             txtAdditionalNotes.Name = "txtAdditionalNotes";
             txtAdditionalNotes.RightToLeft = RightToLeft.Yes;
@@ -311,7 +319,7 @@
             // 
             label3.Anchor = AnchorStyles.Right;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label3.Location = new Point(1055, 649);
+            label3.Location = new Point(618, 50);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.RightToLeft = RightToLeft.Yes;
@@ -319,21 +327,30 @@
             label3.TabIndex = 61;
             label3.Text = "التفاصيل : ";
             // 
+            // panel6
+            // 
+            panel6.Controls.Add(txtAdditionalNotes);
+            panel6.Controls.Add(gpCraft);
+            panel6.Controls.Add(label3);
+            panel6.Controls.Add(btnSave);
+            panel6.Controls.Add(txtAdditional);
+            panel6.Controls.Add(btnCancel);
+            panel6.Controls.Add(label4);
+            panel6.Dock = DockStyle.Bottom;
+            panel6.Location = new Point(0, 609);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(993, 97);
+            panel6.TabIndex = 62;
+            // 
             // frmAddInvoice
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
-            ClientSize = new Size(1431, 689);
-            Controls.Add(txtAdditionalNotes);
-            Controls.Add(label3);
-            Controls.Add(txtAdditional);
-            Controls.Add(label4);
-            Controls.Add(btnCancel);
-            Controls.Add(btnSave);
-            Controls.Add(lbTitle);
-            Controls.Add(gpCraft);
+            ClientSize = new Size(993, 706);
             Controls.Add(panel3);
+            Controls.Add(lbTitle);
+            Controls.Add(panel6);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             KeyPreview = true;
             MaximizeBox = false;
@@ -347,8 +364,9 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel5.ResumeLayout(false);
+            panel6.ResumeLayout(false);
+            panel6.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -376,5 +394,6 @@
         private Label label4;
         private TextBox txtAdditionalNotes;
         private Label label3;
+        private Panel panel6;
     }
 }
