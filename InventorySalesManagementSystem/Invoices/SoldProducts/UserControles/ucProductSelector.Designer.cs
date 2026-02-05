@@ -28,62 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            ucListView1 = new InventorySalesManagementSystem.UserControles.UcListView();
-            txtSearchValue1 = new TextBox();
-            txtSearchValue2 = new TextBox();
-            timer1 = new System.Windows.Forms.Timer(components);
             lbTotal = new Label();
             pnBottom = new Panel();
+            btnDelete = new Button();
+            btnAddRecord = new Button();
             btnAddProduct = new Button();
             btnClearZeros = new Button();
             panel2 = new Panel();
-            flwpSoldProducts = new FlowLayoutPanel();
+            dgvData = new DataGridView();
             pnBottom.SuspendLayout();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             SuspendLayout();
-            // 
-            // ucListView1
-            // 
-            ucListView1.AllowFilter = false;
-            ucListView1.Dock = DockStyle.Left;
-            ucListView1.Location = new Point(0, 0);
-            ucListView1.Name = "ucListView1";
-            ucListView1.Size = new Size(403, 391);
-            ucListView1.TabIndex = 2;
-            // 
-            // txtSearchValue1
-            // 
-            txtSearchValue1.Anchor = AnchorStyles.Right;
-            txtSearchValue1.Location = new Point(687, 7);
-            txtSearchValue1.Name = "txtSearchValue1";
-            txtSearchValue1.RightToLeft = RightToLeft.Yes;
-            txtSearchValue1.Size = new Size(226, 23);
-            txtSearchValue1.TabIndex = 0;
-            txtSearchValue1.TextChanged += txtSearchValue1_TextChanged;
-            txtSearchValue1.KeyDown += txtSearchValue1_KeyDown;
-            // 
-            // txtSearchValue2
-            // 
-            txtSearchValue2.Anchor = AnchorStyles.Right;
-            txtSearchValue2.Location = new Point(463, 7);
-            txtSearchValue2.Name = "txtSearchValue2";
-            txtSearchValue2.RightToLeft = RightToLeft.Yes;
-            txtSearchValue2.Size = new Size(218, 23);
-            txtSearchValue2.TabIndex = 1;
-            txtSearchValue2.TextChanged += txtSearchValue2_TextChanged;
-            txtSearchValue2.KeyDown += txtSearchValue2_KeyDown;
-            // 
-            // timer1
-            // 
-            timer1.Interval = 250;
-            timer1.Tick += timer1_Tick;
             // 
             // lbTotal
             // 
             lbTotal.Anchor = AnchorStyles.Right;
             lbTotal.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lbTotal.Location = new Point(347, 5);
+            lbTotal.Location = new Point(503, 3);
             lbTotal.Name = "lbTotal";
             lbTotal.RightToLeft = RightToLeft.Yes;
             lbTotal.Size = new Size(110, 30);
@@ -92,16 +54,42 @@
             // 
             // pnBottom
             // 
+            pnBottom.Controls.Add(btnDelete);
+            pnBottom.Controls.Add(btnAddRecord);
             pnBottom.Controls.Add(btnAddProduct);
             pnBottom.Controls.Add(btnClearZeros);
             pnBottom.Controls.Add(lbTotal);
-            pnBottom.Controls.Add(txtSearchValue1);
-            pnBottom.Controls.Add(txtSearchValue2);
             pnBottom.Dock = DockStyle.Bottom;
             pnBottom.Location = new Point(0, 356);
             pnBottom.Name = "pnBottom";
-            pnBottom.Size = new Size(916, 35);
+            pnBottom.Size = new Size(616, 35);
             pnBottom.TabIndex = 53;
+            // 
+            // btnDelete
+            // 
+            btnDelete.Anchor = AnchorStyles.Left;
+            btnDelete.BackgroundImage = Properties.Resources.DeleteIcon;
+            btnDelete.BackgroundImageLayout = ImageLayout.Stretch;
+            btnDelete.Location = new Point(378, 3);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(30, 30);
+            btnDelete.TabIndex = 56;
+            btnDelete.TabStop = false;
+            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
+            // 
+            // btnAddRecord
+            // 
+            btnAddRecord.Anchor = AnchorStyles.Left;
+            btnAddRecord.BackgroundImage = Properties.Resources.addIcon;
+            btnAddRecord.BackgroundImageLayout = ImageLayout.Stretch;
+            btnAddRecord.Location = new Point(414, 2);
+            btnAddRecord.Name = "btnAddRecord";
+            btnAddRecord.Size = new Size(30, 30);
+            btnAddRecord.TabIndex = 55;
+            btnAddRecord.TabStop = false;
+            btnAddRecord.UseVisualStyleBackColor = true;
+            btnAddRecord.Click += btnAddRecord_Click;
             // 
             // btnAddProduct
             // 
@@ -127,55 +115,56 @@
             btnClearZeros.TabIndex = 53;
             btnClearZeros.TabStop = false;
             btnClearZeros.UseVisualStyleBackColor = true;
-            btnClearZeros.Click += btnClearZeros_Click;
             // 
             // panel2
             // 
-            panel2.Controls.Add(flwpSoldProducts);
+            panel2.Controls.Add(dgvData);
             panel2.Controls.Add(pnBottom);
             panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(403, 0);
+            panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(916, 391);
+            panel2.Size = new Size(616, 391);
             panel2.TabIndex = 54;
             // 
-            // flwpSoldProducts
+            // dgvData
             // 
-            flwpSoldProducts.AutoScroll = true;
-            flwpSoldProducts.BorderStyle = BorderStyle.FixedSingle;
-            flwpSoldProducts.Dock = DockStyle.Fill;
-            flwpSoldProducts.FlowDirection = FlowDirection.TopDown;
-            flwpSoldProducts.Location = new Point(0, 0);
-            flwpSoldProducts.Name = "flwpSoldProducts";
-            flwpSoldProducts.Size = new Size(916, 356);
-            flwpSoldProducts.TabIndex = 0;
-            flwpSoldProducts.WrapContents = false;
+            dgvData.AllowUserToAddRows = false;
+            dgvData.AllowUserToDeleteRows = false;
+            dgvData.AllowUserToResizeColumns = false;
+            dgvData.AllowUserToResizeRows = false;
+            dgvData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvData.Dock = DockStyle.Fill;
+            dgvData.Location = new Point(0, 0);
+            dgvData.Name = "dgvData";
+            dgvData.RightToLeft = RightToLeft.Yes;
+            dgvData.RowHeadersVisible = false;
+            dgvData.Size = new Size(616, 356);
+            dgvData.TabIndex = 54;
+            dgvData.DataError += dgvData_DataError;
+            dgvData.EditingControlShowing += dgvData_EditingControlShowing;
             // 
             // ucProductSelector
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(panel2);
-            Controls.Add(ucListView1);
             Enabled = false;
             Name = "ucProductSelector";
-            Size = new Size(1319, 391);
+            Size = new Size(616, 391);
             pnBottom.ResumeLayout(false);
-            pnBottom.PerformLayout();
             panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvData).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
-        private InventorySalesManagementSystem.UserControles.UcListView ucListView1;
-        private TextBox txtSearchValue1;
-        private TextBox txtSearchValue2;
-        private System.Windows.Forms.Timer timer1;
         private Label lbTotal;
         private Panel pnBottom;
         private Panel panel2;
-        private FlowLayoutPanel flwpSoldProducts;
         private Button btnClearZeros;
         private Button btnAddProduct;
+        private Button btnDelete;
+        private Button btnAddRecord;
+        private DataGridView dgvData;
     }
 }

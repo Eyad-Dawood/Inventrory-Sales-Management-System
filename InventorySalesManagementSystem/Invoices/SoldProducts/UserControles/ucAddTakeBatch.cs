@@ -33,8 +33,8 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 else
                 {
                     lbTakeNameLable.Text = "المُرجع : ";
-                    ucProductSelector1.GetUcListView.Visible = false;
-                    ucProductSelector1.GetUcListView.Enabled = false;
+                    //ucProductSelector1.GetUcListView.Visible = false;
+                    //ucProductSelector1.GetUcListView.Enabled = false;
                     ucProductSelector1.RefundMode(true);
                 }
 
@@ -79,7 +79,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 TakeName = txtReciver.Text.Trim(),
                 Notes = txtNote.Text.Trim(),
                 InvoiceId = -1,//to be set later
-                SoldProductAddDtos = ucProductSelector1.GetSoldProducts(),
+                SoldProductAddDtos = ucProductSelector1.GetSoldProducts().ToList(),
                 TakeBatchType = _takeBatchType
             };
         }

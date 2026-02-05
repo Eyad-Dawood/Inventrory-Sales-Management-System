@@ -235,5 +235,7 @@ namespace LogicLayer.Services.Products
 
             return MapProductType_ReadDto(ProductType);
         }
+
+
     }
 }
