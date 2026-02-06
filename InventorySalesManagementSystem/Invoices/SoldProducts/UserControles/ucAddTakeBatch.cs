@@ -33,8 +33,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 else
                 {
                     lbTakeNameLable.Text = "المُرجع : ";
-                    //ucProductSelector1.GetUcListView.Visible = false;
-                    //ucProductSelector1.GetUcListView.Enabled = false;
                     ucProductSelector1.RefundMode(true);
                 }
 
@@ -91,10 +89,10 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             this.Enabled = true;
         }
 
-        public void Initialize(IServiceProvider serviceProvider,List<SoldProductSaleDetailsListDto> products)
+        public async Task Initialize(IServiceProvider serviceProvider,List<SoldProductSaleDetailsListDto> products)
         {
             _serviceProvider = serviceProvider;
-            ucProductSelector1.Initialize(_serviceProvider,products);
+           await ucProductSelector1.Initialize(_serviceProvider,products);
             this.Enabled = true;
         }
     }

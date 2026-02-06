@@ -19,7 +19,8 @@ namespace LogicLayer.DTOs.InvoiceDTO.SoldProducts
         public decimal SellingPricePerUnit { get; set; }
         public decimal Quantity { get; set; }
         public bool IsAvilable { get; set; }
-        public decimal Total { get { return SellingPricePerUnit * Quantity; } }
+        public int ProductTypeId { get; set; }
+
     }
 
     //This For Refund Summary

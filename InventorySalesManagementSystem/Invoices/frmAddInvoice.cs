@@ -139,12 +139,13 @@ namespace InventorySalesManagementSystem.Invoices
                             QuantityInStorage = p.QuantityInStorage,
                             SellingPricePerUnit = p.SellingPricePerUnit,
                             SoldProductId = p.ProductId,
+                            ProductTypeId = p.ProductTypeId,
                         };
                     })
                     .ToList();
 
 
-                ucAddTakeBatch1.Initialize(_serviceProvider, _products);
+               await ucAddTakeBatch1.Initialize(_serviceProvider, _products);
 
                 using (var scope = _serviceProvider.CreateAsyncScope())
                 {
@@ -309,7 +310,8 @@ namespace InventorySalesManagementSystem.Invoices
 
             try
             {
-                ucAddTakeBatch1.GetProductSelector.UpdateTotal(discount);
+                ucAddTakeBatch1.GetProductSelector.Discount = discount;
+                ucAddTakeBatch1.GetProductSelector.UpdateTotal();
             }
             catch(OperationFailedException ex)
             {

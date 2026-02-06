@@ -17,5 +17,7 @@ namespace DataAccessLayer.Entities.DTOS
         public decimal SellingPricePerUnit { get; set; }
         public decimal Quantity { get; set; }
         public bool IsAvilable { get; set; }
+        public int ProductTypeId { get; set; }
+
     }
 }

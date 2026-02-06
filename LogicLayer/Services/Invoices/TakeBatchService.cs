@@ -56,6 +56,7 @@ namespace LogicLayer.Services.Invoices
 
         private async Task<TakeBatch> CreateTakeBatchAggregateInternalAsync(
             TakeBatchAddDto dto,
+            decimal Discount,
             int userId,
             InvoiceType invoiceType,
             int CustomerId)
@@ -66,7 +67,7 @@ namespace LogicLayer.Services.Invoices
             ValidationHelper.ValidateEntity(takeBatch);
 
             var soldProducts = await _SoldProductService
-                .ProcessSoldProductsAsync(dto.SoldProductAddDtos, userId, invoiceType, dto.TakeBatchType, CustomerId);
+                .ProcessSoldProductsAsync(dto.SoldProductAddDtos, userId,Discount,invoiceType, dto.TakeBatchType, CustomerId);
 
 
             //Link Sold Products to Take Batch So EF can add them together
@@ -79,10 +80,11 @@ namespace LogicLayer.Services.Invoices
         public async Task<TakeBatch> CreateTakeBatchAggregateAsync(
             TakeBatchAddDto dto,
             int userId,
+            decimal Discount,
             InvoiceType invoiceType,
              int CustomerId)
         {
-            return await CreateTakeBatchAggregateInternalAsync(dto, userId, invoiceType,  CustomerId);
+            return await CreateTakeBatchAggregateInternalAsync(dto, Discount,userId,invoiceType,  CustomerId);
         }
         #endregion
 

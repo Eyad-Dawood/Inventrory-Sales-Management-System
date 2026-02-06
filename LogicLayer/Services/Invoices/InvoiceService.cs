@@ -553,7 +553,7 @@ namespace LogicLayer.Services.Invoices
 
             await ValidateMainAddingLogic(Invoice, BatchDTO.TakeBatchType);
 
-            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId, InvoiceDTO.InvoiceType, Invoice.CustomerId);
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId, InvoiceDTO.Discount, InvoiceDTO.InvoiceType, Invoice.CustomerId);
 
             //Link The TakeBatch With The Invoice
             Invoice.takeBatches.Add(TakeBatch);
@@ -600,7 +600,7 @@ namespace LogicLayer.Services.Invoices
 
             await ValidateMainAddingLogic(Invoice, BatchDTO.TakeBatchType);
 
-            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId, Invoice.InvoiceType, Invoice.CustomerId);
+            var TakeBatch = await _takeBatchService.CreateTakeBatchAggregateAsync(BatchDTO, UserId,Discount:0,Invoice.InvoiceType, Invoice.CustomerId);
 
             using (var Transaction = await _unitOfWork.BeginTransactionAsync())
             {

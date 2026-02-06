@@ -57,6 +57,7 @@ namespace LogicLayer.Services.Invoices
                 IsAvilable = soldProduct.Product.IsAvailable,
                 QuantityInStorage = soldProduct.Product.QuantityInStorage,
                 SellingPricePerUnit = soldProduct.SellingPricePerUnit,
+                ProductTypeId = soldProduct.Product.ProductTypeId,
             };
         }
         private SoldProductSaleDetailsListDto MapSoldProduct_WithProductListDto(SoldProductForRefund soldProduct)
@@ -70,6 +71,7 @@ namespace LogicLayer.Services.Invoices
                 IsAvilable = soldProduct.IsAvilable,
                 QuantityInStorage = soldProduct.QuantityInStorage,
                 SellingPricePerUnit = soldProduct.SellingPricePerUnit,
+                ProductTypeId = soldProduct.ProductTypeId
             };
         }
 
@@ -134,6 +136,7 @@ namespace LogicLayer.Services.Invoices
         public async Task<List<SoldProduct>> ProcessSoldProductsAsync(
             List<SoldProductAddDto> dtos,
             int userId,
+            decimal Discount,
             InvoiceType invoiceType,
             TakeBatchType takeBatchType,
             int CustomerId)
@@ -171,6 +174,8 @@ namespace LogicLayer.Services.Invoices
                     await _customerService.WithdrawBalance
                         (CustomerId,
                         soldProducts.Sum(p => p.Quantity * p.SellingPricePerUnit)
+                        -
+                        Discount
                         );
                 }
                 else if (takeBatchType == TakeBatchType.Refund)

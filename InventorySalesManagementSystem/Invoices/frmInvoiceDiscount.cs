@@ -18,9 +18,9 @@ namespace InventorySalesManagementSystem.Invoices
     public partial class frmInvoiceDiscount : Form
     {
         private IServiceProvider _serviceProvider { set; get; }
-        private int _invoiceId ;
+        private int _invoiceId;
 
-        public frmInvoiceDiscount(IServiceProvider serviceProvider,int InvoiceId)
+        public frmInvoiceDiscount(IServiceProvider serviceProvider, int InvoiceId)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
@@ -88,7 +88,7 @@ namespace InventorySalesManagementSystem.Invoices
             ValidateAdditional();
 
             Cursor.Current = Cursors.WaitCursor;
-            btnSave.Enabled = false;
+            thebutton.Enabled = false;
 
             try
             {
@@ -96,7 +96,7 @@ namespace InventorySalesManagementSystem.Invoices
                 {
                     var service = scope.ServiceProvider.GetRequiredService<InvoiceService>();
 
-                   await service.AddDiscount(_invoiceId, Convert.ToDecimal(txtamount.Text.Trim()), txtAdditionalNotes.Text.Trim());
+                    await service.AddDiscount(_invoiceId, Convert.ToDecimal(txtamount.Text.Trim()), txtAdditionalNotes.Text.Trim());
                 }
 
                 this.Close();
@@ -128,12 +128,14 @@ namespace InventorySalesManagementSystem.Invoices
             finally
             {
                 Cursor.Current = Cursors.Default;
-                btnSave.Enabled = true;
+                thebutton.Enabled = true;
             }
         }
-        private async void btnSave_Click(object sender, EventArgs e)
+
+
+        private async void thebutton_Click(object sender, EventArgs e)
         {
-                await SaveInvoiceAsync();            
+            await SaveInvoiceAsync();
         }
     }
 }

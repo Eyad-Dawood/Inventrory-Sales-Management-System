@@ -32,30 +32,13 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
 
         private bool _IsRefundMode = false;
         private BindingList<SoldProductAddDto> _SoldProductAdd;
-        private BindingList<SoldProductSaleDetailsListDto> _SoldProductRefund;
         private Dictionary<int, List<ProductNameAndIdListDto>> _cachedProducts = new();
-
+        public decimal Discount = 0;
 
         #region Get
         public List<SoldProductAddDto> GetSoldProducts()
         {
-            if (_IsRefundMode)
-            {
-                return _SoldProductRefund.Select(p => new SoldProductAddDto()
-                {
-                    IsAvilable = p.IsAvilable,
-                    PricePerUnit = p.SellingPricePerUnit,
-                    ProductId = p.ProductId,
-                    Quantity = p.Quantity,
-                    QuantityInStorage = p.QuantityInStorage,
-                    TakeBatchId = 0 // to be set later
-                })
-                .ToList();
-            }
-            else
-            {
-                return _SoldProductAdd.ToList();
-            }
+            return _SoldProductAdd.ToList();
         }
         #endregion
 
@@ -155,12 +138,15 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 row.Cells[nameof(ProductNameAndIdListDto.ProductName)]
                 as DataGridViewComboBoxCell;
 
-            productCell.Value = 0;
-
-            productCell.DisplayMember = nameof(ProductNameAndIdListDto.ProductName);
-            productCell.ValueMember = nameof(ProductNameAndIdListDto.ProductId);
-            productCell.DataSource = displayList;
-
+            if (productCell != null)//When Refund Mode
+            {
+                if (productCell.Value == null || (int)productCell.Value < 0)
+                    productCell.Value = 0;
+            
+                    productCell.DisplayMember = nameof(ProductNameAndIdListDto.ProductName);
+                    productCell.ValueMember = nameof(ProductNameAndIdListDto.ProductId);
+                    productCell.DataSource = displayList;
+            }
             UpdateTotal();
         }
         private void popupList_DrawItem(object sender, DrawItemEventArgs e)
@@ -215,14 +201,31 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         {
             _serviceProvider = serviceProvider;
             _SoldProductAdd = new BindingList<SoldProductAddDto>();
-            ConfigAddMode();
+            ConfigDgv();
             this.Enabled = true;
         }
-        public void Initialize(IServiceProvider serviceProvider, List<SoldProductSaleDetailsListDto> products)
+        public async Task Initialize(IServiceProvider serviceProvider, List<SoldProductSaleDetailsListDto> products)
         {
             _serviceProvider = serviceProvider;
-            _SoldProductRefund = new BindingList<SoldProductSaleDetailsListDto>(products);
-            ConfigRefundMode();
+
+            _SoldProductAdd = new BindingList<SoldProductAddDto>(products.Select(p =>
+            new SoldProductAddDto(){
+                IsAvilable = p.IsAvilable,
+                PricePerUnit = p.SellingPricePerUnit,
+                ProductId = p.ProductId,
+                ProductName = p.ProductName,
+                ProductTypeName = p.ProductTypeName,
+                Quantity = p.Quantity,
+                QuantityInStorage = p.QuantityInStorage,
+                ProductTypeId = p.ProductTypeId,
+                TakeBatchId = 0
+            }).ToList());
+
+            ConfigDgv(); 
+
+            if(!_IsRefundMode)
+                await InitializeExistingRowsAsync(); 
+
             this.Enabled = true;
         }
         public void RefundMode(bool Allow)
@@ -239,19 +242,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         #endregion
 
         #region Total
-        private void UpdateTotal()
-        {
-            //Update Total
-            if (_IsRefundMode)
-            {
-                lbTotal.Text = _SoldProductRefund.Sum(x => x.Total).ToString("N2");
-            }
-            else
-            {
-                lbTotal.Text = _SoldProductAdd.Sum(x => x.Total).ToString("N2");
-            }
-        }
-        public void UpdateTotal(decimal Discount)
+        public void UpdateTotal()
         {
             decimal Requierd = _SoldProductAdd.Sum(x => x.Total);
 
@@ -265,7 +256,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         #endregion
 
         #region Configure
-        private void ConfigAddMode()
+        private void ConfigDgv()
         {
             UiFormat.DgvDefualt(dgvData);
 
@@ -275,33 +266,49 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             dgvData.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = nameof(ProductTypeListDto.Name),
-                DataPropertyName = null, // dont link it , its only for search
-                HeaderText = "الموديل",
-                FillWeight = 30
-            });
-
-
-            List<ProductNameAndIdListDto> temp = new List<ProductNameAndIdListDto>()
-            {
-                new ProductNameAndIdListDto(){ProductId = 0,ProductName = "فارغ"}
-            };
-
-            dgvData.Columns.Add(new DataGridViewComboBoxColumn
-            {
+                DataPropertyName = nameof(SoldProductAddDto.ProductTypeName), // dont link it , its only for search
                 HeaderText = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(Product), nameof(Product.ProductName)),
-                DisplayMember = nameof(ProductNameAndIdListDto.ProductName),
-                ValueMember = nameof(ProductNameAndIdListDto.ProductId),
-                DataSource = temp,
-
-                Name = nameof(ProductNameAndIdListDto.ProductName),
-                DataPropertyName = nameof(SoldProductAddDto.ProductId), // dont bind it 
-
-                FillWeight = 25,
-
-                //Data Source to be set later when we need
+                .GetArabicPropertyName(typeof(ProductType), nameof(ProductType.ProductTypeName)),
+                FillWeight = 30,
+                ReadOnly = _IsRefundMode
             });
 
+            if(_IsRefundMode)
+            {
+
+                dgvData.Columns.Add(new DataGridViewTextBoxColumn
+                {
+                    HeaderText = LogicLayer.Utilities.NamesManager
+                    .GetArabicPropertyName(typeof(Product), nameof(Product.ProductName)),
+                    Name = nameof(SoldProductSaleDetailsListDto.ProductName),
+                    DataPropertyName = nameof(SoldProductSaleDetailsListDto.ProductName), // dont bind it 
+                    FillWeight = 25,
+                    ReadOnly = true
+                });
+            }
+            else
+            {
+                List<ProductNameAndIdListDto> temp = new List<ProductNameAndIdListDto>()
+                {
+                    new ProductNameAndIdListDto(){ProductId = 0,ProductName = "فارغ"}
+                };
+
+                dgvData.Columns.Add(new DataGridViewComboBoxColumn
+                {
+                    HeaderText = LogicLayer.Utilities.NamesManager
+                    .GetArabicPropertyName(typeof(Product), nameof(Product.ProductName)),
+                    DisplayMember = nameof(ProductNameAndIdListDto.ProductName),
+                    ValueMember = nameof(ProductNameAndIdListDto.ProductId),
+                    DataSource = temp,
+
+                    Name = nameof(ProductNameAndIdListDto.ProductName),
+                    DataPropertyName = nameof(SoldProductAddDto.ProductId), // dont bind it 
+
+                    FillWeight = 25,
+
+                    //Data Source to be set later when we need
+                });
+            }
 
             // ===== Quantity =====
             dgvData.Columns.Add(new DataGridViewTextBoxColumn
@@ -365,6 +372,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 ReadOnly = true
             });
 
+            // ===== IsAvilable =====
             dgvData.Columns.Add(new DataGridViewCheckBoxColumn
             {
                 Name = nameof(SoldProductAddDto.IsAvilable),
@@ -377,118 +385,18 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             });
 
             dgvData.DataSource = this._SoldProductAdd;
-        }
-        private void ConfigRefundMode()
-        {
-            UiFormat.DgvDefualt(dgvData);
 
-
-            // ===== First We Have The Model name to search with =====
-
-            dgvData.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(SoldProductSaleDetailsListDto.ProductTypeName),
-                DataPropertyName = nameof(SoldProductSaleDetailsListDto.ProductTypeName), // dont link it , its only for search
-                HeaderText = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(ProductType), nameof(ProductType.ProductTypeName)),
-                FillWeight = 30,
-                ReadOnly = true
-            });
-
-
-            dgvData.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                HeaderText = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(Product), nameof(Product.ProductName)),
-                Name = nameof(SoldProductSaleDetailsListDto.ProductName),
-                DataPropertyName = nameof(SoldProductSaleDetailsListDto.ProductName), // dont bind it 
-                FillWeight = 25,
-                ReadOnly = true
-            });
-
-
-            // ===== Quantity =====
-            dgvData.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(SoldProductSaleDetailsListDto.Quantity),
-                DataPropertyName = nameof(SoldProductSaleDetailsListDto.Quantity),
-                HeaderText = "الكمية",
-                FillWeight = 15,
-                DefaultCellStyle = new DataGridViewCellStyle
-                {
-                    Format = "N2",
-                }
-            });
-
-
-
-            // ===== PricePerUnit =====
-            dgvData.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(SoldProductSaleDetailsListDto.SellingPricePerUnit),
-                DataPropertyName = nameof(SoldProductSaleDetailsListDto.SellingPricePerUnit),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(Product), nameof(Product.SellingPrice)),
-                FillWeight = 15,
-                DefaultCellStyle = new DataGridViewCellStyle
-                {
-                    Format = "N2",
-                },
-                ReadOnly = true
-            });
-
-
-
-
-            // ===== Quantity =====
-            dgvData.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(SoldProductSaleDetailsListDto.QuantityInStorage),
-                DataPropertyName = nameof(SoldProductSaleDetailsListDto.QuantityInStorage),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(Product), nameof(Product.QuantityInStorage)),
-                FillWeight = 15,
-                DefaultCellStyle = new DataGridViewCellStyle
-                {
-                    Format = "N2",
-                },
-                ReadOnly = true
-            });
-
-            // ===== Total =====
-            dgvData.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = nameof(SoldProductSaleDetailsListDto.Total),
-                DataPropertyName = nameof(SoldProductSaleDetailsListDto.Total),
-                HeaderText = "إجمالي",
-                FillWeight = 15,
-                DefaultCellStyle = new DataGridViewCellStyle
-                {
-                    Format = "N2",
-                },
-                ReadOnly = true
-            });
-
-            dgvData.Columns.Add(new DataGridViewCheckBoxColumn
-            {
-                Name = nameof(SoldProductSaleDetailsListDto.IsAvilable),
-                DataPropertyName = nameof(SoldProductSaleDetailsListDto.IsAvilable),
-                HeaderText = LogicLayer.Utilities.NamesManager
-                .GetArabicPropertyName(typeof(Product), nameof(Product.IsAvailable)),
-                FillWeight = 15,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.ColumnHeader,
-                ReadOnly = true
-            });
-
-            dgvData.DataSource = this._SoldProductRefund;
         }
         #endregion
 
         #region dgvEvents
         private void dgvData_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            MessageBox.Show("من فضلك أدخل رقم صحيح");
-            e.Cancel = true;
+            if(e.ColumnIndex == dgvData.Columns[nameof(ProductNameAndIdListDto.ProductName)].Index)
+            {
+                e.ThrowException = false;
+                e.Cancel = true;
+            }
         }
         private void dgvData_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
@@ -550,9 +458,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         #region Data
         private async Task LoadProductData(SoldProductAddDto item)
         {
-            List<ProductNameAndIdListDto> originalList;
-
-
             using var scope = _serviceProvider.CreateAsyncScope();
             var productService = scope.ServiceProvider.GetRequiredService<ProductService>();
 
@@ -566,10 +471,38 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             item.QuantityInStorage = product.QuantityInStorage;
 
             item.Quantity = 1;
+            item.IsAvilable = product.IsAvailable;
 
         }
+
+        private async Task InitializeExistingRowsAsync()
+        {
+            foreach (DataGridViewRow row in dgvData.Rows)
+            {
+                if (row.DataBoundItem is not SoldProductAddDto item)
+                    continue;
+
+                if (item.ProductTypeId == 0)
+                    continue;
+
+                
+                await LoadProductsForRow(row, item.ProductTypeId);
+
+                
+                var comboCell =
+                    row.Cells[nameof(ProductNameAndIdListDto.ProductName)]
+                    as DataGridViewComboBoxCell;
+
+                comboCell.Value = item.ProductId;
+
+               
+                await LoadProductData(item);
+            }
+
+            UpdateTotal();
+        }
         #endregion
-        
+
         #region Buttons
         private async Task PerformAddProduct()
         {
@@ -586,25 +519,12 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         }
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (_IsRefundMode)
-            {
-                var item = dgvData.CurrentRow?.DataBoundItem as SoldProductSaleDetailsListDto;
-
-
-                if (item != null)
-                {
-                    _SoldProductRefund.Remove(item);
-                }
-            }
-            else
-            {
                 var item = dgvData.CurrentRow?.DataBoundItem as SoldProductAddDto;
 
                 if (item != null)
                 {
                     _SoldProductAdd.Remove(item);
                 }
-            }
         }
         #endregion
 

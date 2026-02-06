@@ -28,13 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Button btnSave;
             btnCancel = new Button();
             txtamount = new TextBox();
             label1 = new Label();
             txtAdditionalNotes = new TextBox();
             label3 = new Label();
-            btnSave = new Button();
+            thebutton = new Button();
             SuspendLayout();
             // 
             // btnCancel
@@ -89,29 +88,29 @@
             label3.TabIndex = 63;
             label3.Text = "ملاحظات : ";
             // 
-            // btnSave
+            // thebutton
             // 
-            btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            btnSave.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSave.Location = new Point(348, 138);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(96, 30);
-            btnSave.TabIndex = 16;
-            btnSave.Text = "حفظ";
-            btnSave.UseVisualStyleBackColor = true;
-            btnSave.Click += btnSave_Click;
+            thebutton.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            thebutton.ForeColor = Color.Green;
+            thebutton.Location = new Point(348, 140);
+            thebutton.Name = "thebutton";
+            thebutton.Size = new Size(95, 28);
+            thebutton.TabIndex = 64;
+            thebutton.Text = "حفظ";
+            thebutton.UseVisualStyleBackColor = true;
+            thebutton.Click += thebutton_Click;
             // 
             // frmInvoiceDiscount
             // 
-            AcceptButton = btnSave;
+            AcceptButton = thebutton;
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
             ClientSize = new Size(455, 175);
+            Controls.Add(thebutton);
             Controls.Add(txtAdditionalNotes);
             Controls.Add(label3);
             Controls.Add(btnCancel);
-            Controls.Add(btnSave);
             Controls.Add(txtamount);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -125,10 +124,10 @@
         #endregion
 
         private Button btnCancel;
-        private Button btnSave;
         private TextBox txtamount;
         private Label label1;
         private TextBox txtAdditionalNotes;
         private Label label3;
+        private Button thebutton;
     }
 }

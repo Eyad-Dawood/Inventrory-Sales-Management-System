@@ -30,6 +30,8 @@ namespace InventorySalesManagementSystem.Invoices
             _serviceProvider = serviceProvider;
             _invoiceId = invoiceId;
             ucAddTakeBatch1.takeBatchType = TakeBatchType.Invoice;
+            lbTitle.Text = "إضافة عملية شراء";
+
         }
         public frmAddBatchToInvoice(IServiceProvider serviceProvider, int invoiceId, List<SoldProductSaleDetailsListDto> products)
         {
@@ -37,6 +39,7 @@ namespace InventorySalesManagementSystem.Invoices
             _serviceProvider = serviceProvider;
             _invoiceId = invoiceId;
             ucAddTakeBatch1.takeBatchType = TakeBatchType.Refund;
+            lbTitle.Text = "إضافة مرتجع";
             _products = products;
         }
 
@@ -119,12 +122,12 @@ namespace InventorySalesManagementSystem.Invoices
             }
         }
 
-        private void frmAddBatchToInvoice_Load(object sender, EventArgs e)
+        private async void frmAddBatchToInvoice_Load(object sender, EventArgs e)
         {
-             LoadFormAsync();
+            await LoadFormAsync();
         }
 
-        private void LoadFormAsync()
+        private async Task LoadFormAsync()
         {
             if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Invoice)
             {
@@ -132,7 +135,7 @@ namespace InventorySalesManagementSystem.Invoices
             }
             else if (ucAddTakeBatch1.takeBatchType == TakeBatchType.Refund)
             {
-                ucAddTakeBatch1.Initialize(_serviceProvider, _products);
+              await  ucAddTakeBatch1.Initialize(_serviceProvider, _products);
             }
         }
 

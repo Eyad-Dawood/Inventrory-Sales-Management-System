@@ -209,6 +209,7 @@ namespace DataAccessLayer.Repos.Invoices
                     ProductId = g.Key.ProductId,
                     ProductName = $"{g.Key.ProductName}",
                     ProductTypeName = $"{g.Key.ProductTypeName}",
+                    ProductTypeId = g.First().Product.ProductTypeId,
                     IsAvilable = g.Key.IsAvailable,
                     Quantity = 0, // The Quantity User Has Take , Def = 0 let Ui detirmin
                     QuantityInStorage = g.Sum(x =>
