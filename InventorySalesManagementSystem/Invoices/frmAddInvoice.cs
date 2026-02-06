@@ -261,11 +261,13 @@ namespace InventorySalesManagementSystem.Invoices
             rtb.BackColor = this.BackColor;
             rtb.Clear();
 
+            rtb.SelectionColor = Color.DarkRed;
+            rtb.AppendText($"({id})");
+
             rtb.SelectionColor = Color.Black;
             rtb.AppendText($"{name} ");
 
-            rtb.SelectionColor = Color.DarkRed;
-            rtb.AppendText($"({id})");
+            
         }
 
         private void lkSelectCustomer_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

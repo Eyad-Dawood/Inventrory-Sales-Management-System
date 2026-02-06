@@ -29,6 +29,8 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
         private int RowsPerPage = 100;
         private int InvoiceId = 0;
         private InvoiceReadDto InvoiceReadDto;
+        private bool Detailed = true;
+
 
         private readonly Dictionary<int, Color> _batchColors = new();
         private readonly Color[] _palette =
@@ -230,8 +232,25 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             row.DefaultCellStyle.BackColor = color;
         }
 
-        public async Task ShowInvoice(IServiceProvider serviceProvider, int invoiceId)
+        private void ManageDetailUi()
         {
+            lbTotalBuyingLable.Visible = Detailed;
+            lbTotalBuyingPrice.Visible = Detailed;
+            lbTotalBuyingRefundLable.Visible = Detailed;
+            lbTotalBuyingRefundPrice.Visible = Detailed;
+            lbNetBuyingLable.Visible = Detailed;
+            lbNetBuying.Visible = Detailed;
+
+
+            lbProfitLable.Visible = Detailed;
+            lbNetProfit.Visible = Detailed;
+
+            lkNotes.Visible = !string.IsNullOrEmpty(InvoiceReadDto.Notes);
+        }
+        public async Task ShowInvoice(IServiceProvider serviceProvider, int invoiceId , bool detailed)
+        {
+            Detailed = detailed;
+
             _serviceProvider = serviceProvider;
             InvoiceId = invoiceId;
             // Configure DataGridView
@@ -252,6 +271,7 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
                 {
                     var Invoice = await service.GetInvoiceByIdAsync(invoiceId);
                     InvoiceReadDto = Invoice;
+                    ManageDetailUi();
                     LoadUi();
                 }
                 catch (NotFoundException ex)
@@ -295,7 +315,6 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             lbNetProfit.Text = InvoiceReadDto.NetProfit.ToString("N2");
 
             lbDiscount.Text = InvoiceReadDto.Discount.ToString("N2");
-            txtNotes.Text = InvoiceReadDto.Notes;
         }
 
 
@@ -357,14 +376,15 @@ namespace InventorySalesManagementSystem.Invoices.SoldProducts.UserControles
             frm.ShowDialog();
         }
 
-        private void panel2_Paint(object sender, PaintEventArgs e)
+
+        private void lkNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-
-        }
-
-        private void lbInvoicetype_Click(object sender, EventArgs e)
-        {
-
+            if (string.IsNullOrEmpty(InvoiceReadDto.Notes))
+            { 
+                MessageBox.Show("لا يوجد ملاحظات لعرضها");
+                return;
+            }
+            MessageBox.Show(InvoiceReadDto.Notes);
         }
     }
 }

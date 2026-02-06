@@ -67,7 +67,7 @@
             gpCraft.Controls.Add(rdEvaluation);
             gpCraft.Controls.Add(rdSale);
             gpCraft.Font = new Font("Segoe UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            gpCraft.Location = new Point(736, 7);
+            gpCraft.Location = new Point(526, 7);
             gpCraft.Name = "gpCraft";
             gpCraft.RightToLeft = RightToLeft.Yes;
             gpCraft.Size = new Size(148, 72);
@@ -105,7 +105,7 @@
             lbTitle.Margin = new Padding(4, 0, 4, 0);
             lbTitle.Name = "lbTitle";
             lbTitle.RightToLeft = RightToLeft.Yes;
-            lbTitle.Size = new Size(993, 66);
+            lbTitle.Size = new Size(783, 66);
             lbTitle.TabIndex = 49;
             lbTitle.Text = "إضافة فاتورة";
             lbTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -118,7 +118,7 @@
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 66);
             panel3.Name = "panel3";
-            panel3.Size = new Size(993, 466);
+            panel3.Size = new Size(783, 466);
             panel3.TabIndex = 55;
             // 
             // panel1
@@ -128,7 +128,7 @@
             panel1.Controls.Add(label2);
             panel1.Location = new Point(17, 9);
             panel1.Name = "panel1";
-            panel1.Size = new Size(569, 36);
+            panel1.Size = new Size(371, 36);
             panel1.TabIndex = 53;
             // 
             // panel4
@@ -137,7 +137,7 @@
             panel4.Enabled = false;
             panel4.Location = new Point(32, 8);
             panel4.Name = "panel4";
-            panel4.Size = new Size(440, 23);
+            panel4.Size = new Size(250, 23);
             panel4.TabIndex = 65;
             // 
             // rtbCustomer
@@ -149,7 +149,7 @@
             rtbCustomer.Name = "rtbCustomer";
             rtbCustomer.ReadOnly = true;
             rtbCustomer.RightToLeft = RightToLeft.Yes;
-            rtbCustomer.Size = new Size(440, 23);
+            rtbCustomer.Size = new Size(250, 23);
             rtbCustomer.TabIndex = 65;
             rtbCustomer.Text = "----";
             // 
@@ -171,7 +171,7 @@
             label2.Anchor = AnchorStyles.Right;
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label2.Location = new Point(474, 3);
+            label2.Location = new Point(276, 3);
             label2.Name = "label2";
             label2.RightToLeft = RightToLeft.Yes;
             label2.Size = new Size(92, 30);
@@ -186,7 +186,7 @@
             panel2.Controls.Add(label1);
             panel2.Location = new Point(17, 84);
             panel2.Name = "panel2";
-            panel2.Size = new Size(569, 36);
+            panel2.Size = new Size(371, 36);
             panel2.TabIndex = 54;
             // 
             // panel5
@@ -195,7 +195,7 @@
             panel5.Enabled = false;
             panel5.Location = new Point(84, 7);
             panel5.Name = "panel5";
-            panel5.Size = new Size(388, 23);
+            panel5.Size = new Size(198, 23);
             panel5.TabIndex = 66;
             // 
             // rtbWorker
@@ -207,7 +207,7 @@
             rtbWorker.Name = "rtbWorker";
             rtbWorker.ReadOnly = true;
             rtbWorker.RightToLeft = RightToLeft.Yes;
-            rtbWorker.Size = new Size(388, 23);
+            rtbWorker.Size = new Size(198, 23);
             rtbWorker.TabIndex = 65;
             rtbWorker.Text = "----";
             // 
@@ -217,7 +217,7 @@
             lkDeleteWorker.AutoSize = true;
             lkDeleteWorker.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
             lkDeleteWorker.LinkColor = Color.Red;
-            lkDeleteWorker.Location = new Point(14, 12);
+            lkDeleteWorker.Location = new Point(3, 12);
             lkDeleteWorker.Name = "lkDeleteWorker";
             lkDeleteWorker.RightToLeft = RightToLeft.Yes;
             lkDeleteWorker.Size = new Size(33, 13);
@@ -230,7 +230,7 @@
             // 
             lkSelectWorker.AutoSize = true;
             lkSelectWorker.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
-            lkSelectWorker.Location = new Point(53, 13);
+            lkSelectWorker.Location = new Point(42, 13);
             lkSelectWorker.Name = "lkSelectWorker";
             lkSelectWorker.RightToLeft = RightToLeft.Yes;
             lkSelectWorker.Size = new Size(25, 13);
@@ -244,7 +244,7 @@
             label1.Anchor = AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label1.Location = new Point(474, 2);
+            label1.Location = new Point(276, 2);
             label1.Name = "label1";
             label1.RightToLeft = RightToLeft.Yes;
             label1.Size = new Size(91, 30);
@@ -257,7 +257,7 @@
             ucAddTakeBatch1.Enabled = false;
             ucAddTakeBatch1.Location = new Point(0, 0);
             ucAddTakeBatch1.Name = "ucAddTakeBatch1";
-            ucAddTakeBatch1.Size = new Size(993, 466);
+            ucAddTakeBatch1.Size = new Size(783, 466);
             ucAddTakeBatch1.TabIndex = 55;
             // 
             // btnCancel
@@ -265,7 +265,7 @@
             btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnCancel.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnCancel.ForeColor = Color.Red;
-            btnCancel.Location = new Point(890, 49);
+            btnCancel.Location = new Point(680, 49);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(96, 30);
             btnCancel.TabIndex = 57;
@@ -278,7 +278,7 @@
             btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnSave.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             btnSave.ForeColor = Color.FromArgb(0, 192, 0);
-            btnSave.Location = new Point(890, 13);
+            btnSave.Location = new Point(680, 13);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(96, 30);
             btnSave.TabIndex = 56;
@@ -289,7 +289,7 @@
             // txtAdditional
             // 
             txtAdditional.Anchor = AnchorStyles.Right;
-            txtAdditional.Location = new Point(504, 15);
+            txtAdditional.Location = new Point(294, 15);
             txtAdditional.Name = "txtAdditional";
             txtAdditional.Size = new Size(94, 23);
             txtAdditional.TabIndex = 58;
@@ -299,7 +299,7 @@
             // 
             label4.Anchor = AnchorStyles.Right;
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            label4.Location = new Point(604, 15);
+            label4.Location = new Point(394, 15);
             label4.Name = "label4";
             label4.RightToLeft = RightToLeft.Yes;
             label4.Size = new Size(56, 21);
@@ -309,7 +309,7 @@
             // txtAdditionalNotes
             // 
             txtAdditionalNotes.Anchor = AnchorStyles.Right;
-            txtAdditionalNotes.Location = new Point(295, 43);
+            txtAdditionalNotes.Location = new Point(85, 43);
             txtAdditionalNotes.Multiline = true;
             txtAdditionalNotes.Name = "txtAdditionalNotes";
             txtAdditionalNotes.RightToLeft = RightToLeft.Yes;
@@ -320,7 +320,7 @@
             // 
             label3.Anchor = AnchorStyles.Right;
             label3.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            label3.Location = new Point(615, 44);
+            label3.Location = new Point(405, 44);
             label3.Margin = new Padding(4, 0, 4, 0);
             label3.Name = "label3";
             label3.RightToLeft = RightToLeft.Yes;
@@ -340,7 +340,7 @@
             panel6.Dock = DockStyle.Bottom;
             panel6.Location = new Point(0, 532);
             panel6.Name = "panel6";
-            panel6.Size = new Size(993, 88);
+            panel6.Size = new Size(783, 88);
             panel6.TabIndex = 62;
             // 
             // frmAddInvoice
@@ -348,7 +348,7 @@
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
             CancelButton = btnCancel;
-            ClientSize = new Size(993, 620);
+            ClientSize = new Size(783, 620);
             Controls.Add(panel3);
             Controls.Add(lbTitle);
             Controls.Add(panel6);

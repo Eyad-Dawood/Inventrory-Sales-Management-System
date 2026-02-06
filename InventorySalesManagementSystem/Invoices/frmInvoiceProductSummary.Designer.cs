@@ -38,16 +38,16 @@
             ucListView1.Dock = DockStyle.Fill;
             ucListView1.Location = new Point(0, 0);
             ucListView1.Name = "ucListView1";
-            ucListView1.Size = new Size(1561, 773);
+            ucListView1.Size = new Size(769, 550);
             ucListView1.TabIndex = 0;
             // 
             // frmInvoiceProductSummary
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(1561, 773);
+            ClientSize = new Size(769, 550);
             Controls.Add(ucListView1);
-            MinimumSize = new Size(1278, 812);
+            MinimumSize = new Size(785, 589);
             Name = "frmInvoiceProductSummary";
             Load += frmInvoiceProductSummary_Load;
             ResumeLayout(false);

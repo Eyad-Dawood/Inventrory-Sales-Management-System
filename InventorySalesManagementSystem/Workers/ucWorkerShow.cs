@@ -38,16 +38,7 @@ namespace InventorySalesManagementSystem.Workers
 
             lbCraft.Text = dto.Craft.ToDisplayText();
 
-            if (dto.IsActive)
-            {
-                lbActive.Text = "نشط";
-                lbActive.ForeColor = Color.Green;
-            }
-            else
-            {
-                lbActive.Text = "غير نشط";
-                lbActive.ForeColor = Color.Red;
-            }
+            chkIsActive.Checked = dto.IsActive;
 
         }
 

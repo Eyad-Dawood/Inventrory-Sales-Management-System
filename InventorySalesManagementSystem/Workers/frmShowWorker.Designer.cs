@@ -37,14 +37,14 @@
             ucWorkerShow1.Enabled = false;
             ucWorkerShow1.Location = new Point(0, 0);
             ucWorkerShow1.Name = "ucWorkerShow1";
-            ucWorkerShow1.Size = new Size(765, 134);
+            ucWorkerShow1.Size = new Size(765, 116);
             ucWorkerShow1.TabIndex = 0;
             // 
             // frmShowWorker
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(765, 134);
+            ClientSize = new Size(765, 116);
             Controls.Add(ucWorkerShow1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             MaximizeBox = false;

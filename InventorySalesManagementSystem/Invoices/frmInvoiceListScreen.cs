@@ -452,7 +452,7 @@ namespace InventorySalesManagementSystem.Invoices
 
             try
             {
-                var frm = new frmShowInvoice(_serviceProvider, item.InvoiceId);
+                var frm = new frmShowInvoice(_serviceProvider, item.InvoiceId,detailed: !SummaryMode); //Only Place With Details When Not Summary
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)

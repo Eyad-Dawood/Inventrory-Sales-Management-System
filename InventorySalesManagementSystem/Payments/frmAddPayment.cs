@@ -238,7 +238,7 @@ namespace InventorySalesManagementSystem.Payments
 
             try
             {
-                var frm = new frmShowInvoice(_serviceProvider, (int)_invoiceId);
+                var frm = new frmShowInvoice(_serviceProvider, (int)_invoiceId, detailed: false);
                 frm.ShowDialog();
             }
             catch (NotFoundException ex)

@@ -76,16 +76,8 @@ namespace InventorySalesManagementSystem.Products
 
             lbTotalSales.Text = dto.TotalQuantitySold.ToString("N4");
 
-            if (dto.IsAvailable)
-            {
-                lbAvilable.Text = "متاح";
-                lbAvilable.ForeColor = Color.Green;
-            }
-            else
-            {
-                lbAvilable.Text = "غير متاح";
-                lbAvilable.ForeColor = Color.Red;
-            }
+            chkAviable.Checked = dto.IsAvailable;
+
 
         }
 

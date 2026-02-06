@@ -1,7 +1,4 @@
-﻿using DataAccessLayer;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Entities.Products;
-using System.Linq;
+﻿using DataAccessLayer.Entities;
 
 
 

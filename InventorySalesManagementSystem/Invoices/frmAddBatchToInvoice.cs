@@ -144,7 +144,7 @@ namespace InventorySalesManagementSystem.Invoices
             try
             {
                 lkShowInvoice.Enabled = false;
-                var frm = new frmShowInvoice(_serviceProvider, _invoiceId);
+                var frm = new frmShowInvoice(_serviceProvider, _invoiceId , detailed:false);
                 frm.FormClosed += Frm_FormClosed;
                 frm.Show();
             }

@@ -15,17 +15,20 @@ namespace InventorySalesManagementSystem.Invoices
     {
         public int InvoiceId = 0;
         private readonly IServiceProvider _serviceProvider;
+        private bool Detialed = true;
 
-        public frmShowInvoice(IServiceProvider serviceProvider, int invoiceId)
+        public frmShowInvoice(IServiceProvider serviceProvider, int invoiceId , bool detailed)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
             InvoiceId = invoiceId;
+            Detialed =detailed;
+
         }
 
         private async Task LoadInvoiceAsync()
         {
-            await ucInvoiceDetails1.ShowInvoice(_serviceProvider, InvoiceId);
+            await ucInvoiceDetails1.ShowInvoice(_serviceProvider, InvoiceId, Detialed);
         }
 
         private async void frmShowInvoice_Load(object sender, EventArgs e)

@@ -35,16 +35,7 @@ namespace InventorySalesManagementSystem.Customers
             lbBalance.Text = $"{dto.Balance.ToString("N2")}";
             lbBalance.ForeColor = dto.Balance >= 0 ? Color.DarkGreen : Color.DarkRed;
 
-            if (dto.IsActive)
-            {
-                lbActive.Text = "نشط";
-                lbActive.ForeColor = Color.Green;
-            }
-            else
-            {
-                lbActive.Text = "غير نشط";
-                lbActive.ForeColor = Color.Red;
-            }
+            chkActive.Checked = dto.IsActive;
 
         }
         public async Task ShowData(IServiceProvider serviceProvider, int customerId)
