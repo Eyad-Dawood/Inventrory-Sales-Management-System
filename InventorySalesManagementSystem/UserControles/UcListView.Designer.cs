@@ -57,6 +57,7 @@
             chkOpen = new CheckBox();
             chkClose = new CheckBox();
             timer1 = new System.Windows.Forms.Timer(components);
+            btnRefresh = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvData).BeginInit();
             pnBottomBar.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
@@ -204,7 +205,7 @@
             // 
             tlpUpper.AutoSize = true;
             tlpUpper.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tlpUpper.ColumnCount = 10;
+            tlpUpper.ColumnCount = 11;
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 141F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 159F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
@@ -214,7 +215,9 @@
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 222F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 225F));
             tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 229F));
-            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 287F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 259F));
+            tlpUpper.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 48F));
+            tlpUpper.Controls.Add(btnRefresh, 10, 0);
             tlpUpper.Controls.Add(gpInvoiceType, 0, 0);
             tlpUpper.Controls.Add(btnSearch, 3, 0);
             tlpUpper.Controls.Add(dtpLogDate, 6, 0);
@@ -227,11 +230,11 @@
             tlpUpper.Controls.Add(gpInvoiceState, 1, 0);
             tlpUpper.Dock = DockStyle.Right;
             tlpUpper.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            tlpUpper.Location = new Point(173, 0);
+            tlpUpper.Location = new Point(153, 0);
             tlpUpper.Name = "tlpUpper";
             tlpUpper.RowCount = 1;
             tlpUpper.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpUpper.Size = new Size(1530, 39);
+            tlpUpper.Size = new Size(1550, 39);
             tlpUpper.TabIndex = 11;
             // 
             // gpInvoiceType
@@ -419,6 +422,18 @@
             timer1.Interval = 250;
             timer1.Tick += timer1_Tick;
             // 
+            // btnRefresh
+            // 
+            btnRefresh.Anchor = AnchorStyles.Right;
+            btnRefresh.BackgroundImage = Properties.Resources.refresh__1_;
+            btnRefresh.BackgroundImageLayout = ImageLayout.Stretch;
+            btnRefresh.Location = new Point(1517, 4);
+            btnRefresh.Name = "btnRefresh";
+            btnRefresh.Size = new Size(30, 30);
+            btnRefresh.TabIndex = 46;
+            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += btnRefresh_Click;
+            // 
             // UcListView
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
@@ -472,5 +487,6 @@
         private GroupBox gpInvoiceType;
         private CheckBox chkSell;
         private CheckBox chkEvaluation;
+        private Button btnRefresh;
     }
 }

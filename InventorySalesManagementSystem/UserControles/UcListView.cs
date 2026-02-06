@@ -727,6 +727,10 @@ namespace InventorySalesManagementSystem.UserControles
             RefreshData(RefreshDataOperation.DirectFilter);
         }
 
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshData(RefreshDataOperation.Operation);
+        }
     }
 
 

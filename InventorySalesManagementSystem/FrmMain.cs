@@ -1,4 +1,5 @@
-﻿using InventorySalesManagementSystem.Customers;
+﻿using InventorySalesManagementSystem.Backup;
+using InventorySalesManagementSystem.Customers;
 using InventorySalesManagementSystem.General;
 using InventorySalesManagementSystem.Invoices;
 using InventorySalesManagementSystem.Payments;
@@ -157,7 +158,7 @@ namespace InventorySalesManagementSystem
             {
                 OpenForm(
                MainFormsContainer.frmInvoiceSummaryListScreen,
-               () => new frmInvoiceListScreen(_serviceProvider, selectButton: false , summaryMode: true),
+               () => new frmInvoiceListScreen(_serviceProvider, selectButton: false, summaryMode: true),
                f => MainFormsContainer.frmInvoiceSummaryListScreen = f
                );
             }
@@ -173,9 +174,22 @@ namespace InventorySalesManagementSystem
             {
                 OpenForm(
                MainFormsContainer.frmInvoiceManagementListScreen,
-               () => new frmInvoiceListScreen(_serviceProvider, selectButton: false ,summaryMode : false),
+               () => new frmInvoiceListScreen(_serviceProvider, selectButton: false, summaryMode: false),
                f => MainFormsContainer.frmInvoiceManagementListScreen = f
                );
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void BackupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var frm = new frmBackup(_serviceProvider);
+                frm.ShowDialog();
             }
             catch (Exception ex)
             {

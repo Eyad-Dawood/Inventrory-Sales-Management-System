@@ -302,6 +302,16 @@ namespace InventorySalesManagementSystem.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap refresh__1_ {
+            get {
+                object obj = ResourceManager.GetObject("refresh (1)", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Refund {
             get {
                 object obj = ResourceManager.GetObject("Refund", resourceCulture);
@@ -325,6 +335,16 @@ namespace InventorySalesManagementSystem.Properties {
         internal static System.Drawing.Bitmap SearchIcon {
             get {
                 object obj = ResourceManager.GetObject("SearchIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap server__1_ {
+            get {
+                object obj = ResourceManager.GetObject("server (1)", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

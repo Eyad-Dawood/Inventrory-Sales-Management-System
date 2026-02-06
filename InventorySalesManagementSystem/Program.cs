@@ -3,6 +3,7 @@ using DataAccessLayer.Abstractions;
 using DataAccessLayer.Abstractions.Invoices;
 using DataAccessLayer.Abstractions.Payments;
 using DataAccessLayer.Abstractions.Products;
+using DataAccessLayer.Backup;
 using DataAccessLayer.DesignTimeOnly;
 using DataAccessLayer.Repos;
 using DataAccessLayer.Repos.Invoices;
@@ -13,6 +14,7 @@ using LogicLayer.Services.Invoices;
 using LogicLayer.Services.Payments;
 using LogicLayer.Services.Products;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -75,10 +77,26 @@ namespace InventorySalesManagementSystem
             .WriteTo.File(
              path: Path.Combine(logsFolder, "migration-.log"),
              rollingInterval: RollingInterval.Day,
-             retainedFileCountLimit: 30,
+             retainedFileCountLimit: 14,
              shared: true))
              .CreateLogger();
 
+            string? backupDir2 = @"D:\\InventoryBackups";
+
+            try
+            {
+                var configuration = new ConfigurationBuilder()
+                                .SetBasePath(AppContext.BaseDirectory)
+                                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                                .Build();
+                 backupDir2 =
+            configuration.GetSection("BackupSettings")
+                 .GetValue<string>("SecondaryBackupPath");
+            }
+            catch
+            {
+                MessageBox.Show("من فضلك تأكد من مسار التخزين في ملف appsettings.json");
+            }
 
             //Service Config
             var services = new ServiceCollection();
@@ -121,6 +139,23 @@ namespace InventorySalesManagementSystem
 
             //Global
             services.AddSingleton<LogicLayer.Global.Users.UserSession>();
+
+
+            var LocalBackupFolder = Path.Combine(dbFolder, "LocalBackup");
+            
+
+            services.AddSingleton<BackupManager>(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<BackupManager>>();
+
+                return new BackupManager(
+                    dbPath: dbPath,
+                    backupDir1: LocalBackupFolder,
+                    backupDir2: backupDir2,
+                    keepBackups: 50,
+                    logger: logger
+                );
+            });
 
             //Services
             services.AddScoped<ProductPriceLogService>();
@@ -180,6 +215,29 @@ namespace InventorySalesManagementSystem
 
             try
             {
+                if(!Properties.Settings.Default.LastBackupSucceded)
+                {
+                    MessageBox.Show("فشل النسخ الاحتياطي السابق عند غلق البرنامج , راجع السجلات");
+                    Properties.Settings.Default.LastBackupSucceded = true;
+                    Properties.Settings.Default.Save();
+                }
+
+
+
+                //Take A Copy Before starting
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    try
+                    {
+                        var service = scope.ServiceProvider.GetRequiredService<BackupManager>();
+                        service.CreateBackup();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "فشل النسخ الإحتياطي , راجع السجلات");
+                    }
+                }
+
                 ApplicationConfiguration.Initialize();
 
                 var loginForm = new frmLogin(serviceProvider);
@@ -193,10 +251,26 @@ namespace InventorySalesManagementSystem
             catch (Exception ex)
             {
                 Serilog.Log.Fatal(ex, "Application crashed");
-                throw;
             }
             finally
             {
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var service = scope.ServiceProvider.GetRequiredService<BackupManager>();
+
+                    try
+                    {
+                        service.CreateBackup();
+                        Properties.Settings.Default.LastBackupSucceded = true;
+                        Properties.Settings.Default.Save();
+                    }
+                    catch
+                    {
+                        Properties.Settings.Default.LastBackupSucceded = false;
+                        Properties.Settings.Default.Save();
+                    }
+                }
+
                 Serilog.Log.CloseAndFlush();
             }
         }

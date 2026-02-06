@@ -42,6 +42,7 @@
             PriceLogs = new ToolStripMenuItem();
             StorageLog = new ToolStripMenuItem();
             pnMain = new Panel();
+            BackupToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -49,7 +50,7 @@
             // 
             menuStrip1.BackColor = SystemColors.ControlLight;
             menuStrip1.ImageScalingSize = new Size(30, 30);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, Products, Invoices, Payments, toolStripMenuItem2 });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, Products, Invoices, Payments, toolStripMenuItem2, BackupToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(1401, 53);
@@ -68,7 +69,7 @@
             // 
             Workers.Image = Properties.Resources.workers__1_;
             Workers.Name = "Workers";
-            Workers.Size = new Size(189, 50);
+            Workers.Size = new Size(203, 50);
             Workers.Text = "العمال";
             Workers.Click += Workers_Click;
             // 
@@ -76,7 +77,7 @@
             // 
             Customers.Image = Properties.Resources.customer__1_;
             Customers.Name = "Customers";
-            Customers.Size = new Size(189, 50);
+            Customers.Size = new Size(203, 50);
             Customers.Text = "العملاء";
             Customers.Click += Customers_Click;
             // 
@@ -134,7 +135,7 @@
             // 
             PriceLogs.Image = Properties.Resources.price_tag__1_;
             PriceLogs.Name = "PriceLogs";
-            PriceLogs.Size = new Size(204, 50);
+            PriceLogs.Size = new Size(218, 50);
             PriceLogs.Text = "الأسعار";
             PriceLogs.Click += PriceLogs_Click;
             // 
@@ -142,7 +143,7 @@
             // 
             StorageLog.Image = Properties.Resources.boxes__1_;
             StorageLog.Name = "StorageLog";
-            StorageLog.Size = new Size(204, 50);
+            StorageLog.Size = new Size(218, 50);
             StorageLog.Text = "المخزون";
             StorageLog.Click += StorageLog_Click;
             // 
@@ -153,6 +154,15 @@
             pnMain.Name = "pnMain";
             pnMain.Size = new Size(1401, 715);
             pnMain.TabIndex = 15;
+            // 
+            // BackupToolStripMenuItem
+            // 
+            BackupToolStripMenuItem.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            BackupToolStripMenuItem.Image = Properties.Resources.server__1_;
+            BackupToolStripMenuItem.Name = "BackupToolStripMenuItem";
+            BackupToolStripMenuItem.Size = new Size(277, 49);
+            BackupToolStripMenuItem.Text = "النسخ الإحتياطي";
+            BackupToolStripMenuItem.Click += BackupToolStripMenuItem_Click;
             // 
             // FrmMain
             // 
@@ -185,5 +195,6 @@
         private Panel pnMain;
         private ToolStripMenuItem QuickInvoiceToolStripMenuItem;
         private ToolStripMenuItem InvoiceManagementToolStripMenuItem;
+        private ToolStripMenuItem BackupToolStripMenuItem;
     }
 }
