@@ -1,593 +1,439 @@
 # Inventory Sales Management System
 
-A full-featured **Inventory and Sales Management desktop application** built with **.NET 9.0**, designed to manage products, sales, invoices, payments, customers, and stock movement with complete financial traceability.
+Focused Technical Documentation (Important Details)
+
+This document is intentionally focused on architecture, behavior, and maintenance-critical details.
+It avoids exhaustive per-file listing and is intended to be used as a practical project README.
+
+## 1) What the Project Is
+
+Inventory Sales Management System is a desktop business application built with WinForms + .NET 9.
+It manages:
+- customers and workers
+- products and product types
+- inventory quantities
+- invoices (sale/evaluation + refund flows)
+- payments and balance effects
+- audit logs for price changes and stock movements
+- backup/restore of SQLite database
+
+Primary language for UI and validation messages is Arabic.
+
+## 2) High-Level Architecture
+
+The repository follows a clear 3-layer architecture:
+
+1. Presentation Layer (`InventorySalesManagementSystem`)
+- WinForms screens, dialogs, user controls
+- user interaction, event handling, binding
+- calls service layer through dependency injection
+
+2. Business Logic Layer (`LogicLayer`)
+- service classes implement business rules and use-cases
+- DTOs isolate UI contracts from EF entities
+- validation orchestration and business exceptions
+
+3. Data Access Layer (`DataAccessLayer`)
+- EF Core `DbContext` + repositories + unit of work
+- entity models and migrations
+- persistence logic and query composition
+
+Flow:
+`WinForms -> Services -> Repositories/UnitOfWork -> EF Core -> SQLite`
+
+## 3) Technology Stack
+
+- Runtime: .NET 9 (`net9.0`, `net9.0-windows`)
+- UI: Windows Forms
+- ORM: Entity Framework Core 9
+- Database: SQLite (`inventory.db`)
+- Logging: Serilog file sinks
+- DI/Config: `Microsoft.Extensions.DependencyInjection`, `ConfigurationBuilder`
+
+Project files:
+- `InventorySalesManagementSystem/InventorySalesManagementSystem.csproj`
+- `LogicLayer/LogicLayer.csproj`
+- `DataAccessLayer/DataAccessLayer.csproj`
+
+## 4) Startup and Runtime Lifecycle
+
+Main startup is in `InventorySalesManagementSystem/Program.cs`.
+
+Important runtime behavior:
+
+1. App paths
+- Creates `%ProgramData%/InventorySales` directory
+- Database path: `%ProgramData%/InventorySales/inventory.db`
+- Logs path: `%ProgramData%/InventorySales/Logs`
+- Local backup path: `%ProgramData%/InventorySales/LocalBackup`
+
+2. Logging configuration
+- `app-.log`: general app logs
+- `ef-.log`: EF Core logs (excluding migrations)
+- `migration-.log`: migration logs at warning+ level
+- rolling daily logs with retention = 14 files
+
+3. Config read
+- Optional `appsettings.json` read from output directory
+- `BackupSettings:SecondaryBackupPath` controls secondary backup directory
+- default fallback in code: `D:\InventoryBackups`
+
+4. DI registrations
+- DbContext: SQLite
+- UnitOfWork + generic repository + all specialized repositories
+- all services (`CustomerService`, `ProductService`, `InvoiceService`, etc.)
+- global singleton session state: `UserSession`
+- singleton `BackupManager`
+
+5. Migration and seed on startup
+- checks pending migrations
+- if migration needed and DB exists, pre-migration copy is created
+- runs `db.Database.Migrate()`
+- runs `DatabaseSeeder.Seed(db)`
+
+6. Backup strategy
+- backup attempted before entering main UI
+- backup attempted again on shutdown (finally block)
+- setting `LastBackupSucceded` is persisted in `Properties.Settings`
+
+7. Login gate
+- app opens `frmLogin`
+- only on `DialogResult.OK` runs `FrmMain`
 
-The system follows a **Three-Tier Architecture (N-Tier)** that cleanly separates the user interface, business logic, and database operations to ensure maintainability, scalability, and code clarity.
+## 5) Persistence Model and DbContext
 
-The application is designed primarily for **Arabic-speaking businesses**, with localized labels and validation messages.
+`DataAccessLayer/InventoryDbContext.cs` registers DbSets:
+- `People`, `Towns`, `Customers`, `Workers`, `Users`
+- `ProductTypes`, `Products`, `ProductPricesLog`, `ProductStockMovmentsLog`
+- `Invoices`, `TakeBatches`, `SoldProducts`, `Payments`
 
----
+Important model configuration:
 
-# Table of Contents
+- `Person.FullName` is computed column (SQLite expression concatenating name parts)
+- Unique indexes:
+  - `Town.TownName`
+  - `ProductType.ProductTypeName`
+- Search indexes:
+  - `Person.FullName`
+  - `Product.ProductName`
+  - `Invoice.CustomerId`
+  - `TakeBatch.InvoiceId`, `TakeBatch.TakeBatchType`
+  - `SoldProduct.TakeBatchId`, `SoldProduct.ProductId`
+  - `Payment.InvoiceId`, `Payment.CustomerId`, `Payment.PaymentReason`
+- default values:
+  - `Worker.IsActive = true`
+  - `Customer.IsActive = true`
+  - `Customer.Balance = 0`
+- global FK delete behavior set to `Restrict`
 
-1. Overview
-2. Features
-3. System Architecture
-4. Technology Stack
-5. Project Structure
-6. Domain Model
-7. Data Access Layer
-8. Business Logic Layer
-9. Presentation Layer
-10. Database Design
-11. Audit & Logging System
-12. Authentication & Permissions
-13. Error Handling
-14. Installation & Setup
-15. Running the Application
-16. Database Migrations & Seeding
-17. Backup System
-18. Future Improvements
-19. License
+## 6) Core Domain Objects
 
----
+### Person / Town / Customer / Worker / User
 
-# 1. Overview
+- `Person` stores names, phone, national number, town link
+- `Town` has unique name and is used by `Person`
+- `Customer` references `Person` + has `Balance`, `IsActive`
+- `Worker` references `Person` + has craft flags (`WorkersCraftsEnum`)
+- `User` has username/password/isActive/permissions
 
-Inventory Sales Management System is a desktop application used to manage:
+Permission enum (`User.Permission`) uses flags:
+- `Admin`, `View`, `Add`, `Edit`, `Delete`
 
-* Product inventory
-* Sales invoices
-* Customer balances
-* Payments
-* Product pricing history
-* Stock movements
+### Product domain
 
-The system ensures **complete auditability** of financial and inventory operations by logging every price change and stock movement.
+- `ProductType`: category/model name
+- `Product`: buying/selling prices, stock quantity, availability, type link
+- `ProductPriceLog`: old/new buy/sell values + user + date
+- `ProductStockMovementLog`: old/new quantity + reason + user + date + notes
 
-This design prevents data inconsistencies and allows accurate historical reporting.
+Stock movement reasons:
+- `Purchase`, `Sale`, `Adjustment`, `Damage`, `InitialStock`, `Refund`
 
----
+### Invoice domain
 
-# 2. Features
+- `Invoice`: open/close info, financial totals, discount, state/type, links
+- `TakeBatch`: operation batch under invoice, includes sold product items
+- `SoldProduct`: quantity and per-unit prices snapshot at operation time
+- `Payment`: monetary transaction with reason and actor fields
 
-### Inventory Management
+Invoice enums:
+- `InvoiceType`: `Evaluation` or `Sale`
+- `InvoiceState`: `Open` or `Closed`
 
-* Create and manage products
-* Organize products by type
-* Track product pricing history
-* Track stock movement
-* Manage product batches
-
-### Sales Management
-
-* Create sales invoices
-* Add multiple products to invoices
-* Apply invoice discounts
-* Handle refunds
-* Track invoice financial summaries
-
-### Customer Management
-
-* Add and manage customers
-* Track customer balances
-* View customer purchase history
-
-### Payments
-
-* Record payments from customers
-* Apply payments to invoices
-* Maintain financial balance integrity
-
-### Worker & User Management
-
-* Manage employees
-* Create system users
-* Authentication and permission management
-
-### Audit Logging
-
-* Product price history logging
-* Inventory movement tracking
-* Financial traceability
-
-### Database Backup
-
-* Manual and automated backup system
-* Built-in backup management interface
-
----
-
-# 3. System Architecture
-
-The system follows a **Three-Tier Architecture** to enforce separation of concerns.
-
-```
-Presentation Layer (WinForms UI)
-        ↓
-Business Logic Layer (Services)
-        ↓
-Data Access Layer (EF Core + Repositories)
-        ↓
-SQL Database
-```
-
-### Advantages of this architecture
-
-* Better maintainability
-* Easier testing
-* Decoupled components
-* Clear responsibility boundaries
-
----
-
-# 4. Technology Stack
-
-| Component    | Technology                                    |
-| ------------ | --------------------------------------------- |
-| Framework    | .NET 9.0                                      |
-| Language     | C#                                            |
-| UI Framework | Windows Forms                                 |
-| ORM          | Entity Framework Core                         |
-| Database     | SQL Server                                    |
-| Architecture | Three-Tier (N-Tier)                           |
-| Patterns     | Repository Pattern, Unit of Work, DTO Pattern |
-
----
-
-# 5. Project Structure
-
-```
-Solution
-│
-├── DataAccessLayer
-│   ├── Entities
-│   ├── Repositories
-│   ├── Interfaces
-│   ├── Migrations
-│   ├── BackupManager
-│   └── InventoryDbContext
-│
-├── LogicLayer
-│   ├── DTOs
-│   ├── Services
-│   ├── Exceptions
-│   ├── Helpers
-│   └── Utilities
-│
-└── InventorySalesManagementSystem
-    ├── Forms
-    ├── UserControls
-    ├── Resources
-    ├── Configuration
-    └── Program.cs
-```
-
----
-
-# 6. Domain Model
-
-The system models the following core business entities.
-
-### Person
-
-Base representation of any human in the system.
-
-Properties include:
-
-* First Name
-* Second Name
-* Third Name
-* Fourth Name
-* Full Name
-* National Number
-* Phone Number
-* Town
-
-### Customer
-
-Represents clients who purchase products.
-
-Key attributes:
-
-* Balance
-* Active status
-* Purchase history
-
-### Worker
-
-Represents employees working in the system.
-
-### User
-
-Represents application users who can log into the system.
-
-Includes authentication credentials and permissions.
-
-### Product
-
-Represents an item in the inventory.
-
-Attributes include:
-
-* Name
-* Barcode
-* Product Type
-* Price
-* Stock quantity
-
-### ProductType
-
-Represents product categories.
-
-### Invoice
-
-Represents a completed sales transaction.
-
-### SoldProduct
-
-Represents line items within an invoice.
-
-### TakeBatch
-
-Represents product batches removed from inventory during sales.
-
-### Payment
-
-Represents financial transactions received from customers.
-
----
-
-# 7. Data Access Layer
-
-The **Data Access Layer (DAL)** is responsible for interacting with the database using **Entity Framework Core**.
-
-## InventoryDbContext
-
-Defines the database schema using DbSet properties.
-
-Example:
-
-```
-DbSet<Person>
-DbSet<Customer>
-DbSet<Product>
-DbSet<Invoice>
-DbSet<SoldProduct>
-DbSet<Payment>
-```
-
-### Fluent API Configuration
-
-Used to configure:
-
-* Default values
-* Relationships
-* Constraints
-* Keys
-
-Example configurations:
-
-* Worker.IsActive → default true
-* Customer.IsActive → default true
-* Customer.Balance → default 0
-
----
-
-# 8. Repository Pattern
-
-The system uses a **Generic Repository Pattern** to abstract database operations.
-
-### IRepository<T>
-
-Provides common operations:
-
-* Add
-* GetById
-* GetAll
-* Update
-* Delete
-
-### Repository<T>
-
-Concrete implementation using EF Core.
-
-### Specific Repositories
-
-Custom repositories provide domain-specific queries.
-
-Examples:
-
-* CustomerRepository
-* ProductRepository
-* InvoiceRepository
-
----
-
-# 9. Unit Of Work
-
-The **Unit of Work pattern** ensures that multiple database operations are committed as a single transaction.
-
-Example scenario:
-
-Creating an invoice requires:
-
-1. Creating invoice record
-2. Adding sold products
-3. Deducting stock
-4. Updating customer balance
-5. Logging stock movement
-
-All operations are executed within a single transaction.
-
-If any step fails, the transaction is rolled back.
-
----
-
-# 10. Business Logic Layer
-
-The **Business Logic Layer (BLL)** contains the core business rules.
-
-It acts as a mediator between the UI and the data layer.
-
----
-
-## Services
-
-The system contains several service classes responsible for implementing business rules.
-
-### CustomerService
-
-Handles:
-
-* Creating customers
-* Updating balances
-* Retrieving customer data
-
-### ProductService
-
-Handles:
-
-* Product management
-* Inventory operations
-
-### InvoiceService
-
-The most critical component of the system.
-
-Responsibilities include:
-
-* Creating invoices
-* Calculating totals
-* Applying discounts
-* Managing product stock deductions
-* Logging stock movements
-
-### PaymentService
-
-Handles customer payment processing.
-
----
-
-# 11. Data Transfer Objects (DTOs)
-
-DTOs are used to safely transfer data between layers.
-
-Each entity has multiple DTO models depending on the operation.
-
-Example:
-
-```
-CustomerAddDto
-CustomerUpdateDto
-CustomerReadDto
-CustomerListDto
-```
-
-Benefits:
-
-* Prevents over-posting
-* Improves security
-* Optimizes data transfer
-
----
-
-# 12. Audit & Logging System
-
-The system includes a comprehensive audit system.
-
-### ProductPriceLog
-
-Tracks every product price change.
-
-Example fields:
-
-* ProductId
-* OldPrice
-* NewPrice
-* ChangedDate
-* ChangedBy
-
-### ProductStockMovementLog
-
-Tracks all stock movements.
-
-Records:
-
-* Stock additions
-* Sales deductions
-* Inventory adjustments
-
-This ensures full traceability.
-
----
-
-# 13. Authentication & Permissions
-
-The system includes user authentication.
-
-Users must log in through the **Login Form**.
-
-After successful login:
-
-* User session is stored in `UserSession`
-* Permissions are applied across the system
-
-Permission utilities are handled using:
-
-```
-PermissionsExtensions
-EnumExtensions
-```
-
----
-
-# 14. Error Handling
-
-The system uses custom exception types.
-
-Examples:
-
-```
-ValidationException
-NotFoundException
-OperationFailedException
-WrongPasswordException
-```
-
-These provide meaningful error handling throughout the application.
-
----
-
-# 15. Presentation Layer
-
-The Presentation Layer is built using **Windows Forms**.
-
-It provides the graphical interface for interacting with the system.
-
-### Core Forms
-
-* Login Form
-* Main Dashboard
-* Customer Management Screens
-* Product Management Screens
-* Invoice Management Screens
-* Payment Screens
-
-### User Controls
-
-Reusable UI components are used for common forms such as:
-
-* Person data entry
-* Product display
-* Customer display
-
----
-
-# 16. Installation & Setup
-
-### Requirements
-
-* .NET 9 SDK
-* SQL Server
-* Visual Studio 2022 or later
-
-### Steps
-
-1. Clone the repository.
-
-```
-git clone https://github.com/Eyad-Dawood/Inventrory-Sales-Management-System/InventorySalesManagementSystem.git
-```
-
-2. Open the solution in Visual Studio.
-
-3. Update the connection string in:
-
-```
-appsettings.json
-or
-App.config
-```
-
-4. Run database migrations.
-
-```
-Update-Database
-```
-
-5. Start the application.
-
----
-
-# 17. Database Migrations
-
-The project includes EF Core migrations that track database schema changes.
-
-Example migration:
-
-```
-20260204164435_NewInitialCommit
-```
-
-To apply migrations:
-
-```
-Update-Database
-```
-
----
-
-# 18. Database Seeding
-
-Initial data can be inserted using the database seeder.
-
-Examples of seeded data:
-
-* Default admin user
-* Initial towns
-* Product categories
-
-Seeder located in:
-
-```
-DesignTimeOnly/DatabaseSeeder.cs
-```
-
----
-
-# 19. Backup System
-
-The system includes a built-in **database backup manager**.
-
-Capabilities include:
-
-* Manual backups
-* Scheduled backups
-* Backup restoration
-
-The backup UI is available through:
-
-```
-frmBackup
-```
-
----
-
-# 20. Future Improvements
-
-Possible enhancements include:
-
-* Migration to WPF or Web interface
-* REST API integration
-* Mobile client support
-* Advanced reporting system
-* Real-time inventory dashboards
-
----
-
-# 21. License
-
-This project is intended for educational and business use.
-
-License details should be added according to project requirements.
+Take batch enum:
+- `TakeBatchType`: `Invoice` or `Refund`
+
+Payment reason enum:
+- `Invoice`, `Refund`
+
+## 7) Validation Strategy
+
+Validation is layered:
+
+1. Entity validation (`IValidatable.Validate(List<ValidationError>)`)
+- almost all entities implement self-validation
+- checks required fields, range rules, and logical constraints
+
+2. Service-level logical validation
+- operations enforce business state constraints (active customer, invoice state, etc.)
+
+3. Format validation utilities
+- under `LogicLayer/Validation` and `LogicLayer/Validation/Custom Validation`
+
+4. Exception types used for control flow
+- `ValidationException`
+- `NotFoundException`
+- `OperationFailedException`
+- `WrongPasswordException`
+
+## 8) Repository and Unit of Work Pattern
+
+### Generic repository
+`DataAccessLayer/Repos/Repository.cs`
+
+Provides:
+- `AddAsync`, `AddRangeAsync`, `Update`, `Delete`
+- `GetByIdAsync`, `GetAllAsync`, paged `GetAllAsync`
+- generic `GetTotalPagesAsync`
+
+### Specialized repositories
+
+Each aggregate has query-specific repositories, for example:
+- `ProductRepository`: filtered product searches + include product type
+- `InvoiceRepository`: deep include projections + summary groupings
+- `PaymentRepository`: reason/date/customer filtering and summary projections
+
+### Unit of Work
+`DataAccessLayer/UnitOfWork.cs`
+
+Provides:
+- `SaveAsync()`
+- `BeginTransactionAsync()`
+
+Services use explicit transactions for multi-step aggregate operations.
+
+## 9) Service Layer Responsibilities
+
+### `CustomerService`
+- CRUD for customer aggregate (`Customer + Person`)
+- paging/search by full name / town
+- activation toggle
+- balance operations:
+  - `DepositBalance`
+  - `WithdrawBalance`
+
+### `WorkerService`
+- CRUD for worker aggregate (`Worker + Person`)
+- paging/search by full name / town
+- activation toggle
+
+### `TownService`
+- add/update/delete/list town data
+
+### `UserService`
+- validates login credentials (`username + password`)
+- maps to `UserReadDto`
+
+### `ProductTypeService`
+- CRUD + paging/filter for product types
+
+### `ProductService`
+Critical behavior:
+- add/update products in aggregate mode
+- price-change writes price log records
+- quantity add/remove enforces reason constraints
+- stock changes always log old/new quantity + reason + user
+- availability state can be toggled
+
+### `ProductPriceLogService`
+- add and query price logs
+- supports name/date filtering
+
+### `ProductStockMovementLogService`
+- add and query stock movement logs
+- supports name/date filtering
+
+### `SoldProductService` + `TakeBatchService`
+- build take-batch + sold-product aggregate from invoice input
+- process sale/refund lines and quantity impacts
+
+### `InvoiceService`
+Important business rules:
+- adding or appending batches updates invoice financial totals
+- closing invoice is blocked unless remaining amount is exactly zero
+- no normal sale batch modifications on closed invoices
+- discounts are prevented when they would create invalid negative balance scenarios
+- payment/refund operations validate customer active status and invoice type/state
+
+### `PaymentService`
+- creates payment records
+- integrates with `InvoiceService`/`CustomerService` for financial consistency
+- provides payment summaries and filtered paging queries
+
+### Finance helper
+`LogicLayer/Services/Helpers/InvoiceFinanceHelper.cs`
+
+Core formulas:
+- `NetSale = TotalSellingPrice - TotalRefundSellingPrice`
+- `NetBuying = TotalBuyingPrice - TotalRefundBuyingPrice`
+- `NetProfit = NetSale - NetBuying - Discount`
+- `AmountDue = NetSale - Discount`
+- `Remaining = AmountDue - TotalPaid`
+- `RefundAmount = TotalPaid - AmountDue`
+
+## 10) UI Structure (WinForms)
+
+### Main shell
+- `frmLogin`: credential entry and session initialization
+- `FrmMain`: host panel and module navigation
+
+### Worker screens
+- list/add/update/show + `ucWorkerShow`
+
+### Customer screens
+- list/add/update/show + `ucCustomerShow`
+
+### Product screens
+- list/add/update/show + product type management
+- price log list
+- stock movement log list
+- quantity-change info dialog
+
+### Invoice screens
+- invoice list (summary/management modes)
+- add invoice, add batch, discount dialog
+- invoice details and product summary
+- refund summary
+- sold-products user controls (`ucAddTakeBatch`, `ucProductSelector`, `ucInvoiceDetails`)
+
+### Payment screens
+- payments list
+- add payment dialog
+- invoice payment summary dialog
+
+### Shared UI infrastructure
+- `General/General Forms/frmBaseListScreen`
+- `UserControles/UcListView`
+- formatting helpers under `General/UiFormat.cs`
+
+## 11) Authentication and Authorization Model
+
+Current implementation:
+- login checks exact username + exact password text equality
+- authenticated user stored in singleton `UserSession`
+- permission enum exists and helper extension converts flags to display text
+
+Important: password storage/check is currently plain-text comparison.
+
+## 12) Backup and Recovery Details
+
+Backup component:
+`DataAccessLayer/backup/BackupManager.cs`
+
+Behavior:
+- synchronized via static lock
+- SQLite-native online backup (`SqliteConnection.BackupDatabase`)
+- writes to local backup folder and optional secondary folder
+- keeps newest N backups (`keepBackups`)
+- emergency fallback copy to `D:\InventoryBackups` when primary backup flow fails
+- `RestoreBackup` creates pre-restore backup best effort, then replaces DB file
+
+App setting involved:
+- `InventorySalesManagementSystem/appsettings.json`
+
+User setting involved:
+- `InventorySalesManagementSystem/App.config`
+- `Properties.Settings.Default.LastBackupSucceded`
+
+## 13) Migrations and Seeding
+
+Migrations live in `DataAccessLayer/Migrations`.
+
+Design-time helpers:
+- `DataAccessLayer/DesignTimeOnly/InventoryDbContextFactory.cs`
+- `DataAccessLayer/DesignTimeOnly/DatabaseSeeder.cs`
+
+Seeder behavior:
+- ensures at least one town (`"عام"`)
+- ensures admin user exists:
+  - username: `admin`
+  - password: `123456`
+  - permissions: `Admin`
+
+## 14) Query and Paging Conventions
+
+Common conventions in repositories/services:
+- paging is 1-based input (`PageNumber`, `RowsPerPage`)
+- page count computed via `Ceiling(totalCount / rowsPerPage)`
+- list queries usually `AsNoTracking()`
+- default order in many lists is latest first by date or ascending by id
+- text searches typically use `StartsWith` or `Contains`
+
+## 15) Error Handling and Logging Pattern
+
+Service pattern:
+- validate inputs and state first
+- throw typed business exceptions for user-facing failures
+- wrap data mutation in transaction where operation spans multiple entities
+- log with context and rethrow `OperationFailedException` when needed
+
+App-level pattern:
+- catches migration/startup fatal errors in `Program.cs`
+- catches top-level runtime crash and flushes logs
+
+## 16) Important Implementation Notes and Risks
+
+1. Security: passwords are plain text
+- both seeded and checked without hashing
+- login error logging currently includes username and password fields
+
+2. Domain integrity logic is service-dependent
+- several invariants rely on service orchestration, not DB constraints
+
+3. Naming/typo consistency
+- there are minor naming typos in identifiers (e.g., `RecivedBy`, some method names)
+- does not break function but affects maintainability and API cleanliness
+
+4. UI and service coupling by direct DI scope usage
+- forms often create scopes in event handlers
+- practical for desktop app, but can complicate lifetime tracing
+
+5. Secondary backup path reliability
+- depends on configured path availability and permissions
+
+## 17) How to Run (Developer)
+
+Prerequisites:
+- .NET SDK 9.x
+- Windows (WinForms target)
+
+Steps:
+1. Restore and build solution.
+2. Run `InventorySalesManagementSystem` project.
+3. On first run, app creates database and applies migrations.
+4. Login with seeded admin if DB is fresh:
+   - username `admin`
+   - password `123456`
+
+## 18) Suggested Next Engineering Improvements
+
+Priority order:
+
+1. Replace plain-text passwords with salted hash (e.g., PBKDF2/Argon2/Bcrypt).
+2. Remove sensitive login data from logs.
+3. Add automated tests for key finance invariants (invoice/pay/refund/discount).
+4. Introduce explicit transactional boundaries in all cross-aggregate mutations.
+5. Add optimistic concurrency tokens on critical entities (`Invoice`, `Product`, `Customer`).
+6. Normalize naming typos and public method consistency.
+7. Add role-based permission checks in UI actions and service entry points.
+
+## 19) Project Layout (Condensed)
+
+- `InventorySalesManagementSystem/`
+  - WinForms app, forms, user controls, resources, startup config
+- `LogicLayer/`
+  - DTOs, services, validation helpers, utility extensions, user session
+- `DataAccessLayer/`
+  - entities, repositories, abstractions, DbContext, unit of work, migrations, backup manager
+
+This is the primary maintenance map for onboarding and feature extension.
