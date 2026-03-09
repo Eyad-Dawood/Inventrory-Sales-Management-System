@@ -497,7 +497,7 @@ Reusable UI components are used for common forms such as:
 1. Clone the repository.
 
 ```
-git clone https://github.com/your-repo/InventorySalesManagementSystem.git
+git clone https://github.com/Eyad-Dawood/Inventrory-Sales-Management-System/InventorySalesManagementSystem.git
 ```
 
 2. Open the solution in Visual Studio.
